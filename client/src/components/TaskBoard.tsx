@@ -9,6 +9,9 @@ import { useRealtimeTasks } from '@/hooks/useRealtimeTasks';
 import { Task } from '@/types/task';
 
 const TaskBoard: React.FC = React.memo(() => {
+  // Enable real-time updates
+  useRealtimeTasks();
+  
   // Use Supabase-powered board for state
   const {
     isTaskDialogOpen,
