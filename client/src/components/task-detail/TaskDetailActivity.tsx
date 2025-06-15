@@ -3,7 +3,6 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useUser } from '@/contexts/UserContext';
 import TaskChatInput from './TaskChatInput';
 import { fetchTaskMessages, insertTaskMessage, subscribeToTaskMessages, TaskMessage } from '@/data/taskMessagesSupabase';
-import { supabase } from "@/integrations/supabase/client";
 import { getCRMUser } from '@/utils/taskUserCRM';
 
 interface TaskDetailActivityProps {
@@ -35,23 +34,23 @@ const TaskDetailActivity = ({ taskId }: TaskDetailActivityProps) => {
   // Find the CRM user by user_id or user_name, and always expose both avatar & full name
   function lookupChatUser(msg: TaskMessage) {
     const crmUser = getCRMUser({
-      id: msg.user_id, // try to match by id (for internal users)
-      name: msg.user_name, // fallback to name
-      avatar: undefined,
-      fullName: undefined,
+      id: msg.userId, // try to match by id (for internal users)
+      name: msg.userName, // fallback to name
+      avatar: "",
+      fullName: "",
     });
     if (crmUser) {
       return {
-        avatar: crmUser.avatar ?? getInitials(msg.user_name),
+        avatar: crmUser.avatar ?? getInitials(msg.userName),
         avatarColor: crmUser.avatarColor ?? 'bg-gray-400',
-        fullName: crmUser.fullName ?? msg.user_name,
+        fullName: crmUser.fullName ?? msg.userName,
       };
     }
     // Fallback for unknown user
     return {
-      avatar: getInitials(msg.user_name),
+      avatar: getInitials(msg.userName),
       avatarColor: 'bg-gray-400',
-      fullName: msg.user_name
+      fullName: msg.userName
     };
   }
 
@@ -77,7 +76,11 @@ const TaskDetailActivity = ({ taskId }: TaskDetailActivityProps) => {
         return [...prev, msg];
       });
     });
-    return () => { supabase.removeChannel(channel); };
+    return () => { 
+      if (channel && channel.unsubscribe) {
+        channel.unsubscribe();
+      }
+    };
   }, [taskId]);
 
   // Scroll to bottom on new messages
