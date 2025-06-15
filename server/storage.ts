@@ -40,9 +40,7 @@ export class DatabaseStorage implements IStorage {
 
   // Task methods
   async getAllTasks(): Promise<Task[]> {
-    return await db.select().from(tasks)
-      .where(sql`${tasks.deletedAt} IS NULL`)
-      .orderBy(desc(tasks.createdAt));
+    return await db.select().from(tasks).orderBy(desc(tasks.createdAt));
   }
 
   async getTaskByTaskId(taskId: string): Promise<Task | undefined> {
