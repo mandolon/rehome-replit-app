@@ -58,6 +58,11 @@ export class DatabaseStorage implements IStorage {
       .set({ ...updates, updatedAt: new Date() })
       .where(eq(tasks.taskId, taskId))
       .returning();
+    
+    if (!result || result.length === 0) {
+      throw new Error(`Task with ID ${taskId} not found`);
+    }
+    
     return result[0];
   }
 
