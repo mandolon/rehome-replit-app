@@ -93,7 +93,7 @@ const TaskBoard: React.FC = React.memo(() => {
   }, [handleDeleteTask, taskGroups]);
 
   return (
-    <>
+    <div className="h-full flex flex-col overflow-hidden">
       <TaskBoardContent
         taskGroups={taskGroups}
         showQuickAdd={showQuickAdd}
@@ -114,7 +114,7 @@ const TaskBoard: React.FC = React.memo(() => {
         onClose={onDialogClose}
         onCreateTask={handleCreateTask}
       />
-    </>
+    </div>
   );
 });
 

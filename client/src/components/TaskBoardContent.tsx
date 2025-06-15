@@ -61,12 +61,12 @@ const TaskBoardContent = ({
   );
 
   return (
-    <div className="flex-1 bg-background pl-2">
+    <div className="flex-1 bg-background pl-2 overflow-hidden">
       <div className="h-full flex flex-col">
         <TaskBoardHeader />
         <TaskBoardFilters onAddTask={onAddTask} />
 
-        <ScrollArea className="flex-1">
+        <ScrollArea className="flex-1 min-h-0">
           <div className="p-4 space-y-6">
             {renderedGroups}
           </div>
