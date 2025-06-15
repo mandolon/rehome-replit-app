@@ -148,14 +148,14 @@ const TaskDetailPage = () => {
 
   return (
     <AppLayout>
-      <div className="h-full flex flex-col">
-        <div className="flex-1 min-h-0 pl-4 pr-4">
+      <div className="h-full flex flex-col overflow-hidden">
+        <div className="flex-1 min-h-0 overflow-hidden">
           <TaskDetail 
             isOpen={true} 
             onClose={handleBack}
             onProjectClick={handleProjectClick}
             task={currentTask}
-            onDeleted={handleDeleted} // <--- ADDED
+            onDeleted={handleDeleted}
           />
         </div>
       </div>

@@ -19,22 +19,22 @@ const TaskDetail = ({ isOpen, onClose, onProjectClick, task, onDeleted }: TaskDe
   if (!task || !isOpen) return null;
 
   return (
-    <div className="h-full bg-background flex flex-col max-w-none">
+    <div className="h-full bg-background flex flex-col max-w-none overflow-hidden">
       <TaskDetailHeader task={task} onClose={onClose} onProjectClick={onProjectClick} />
 
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden min-h-0">
         {/* Main Content */}
-        <div className="flex-1 overflow-y-auto pr-2">
+        <div className="flex-1 overflow-y-auto pr-2 min-h-0">
           <div className="max-w-4xl mx-auto p-3 space-y-4">
             <TaskDetailForm task={task} />
             <TaskDetailAttachments taskId={task.taskId} />
             {/* Trash Button moved below attachments */}
-            <TaskDetailTrashButton task={task} onDeleted={onDeleted} /> {/* <--- pass new prop */}
+            <TaskDetailTrashButton task={task} onDeleted={onDeleted} />
           </div>
         </div>
 
         {/* Activity Sidebar */}
-        <div className="w-[25vw] min-w-[280px] max-w-[600px] border-l border-border flex-shrink-0">
+        <div className="w-[25vw] min-w-[280px] max-w-[600px] border-l border-border flex-shrink-0 overflow-hidden">
           <TaskDetailActivity taskId={task.taskId} />
         </div>
       </div>
