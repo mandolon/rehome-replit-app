@@ -1,10 +1,11 @@
 
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Task, TaskGroup, TaskUser } from '@/types/task';
 import { useUser } from '@/contexts/UserContext';
 import { useRealtimeTasks } from './useRealtimeTasks';
-import { insertTask, updateTaskSupabase, deleteTaskSupabase } from '@/data/taskSupabase';
+import { fetchAllTasks, createTask, updateTask, deleteTask } from '@/data/api';
 import { nanoid } from "nanoid";
 
 // New: helper to deep copy and update list
@@ -15,18 +16,36 @@ function updateTaskInList(tasks: Task[], taskId: string, updater: (t: Task) => T
 export const useTaskBoard = () => {
   const navigate = useNavigate();
   const { currentUser } = useUser();
-  const { tasks, setTasks, loading } = useRealtimeTasks();
+  const queryClient = useQueryClient();
+  
+  // Enable real-time updates
+  useRealtimeTasks();
+  
+  // Fetch tasks using React Query
+  const { data: tasks = [], isLoading: loading } = useQuery({
+    queryKey: ['/api/tasks'],
+    queryFn: fetchAllTasks,
+    refetchOnWindowFocus: false,
+  });
 
   // Dialog/quick add state
   const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false);
   const [showQuickAdd, setShowQuickAdd] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  // Supabase powered task groups
+  // Task groups powered by API
   const getTaskGroups = (): TaskGroup[] => {
-    const centralizedRedline = tasks.filter(task => task.status === 'redline' && !task.archived && !task.deletedAt);
-    const centralizedProgress = tasks.filter(task => task.status === 'progress' && !task.archived && !task.deletedAt);
-    const centralizedCompleted = tasks.filter(task => task.status === 'completed' && !task.archived && !task.deletedAt);
+    if (!tasks || !Array.isArray(tasks)) {
+      return [
+        { title: "TASK/ REDLINE", count: 0, color: "bg-red-500", status: "redline", tasks: [] },
+        { title: "PROGRESS/ UPDATE", count: 0, color: "bg-blue-500", status: "progress", tasks: [] },
+        { title: "COMPLETED", count: 0, color: "bg-green-500", status: "completed", tasks: [] }
+      ];
+    }
+    
+    const centralizedRedline = tasks.filter((task: any) => task.status === 'redline' && !task.archived && !task.deletedAt);
+    const centralizedProgress = tasks.filter((task: any) => task.status === 'progress' && !task.archived && !task.deletedAt);
+    const centralizedCompleted = tasks.filter((task: any) => task.status === 'completed' && !task.archived && !task.deletedAt);
 
     const taskGroups: TaskGroup[] = [
       {
@@ -57,75 +76,101 @@ export const useTaskBoard = () => {
   // Generate a new taskId for every task insert
   const generateTaskId = () => "T" + Math.floor(Math.random() * 100000).toString().padStart(4, "0");
 
-  // --- No more optimistic update! Only insert, let realtime pull in
+  // Create task mutation
+  const createTaskMutation = useMutation({
+    mutationFn: createTask,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+      setRefreshTrigger(prev => prev + 1);
+    },
+  });
+
   const handleCreateTask = useCallback(
     async (newTask: any) => {
       const taskId = newTask.taskId ?? generateTaskId();
-      await insertTask({
+      createTaskMutation.mutate({
         ...newTask,
         taskId,
         createdBy: currentUser?.name ?? currentUser?.email ?? "Unknown",
       });
       setIsTaskDialogOpen(false);
     },
-    [currentUser]
+    [currentUser, createTaskMutation]
   );
 
   const handleQuickAddSave = useCallback(
     async (taskData: any) => {
       const taskId = taskData.taskId ?? generateTaskId();
-      await insertTask({
+      createTaskMutation.mutate({
         ...taskData,
         taskId,
         createdBy: currentUser?.name ?? currentUser?.email ?? "Unknown",
       });
       setShowQuickAdd(null);
     },
-    [currentUser]
+    [currentUser, createTaskMutation]
   );
 
   const handleTaskClick = (task: Task) => {
     navigate(`/task/${task.taskId}`);
   };
 
+  // Update task mutation
+  const updateTaskMutation = useMutation({
+    mutationFn: ({ taskId, updates }: { taskId: string; updates: Partial<Task> }) =>
+      updateTask(taskId, updates),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+      setRefreshTrigger(prev => prev + 1);
+    },
+  });
+
+  // Delete task mutation
+  const deleteTaskMutation = useMutation({
+    mutationFn: deleteTask,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+      setRefreshTrigger(prev => prev + 1);
+    },
+  });
+
   const handleTaskArchive = async (taskId: number) => {
-    const task = tasks.find(t => t.id === taskId);
+    const task = tasks.find((t: any) => t.id === taskId);
     if (task) {
-      await updateTaskSupabase(task.taskId, { archived: true });
+      updateTaskMutation.mutate({ taskId: task.taskId, updates: { archived: true } });
     }
   };
 
   const handleTaskDeleted = async (taskId: string) => {
-    const task = tasks.find(t => t.taskId === taskId);
+    const task = tasks.find((t: any) => t.taskId === taskId);
     if (task) {
-      await deleteTaskSupabase(task.taskId);
+      deleteTaskMutation.mutate(task.taskId);
     }
   };
 
-  // ------------- NEW ASSIGN PERSON (and collaborators) HANDLERS FOR SUPABASE --------------
-  // For consistent types, all handlers use .taskId as string
-
+  // Assignment handlers using API mutations
   const assignPerson = async (taskId: string, person: TaskUser) => {
-    // Assign main assignee, set .assignee field to person, leave collaborators unchanged
-    await updateTaskSupabase(taskId, { assignee: person });
-    // Let real-time pull updated row
+    updateTaskMutation.mutate({ taskId, updates: { assignee: person } });
   };
+  
   const removeAssignee = async (taskId: string) => {
-    await updateTaskSupabase(taskId, { assignee: null });
+    updateTaskMutation.mutate({ taskId, updates: { assignee: null } });
   };
+  
   const addCollaborator = async (taskId: string, person: TaskUser) => {
-    const task = tasks.find(t => t.taskId === taskId);
+    const task = tasks.find((t: any) => t.taskId === taskId);
     const collabs = (task?.collaborators ?? []).slice();
-    if (!collabs.find(c => c.id === person.id)) {
+    if (!collabs.find((c: any) => c.id === person.id)) {
       collabs.push(person);
     }
-    await updateTaskSupabase(taskId, { collaborators: collabs });
+    updateTaskMutation.mutate({ taskId, updates: { collaborators: collabs } });
   };
+  
   const removeCollaborator = async (taskId: string, collaboratorIndex: number) => {
-    const task = tasks.find(t => t.taskId === taskId);
+    const task = tasks.find((t: any) => t.taskId === taskId);
     const collabs = (task?.collaborators ?? []).slice();
     collabs.splice(collaboratorIndex, 1);
-    await updateTaskSupabase(taskId, { collaborators: collabs });
+    updateTaskMutation.mutate({ taskId, updates: { collaborators: collabs } });
   };
 
   return {
