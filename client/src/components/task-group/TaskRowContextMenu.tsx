@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Edit, Check, Trash2 } from 'lucide-react';
 import {
   ContextMenu,
@@ -25,23 +25,29 @@ const TaskRowContextMenu = ({
   onTaskStatusClick,
   onContextMenuDelete
 }: TaskRowContextMenuProps) => {
+  const [open, setOpen] = useState(false);
+
   const handleDuplicateTask = () => {
     console.log('Duplicating task:', task.id);
+    setOpen(false);
   };
 
   const handleMarkComplete = () => {
     onTaskStatusClick(task.id);
+    setOpen(false);
   };
 
   const handleEditClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onEditClick(task, e as any);
+    setOpen(false);
   };
 
   const handleDeleteClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     onContextMenuDelete(e);
+    setOpen(false);
   };
 
   return (

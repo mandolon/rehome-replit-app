@@ -62,8 +62,19 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateTask(taskId: string, updates: Partial<Task>): Promise<Task> {
+    // Build the update object carefully, excluding undefined values and handling nulls properly
+    const updateData: any = { updatedAt: new Date() };
+    
+    // Only include fields that are explicitly provided in updates
+    Object.keys(updates).forEach(key => {
+      const value = (updates as any)[key];
+      if (value !== undefined) {
+        updateData[key] = value;
+      }
+    });
+    
     const result = await db.update(tasks)
-      .set({ ...updates, updatedAt: new Date() })
+      .set(updateData)
       .where(eq(tasks.taskId, taskId))
       .returning();
     
