@@ -47,13 +47,13 @@ export const useTaskDeletion = () => {
       if (!taskToDeleteObj) return;
       setIsDeleting(true);
       try {
-        // Use proper delete API for all tasks
+        const deletedByName = currentUser?.name || currentUser?.email || "—";
+        // Use soft delete by updating task with deletedAt and deletedBy fields
         if (taskToDeleteObj.taskId) {
-          // Use the delete API endpoint for tasks with taskId
-          const response = await fetch(`/api/tasks/${taskToDeleteObj.taskId}`, { method: 'DELETE' });
-          if (!response.ok) {
-            throw new Error(`Failed to delete task: ${response.status} ${response.statusText}`);
-          }
+          await updateTaskSupabase(taskToDeleteObj.taskId, {
+            deletedAt: new Date().toISOString(),
+            deletedBy: deletedByName
+          });
         } else {
           // Legacy: only pass the ID, as the context only expects one argument
           await deleteTask(taskToDeleteObj.id);
@@ -83,9 +83,15 @@ export const useTaskDeletion = () => {
                 className="pl-1 pr-2 py-0.5 h-7 flex items-center gap-1 group"
                 onClick={async (e) => {
                   e.stopPropagation();
-                  // Since we're using hard delete, we can't actually undo
-                  // This would require implementing the task creation again
-                  // For now, just dismiss the toast
+                  // UNDO soft delete by clearing deletedAt and deletedBy
+                  if (taskToDeleteObj?.taskId) {
+                    await updateTaskSupabase(taskToDeleteObj.taskId, {
+                      deletedAt: null,
+                      deletedBy: null
+                    });
+                  } else if (taskToDeleteObj) {
+                    restoreDeletedTask(taskToDeleteObj.id);
+                  }
                   dismiss();
                 }}
               >

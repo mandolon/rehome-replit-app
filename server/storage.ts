@@ -8,6 +8,7 @@ export interface IStorage {
   
   // Task methods
   getAllTasks(): Promise<Task[]>;
+  getAllTasksIncludingDeleted(): Promise<Task[]>;
   getTaskByTaskId(taskId: string): Promise<Task | undefined>;
   createTask(task: InsertTask): Promise<Task>;
   updateTask(taskId: string, updates: Partial<Task>): Promise<Task>;
@@ -40,6 +41,12 @@ export class DatabaseStorage implements IStorage {
 
   // Task methods
   async getAllTasks(): Promise<Task[]> {
+    return await db.select().from(tasks)
+      .where(sql`${tasks.deletedAt} IS NULL`)
+      .orderBy(desc(tasks.createdAt));
+  }
+
+  async getAllTasksIncludingDeleted(): Promise<Task[]> {
     return await db.select().from(tasks).orderBy(desc(tasks.createdAt));
   }
 
@@ -114,6 +121,14 @@ export class MemStorage implements IStorage {
   }
 
   async getAllTasks(): Promise<Task[]> {
+    return Array.from(this.tasks.values())
+      .filter(task => !task.deletedAt)
+      .sort((a, b) => 
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+  }
+
+  async getAllTasksIncludingDeleted(): Promise<Task[]> {
     return Array.from(this.tasks.values()).sort((a, b) => 
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );

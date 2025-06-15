@@ -6,6 +6,10 @@ export async function fetchAllTasks(): Promise<Task[]> {
   return apiRequest('/api/tasks');
 }
 
+export async function fetchAllTasksIncludingDeleted(): Promise<Task[]> {
+  return apiRequest('/api/tasks/all');
+}
+
 export async function fetchTaskById(taskId: string): Promise<Task> {
   return apiRequest(`/api/tasks/${taskId}`);
 }
