@@ -34,6 +34,12 @@ export async function deleteTask(taskId: string): Promise<void> {
   });
 }
 
+export async function permanentDeleteTask(taskId: string): Promise<void> {
+  return apiRequest(`/api/tasks/${taskId}/permanent`, {
+    method: 'DELETE',
+  });
+}
+
 // Task Message API functions
 export interface TaskMessage {
   id: string;

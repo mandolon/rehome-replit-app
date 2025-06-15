@@ -13,6 +13,7 @@ export interface IStorage {
   createTask(task: InsertTask): Promise<Task>;
   updateTask(taskId: string, updates: Partial<Task>): Promise<Task>;
   deleteTask(taskId: string): Promise<void>;
+  permanentDeleteTask(taskId: string): Promise<void>;
   
   // Task message methods
   getTaskMessages(taskId: string): Promise<TaskMessage[]>;
@@ -81,6 +82,11 @@ export class DatabaseStorage implements IStorage {
         deletedBy: 'system' // TODO: get actual user when auth is implemented
       })
       .where(eq(tasks.taskId, taskId));
+  }
+
+  async permanentDeleteTask(taskId: string): Promise<void> {
+    // Hard delete: permanently remove from database
+    await db.delete(tasks).where(eq(tasks.taskId, taskId));
   }
 
   // Task message methods
@@ -201,6 +207,11 @@ export class MemStorage implements IStorage {
       };
       this.tasks.set(taskId, updatedTask);
     }
+  }
+
+  async permanentDeleteTask(taskId: string): Promise<void> {
+    this.tasks.delete(taskId);
+    this.messages.delete(taskId);
   }
 
   async getTaskMessages(taskId: string): Promise<TaskMessage[]> {

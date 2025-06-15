@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { formatDate } from '@/utils/taskUtils';
-import { fetchAllTasksIncludingDeleted, updateTask, deleteTask } from '@/data/api';
+import { fetchAllTasksIncludingDeleted, updateTask, permanentDeleteTask } from '@/data/api';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Task } from '@/types/task';
 import { useNavigate } from 'react-router-dom';
@@ -38,7 +38,7 @@ const TrashTab = () => {
 
   // Mutation for permanently deleting tasks
   const permanentDeleteMutation = useMutation({
-    mutationFn: deleteTask,
+    mutationFn: permanentDeleteTask,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
       queryClient.invalidateQueries({ queryKey: ['/api/tasks/all'] });
