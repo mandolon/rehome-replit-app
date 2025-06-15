@@ -105,6 +105,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete("/api/tasks/:taskId/permanent", async (req, res) => {
+    try {
+      await storage.permanentDeleteTask(req.params.taskId);
+      broadcast('task_deleted', { taskId: req.params.taskId });
+      res.status(204).send();
+    } catch (error: any) {
+      console.error(`Error permanently deleting task ${req.params.taskId}:`, error);
+      res.status(500).json({ 
+        error: "Failed to permanently delete task", 
+        details: error?.message || String(error) 
+      });
+    }
+  });
+
   // Task message routes
   app.get("/api/tasks/:taskId/messages", async (req, res) => {
     try {

@@ -74,7 +74,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteTask(taskId: string): Promise<void> {
-    await db.delete(tasks).where(eq(tasks.taskId, taskId));
+    // Soft delete: set deletedAt timestamp and deletedBy
+    await db.update(tasks)
+      .set({ 
+        deletedAt: new Date(),
+        deletedBy: 'system' // TODO: get actual user when auth is implemented
+      })
+      .where(eq(tasks.taskId, taskId));
   }
 
   // Task message methods
@@ -167,9 +173,17 @@ export class MemStorage implements IStorage {
     const existing = this.tasks.get(taskId);
     if (!existing) throw new Error(`Task ${taskId} not found`);
     
+    // Handle date conversions for updates
+    const processedUpdates = { ...updates };
+    if (processedUpdates.deletedAt === null) {
+      processedUpdates.deletedAt = null;
+    } else if (processedUpdates.deletedAt && typeof processedUpdates.deletedAt === 'string') {
+      processedUpdates.deletedAt = new Date(processedUpdates.deletedAt);
+    }
+    
     const updated: Task = {
       ...existing,
-      ...updates,
+      ...processedUpdates,
       updatedAt: new Date(),
     };
     this.tasks.set(taskId, updated);
@@ -177,8 +191,16 @@ export class MemStorage implements IStorage {
   }
 
   async deleteTask(taskId: string): Promise<void> {
-    this.tasks.delete(taskId);
-    this.messages.delete(taskId);
+    const task = this.tasks.get(taskId);
+    if (task) {
+      const updatedTask: Task = {
+        ...task,
+        deletedAt: new Date(),
+        deletedBy: 'system',
+        updatedAt: new Date()
+      };
+      this.tasks.set(taskId, updatedTask);
+    }
   }
 
   async getTaskMessages(taskId: string): Promise<TaskMessage[]> {
