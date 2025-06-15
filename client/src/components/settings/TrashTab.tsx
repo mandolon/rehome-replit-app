@@ -5,9 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { formatDate } from '@/utils/taskUtils';
-import { restoreTask, softDeleteTask } from '@/data/taskHelpers';
-import { updateTaskSupabase, deleteTaskSupabase, fetchAllTasks } from '@/data/taskSupabase';
-import { useRealtimeTasks } from '@/hooks/useRealtimeTasks';
+import { fetchAllTasksIncludingDeleted, updateTask, deleteTask } from '@/data/api';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Task } from '@/types/task';
 import { useNavigate } from 'react-router-dom';
 
 const TrashTab = () => {
@@ -15,13 +15,39 @@ const TrashTab = () => {
   const { toast } = useToast();
   const [restoringIds, setRestoringIds] = useState<string[]>([]);
   const [emptyingTrash, setEmptyingTrash] = useState(false);
-  const { tasks: allTasks, loading } = useRealtimeTasks();
   const [optimisticallyRestored, setOptimisticallyRestored] = useState<string[]>([]);
   const [optimisticallyDeleted, setOptimisticallyDeleted] = useState<string[]>([]);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  // Fetch all tasks including deleted ones
+  const { data: allTasks = [], isLoading: loading } = useQuery({
+    queryKey: ['/api/tasks/all'],
+    queryFn: fetchAllTasksIncludingDeleted,
+    refetchOnWindowFocus: false,
+  });
+
+  // Mutation for restoring tasks
+  const restoreTaskMutation = useMutation({
+    mutationFn: ({ taskId, updates }: { taskId: string; updates: Partial<Task> }) =>
+      updateTask(taskId, updates),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/tasks/all'] });
+    },
+  });
+
+  // Mutation for permanently deleting tasks
+  const permanentDeleteMutation = useMutation({
+    mutationFn: deleteTask,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/tasks/all'] });
+    },
+  });
 
   const deletedTasks = useMemo(() => {
-    return (allTasks ?? []).filter(
+    return allTasks.filter(
       task => !!task.deletedAt && 
         !optimisticallyRestored.includes(task.id?.toString() ?? '') &&
         !optimisticallyDeleted.includes(task.id?.toString() ?? '')
