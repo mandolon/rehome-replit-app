@@ -193,7 +193,7 @@ export class MemStorage implements IStorage {
     const updated: Task = {
       ...existing,
       ...updates,
-      updatedAt: new Date(),
+      updatedAt: new Date().toISOString(),
     };
     this.tasks.set(taskId, updated);
     return updated;
