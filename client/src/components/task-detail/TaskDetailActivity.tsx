@@ -111,7 +111,7 @@ const TaskDetailActivity = ({ taskId }: TaskDetailActivityProps) => {
         {loading && <div>Loading messages...</div>}
         {error && <div className="text-red-500 text-xs">{error}</div>}
         {!loading && !error && messages.map((msg) => {
-          const isSelf = msg.user_id === currentUser?.id;
+          const isSelf = msg.userId === currentUser?.id;
           const chatUser = lookupChatUser(msg);
 
           return (
@@ -136,7 +136,7 @@ const TaskDetailActivity = ({ taskId }: TaskDetailActivityProps) => {
                   }`}>
                     {msg.message}
                   </div>
-                  <div className="text-xs text-muted-foreground mt-1">{getRelativeTime(msg.created_at)}</div>
+                  <div className="text-xs text-muted-foreground mt-1">{getRelativeTime(msg.createdAt)}</div>
                 </div>
                 {isSelf && (
                   <Avatar className="w-8 h-8 flex-shrink-0">

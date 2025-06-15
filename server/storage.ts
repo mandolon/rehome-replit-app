@@ -125,6 +125,15 @@ export class MemStorage implements IStorage {
       id: this.currentId++,
       createdAt: now,
       updatedAt: now,
+      // Ensure all optional fields are properly typed
+      project: task.project ?? null,
+      estimatedCompletion: task.estimatedCompletion ?? null,
+      dateCreated: task.dateCreated ?? null,
+      dueDate: task.dueDate ?? null,
+      status: task.status ?? null,
+      deletedAt: task.deletedAt ?? null,
+      deletedBy: task.deletedBy ?? null,
+      description: task.description ?? null,
     };
     this.tasks.set(task.taskId, newTask);
     return newTask;

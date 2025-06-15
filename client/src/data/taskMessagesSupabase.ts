@@ -1,7 +1,8 @@
 
-import { fetchTaskMessages, createTaskMessage, TaskMessage } from "./api";
+import { fetchTaskMessages, createTaskMessage } from "./api";
+import type { TaskMessage } from "./api";
 
-export { TaskMessage };
+export type { TaskMessage };
 
 export { fetchTaskMessages };
 
