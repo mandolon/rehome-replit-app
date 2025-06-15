@@ -25,7 +25,7 @@ export const tasks = pgTable("tasks", {
   createdBy: text("created_by").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
-  deletedAt: timestamp("deleted_at"),
+  deletedAt: text("deleted_at"),
   deletedBy: text("deleted_by"),
   description: text("description"),
 });

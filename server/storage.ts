@@ -89,7 +89,7 @@ export class DatabaseStorage implements IStorage {
     // Soft delete: set deletedAt timestamp and deletedBy
     await db.update(tasks)
       .set({ 
-        deletedAt: new Date(),
+        deletedAt: new Date().toISOString(),
         deletedBy: 'system' // TODO: get actual user when auth is implemented
       })
       .where(eq(tasks.taskId, taskId));
@@ -190,17 +190,9 @@ export class MemStorage implements IStorage {
     const existing = this.tasks.get(taskId);
     if (!existing) throw new Error(`Task ${taskId} not found`);
     
-    // Handle date conversions for updates
-    const processedUpdates = { ...updates };
-    if (processedUpdates.deletedAt === null) {
-      processedUpdates.deletedAt = null;
-    } else if (processedUpdates.deletedAt && typeof processedUpdates.deletedAt === 'string') {
-      processedUpdates.deletedAt = new Date(processedUpdates.deletedAt);
-    }
-    
     const updated: Task = {
       ...existing,
-      ...processedUpdates,
+      ...updates,
       updatedAt: new Date(),
     };
     this.tasks.set(taskId, updated);
@@ -212,7 +204,7 @@ export class MemStorage implements IStorage {
     if (task) {
       const updatedTask: Task = {
         ...task,
-        deletedAt: new Date(),
+        deletedAt: new Date().toISOString(),
         deletedBy: 'system',
         updatedAt: new Date()
       };
