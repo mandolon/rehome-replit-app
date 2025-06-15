@@ -61,7 +61,7 @@ export const useTaskDeletion = () => {
 
         toast({
           description: (
-            <div className="flex items-center justify-between w-full">
+            <div className="flex items-center justify-between w-full -mr-1">
               <span>
                 <span className="font-semibold">Task</span>
                 {" "}moved to{" "}
@@ -81,7 +81,7 @@ export const useTaskDeletion = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                className="pl-2 pr-2 py-0.5 h-7 flex items-center gap-1 group ml-4"
+                className="px-2 py-0.5 h-7 flex items-center gap-1 group ml-4 -mr-2"
                 onClick={async (e) => {
                   e.stopPropagation();
                   // UNDO soft delete by clearing deletedAt and deletedBy
