@@ -125,12 +125,16 @@ export class MemStorage implements IStorage {
       id: this.currentId++,
       createdAt: now,
       updatedAt: now,
-      // Ensure all optional fields are properly typed
+      // Ensure all fields are properly typed
       project: task.project ?? null,
       estimatedCompletion: task.estimatedCompletion ?? null,
       dateCreated: task.dateCreated ?? null,
       dueDate: task.dueDate ?? null,
+      assignee: task.assignee ?? null,
+      hasAttachment: task.hasAttachment ?? false,
+      collaborators: task.collaborators ?? [],
       status: task.status ?? null,
+      archived: task.archived ?? false,
       deletedAt: task.deletedAt ?? null,
       deletedBy: task.deletedBy ?? null,
       description: task.description ?? null,

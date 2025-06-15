@@ -1,10 +1,34 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import { WebSocketServer } from "ws";
 import { storage } from "./storage";
 import { insertTaskSchema, insertTaskMessageSchema } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  const httpServer = createServer(app);
+
+  // WebSocket server for real-time updates
+  const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
+  
+  wss.on('connection', (ws) => {
+    console.log('WebSocket client connected');
+    
+    ws.on('close', () => {
+      console.log('WebSocket client disconnected');
+    });
+  });
+
+  // Broadcast function to notify all connected clients
+  function broadcast(event: string, data: any) {
+    const message = JSON.stringify({ event, data });
+    wss.clients.forEach((client) => {
+      if (client.readyState === 1) { // WebSocket.OPEN
+        client.send(message);
+      }
+    });
+  }
+
   // Task routes
   app.get("/api/tasks", async (req, res) => {
     try {
@@ -31,6 +55,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validatedTask = insertTaskSchema.parse(req.body);
       const task = await storage.createTask(validatedTask);
+      broadcast('task_created', task);
       res.status(201).json(task);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -43,6 +68,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/tasks/:taskId", async (req, res) => {
     try {
       const task = await storage.updateTask(req.params.taskId, req.body);
+      broadcast('task_updated', task);
       res.json(task);
     } catch (error) {
       res.status(500).json({ error: "Failed to update task" });
@@ -52,6 +78,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/tasks/:taskId", async (req, res) => {
     try {
       await storage.deleteTask(req.params.taskId);
+      broadcast('task_deleted', { taskId: req.params.taskId });
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ error: "Failed to delete task" });
@@ -76,6 +103,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
       const validatedMessage = insertTaskMessageSchema.parse(messageData);
       const message = await storage.createTaskMessage(validatedMessage);
+      broadcast('message_created', message);
       res.status(201).json(message);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -84,8 +112,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Failed to create message" });
     }
   });
-
-  const httpServer = createServer(app);
 
   return httpServer;
 }
