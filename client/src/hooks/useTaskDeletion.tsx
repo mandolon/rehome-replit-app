@@ -60,46 +60,45 @@ export const useTaskDeletion = () => {
         }
 
         toast({
+          title: "Task moved to trash",
           description: (
-            <div className="flex items-center justify-between w-full -mr-1">
-              <span>
-                <span className="font-semibold">Task</span>
-                {" "}moved to{" "}
-                <button
-                  type="button"
-                  className="underline decoration-dotted underline-offset-4 text-blue-700 hover:text-blue-600 transition-colors"
-                  tabIndex={0}
-                  onClick={() => {
-                    navigate('/settings?tab=trash');
-                    dismiss();
-                  }}
-                  style={{ fontWeight: 500 }}
-                >
-                  trash
-                </button>
-              </span>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="px-2 py-0.5 h-7 flex items-center gap-1 group ml-4 -mr-2"
-                onClick={async (e) => {
-                  e.stopPropagation();
-                  // UNDO soft delete by clearing deletedAt and deletedBy
-                  if (taskToDeleteObj?.taskId) {
-                    await updateTaskSupabase(taskToDeleteObj.taskId, {
-                      deletedAt: null,
-                      deletedBy: null
-                    });
-                  } else if (taskToDeleteObj) {
-                    restoreDeletedTask(taskToDeleteObj.id);
-                  }
+            <span>
+              <span className="font-semibold">Task</span>
+              {" "}moved to{" "}
+              <button
+                type="button"
+                className="underline decoration-dotted underline-offset-4 text-blue-700 hover:text-blue-600 transition-colors"
+                tabIndex={0}
+                onClick={() => {
+                  navigate('/settings?tab=trash');
                   dismiss();
                 }}
+                style={{ fontWeight: 500 }}
               >
-                <Undo className="w-4 h-4 mr-1 text-muted-foreground group-hover:text-foreground" strokeWidth={2.2}/>
-                Undo
-              </Button>
-            </div>
+                trash
+              </button>
+            </span>
+          ),
+          action: (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={async (e) => {
+                e.stopPropagation();
+                // UNDO soft delete by clearing deletedAt and deletedBy
+                if (taskToDeleteObj?.taskId) {
+                  await updateTaskSupabase(taskToDeleteObj.taskId, {
+                    deletedAt: null,
+                    deletedBy: null
+                  });
+                } else if (taskToDeleteObj) {
+                  restoreDeletedTask(taskToDeleteObj.id);
+                }
+                dismiss();
+              }}
+            >
+              Undo
+            </Button>
           ),
           duration: 5000,
         });
