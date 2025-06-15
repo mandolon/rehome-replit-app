@@ -1,36 +1,55 @@
-
-import { useEffect, useState, useRef } from "react";
-import { Task } from "@/types/task";
-import { fetchAllTasks } from "@/data/taskSupabase";
-import { useUser } from "@/contexts/UserContext";
-import { filterTasksForUser } from "@/utils/taskVisibility";
+import { useEffect, useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
 export function useRealtimeTasks() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState(true);
-  const loadingRef = useRef(false);
-  const { currentUser } = useUser();
+  const queryClient = useQueryClient();
 
-  // Filters and sets tasks so users only see what they should
-  const secureSetTasks = (allTasks: Task[]) => {
-    setTasks(filterTasksForUser(allTasks, currentUser));
-  };
+  const handleWebSocketMessage = useCallback((event: MessageEvent) => {
+    try {
+      const message = JSON.parse(event.data);
+      console.log('WebSocket message received:', message);
+      
+      switch (message.event) {
+        case 'task_created':
+        case 'task_updated':
+        case 'task_deleted':
+        case 'message_created':
+          // Invalidate and refetch tasks when any task-related event occurs
+          queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+          break;
+        
+        default:
+          console.log('Unknown WebSocket event:', message.event);
+      }
+    } catch (error) {
+      console.error('Failed to parse WebSocket message:', error);
+    }
+  }, [queryClient]);
 
   useEffect(() => {
-    if (loadingRef.current) return;
-    loadingRef.current = true;
-    setLoading(true);
-    fetchAllTasks()
-      .then(secureSetTasks)
-      .finally(() => {
-        loadingRef.current = false;
-        setLoading(false);
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentUser]);
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const wsUrl = `${protocol}//${window.location.host}/ws`;
+    
+    const ws = new WebSocket(wsUrl);
+    
+    ws.onopen = () => {
+      console.log('WebSocket connected for real-time updates');
+    };
+    
+    ws.onmessage = handleWebSocketMessage;
+    
+    ws.onclose = () => {
+      console.log('WebSocket disconnected');
+    };
+    
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
 
-  // Real-time functionality removed for now - can be implemented with WebSockets later
-  // For now, tasks will update on page refresh or manual refresh
+    return () => {
+      ws.close();
+    };
+  }, [handleWebSocketMessage]);
 
-  return { tasks, setTasks: secureSetTasks, loading };
+  return {};
 }

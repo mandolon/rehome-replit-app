@@ -5,6 +5,7 @@ import TaskBoardContent from './TaskBoardContent';
 import { useTaskBoard } from '@/hooks/useTaskBoard';
 import { useTaskAttachmentContext } from '@/contexts/TaskAttachmentContext';
 import { useTaskDeletion } from '@/hooks/useTaskDeletion';
+import { useRealtimeTasks } from '@/hooks/useRealtimeTasks';
 import { Task } from '@/types/task';
 
 const TaskBoard: React.FC = React.memo(() => {

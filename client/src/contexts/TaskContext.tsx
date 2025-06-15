@@ -4,7 +4,6 @@ import { useTaskOperations } from '@/hooks/useTaskOperations';
 import { useTaskEditing } from '@/hooks/useTaskEditing';
 import { useTaskAssignments } from '@/hooks/useTaskAssignments';
 import { useTaskStatusOperations } from '@/hooks/useTaskStatusOperations';
-import { useCRMRole } from '@/pages/TeamsPage';
 
 interface TaskContextType {
   // Task state
@@ -71,7 +70,6 @@ export const TaskProvider = React.memo(({ children }: TaskProviderProps) => {
     taskOperations.updateTaskById,
     taskOperations.archiveTask
   );
-  const crmRole = useCRMRole();
 
   const value = React.useMemo((): TaskContextType => ({
     // Task state

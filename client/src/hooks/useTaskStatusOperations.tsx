@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Task } from '@shared/schema';
+import { Task } from '@/types/task';
 
 export function useTaskStatusOperations(
   customTasks: Task[],

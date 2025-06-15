@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Task } from '@shared/schema';
+import { Task } from '@/types/task';
 import { fetchAllTasks, createTask, updateTask, deleteTask } from '@/data/api';
 import { useWebSocket } from './useWebSocket';
 
@@ -55,12 +55,10 @@ export function useTaskOperations() {
 
   // Update local state when tasks change
   useEffect(() => {
-    if (tasks.length > 0) {
-      const activeTasks = tasks.filter(task => !task.archived);
-      const archived = tasks.filter(task => task.archived);
-      setCustomTasks(activeTasks);
-      setArchivedTasks(archived);
-    }
+    const activeTasks = tasks.filter(task => !task.archived);
+    const archived = tasks.filter(task => task.archived);
+    setCustomTasks(activeTasks);
+    setArchivedTasks(archived);
   }, [tasks]);
 
   // Create task mutation
