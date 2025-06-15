@@ -16,8 +16,22 @@ export const useTaskStatusChange = () => {
     updateTaskById(taskId, { status: 'completed', archived: true });
     
     toast({
-      title: "Task completed",
-      description: `"${taskTitle}" has been marked as completed.`,
+      description: (
+        <span>
+          <span className="font-semibold">Task</span>
+          {" "}has been completed.{" "}
+          <button
+            type="button"
+            className="font-bold underline text-blue-700 hover:text-blue-600 transition-colors"
+            tabIndex={0}
+            onClick={() => {
+              window.location.href = '/';
+            }}
+          >
+            Go to tasks
+          </button>
+        </span>
+      ),
       action: (
         <Button 
           variant="outline" 

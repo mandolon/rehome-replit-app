@@ -18,8 +18,23 @@ export const useTaskStatus = (onTaskArchive?: (taskId: number) => void) => {
       }
       
       toast({
-        title: "Task completed",
-        description: `"${task.title}" has been marked as completed.`,
+        description: (
+          <span>
+            <span className="font-semibold">Task</span>
+            {" "}has been completed.{" "}
+            <button
+              type="button"
+              className="font-bold underline text-blue-700 hover:text-blue-600 transition-colors"
+              tabIndex={0}
+              onClick={() => {
+                // Navigate to tasks view
+                window.location.href = '/';
+              }}
+            >
+              Go to tasks
+            </button>
+          </span>
+        ),
         action: (
           <Button 
             variant="outline" 
@@ -43,8 +58,22 @@ export const useTaskStatus = (onTaskArchive?: (taskId: number) => void) => {
     onTaskUpdate(taskId, { status: previousStatus, archived: false });
     
     toast({
-      title: "Task restored",
-      description: "Task has been restored to its previous status.",
+      description: (
+        <span>
+          <span className="font-semibold">Task</span>
+          {" "}has been restored.{" "}
+          <button
+            type="button"
+            className="font-bold underline text-blue-700 hover:text-blue-600 transition-colors"
+            tabIndex={0}
+            onClick={() => {
+              window.location.href = '/';
+            }}
+          >
+            Go to tasks
+          </button>
+        </span>
+      ),
       duration: 3000,
     });
     

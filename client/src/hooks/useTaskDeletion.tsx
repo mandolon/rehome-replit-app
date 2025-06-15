@@ -60,22 +60,20 @@ export const useTaskDeletion = () => {
         }
 
         toast({
-          title: "Task moved to trash",
           description: (
             <span>
               <span className="font-semibold">Task</span>
-              {" "}moved to{" "}
+              {" "}moved to trash.{" "}
               <button
                 type="button"
-                className="underline decoration-dotted underline-offset-4 text-blue-700 hover:text-blue-600 transition-colors"
+                className="font-bold underline text-blue-700 hover:text-blue-600 transition-colors"
                 tabIndex={0}
                 onClick={() => {
                   navigate('/settings?tab=trash');
                   dismiss();
                 }}
-                style={{ fontWeight: 500 }}
               >
-                trash
+                Go to trash
               </button>
             </span>
           ),
@@ -104,8 +102,23 @@ export const useTaskDeletion = () => {
         });
       } catch (error) {
         toast({
-          title: "Error",
-          description: "Failed to delete task. Please try again.",
+          description: (
+            <span>
+              <span className="font-semibold">Task</span>
+              {" "}deletion failed. Please try again.{" "}
+              <button
+                type="button"
+                className="font-bold underline text-red-200 hover:text-red-100 transition-colors"
+                tabIndex={0}
+                onClick={() => {
+                  navigate('/');
+                  dismiss();
+                }}
+              >
+                Go to tasks
+              </button>
+            </span>
+          ),
           variant: "destructive",
         });
       } finally {

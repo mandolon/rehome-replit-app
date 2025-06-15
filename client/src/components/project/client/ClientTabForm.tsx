@@ -54,7 +54,24 @@ const ClientTabForm = ({ onSave }: ClientTabFormProps) => {
   // Add new client handler (uses unique ID generator)
   const handleAddClient = () => {
     if (!newClient.firstName || !newClient.lastName) {
-      toast({ title: "Missing info", description: "First & last name required" });
+      toast({ 
+        description: (
+          <span>
+            <span className="font-semibold">Task</span>
+            {" "}requires first & last name.{" "}
+            <button
+              type="button"
+              className="font-bold underline text-blue-700 hover:text-blue-600 transition-colors"
+              tabIndex={0}
+              onClick={() => {
+                window.location.href = '/';
+              }}
+            >
+              Go to tasks
+            </button>
+          </span>
+        )
+      });
       return;
     }
     const id = generateClientId();
@@ -65,7 +82,24 @@ const ClientTabForm = ({ onSave }: ClientTabFormProps) => {
     addClientToProject(projectId!, client);
     setShowAdd(false);
     setNewClient(emptyClient());
-    toast({ title: "Client added", description: "New client added to project." });
+    toast({ 
+      description: (
+        <span>
+          <span className="font-semibold">Task</span>
+          {" "}client has been added.{" "}
+          <button
+            type="button"
+            className="font-bold underline text-blue-700 hover:text-blue-600 transition-colors"
+            tabIndex={0}
+            onClick={() => {
+              window.location.href = '/';
+            }}
+          >
+            Go to tasks
+          </button>
+        </span>
+      )
+    });
     onSave();
     // After add, ensure new client becomes visible if hidden
     setVisibleCount(v => Math.max(v, Math.ceil(updated.length / CLIENTS_PER_BATCH) * CLIENTS_PER_BATCH));
