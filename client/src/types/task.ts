@@ -11,21 +11,21 @@ export interface Task {
   taskId: string; // Human-readable task ID like T0001, T0002, etc.
   title: string;
   projectId: string;
-  project: string; // Display name for backward compatibility
-  estimatedCompletion: string;
-  dateCreated: string;
-  dueDate: string;
+  project: string | null; // Match API response
+  estimatedCompletion: string | null;
+  dateCreated: string | null;
+  dueDate: string | null;
   assignee: TaskUser | null;
   hasAttachment: boolean;
-  collaborators?: TaskUser[];
+  collaborators: TaskUser[];
   status: string;
-  archived?: boolean;
+  archived: boolean;
   createdBy: string;
   createdAt: string;
   updatedAt: string;
-  deletedAt?: string;
-  deletedBy?: string;
-  description?: string; // <-- added field
+  deletedAt: string | null;
+  deletedBy: string | null;
+  description: string | null;
 }
 
 export interface TaskGroup {
