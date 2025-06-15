@@ -4,6 +4,22 @@ require_once __DIR__ . '/models/User.php';
 require_once __DIR__ . '/models/Task.php';
 require_once __DIR__ . '/models/TaskMessage.php';
 
+// WebSocket functionality for real-time updates
+class TaskWebSocket {
+    private static $clients = [];
+    
+    public static function broadcast($event, $data) {
+        // In a production environment, this would use Redis or a proper WebSocket server
+        // For now, we'll implement a simple file-based notification system
+        $notification = [
+            'event' => $event,
+            'data' => $data,
+            'timestamp' => time()
+        ];
+        file_put_contents(__DIR__ . '/websocket_events.json', json_encode($notification) . "\n", FILE_APPEND);
+    }
+}
+
 // CORS headers
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
@@ -15,17 +31,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-// Database connection
+// Database connection using environment variables
 try {
+    $host = getenv('PGHOST') ?: 'localhost';
+    $port = getenv('PGPORT') ?: '5432';
+    $dbname = getenv('PGDATABASE') ?: 'postgres';
+    $user = getenv('PGUSER') ?: 'postgres';
+    $password = getenv('PGPASSWORD') ?: '';
+    
     $pdo = new PDO(
-        "pgsql:host=" . $_ENV['PGHOST'] . ";port=" . $_ENV['PGPORT'] . ";dbname=" . $_ENV['PGDATABASE'],
-        $_ENV['PGUSER'],
-        $_ENV['PGPASSWORD'],
+        "pgsql:host={$host};port={$port};dbname={$dbname}",
+        $user,
+        $password,
         [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
     );
 } catch (PDOException $e) {
     http_response_code(500);
-    echo json_encode(['error' => 'Database connection failed']);
+    echo json_encode(['error' => 'Database connection failed: ' . $e->getMessage()]);
     exit();
 }
 
