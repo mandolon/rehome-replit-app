@@ -61,26 +61,27 @@ export const useTaskDeletion = () => {
 
         toast({
           description: (
-            <div className="flex items-center gap-2 w-full">
-              <span className="font-semibold">Task</span>
-              <span>moved to</span>
-              <button
-                type="button"
-                className="underline decoration-dotted underline-offset-4 text-blue-700 hover:text-blue-600 transition-colors"
-                tabIndex={0}
-                onClick={() => {
-                  navigate('/settings?tab=trash');
-                  dismiss();
-                }}
-                style={{ fontWeight: 500 }}
-              >
-                trash
-              </button>
-              <span className="ml-6" />
+            <div className="flex items-center justify-between w-full">
+              <span>
+                <span className="font-semibold">Task</span>
+                {" "}moved to{" "}
+                <button
+                  type="button"
+                  className="underline decoration-dotted underline-offset-4 text-blue-700 hover:text-blue-600 transition-colors"
+                  tabIndex={0}
+                  onClick={() => {
+                    navigate('/settings?tab=trash');
+                    dismiss();
+                  }}
+                  style={{ fontWeight: 500 }}
+                >
+                  trash
+                </button>
+              </span>
               <Button
                 variant="ghost"
                 size="sm"
-                className="pl-1 pr-2 py-0.5 h-7 flex items-center gap-1 group"
+                className="pl-2 pr-2 py-0.5 h-7 flex items-center gap-1 group ml-4"
                 onClick={async (e) => {
                   e.stopPropagation();
                   // UNDO soft delete by clearing deletedAt and deletedBy
@@ -98,11 +99,9 @@ export const useTaskDeletion = () => {
                 <Undo className="w-4 h-4 mr-1 text-muted-foreground group-hover:text-foreground" strokeWidth={2.2}/>
                 Undo
               </Button>
-              <span className="mx-2 h-5 border-l border-border inline-block self-center" />
             </div>
           ),
           duration: 5000,
-          className: "p-3 pr-2 w-auto min-w-[340px]",
         });
       } catch (error) {
         toast({
