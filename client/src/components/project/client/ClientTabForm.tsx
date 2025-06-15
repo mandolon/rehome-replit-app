@@ -109,7 +109,24 @@ const ClientTabForm = ({ onSave }: ClientTabFormProps) => {
   const handleSetPrimary = (id: string) => {
     setPrimaryClient(projectId!, id);
     setClients(clients.map(c => ({ ...c, isPrimary: c.clientId === id })));
-    toast({ title: "Primary Contact Changed" });
+    toast({ 
+      description: (
+        <span>
+          <span className="font-semibold">Task</span>
+          {" "}primary contact updated.{" "}
+          <button
+            type="button"
+            className="font-bold underline text-blue-700 hover:text-blue-600 transition-colors"
+            tabIndex={0}
+            onClick={() => {
+              window.location.href = '/';
+            }}
+          >
+            Go to tasks
+          </button>
+        </span>
+      )
+    });
     onSave();
   };
 
@@ -119,7 +136,24 @@ const ClientTabForm = ({ onSave }: ClientTabFormProps) => {
     const updated = clients.filter(c => c.clientId !== id);
     setClients(updated);
     updateClientData(projectId!, updated);
-    toast({ title: "Client Removed" });
+    toast({ 
+      description: (
+        <span>
+          <span className="font-semibold">Task</span>
+          {" "}client has been removed.{" "}
+          <button
+            type="button"
+            className="font-bold underline text-blue-700 hover:text-blue-600 transition-colors"
+            tabIndex={0}
+            onClick={() => {
+              window.location.href = '/';
+            }}
+          >
+            Go to tasks
+          </button>
+        </span>
+      )
+    });
     onSave();
     setVisibleCount(prev => Math.min(Math.max(CLIENTS_PER_BATCH, prev), updated.length));
   };

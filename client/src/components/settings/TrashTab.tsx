@@ -81,25 +81,45 @@ const TrashTab = () => {
       setOptimisticallyRestored((prev) => [...prev, taskId.toString()]);
 
       toast({
-        title: 'Task Restored',
         description: (
           <span>
-            Task has been restored.&nbsp;
-            <Button
-              variant="link"
-              size="sm"
-              className="pl-1 pr-2 py-0.5 h-7"
-              onClick={() => navigate('/tasks')}
+            <span className="font-semibold">Task</span>
+            {" "}has been restored.{" "}
+            <button
+              type="button"
+              className="font-bold underline text-blue-700 hover:text-blue-600 transition-colors"
+              tabIndex={0}
+              onClick={() => {
+                navigate('/tasks');
+              }}
             >
-              Go to Tasks
-            </Button>
+              Go to tasks
+            </button>
           </span>
         ),
         duration: 3500,
       });
     } catch (e) {
       console.error('Error restoring task:', e);
-      toast({ title: 'Error', description: 'Failed to restore task.', variant: 'destructive' });
+      toast({ 
+        description: (
+          <span>
+            <span className="font-semibold">Task</span>
+            {" "}restore failed.{" "}
+            <button
+              type="button"
+              className="font-bold underline text-red-200 hover:text-red-100 transition-colors"
+              tabIndex={0}
+              onClick={() => {
+                navigate('/tasks');
+              }}
+            >
+              Go to tasks
+            </button>
+          </span>
+        ),
+        variant: 'destructive' 
+      });
     } finally {
       setRestoringIds((prev) => prev.filter(id => id !== taskId.toString()));
     }
@@ -114,11 +134,47 @@ const TrashTab = () => {
       setOptimisticallyDeleted(prev => [...prev, taskId.toString()]);
       
       await permanentDeleteMutation.mutateAsync(task.taskId);
-      toast({ title: 'Task permanently deleted', description: '', duration: 3000 });
+      toast({ 
+        description: (
+          <span>
+            <span className="font-semibold">Task</span>
+            {" "}permanently deleted.{" "}
+            <button
+              type="button"
+              className="font-bold underline text-blue-700 hover:text-blue-600 transition-colors"
+              tabIndex={0}
+              onClick={() => {
+                navigate('/tasks');
+              }}
+            >
+              Go to tasks
+            </button>
+          </span>
+        ),
+        duration: 3000 
+      });
     } catch (e) {
       // Revert optimistic update on error
       setOptimisticallyDeleted(prev => prev.filter(id => id !== taskId.toString()));
-      toast({ title: 'Error', description: 'Could not permanently delete.', variant: 'destructive' });
+      toast({ 
+        description: (
+          <span>
+            <span className="font-semibold">Task</span>
+            {" "}deletion failed.{" "}
+            <button
+              type="button"
+              className="font-bold underline text-red-200 hover:text-red-100 transition-colors"
+              tabIndex={0}
+              onClick={() => {
+                navigate('/tasks');
+              }}
+            >
+              Go to tasks
+            </button>
+          </span>
+        ),
+        variant: 'destructive' 
+      });
     }
   };
 
@@ -137,8 +193,22 @@ const TrashTab = () => {
       await Promise.all(promises);
       
       toast({ 
-        title: 'Trash emptied', 
-        description: `${deletedTasks.length} task(s) permanently deleted.`, 
+        description: (
+          <span>
+            <span className="font-semibold">Task</span>
+            {" "}trash has been emptied.{" "}
+            <button
+              type="button"
+              className="font-bold underline text-blue-700 hover:text-blue-600 transition-colors"
+              tabIndex={0}
+              onClick={() => {
+                navigate('/tasks');
+              }}
+            >
+              Go to tasks
+            </button>
+          </span>
+        ),
         duration: 3000 
       });
     } catch (error) {
@@ -146,8 +216,22 @@ const TrashTab = () => {
       setOptimisticallyDeleted(prev => prev.filter(id => !taskIds.includes(id)));
       console.error('Error emptying trash:', error);
       toast({ 
-        title: 'Error', 
-        description: 'Failed to empty trash completely.', 
+        description: (
+          <span>
+            <span className="font-semibold">Task</span>
+            {" "}trash emptying failed.{" "}
+            <button
+              type="button"
+              className="font-bold underline text-red-200 hover:text-red-100 transition-colors"
+              tabIndex={0}
+              onClick={() => {
+                navigate('/tasks');
+              }}
+            >
+              Go to tasks
+            </button>
+          </span>
+        ),
         variant: 'destructive' 
       });
     } finally {
