@@ -52,10 +52,10 @@ export function useTaskAssignments(
     }
   }, [customTasks, updateTaskById]);
 
-  return {
+  return React.useMemo(() => ({
     assignPerson,
     removeAssignee,
     addCollaborator,
     removeCollaborator,
-  };
+  }), [assignPerson, removeAssignee, addCollaborator, removeCollaborator]);
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Task } from '@/types/task';
 import { fetchAllTasks, createTask, updateTask, deleteTask } from '@/data/api';
@@ -130,7 +130,7 @@ export function useTaskOperations() {
     queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
   }, [queryClient]);
 
-  return {
+  return useMemo(() => ({
     customTasks,
     archivedTasks,
     refreshTrigger,
@@ -145,5 +145,20 @@ export function useTaskOperations() {
     getTasksByStatus,
     getAllTasks,
     triggerRefresh,
-  };
+  }), [
+    customTasks,
+    archivedTasks,
+    refreshTrigger,
+    isLoading,
+    isConnected,
+    createTaskHandler,
+    updateTaskById,
+    deleteTaskHandler,
+    restoreDeletedTask,
+    archiveTask,
+    navigateToTask,
+    getTasksByStatus,
+    getAllTasks,
+    triggerRefresh,
+  ]);
 }
