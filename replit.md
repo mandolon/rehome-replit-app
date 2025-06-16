@@ -15,25 +15,29 @@ This is a full-stack task management application built with a modern web archite
 - **Form Handling**: React Hook Form with Zod validation
 
 ### Backend Architecture
-- **Runtime**: Node.js with Express.js framework
-- **Language**: TypeScript with ES modules
-- **Database**: PostgreSQL with Drizzle ORM
+- **Primary Framework**: Laravel 10+ with PHP 8.2+
+- **Secondary Framework**: Node.js with Express.js (legacy support)
+- **Language**: PHP for Laravel, TypeScript for Node.js
+- **Database**: PostgreSQL with Eloquent ORM (Laravel) and Drizzle ORM (Node.js)
+- **Frontend Integration**: Inertia.js for seamless SPA experience
 - **Real-time Communication**: WebSocket server for live updates
-- **Session Management**: PostgreSQL-based session storage
-- **API Structure**: RESTful endpoints with real-time WebSocket integration
+- **Session Management**: Laravel session management with database storage
+- **API Structure**: RESTful Laravel controllers with comprehensive CRUD operations
 
-### Hybrid API Support
-- **Primary API**: Node.js/Express with TypeScript
-- **Secondary API**: PHP Laravel components for additional functionality
-- **Database Access**: Both APIs can interact with the same PostgreSQL database
+### Hybrid API Architecture
+- **Primary API**: Laravel with Eloquent models and resource controllers
+- **Secondary API**: Node.js/Express with TypeScript for real-time features
+- **Database Access**: Both frameworks use the same PostgreSQL database
+- **Model Synchronization**: Laravel Eloquent models mirror Node.js Drizzle schema
 
 ## Key Components
 
-### Database Schema (PostgreSQL + Drizzle)
-- **Users Table**: Authentication and user management
-- **Tasks Table**: Core task entities with metadata, status tracking, and soft delete functionality
-- **Task Messages Table**: Comments and communication threads for tasks
-- **Session Storage**: Built-in session management for user authentication
+### Database Schema (PostgreSQL + Laravel Migrations)
+- **Users Table**: Enhanced authentication with Laravel User model, roles, and profile management
+- **Tasks Table**: Advanced task entities with Laravel soft deletes, status workflow, and project associations
+- **Task Messages Table**: Thread-based communication system with user relationships and metadata
+- **Session Storage**: Laravel session management with database persistence
+- **Migration System**: Laravel migration files for version-controlled schema changes
 
 ### Authentication System
 - Session-based authentication using PostgreSQL storage
