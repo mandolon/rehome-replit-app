@@ -2,47 +2,106 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
-        'name',
+        'username',
         'email',
         'password',
+        'role',
+        'first_name',
+        'last_name',
+        'avatar',
+        'status',
+        'bio',
+        'company',
+        'last_active',
+        'notifications_muted',
+        'show_online_status',
+        'show_last_active',
+        'avatar_color'
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'last_active' => 'datetime',
+        'notifications_muted' => 'boolean',
+        'show_online_status' => 'boolean',
+        'show_last_active' => 'boolean',
+        'password' => 'hashed',
+    ];
+
+    // Relationships
+    public function createdTasks()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->hasMany(Task::class, 'created_by');
+    }
+
+    public function taskMessages()
+    {
+        return $this->hasMany(TaskMessage::class, 'user_id');
+    }
+
+    // Accessors
+    public function getFullNameAttribute()
+    {
+        return trim($this->first_name . ' ' . $this->last_name);
+    }
+
+    public function getInitialsAttribute()
+    {
+        $firstName = $this->first_name ?? '';
+        $lastName = $this->last_name ?? '';
+        return strtoupper(substr($firstName, 0, 1) . substr($lastName, 0, 1));
+    }
+
+    public function getIsOnlineAttribute()
+    {
+        return $this->last_active && $this->last_active->diffInMinutes(now()) <= 5;
+    }
+
+    // Scopes
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
+    }
+
+    public function scopeByRole($query, $role)
+    {
+        return $query->where('role', $role);
+    }
+
+    // Methods
+    public function updateLastActive()
+    {
+        $this->update(['last_active' => now()]);
+    }
+
+    public function hasRole($role)
+    {
+        return $this->role === $role;
+    }
+
+    public function isAdmin()
+    {
+        return $this->hasRole('admin');
+    }
+
+    public function canManageTasks()
+    {
+        return in_array($this->role, ['admin', 'manager']);
     }
 }
