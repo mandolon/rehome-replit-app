@@ -38,13 +38,16 @@ export const useTaskDialog = () => {
       projectId: getProjectIdFromDisplayName(selectedProject)
     };
 
+    // Generate taskId for API requirement
+    const generateTaskId = () => "T" + Math.floor(Math.random() * 100000).toString().padStart(4, "0");
+    
     const projectId = getProjectIdFromDisplayName(selectedProject);
     const taskDataForSupabase = {
-      taskId: undefined, // let insertTask generate if absent
+      taskId: generateTaskId(), // Generate taskId as required by API
       title: taskName,
       projectId,
       project: getProjectDisplayName(projectId),
-      status: selectedStatus || 'progress',
+      status: selectedStatus || 'redline',
       description: addDescription ? description : '',
       assignee: assigneeObj,
       dueDate: dueDate ? format(dueDate, 'MM/dd/yy') : '—',
