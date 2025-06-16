@@ -59,10 +59,25 @@ This is a full-stack task management application built with a modern web archite
 - Collaborative editing notifications
 
 ### API Endpoints
-- `/api/tasks` - Task CRUD operations
-- `/api/tasks/all` - Include deleted tasks for admin views
-- `/api/tasks/:id/messages` - Task-specific messaging
+
+#### Laravel API (Primary)
+- `GET /api/tasks` - Retrieve tasks with filtering and relationships
+- `POST /api/tasks` - Create new task with validation
+- `GET /api/tasks/{taskId}` - Get specific task with messages
+- `PUT /api/tasks/{taskId}` - Update task with status workflow
+- `DELETE /api/tasks/{taskId}` - Soft delete task
+- `DELETE /api/tasks/{taskId}/permanent` - Permanently delete task
+- `POST /api/tasks/{taskId}/restore` - Restore soft-deleted task
+- `PATCH /api/tasks/{taskId}/status` - Update task status with business logic
+- `POST /api/tasks/{taskId}/archive` - Archive task
+- `GET /api/tasks/{taskId}/messages` - Get task messages with user data
+- `POST /api/tasks/{taskId}/messages` - Create task message
+- `GET /api/users` - User management endpoints
+- `GET /api/projects/{projectId}/tasks` - Project-specific tasks
+
+#### Node.js API (Legacy/Real-time)
 - WebSocket endpoint at `/ws` for real-time features
+- Legacy Express endpoints for backward compatibility
 
 ## Data Flow
 
@@ -116,7 +131,16 @@ This is a full-stack task management application built with a modern web archite
 
 ```
 Changelog:
-- June 16, 2025. Initial setup
+- June 16, 2025: Initial setup
+- June 16, 2025: Backend architecture refactoring - Implemented Laravel 10+ with Inertia.js integration as primary backend framework
+  * Created comprehensive Laravel Models (Task, User, TaskMessage) with Eloquent relationships
+  * Built Laravel Controllers (TaskController, UserController, TaskMessageController) with full CRUD operations
+  * Designed database migrations for PostgreSQL with proper indexing and foreign key constraints
+  * Implemented Laravel API routes with RESTful endpoints and advanced filtering
+  * Added soft delete functionality, status workflow management, and user role system
+  * Optimized React hooks (useTaskOperations, useTaskEditing, useTaskAssignments) to prevent infinite re-renders
+  * Maintained Node.js/Express backend for real-time WebSocket functionality and legacy support
+  * Enhanced project architecture to support hybrid Laravel/Node.js backend with shared PostgreSQL database
 ```
 
 ## User Preferences
