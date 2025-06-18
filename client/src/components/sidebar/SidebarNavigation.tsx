@@ -58,7 +58,7 @@ const SidebarNavigation = React.memo(({ isCollapsed, isOpen, onToggle }: Sidebar
     if (clientMode) return clientNavItems;
     return [
       { icon: Home, label: 'Home', active: false, onClick: handleNavigateHome },
-      { icon: ClipboardList, label: 'Tasks', active: false, onClick: handleNavigateTasks },
+      { icon: ClipboardList, label: 'Task Board (Final)', active: false, onClick: handleNavigateTasks },
       { icon: Inbox, label: 'Inbox', active: false, onClick: handleNavigateInbox },
       { icon: MessageSquare, label: 'Chat', active: false, onClick: handleNavigateChat },
       { icon: Users, label: 'Teams', active: false, onClick: handleNavigateTeams },
