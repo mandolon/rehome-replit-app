@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Send, Paperclip, Image, Calendar, Clock, Edit2, Trash2, FileText } from 'lucide-react';
+import { X, Send, Paperclip, Image, Calendar, Clock, Edit2, Trash2, FileText, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useUser } from '@/contexts/UserContext';
