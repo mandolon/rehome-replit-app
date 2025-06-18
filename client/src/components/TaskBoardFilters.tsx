@@ -146,26 +146,16 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed }: TaskBoardFi
           </PopoverContent>
         </Popover>
 
-        {/* Apply button for Date Created filter */}
-        <button 
-          className="flex items-center gap-1 px-2 py-1 text-xs rounded border text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-transparent hover:border-gray-200 dark:hover:border-gray-700"
-          onClick={() => setDateFilterOpen(false)}
-        >
-          Apply
-        </button>
-
         {/* Assignee Filter Popover */}
         <AssigneeFilterPopover
           selectedPeople={selectedAssignees}
           onChange={setSelectedAssignees}
         />
 
-        <button className="flex items-center gap-1 px-2 py-1 text-gray-600 hover:text-gray-700 text-xs">
-          Subtasks
-        </button>
-        <button className="flex items-center gap-1 px-2 py-1 text-gray-600 hover:text-gray-700 text-xs">
-          Columns
-        </button>
+        {/* Separator to distinguish from actions */}
+        <div className="h-4 w-px bg-gray-300 dark:bg-gray-600 mx-2"></div>
+        
+        {/* Actions section */}
         <button 
           onClick={() => {
             console.log('Closed button clicked, current showClosed:', showClosed);
