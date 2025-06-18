@@ -91,18 +91,18 @@ export function useTaskOperations() {
   }, [createTaskMutation]);
 
   const updateTaskById = useCallback((taskId: number, updates: Partial<Task>) => {
-    const task = customTasks.find(t => t.id === taskId);
+    const task = tasks.find(t => t.id === taskId);
     if (task) {
       updateTaskMutation.mutate({ taskId: task.taskId, updates });
     }
-  }, [customTasks, updateTaskMutation]);
+  }, [tasks, updateTaskMutation]);
 
   const deleteTaskHandler = useCallback(async (taskId: number): Promise<void> => {
-    const task = customTasks.find(t => t.id === taskId);
+    const task = tasks.find(t => t.id === taskId);
     if (task) {
       deleteTaskMutation.mutate(task.taskId);
     }
-  }, [customTasks, deleteTaskMutation]);
+  }, [tasks, deleteTaskMutation]);
 
   const restoreDeletedTask = useCallback((taskId: number) => {
     // Implementation for restoring deleted tasks
@@ -118,12 +118,12 @@ export function useTaskOperations() {
   }, []);
 
   const getTasksByStatus = useCallback((status: string) => {
-    return customTasks.filter(task => task.status === status);
-  }, [customTasks]);
+    return tasks.filter(task => task.status === status && !task.archived);
+  }, [tasks]);
 
   const getAllTasks = useCallback(() => {
-    return customTasks;
-  }, [customTasks]);
+    return tasks.filter(task => !task.archived);
+  }, [tasks]);
 
   const triggerRefresh = useCallback(() => {
     setRefreshTrigger(prev => prev + 1);

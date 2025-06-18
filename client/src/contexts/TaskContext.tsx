@@ -64,9 +64,9 @@ interface TaskProviderProps {
 export const TaskProvider = React.memo(({ children }: TaskProviderProps) => {
   const taskOperations = useTaskOperations();
   const taskEditing = useTaskEditing(taskOperations.updateTaskById);
-  const taskAssignments = useTaskAssignments(taskOperations.customTasks, taskOperations.updateTaskById);
+  const taskAssignments = useTaskAssignments(taskOperations.getAllTasks, taskOperations.updateTaskById);
   const taskStatusOperations = useTaskStatusOperations(
-    taskOperations.customTasks,
+    taskOperations.getAllTasks,
     taskOperations.updateTaskById,
     taskOperations.archiveTask
   );
