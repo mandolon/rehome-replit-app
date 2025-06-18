@@ -15,7 +15,7 @@ const PageSectionHeader = ({
   className,
 }: PageSectionHeaderProps) => {
   return (
-    <div className={`px-6 pt-6 pb-4 flex items-center justify-between ${className || ''}`}>
+    <div className={`px-6 pt-6 pb-2 flex items-center justify-between ${className || ''}`}>
       <h1 className="text-xl font-semibold tracking-tight leading-tight">{title}</h1>
       {children}
     </div>

@@ -44,7 +44,7 @@ const TaskBoardContent = ({
 }: TaskBoardContentProps) => {
   const renderedGroups = React.useMemo(
     () => taskGroups
-      .filter((group: TaskGroup) => showClosed || group.status !== 'completed')
+      .filter((group: TaskGroup) => showClosed ? group.status === 'completed' : group.status !== 'completed')
       .map((group: TaskGroup, groupIndex: number) => (
         <TaskGroupSection
           key={`${groupIndex}-${refreshTrigger}`}
@@ -77,7 +77,7 @@ const TaskBoardContent = ({
         />
 
         <ScrollArea className="flex-1 min-h-0">
-          <div className="px-4 pt-2 pb-4 space-y-4">
+          <div className="px-4 pt-6 pb-4 space-y-4">
             {renderedGroups}
           </div>
         </ScrollArea>
