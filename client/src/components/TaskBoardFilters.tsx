@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Filter, Search, Plus, Calendar, ChevronDown } from 'lucide-react';
+import { Filter, Search, Plus, Calendar, ChevronDown, CheckCircle, ListTodo } from 'lucide-react';
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Calendar as ShadcnCalendar } from "@/components/ui/calendar";
@@ -161,22 +161,33 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed }: TaskBoardFi
           onChange={setSelectedAssignees}
         />
 
-        <button 
-          onClick={() => {
-            console.log('Completed button clicked, current showClosed:', showClosed);
-            onToggleClosed();
-          }}
-          className={`flex items-center gap-1 px-2 py-1 text-xs rounded border ${
-            showClosed 
-              ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700' 
-              : 'text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-transparent hover:border-gray-200 dark:hover:border-gray-700'
-          }`}
-        >
-          Completed
-        </button>
-
         <div className="ml-auto flex items-center gap-2">
-          {/* Old Assignee button replaced by assignee filter above */}
+          {/* To Do button */}
+          <button 
+            onClick={onAddTask}
+            className="flex items-center gap-1 px-2 py-1 text-xs rounded border text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-transparent hover:border-gray-200 dark:hover:border-gray-700"
+          >
+            <ListTodo className="w-3 h-3" />
+            To Do
+            <Plus className="w-3 h-3" />
+          </button>
+
+          {/* Completed button moved here */}
+          <button 
+            onClick={() => {
+              console.log('Completed button clicked, current showClosed:', showClosed);
+              onToggleClosed();
+            }}
+            className={`flex items-center gap-1 px-2 py-1 text-xs rounded border ${
+              showClosed 
+                ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700' 
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-transparent hover:border-gray-200 dark:hover:border-gray-700'
+            }`}
+          >
+            <CheckCircle className="w-3 h-3" />
+            Completed
+          </button>
+
           <div className="relative">
             <Search className="w-3 h-3 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input 
