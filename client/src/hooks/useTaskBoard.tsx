@@ -13,12 +13,7 @@ function updateTaskInList(tasks: Task[], taskId: string, updater: (t: Task) => T
   return tasks.map(t => t.taskId === taskId ? updater(t) : t);
 }
 
-export const useTaskBoard = (filters?: {
-  selectedAssignees?: string[];
-  selectedProject?: string;
-  selectedStartDate?: Date;
-  selectedEndDate?: Date;
-}) => {
+export const useTaskBoard = () => {
   const navigate = useNavigate();
   const { currentUser } = useUser();
   const queryClient = useQueryClient();
@@ -38,43 +33,7 @@ export const useTaskBoard = (filters?: {
   const [showQuickAdd, setShowQuickAdd] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  // Apply filters to tasks
-  const applyFilters = (taskList: Task[]) => {
-    let filteredTasks = taskList.filter((task: any) => !task.archived && !task.deletedAt);
-
-    // Apply assignee filter
-    if (filters?.selectedAssignees && filters.selectedAssignees.length > 0) {
-      filteredTasks = filteredTasks.filter((task: any) => {
-        const assigneeName = task.assignee?.name || task.assignee?.fullName;
-        return filters.selectedAssignees!.includes(assigneeName);
-      });
-    }
-
-    // Apply project filter
-    if (filters?.selectedProject) {
-      filteredTasks = filteredTasks.filter((task: any) => task.project === filters.selectedProject);
-    }
-
-    // Apply date range filter
-    if (filters?.selectedStartDate || filters?.selectedEndDate) {
-      filteredTasks = filteredTasks.filter((task: any) => {
-        if (!task.dateCreated) return false;
-        const taskDate = new Date(task.dateCreated);
-        
-        if (filters.selectedStartDate && taskDate < filters.selectedStartDate) {
-          return false;
-        }
-        if (filters.selectedEndDate && taskDate > filters.selectedEndDate) {
-          return false;
-        }
-        return true;
-      });
-    }
-
-    return filteredTasks;
-  };
-
-  // Task groups powered by API with filtering
+  // Task groups powered by API
   const getTaskGroups = (): TaskGroup[] => {
     if (!tasks || !Array.isArray(tasks)) {
       return [
@@ -84,12 +43,9 @@ export const useTaskBoard = (filters?: {
       ];
     }
     
-    // Apply filters first, then group by status
-    const filteredTasks = applyFilters(tasks);
-    
-    const centralizedRedline = filteredTasks.filter((task: any) => task.status === 'redline');
-    const centralizedProgress = filteredTasks.filter((task: any) => task.status === 'progress');
-    const centralizedCompleted = filteredTasks.filter((task: any) => task.status === 'completed');
+    const centralizedRedline = tasks.filter((task: any) => task.status === 'redline' && !task.archived && !task.deletedAt);
+    const centralizedProgress = tasks.filter((task: any) => task.status === 'progress' && !task.archived && !task.deletedAt);
+    const centralizedCompleted = tasks.filter((task: any) => task.status === 'completed' && !task.archived && !task.deletedAt);
 
     const taskGroups: TaskGroup[] = [
       {

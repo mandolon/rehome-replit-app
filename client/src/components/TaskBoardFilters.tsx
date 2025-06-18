@@ -10,33 +10,17 @@ interface TaskBoardFiltersProps {
   onAddTask: () => void;
   showClosed: boolean;
   onToggleClosed: () => void;
-  selectedAssignees: string[];
-  setSelectedAssignees: (assignees: string[]) => void;
-  selectedProject: string;
-  setSelectedProject: (project: string) => void;
-  selectedStartDate: Date | undefined;
-  setSelectedStartDate: (date: Date | undefined) => void;
-  selectedEndDate: Date | undefined;
-  setSelectedEndDate: (date: Date | undefined) => void;
 }
 
-const TaskBoardFilters = ({ 
-  onAddTask, 
-  showClosed, 
-  onToggleClosed,
-  selectedAssignees,
-  setSelectedAssignees,
-  selectedProject,
-  setSelectedProject,
-  selectedStartDate,
-  setSelectedStartDate,
-  selectedEndDate,
-  setSelectedEndDate
-}: TaskBoardFiltersProps) => {
+const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed }: TaskBoardFiltersProps) => {
   const [dateFilterOpen, setDateFilterOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
+  const [selectedAssignees, setSelectedAssignees] = useState<string[]>([]);
   const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
   const [projectsDropdownOpen, setProjectsDropdownOpen] = useState(false);
+  const [selectedStartDate, setSelectedStartDate] = useState<Date | undefined>();
+  const [selectedEndDate, setSelectedEndDate] = useState<Date | undefined>();
+  const [selectedProject, setSelectedProject] = useState<string>('');
 
   return (
     <div className="px-4 py-2 border-b border-border">

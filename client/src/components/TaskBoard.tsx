@@ -12,13 +12,7 @@ const TaskBoard: React.FC = React.memo(() => {
   // Enable real-time updates
   useRealtimeTasks();
   
-  // Filter state
-  const [selectedAssignees, setSelectedAssignees] = React.useState<string[]>([]);
-  const [selectedProject, setSelectedProject] = React.useState<string>('');
-  const [selectedStartDate, setSelectedStartDate] = React.useState<Date | undefined>();
-  const [selectedEndDate, setSelectedEndDate] = React.useState<Date | undefined>();
-  
-  // Use Supabase-powered board for state with filters
+  // Use Supabase-powered board for state
   const {
     isTaskDialogOpen,
     setIsTaskDialogOpen,
@@ -34,12 +28,7 @@ const TaskBoard: React.FC = React.memo(() => {
     removeAssignee,
     addCollaborator,
     removeCollaborator,
-  } = useTaskBoard({
-    selectedAssignees,
-    selectedProject,
-    selectedStartDate,
-    selectedEndDate,
-  });
+  } = useTaskBoard();
 
   // State for showing/hiding closed tasks
   const [showClosed, setShowClosed] = React.useState(false);
@@ -129,15 +118,6 @@ const TaskBoard: React.FC = React.memo(() => {
         removeAssignee={removeAssignee}
         addCollaborator={addCollaborator}
         removeCollaborator={removeCollaborator}
-        // Filter props
-        selectedAssignees={selectedAssignees}
-        setSelectedAssignees={setSelectedAssignees}
-        selectedProject={selectedProject}
-        setSelectedProject={setSelectedProject}
-        selectedStartDate={selectedStartDate}
-        setSelectedStartDate={setSelectedStartDate}
-        selectedEndDate={selectedEndDate}
-        setSelectedEndDate={setSelectedEndDate}
       />
       <TaskDialog
         isOpen={isTaskDialogOpen}
