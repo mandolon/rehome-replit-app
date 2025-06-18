@@ -106,9 +106,9 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed }: TaskBoardFi
               <ChevronDown className="w-3 h-3" />
             </button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-3 z-[1100]">
+          <PopoverContent className="w-auto p-3 z-[1100]" align="start">
             <div className="space-y-3">
-              <div className="text-[11px] font-medium text-muted-foreground/70 px-2 py-1">
+              <div className="text-[11px] font-medium text-muted-foreground/70">
                 Show date range
               </div>
               <div className="flex gap-3">
