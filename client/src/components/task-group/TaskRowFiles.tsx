@@ -53,7 +53,7 @@ const TaskRowFiles = ({
                 title={attachments[0].name}
                 onClick={e => e.stopPropagation()}
               >
-                <Paperclip className="w-4 h-4 text-gray-600" />
+                <Paperclip className="w-5 h-5 text-gray-600" />
               </a>
             ) : (
               <>
@@ -66,7 +66,7 @@ const TaskRowFiles = ({
                   }}
                   aria-label="Show attachments"
                 >
-                  <Paperclip className="w-4 h-4 text-gray-600" />
+                  <Paperclip className="w-5 h-5 text-gray-600" />
                 </button>
                 {showDropdown && (
                   <div
@@ -118,7 +118,7 @@ const TaskRowFiles = ({
             aria-label="Add file"
             tabIndex={0}
           >
-            <Plus className="w-4 h-4 text-foreground" strokeWidth="2" />
+            <Plus className="w-3 h-3 text-foreground" strokeWidth="2" />
           </button>
         )}
 
