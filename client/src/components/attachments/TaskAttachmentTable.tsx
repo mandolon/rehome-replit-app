@@ -60,7 +60,7 @@ const TaskAttachmentTable: React.FC<TaskAttachmentTableProps> = ({
             <th className="py-2 px-2 text-left font-medium whitespace-nowrap w-[15%] min-w-[100px]">Category</th>
             <th className="py-2 px-2 text-left font-medium whitespace-nowrap w-[15%] min-w-[90px]">Date Created</th>
             <th className="py-2 px-2 text-left font-medium whitespace-nowrap w-[12%] min-w-[80px]">Created by</th>
-            {onRemove && <th className="py-2 px-2 text-right font-medium w-[6%] min-w-[56px]">Action</th>}
+            {onRemove && <th className="py-2 px-2 text-right font-medium w-[6%] min-w-[56px]"></th>}
           </tr>
         </thead>
         <tbody>
