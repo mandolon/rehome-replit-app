@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, Send, Paperclip, Image, Calendar, Clock, Edit2, Trash2 } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { X, Send, Paperclip, Image, Calendar, Clock, Edit2, Trash2, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useUser } from '@/contexts/UserContext';
@@ -26,6 +26,7 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editingTodo, setEditingTodo] = useState<string | null>(null);
   const [editText, setEditText] = useState('');
+  const popupRef = useRef<HTMLDivElement>(null);
   const [todos, setTodos] = useState<TodoItem[]>([
     {
       id: '1',
@@ -33,7 +34,7 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
       content: 'Need to analyze the Q3 financial data and prepare recommendations for Q4 budget allocation.',
       author: 'Review quarterly budget report',
       authorAvatar: 'AL',
-      timestamp: 'Today at 2:15 pm',
+      timestamp: 'Last Updated: Today at 2:15 pm',
       completed: false
     },
     {
@@ -42,7 +43,7 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
       content: 'Incorporate latest design changes and add new feature demos for the PinerWorks client meeting.',
       author: 'Update client presentation slides',
       authorAvatar: 'AD',
-      timestamp: 'Yesterday at 4:30 pm',
+      timestamp: 'Last Updated: Yesterday at 4:30 pm',
       completed: true
     },
     {
@@ -51,7 +52,7 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
       content: 'Coordinate with all team leads to establish consistent meeting times for next sprint.',
       author: 'Schedule team standup meetings',
       authorAvatar: 'MP',
-      timestamp: '2 days ago at 10:00 am',
+      timestamp: 'Last Updated: 2 days ago at 10:00 am',
       completed: false
     }
   ]);
@@ -65,7 +66,7 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
         content: newTodo,
         author: todoTitle, // Use todo title instead of author name
         authorAvatar: currentUser.avatar,
-        timestamp: 'Just now',
+        timestamp: 'Last Updated: Just now',
         completed: false
       };
       setTodos([todo, ...todos]);
@@ -111,15 +112,46 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
     }
   };
 
+  // Handle click outside to close popup
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, onClose]);
+
+  // Get current date and time
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    const options: Intl.DateTimeFormatOptions = {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    };
+    return now.toLocaleDateString('en-US', options);
+  };
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl w-[600px] max-h-[80vh] flex flex-col">
+      <div ref={popupRef} className="bg-white dark:bg-gray-900 rounded-lg shadow-xl w-[600px] max-h-[80vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+            <FileText className="w-4 h-4 text-gray-500" />
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
               To Do
             </span>
@@ -156,10 +188,10 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
             )}
           </div>
 
-          {/* Timestamp Info */}
+          {/* Current Date Info */}
           <div className="px-4 pb-3 flex items-center gap-2">
             <span className="text-xs text-gray-500">
-              Last Updated: Today at 3:12 pm
+              {getCurrentDateTime()}
             </span>
           </div>
 
