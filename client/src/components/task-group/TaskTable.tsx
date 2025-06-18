@@ -110,7 +110,7 @@ const TaskTable = React.memo(React.forwardRef<HTMLDivElement, any>(({
             {/* Marked Complete By - only for completed view */}
             {isCompletedView && (
               <TableHead className="text-muted-foreground font-medium text-xs py-1.5 h-auto align-baseline w-[10%] transition-colors group-hover:bg-accent/50 hover:bg-accent">
-                Marked Complete By
+                By
               </TableHead>
             )}
             {/* Assigned to - only for non-completed view */}
