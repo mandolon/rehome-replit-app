@@ -54,6 +54,51 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
       authorAvatar: 'MP',
       timestamp: 'Last Updated: 2 days ago at 10:00 am',
       completed: false
+    },
+    {
+      id: '4',
+      title: 'Finalize website wireframes',
+      content: 'Complete the wireframe designs for the new product landing page and get approval from stakeholders.',
+      author: 'Finalize website wireframes',
+      authorAvatar: 'SS',
+      timestamp: 'Last Updated: 3 days ago at 1:45 pm',
+      completed: false
+    },
+    {
+      id: '5',
+      title: 'Test mobile responsiveness',
+      content: 'Run comprehensive tests on mobile devices to ensure the application works seamlessly across different screen sizes.',
+      author: 'Test mobile responsiveness',
+      authorAvatar: 'JJ',
+      timestamp: 'Last Updated: 4 days ago at 11:20 am',
+      completed: true
+    },
+    {
+      id: '6',
+      title: 'Database optimization review',
+      content: 'Analyze query performance and implement indexing strategies to improve database response times.',
+      author: 'Database optimization review',
+      authorAvatar: 'AL',
+      timestamp: 'Last Updated: 5 days ago at 3:30 pm',
+      completed: false
+    },
+    {
+      id: '7',
+      title: 'User feedback integration',
+      content: 'Review user feedback from beta testing and create action items for the next development cycle.',
+      author: 'User feedback integration',
+      authorAvatar: 'AD',
+      timestamp: 'Last Updated: 1 week ago at 9:15 am',
+      completed: false
+    },
+    {
+      id: '8',
+      title: 'Security audit documentation',
+      content: 'Document security protocols and create guidelines for secure coding practices across the team.',
+      author: 'Security audit documentation',
+      authorAvatar: 'MP',
+      timestamp: 'Last Updated: 1 week ago at 4:00 pm',
+      completed: true
     }
   ]);
 
@@ -167,7 +212,7 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
         {/* Content */}
         <div className="flex-1 overflow-hidden flex flex-col">
           {/* Title */}
-          <div className="p-4 pb-2">
+          <div className="px-6 pt-4 pb-2">
             {isEditingTitle ? (
               <input
                 type="text"
@@ -189,14 +234,14 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
           </div>
 
           {/* Current Date Info */}
-          <div className="px-4 pb-3 flex items-center gap-2">
+          <div className="px-6 pb-3 flex items-center gap-2">
             <span className="text-xs text-gray-500">
               {getCurrentDateTime()}
             </span>
           </div>
 
           {/* New Todo Input */}
-          <div className="px-4 pb-4">
+          <div className="px-6 pb-4">
             <Textarea
               value={newTodo}
               onChange={(e) => setNewTodo(e.target.value)}
@@ -211,7 +256,7 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
           </div>
 
           {/* Existing Todos */}
-          <div className="px-4 pb-4 flex-1 overflow-y-auto max-h-[300px]">
+          <div className="px-6 pb-4 flex-1 overflow-y-auto max-h-[300px]">
             <div className="space-y-3">
               {todos.map((todo) => (
                 <div
@@ -311,28 +356,22 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Footer Actions */}
-        <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500">
-              <Paperclip className="w-4 h-4" />
-            </button>
-            <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500">
-              <Image className="w-4 h-4" />
-            </button>
-            <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500">
-              <Calendar className="w-4 h-4" />
-            </button>
-            <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500">
-              <Clock className="w-4 h-4" />
-            </button>
-          </div>
-          <Button
+        <div className="px-6 py-3 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+          <button className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
+            <Paperclip className="w-4 h-4" />
+          </button>
+          <button
             onClick={handleSubmit}
             disabled={!newTodo.trim()}
-            className="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-full flex items-center gap-2"
+            className={`px-3 py-1 rounded text-xs font-medium flex items-center gap-1 transition-colors ${
+              newTodo.trim()
+                ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            }`}
           >
-            <Send className="w-4 h-4" />
-          </Button>
+            <Send className="w-3 h-3" />
+            Send
+          </button>
         </div>
       </div>
     </div>
