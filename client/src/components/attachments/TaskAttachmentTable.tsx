@@ -133,13 +133,13 @@ const TaskAttachmentTable: React.FC<TaskAttachmentTableProps> = ({
                     </span>
                   </td>
                   {onRemove && (
-                    <td className="px-1 py-2 text-right w-8">
+                    <td className="px-1 py-2 text-right w-8 align-bottom">
                       <button
                         onClick={() => onRemove(attachment.id)}
                         className="p-1 hover:bg-accent rounded opacity-0 group-hover:opacity-100 transition-opacity"
                         aria-label="Remove attachment"
                       >
-                        <X className="w-3 h-3 text-destructive" />
+                        <X className="w-4 h-4 text-destructive" />
                       </button>
                     </td>
                   )}
