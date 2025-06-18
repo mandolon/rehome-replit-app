@@ -40,8 +40,12 @@ const TaskRowFiles = ({
   const [showDropdown, setShowDropdown] = React.useState(false);
 
   return (
-    <div className="flex items-center relative select-none">
-      <div className="w-6 h-6 rounded flex items-center justify-center relative group border border-transparent hover:border-accent transition-colors bg-background">
+    <div 
+      className="flex items-center relative select-none w-full h-full cursor-pointer hover:bg-accent/30 transition-colors rounded"
+      onClick={handleUploadClick}
+      title="Click to upload files"
+    >
+      <div className="w-6 h-6 rounded flex items-center justify-center relative group border border-transparent bg-background">
         {hasFiles ? (
           <>
             {attachments.length === 1 ? (
@@ -103,7 +107,10 @@ const TaskRowFiles = ({
             <button
               className="absolute bottom-0.5 -right-2 bg-background border border-border rounded-full p-[2px] shadow hover:bg-accent z-30 transition-colors"
               style={{ minWidth: 18, minHeight: 18 }}
-              onClick={handleUploadClick}
+              onClick={e => {
+                e.stopPropagation();
+                handleUploadClick(e);
+              }}
               aria-label="Add file"
               tabIndex={0}
             >
@@ -114,7 +121,10 @@ const TaskRowFiles = ({
           // If no files, only show plus
           <button
             className="w-full h-full flex items-center justify-center rounded-full bg-background border border-border hover:bg-accent transition-colors"
-            onClick={handleUploadClick}
+            onClick={e => {
+              e.stopPropagation();
+              handleUploadClick(e);
+            }}
             aria-label="Add file"
             tabIndex={0}
           >
