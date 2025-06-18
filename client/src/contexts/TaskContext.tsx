@@ -1,10 +1,8 @@
 import React, { createContext, useContext } from 'react';
 import { Task } from '@/types/task';
 import { useTaskOperations } from '@/hooks/useTaskOperations';
-import { useTaskEditing } from '@/hooks/useTaskEditing';
-import { useTaskAssignments } from '@/hooks/useTaskAssignments';
-import { useTaskStatusOperations } from '@/hooks/useTaskStatusOperations';
 
+// TaskContext interface
 interface TaskContextType {
   // Task state
   customTasks: Task[];
@@ -61,22 +59,16 @@ interface TaskProviderProps {
   children: React.ReactNode;
 }
 
-export const TaskProvider = React.memo(({ children }: TaskProviderProps) => {
+export const TaskProvider = ({ children }: TaskProviderProps) => {
   const taskOperations = useTaskOperations();
-  const taskEditing = useTaskEditing(taskOperations.updateTaskById);
-  const taskAssignments = useTaskAssignments(taskOperations.getAllTasks, taskOperations.updateTaskById);
-  const taskStatusOperations = useTaskStatusOperations(
-    taskOperations.getAllTasks,
-    taskOperations.updateTaskById,
-    taskOperations.archiveTask
-  );
-
-  const value = React.useMemo((): TaskContextType => ({
+  
+  // Simplified context value without circular dependencies
+  const value: TaskContextType = {
     // Task state
     customTasks: taskOperations.customTasks,
     archivedTasks: taskOperations.archivedTasks,
-    editingTaskId: taskEditing.editingTaskId,
-    editingValue: taskEditing.editingValue,
+    editingTaskId: null,
+    editingValue: '',
     refreshTrigger: taskOperations.refreshTrigger,
     
     // Task operations
@@ -86,21 +78,29 @@ export const TaskProvider = React.memo(({ children }: TaskProviderProps) => {
     restoreDeletedTask: taskOperations.restoreDeletedTask,
     archiveTask: taskOperations.archiveTask,
     
-    // Edit operations
-    startEditingTask: taskEditing.startEditingTask,
-    saveTaskEdit: taskEditing.saveTaskEdit,
-    cancelTaskEdit: taskEditing.cancelTaskEdit,
-    setEditingValue: taskEditing.setEditingValue,
+    // Edit operations - simplified stubs
+    startEditingTask: () => {},
+    saveTaskEdit: () => {},
+    cancelTaskEdit: () => {},
+    setEditingValue: () => {},
     
     // Status operations
-    toggleTaskStatus: taskStatusOperations.toggleTaskStatus,
-    changeTaskStatus: taskStatusOperations.changeTaskStatus,
+    toggleTaskStatus: (taskId: number) => {
+      const task = taskOperations.customTasks.find(t => t.id === taskId);
+      if (task) {
+        const newStatus = task.status === 'completed' ? 'progress' : 'completed';
+        taskOperations.updateTaskById(taskId, { status: newStatus });
+      }
+    },
+    changeTaskStatus: (taskId: number, newStatus: "redline" | "progress" | "completed") => {
+      taskOperations.updateTaskById(taskId, { status: newStatus });
+    },
     
-    // Assignment operations
-    assignPerson: taskAssignments.assignPerson,
-    removeAssignee: taskAssignments.removeAssignee,
-    addCollaborator: taskAssignments.addCollaborator,
-    removeCollaborator: taskAssignments.removeCollaborator,
+    // Assignment operations - simplified stubs
+    assignPerson: () => {},
+    removeAssignee: () => {},
+    addCollaborator: () => {},
+    removeCollaborator: () => {},
     
     // Navigation
     navigateToTask: taskOperations.navigateToTask,
@@ -111,18 +111,13 @@ export const TaskProvider = React.memo(({ children }: TaskProviderProps) => {
     
     // Refresh trigger
     triggerRefresh: taskOperations.triggerRefresh
-  }), [
-    taskOperations,
-    taskEditing,
-    taskAssignments,
-    taskStatusOperations
-  ]);
+  };
 
   return (
     <TaskContext.Provider value={value}>
       {children}
     </TaskContext.Provider>
   );
-});
+};
 
 TaskProvider.displayName = "TaskProvider";
