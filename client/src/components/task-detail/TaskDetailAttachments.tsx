@@ -5,7 +5,6 @@ import { useTaskAttachmentContext, TaskAttachment } from '@/contexts/TaskAttachm
 import { useTaskContext } from '@/contexts/TaskContext';
 import { useUser } from '@/contexts/UserContext';
 import TaskAttachmentTable from '../attachments/TaskAttachmentTable';
-import AttachmentFilters from '../attachments/AttachmentFilters';
 
 interface TaskDetailAttachmentsProps {
   taskId?: string;
@@ -18,17 +17,11 @@ const TaskDetailAttachments = ({ taskId }: TaskDetailAttachmentsProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [dragActive, setDragActive] = useState(false);
-  const [filteredAttachments, setFilteredAttachments] = useState<TaskAttachment[]>([]);
 
   let currentTaskId = taskId;
   if (!currentTaskId && customTasks && customTasks.length > 0) currentTaskId = customTasks[0]?.taskId;
   if (!currentTaskId) return null;
   const attachments = getAttachments(currentTaskId);
-
-  // Initialize filtered attachments
-  React.useEffect(() => {
-    setFilteredAttachments(attachments);
-  }, [attachments]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length) {

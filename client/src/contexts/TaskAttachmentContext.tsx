@@ -1,6 +1,19 @@
 
 import React, { createContext, useContext, useState, useMemo } from "react";
-import { analyzeFile } from "@/utils/fileTagging";
+
+// Simple file type detection
+function getFileType(extension: string): string {
+  const ext = extension.toLowerCase();
+  if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(ext)) return 'Image';
+  if (['pdf', 'doc', 'docx', 'txt', 'rtf'].includes(ext)) return 'Document';
+  if (['xls', 'xlsx', 'csv'].includes(ext)) return 'Spreadsheet';
+  if (['ppt', 'pptx'].includes(ext)) return 'Presentation';
+  if (['mp4', 'avi', 'mov', 'wmv', 'mkv'].includes(ext)) return 'Video';
+  if (['mp3', 'wav', 'flac', 'aac'].includes(ext)) return 'Audio';
+  if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext)) return 'Archive';
+  if (['js', 'ts', 'html', 'css', 'py', 'java', 'cpp'].includes(ext)) return 'Code';
+  return 'Other';
+}
 
 export interface TaskAttachment {
   id: string;
@@ -10,7 +23,6 @@ export interface TaskAttachment {
   url: string;
   author: string;
   dateCreated: string;
-  tags: string[];
   category: string;
   fileType: string;
 }
@@ -37,7 +49,8 @@ export const TaskAttachmentProvider = ({ children }: { children: React.ReactNode
   const addAttachments = (taskId: string, files: File[], author: string) => {
     const now = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' });
     const newAttachments: TaskAttachment[] = files.map(file => {
-      const analysis = analyzeFile(file);
+      const extension = file.name.split('.').pop()?.toLowerCase() || '';
+      const fileType = getFileType(extension);
       return {
         id: Math.random().toString(36).slice(2),
         taskId,
@@ -46,9 +59,8 @@ export const TaskAttachmentProvider = ({ children }: { children: React.ReactNode
         url: URL.createObjectURL(file),
         author,
         dateCreated: now,
-        tags: analysis.tags,
-        category: analysis.category,
-        fileType: analysis.fileType,
+        category: 'General',
+        fileType,
       };
     });
     setAttachmentBucket(prev => ({
