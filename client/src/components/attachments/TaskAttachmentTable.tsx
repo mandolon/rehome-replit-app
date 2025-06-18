@@ -88,7 +88,7 @@ const TaskAttachmentTable: React.FC<TaskAttachmentTableProps> = ({
               return (
                 <tr
                   key={attachment.id}
-                  className="hover:bg-muted/50 border-b transition-colors"
+                  className="hover:bg-muted/50 border-b transition-colors group"
                 >
                   <td className="px-3 py-2 max-w-[160px] truncate w-[30%]">
                     <span className="inline-block align-middle mr-2">📄</span>
@@ -136,7 +136,7 @@ const TaskAttachmentTable: React.FC<TaskAttachmentTableProps> = ({
                     <td className="px-2 py-2 text-right w-[6%]">
                       <button
                         onClick={() => onRemove(attachment.id)}
-                        className="p-1 hover:bg-accent rounded"
+                        className="p-1 hover:bg-accent rounded opacity-0 group-hover:opacity-100 transition-opacity"
                         aria-label="Remove attachment"
                       >
                         <X className="w-3 h-3 text-destructive" />
