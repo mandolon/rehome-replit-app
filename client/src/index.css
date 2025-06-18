@@ -121,3 +121,41 @@
     transform: scale(1);
   }
 }
+
+/* Modern, thin scrollbar styles for TodoPopup */
+.todo-popup-scrollbar {
+  /* Webkit browsers (Chrome, Safari, Edge) */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
+}
+
+.todo-popup-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.todo-popup-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.todo-popup-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.3);
+  border-radius: 3px;
+  transition: background-color 0.2s ease;
+}
+
+.todo-popup-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.5);
+}
+
+/* Dark mode scrollbar */
+.dark .todo-popup-scrollbar {
+  scrollbar-color: rgba(75, 85, 99, 0.4) transparent;
+}
+
+.dark .todo-popup-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(75, 85, 99, 0.4);
+}
+
+.dark .todo-popup-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(75, 85, 99, 0.6);
+}
