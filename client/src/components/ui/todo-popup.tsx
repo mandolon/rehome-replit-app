@@ -274,7 +274,7 @@ export const TodoPopup = ({
             <div className="border-t border-gray-200 dark:border-gray-700"></div>
 
             {/* Todo Lists */}
-            <div className="px-6 pb-4 flex-1 overflow-y-auto h-[400px] todo-popup-scrollbar">
+            <div className="px-6 pb-4 overflow-y-auto h-[320px] todo-popup-scrollbar">
               <div className="space-y-3 pt-4 h-full">
                 {showCompleted ? (
                   // Show completed todos
