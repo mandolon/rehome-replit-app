@@ -94,15 +94,12 @@ const TaskDetailPage = () => {
     if (!currentTask || !currentUser) return false;
     const check = canUserViewTask(currentTask, currentUser);
     if (!check.allowed) {
-      console.log('Access denied:', {
-        reason: check.reason,
-        currentUser,
-        assignee: currentTask.assignee,
-        collaborators: currentTask.collaborators,
-        createdBy: currentTask.createdBy
-      });
-    } else {
-      console.log('Access allowed:', check.reason);
+      console.log('TaskDetailPage: Access denied for task', currentTask.taskId);
+      console.log('TaskDetailPage: User:', currentUser.name, currentUser.email);
+      console.log('TaskDetailPage: Task assignee:', currentTask.assignee);
+      console.log('TaskDetailPage: Task collaborators:', currentTask.collaborators);
+      console.log('TaskDetailPage: Task createdBy:', currentTask.createdBy);
+      console.log('TaskDetailPage: Check result:', check);
     }
     return check.allowed;
   }, [currentTask, currentUser]);
