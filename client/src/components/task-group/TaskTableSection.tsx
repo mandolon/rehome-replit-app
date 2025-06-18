@@ -174,16 +174,18 @@ const TaskTableSection = ({
         onAssignedToFilterClick={handleAssignedToFilterClick}
       />
 
-      {isShowingQuickAdd ? (
-        <div ref={quickAddRef}>
-          <QuickAddTask
-            onSave={onQuickAddSave}
-            onCancel={() => onSetShowQuickAdd(null)}
-            defaultStatus={group.status}
-          />
-        </div>
-      ) : (
-        <AddTaskButton onAddTask={() => onSetShowQuickAdd(group.status)} />
+      {group.status !== 'completed' && (
+        isShowingQuickAdd ? (
+          <div ref={quickAddRef}>
+            <QuickAddTask
+              onSave={onQuickAddSave}
+              onCancel={() => onSetShowQuickAdd(null)}
+              defaultStatus={group.status}
+            />
+          </div>
+        ) : (
+          <AddTaskButton onAddTask={() => onSetShowQuickAdd(group.status)} />
+        )
       )}
     </>
   );

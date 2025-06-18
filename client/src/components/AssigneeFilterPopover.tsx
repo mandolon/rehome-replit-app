@@ -39,14 +39,11 @@ const AssigneeFilterPopover = ({ selectedPeople, onChange }: AssigneeFilterPopov
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          size="sm"
-          variant="ghost"
-          className="flex items-center gap-1 px-2 py-1 text-xs text-gray-600 hover:text-gray-700"
+        <button
+          className="flex items-center gap-1 px-2 py-1 text-xs text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
         >
-          <Users className="w-3 h-3" />
           Assignee
-        </Button>
+        </button>
       </PopoverTrigger>
       <PopoverContent className="w-56 p-2 z-[1100]">
         <Input
