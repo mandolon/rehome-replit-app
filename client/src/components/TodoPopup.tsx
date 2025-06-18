@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Send, Paperclip, Image, Calendar, Clock, Edit2, Trash2, FileText, Plus } from 'lucide-react';
+import { X, Send, Paperclip, Image, Calendar, Clock, Edit2, Trash2, FileText, Plus, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useUser } from '@/contexts/UserContext';
@@ -35,6 +35,8 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
   const [editingTodo, setEditingTodo] = useState<string | null>(null);
   const [editText, setEditText] = useState('');
   const [attachments, setAttachments] = useState<TodoAttachment[]>([]);
+  const [completedTodos, setCompletedTodos] = useState<TodoItem[]>([]);
+  const [showCompleted, setShowCompleted] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [todos, setTodos] = useState<TodoItem[]>([
@@ -140,9 +142,15 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
   };
 
   const toggleComplete = (id: string) => {
-    setTodos(todos.map(todo => 
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    ));
+    const todo = todos.find(t => t.id === id);
+    if (todo) {
+      if (!todo.completed) {
+        // Moving to completed
+        const completedTodo = { ...todo, completed: true };
+        setCompletedTodos(prev => [completedTodo, ...prev]);
+        setTodos(prev => prev.filter(t => t.id !== id));
+      }
+    }
   };
 
   const startEditingTodo = (todo: TodoItem) => {
@@ -341,10 +349,65 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
           {/* Separator line */}
           <div className="border-t border-gray-200 dark:border-gray-700"></div>
 
-          {/* Existing Todos */}
+          {/* Todo Lists */}
           <div className="px-6 pb-4 flex-1 overflow-y-auto max-h-[300px] todo-popup-scrollbar">
             <div className="space-y-3 pt-4">
-              {todos.map((todo) => (
+              {showCompleted ? (
+                // Show completed todos
+                completedTodos.length === 0 ? (
+                  <div className="text-center py-8 text-gray-500 text-sm">
+                    No completed todos yet
+                  </div>
+                ) : (
+                  completedTodos.map((todo) => (
+                    <div
+                      key={todo.id}
+                      className="group p-3 border border-gray-200 dark:border-gray-700 rounded-lg opacity-60"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="w-4 h-4 rounded border-2 bg-green-500 border-green-500 flex items-center justify-center mt-1">
+                          <div className="w-2 h-2 bg-white rounded-full"></div>
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-xs font-medium text-gray-900 dark:text-white line-through">
+                              {todo.author}
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              {todo.timestamp}
+                            </span>
+                          </div>
+                          <p className="text-xs line-through text-gray-500">
+                            {todo.content}
+                          </p>
+                          
+                          {/* Show attachments if any */}
+                          {todo.attachments && todo.attachments.length > 0 && (
+                            <div className="mt-2 space-y-1">
+                              {todo.attachments.map((attachment) => (
+                                <div
+                                  key={attachment.id}
+                                  className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded px-2 py-1 text-xs opacity-60"
+                                >
+                                  <span className="text-sm">{getFileIcon(attachment.type)}</span>
+                                  <span className="flex-1 truncate text-gray-600 dark:text-gray-400">
+                                    {attachment.name}
+                                  </span>
+                                  <span className="text-gray-400 text-xs">
+                                    {formatFileSize(attachment.size)}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )
+              ) : (
+                // Show active todos
+                todos.filter(todo => !todo.completed).map((todo) => (
                 <div
                   key={todo.id}
                   className={`group p-3 border border-gray-200 dark:border-gray-700 rounded-lg transition-all hover:shadow-sm hover:border-gray-300 dark:hover:border-gray-600 ${
@@ -458,7 +521,8 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
                     </div>
                   </div>
                 </div>
-              ))}
+              ))
+              )}
             </div>
           </div>
         </div>
@@ -466,24 +530,34 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
         {/* Footer Actions */}
         <div className="px-6 py-3 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
           <button 
-            onClick={() => fileInputRef.current?.click()}
-            className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
-            title="Attach file"
+            onClick={() => setShowCompleted(!showCompleted)}
+            className="px-2 py-1 text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors flex items-center gap-1"
           >
-            <Paperclip className="w-4 h-4" />
+            <Check className="w-3 h-3" />
+            {showCompleted ? 'Hide Completed' : `Show Completed (${completedTodos.length})`}
           </button>
-          <button
-            onClick={handleSubmit}
-            disabled={!newTodo.trim()}
-            className={`px-3 py-1 rounded text-xs font-medium flex items-center gap-1 transition-colors ${
-              newTodo.trim()
-                ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-            }`}
-          >
-            <Plus className="w-3 h-3" />
-            Add
-          </button>
+          
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => fileInputRef.current?.click()}
+              className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+              title="Attach file"
+            >
+              <Paperclip className="w-4 h-4" />
+            </button>
+            <button
+              onClick={handleSubmit}
+              disabled={!newTodo.trim()}
+              className={`px-3 py-1 rounded text-xs font-medium flex items-center gap-1 transition-colors ${
+                newTodo.trim()
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
+            >
+              <Plus className="w-3 h-3" />
+              Add
+            </button>
+          </div>
         </div>
 
         {/* Hidden file input */}
