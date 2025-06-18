@@ -53,7 +53,7 @@ const TaskRowAssignees = ({
     <div className="flex items-center -space-x-1 relative">
       {/* ASSIGNEE */}
       {assignee && (
-        <div className="relative" title={assignee.fullName || assignee.name}>
+        <div className="relative group/avatar" title={assignee.fullName || assignee.name}>
           <div
             className={`${getAvatarColor(assignee)} w-7 h-7 rounded-full ${AVATAR_INITIALS_CLASSNAMES} text-white border-2 border-background flex items-center justify-center`}
           >
@@ -61,7 +61,7 @@ const TaskRowAssignees = ({
           </div>
           {/* Remove Assignee Button */}
           <button
-            className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-white border border-border p-0 flex items-center justify-center text-destructive opacity-0 group-hover/assignees:opacity-100 transition-opacity"
+            className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-white border border-border p-0 flex items-center justify-center text-destructive opacity-0 group-hover/avatar:opacity-100 transition-opacity"
             style={{lineHeight: 1}}
             onClick={e => { e.stopPropagation(); onRemoveAssignee(task.taskId, e); }}
             title="Remove assignee"
@@ -73,7 +73,7 @@ const TaskRowAssignees = ({
       )}
       {/* COLLABORATORS */}
       {collaborators?.map((collaborator: any, idx: number) => collaborator && (
-        <div className="relative" key={idx} title={collaborator.fullName || collaborator.name}>
+        <div className="relative group/avatar" key={idx} title={collaborator.fullName || collaborator.name}>
           <div
             className={`${getAvatarColor(collaborator)} w-7 h-7 rounded-full ${AVATAR_INITIALS_CLASSNAMES} text-white border-2 border-background flex items-center justify-center`}
           >
@@ -81,7 +81,7 @@ const TaskRowAssignees = ({
           </div>
           {/* Remove Collaborator Button */}
           <button
-            className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-white border border-border p-0 flex items-center justify-center text-destructive opacity-0 group-hover/assignees:opacity-100 transition-opacity"
+            className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-white border border-border p-0 flex items-center justify-center text-destructive opacity-0 group-hover/avatar:opacity-100 transition-opacity"
             style={{lineHeight: 1}}
             onClick={e => { e.stopPropagation(); onRemoveCollaborator(task.taskId, idx, e); }}
             title="Remove collaborator"
