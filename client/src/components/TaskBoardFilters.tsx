@@ -152,13 +152,9 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed }: TaskBoardFi
           onChange={setSelectedAssignees}
         />
 
-        {/* Separator to distinguish from actions */}
-        <div className="h-4 w-px bg-gray-300 dark:bg-gray-600 mx-2"></div>
-        
-        {/* Actions section */}
         <button 
           onClick={() => {
-            console.log('Closed button clicked, current showClosed:', showClosed);
+            console.log('Completed button clicked, current showClosed:', showClosed);
             onToggleClosed();
           }}
           className={`flex items-center gap-1 px-2 py-1 text-xs rounded border ${
@@ -167,7 +163,7 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed }: TaskBoardFi
               : 'text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-transparent hover:border-gray-200 dark:hover:border-gray-700'
           }`}
         >
-          Closed
+          Completed
         </button>
 
         <div className="ml-auto flex items-center gap-2">
