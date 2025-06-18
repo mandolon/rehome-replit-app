@@ -32,6 +32,11 @@ const TaskBoard: React.FC = React.memo(() => {
 
   // State for showing/hiding closed tasks
   const [showClosed, setShowClosed] = React.useState(false);
+  
+  const handleToggleClosed = React.useCallback(() => {
+    console.log('Toggle closed called, current state:', showClosed);
+    setShowClosed(!showClosed);
+  }, [showClosed]);
   const { addAttachments } = useTaskAttachmentContext();
 
   // --- Task Deletion logic from useTaskDeletion
@@ -108,7 +113,7 @@ const TaskBoard: React.FC = React.memo(() => {
         onTaskDeleted={onTaskDeleted}
         onAddTask={onDialogOpen}
         showClosed={showClosed}
-        onToggleClosed={() => setShowClosed(!showClosed)}
+        onToggleClosed={handleToggleClosed}
         assignPerson={assignPerson}
         removeAssignee={removeAssignee}
         addCollaborator={addCollaborator}

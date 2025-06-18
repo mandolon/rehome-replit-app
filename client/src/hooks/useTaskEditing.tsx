@@ -23,12 +23,12 @@ export function useTaskEditing(updateTaskById: (taskId: number, updates: Partial
     setEditingValue('');
   }, []);
 
-  return React.useMemo(() => ({
+  return {
     editingTaskId,
     editingValue,
     startEditingTask,
     saveTaskEdit,
     cancelTaskEdit,
     setEditingValue,
-  }), [editingTaskId, editingValue, startEditingTask, saveTaskEdit, cancelTaskEdit, setEditingValue]);
+  };
 }

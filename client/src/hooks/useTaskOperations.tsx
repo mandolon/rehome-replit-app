@@ -130,7 +130,7 @@ export function useTaskOperations() {
     queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
   }, [queryClient]);
 
-  return useMemo(() => ({
+  return {
     customTasks,
     archivedTasks,
     refreshTrigger,
@@ -145,20 +145,5 @@ export function useTaskOperations() {
     getTasksByStatus,
     getAllTasks,
     triggerRefresh,
-  }), [
-    customTasks,
-    archivedTasks,
-    refreshTrigger,
-    isLoading,
-    isConnected,
-    createTaskHandler,
-    updateTaskById,
-    deleteTaskHandler,
-    restoreDeletedTask,
-    archiveTask,
-    navigateToTask,
-    getTasksByStatus,
-    getAllTasks,
-    triggerRefresh,
-  ]);
+  };
 }

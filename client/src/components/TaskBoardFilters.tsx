@@ -81,7 +81,10 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed }: TaskBoardFi
             Filter
           </button>
           <button 
-            onClick={onToggleClosed}
+            onClick={() => {
+              console.log('Closed button clicked, current showClosed:', showClosed);
+              onToggleClosed();
+            }}
             className={`flex items-center gap-1 px-2 py-1 text-xs ${
               showClosed 
                 ? 'bg-blue-100 text-blue-700' 
