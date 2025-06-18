@@ -1,6 +1,5 @@
-import React, { createContext, useContext, useMemo, useCallback } from 'react';
+import React, { createContext, useContext } from 'react';
 import { Task } from '@/types/task';
-import { useTaskOperations } from '@/hooks/useTaskOperations';
 
 // TaskContext interface
 interface TaskContextType {
@@ -59,92 +58,73 @@ interface TaskProviderProps {
   children: React.ReactNode;
 }
 
+// Hardcoded placeholder tasks
+const PLACEHOLDER_TASKS: Task[] = [
+  {
+    id: 17,
+    taskId: "T9477",
+    title: "Test Task for Development",
+    projectId: "PRJ001",
+    project: "Main Project",
+    estimatedCompletion: null,
+    dateCreated: "2024-06-15",
+    dueDate: null,
+    assignee: { name: "Sarah Chen", avatar: "SC", fullName: "Sarah Chen" },
+    hasAttachment: true,
+    collaborators: [],
+    status: "progress",
+    archived: false,
+    createdBy: "admin",
+    createdAt: "2024-06-15T10:00:00Z",
+    updatedAt: "2024-06-15T10:00:00Z",
+    deletedAt: null,
+    deletedBy: null,
+    description: "A test task for development purposes"
+  }
+];
+
 export const TaskProvider = ({ children }: TaskProviderProps) => {
-  const {
-    customTasks,
-    archivedTasks,
-    refreshTrigger,
-    createTask,
-    updateTaskById,
-    deleteTask,
-    restoreDeletedTask,
-    archiveTask,
-    navigateToTask,
-    getTasksByStatus,
-    getAllTasks,
-    triggerRefresh
-  } = useTaskOperations();
-  
-  // Status operations with stable references
-  const toggleTaskStatus = useCallback((taskId: number) => {
-    const task = customTasks.find(t => t.id === taskId);
-    if (task) {
-      const newStatus = task.status === 'completed' ? 'progress' : 'completed';
-      updateTaskById(taskId, { status: newStatus });
-    }
-  }, [customTasks, updateTaskById]);
-
-  const changeTaskStatus = useCallback((taskId: number, newStatus: "redline" | "progress" | "completed") => {
-    updateTaskById(taskId, { status: newStatus });
-  }, [updateTaskById]);
-
-  // Simple memoized context value
-  const value: TaskContextType = useMemo(() => ({
+  const value: TaskContextType = {
     // Task state
-    customTasks,
-    archivedTasks,
+    customTasks: PLACEHOLDER_TASKS,
+    archivedTasks: [],
     editingTaskId: null,
     editingValue: '',
-    refreshTrigger,
+    refreshTrigger: 0,
     
-    // Task operations
-    createTask,
-    updateTaskById,
-    deleteTask,
-    restoreDeletedTask,
-    archiveTask,
+    // Task operations - all placeholders
+    createTask: () => {},
+    updateTaskById: () => {},
+    deleteTask: async () => {},
+    restoreDeletedTask: () => {},
+    archiveTask: () => {},
     
-    // Edit operations - simplified stubs
+    // Edit operations - all placeholders
     startEditingTask: () => {},
     saveTaskEdit: () => {},
     cancelTaskEdit: () => {},
     setEditingValue: () => {},
     
-    // Status operations
-    toggleTaskStatus,
-    changeTaskStatus,
+    // Status operations - all placeholders
+    toggleTaskStatus: () => {},
+    changeTaskStatus: () => {},
     
-    // Assignment operations - simplified stubs
+    // Assignment operations - all placeholders
     assignPerson: () => {},
     removeAssignee: () => {},
     addCollaborator: () => {},
     removeCollaborator: () => {},
     
-    // Navigation
-    navigateToTask,
+    // Navigation - placeholder
+    navigateToTask: () => {},
     
     // Data getters
-    getTasksByStatus,
-    getAllTasks,
+    getTasksByStatus: (status: string) => PLACEHOLDER_TASKS.filter(task => task.status === status),
+    getAllTasks: () => PLACEHOLDER_TASKS,
     
-    // Refresh trigger
-    triggerRefresh
-  }), [
-    customTasks,
-    archivedTasks,
-    refreshTrigger,
-    createTask,
-    updateTaskById,
-    deleteTask,
-    restoreDeletedTask,
-    archiveTask,
-    navigateToTask,
-    getTasksByStatus,
-    getAllTasks,
-    triggerRefresh,
-    toggleTaskStatus,
-    changeTaskStatus
-  ]);
+    // Refresh trigger - placeholder
+    triggerRefresh: () => {}
+  };
 
   return (
     <TaskContext.Provider value={value}>
@@ -152,5 +132,3 @@ export const TaskProvider = ({ children }: TaskProviderProps) => {
     </TaskContext.Provider>
   );
 };
-
-TaskProvider.displayName = "TaskProvider";
