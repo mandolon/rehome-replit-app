@@ -69,7 +69,7 @@ const PageHeader = ({
             <DropdownMenuTrigger className="flex items-center gap-2 hover:bg-accent px-2 py-1 rounded-md transition-colors">
               <div className="flex items-center gap-2">
                 <div className="relative">
-                  <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                  <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center text-white text-xs font-medium">
                     {currentUser.avatar}
                   </div>
                   <Circle className={`w-3 h-3 absolute -bottom-0.5 -right-0.5 ${getStatusColor(currentUser.status)} fill-current`} />
@@ -89,7 +89,7 @@ const PageHeader = ({
                   </div>
                   <div>
                     <div className="font-semibold">{currentUser.name}</div>
-                    <div className="text-sm text-muted-foreground">{currentUser.email}</div>
+                    <div className="text-xs text-muted-foreground">{currentUser.email}</div>
                   </div>
                 </div>
               </DropdownMenuLabel>
