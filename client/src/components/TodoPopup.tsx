@@ -343,7 +343,7 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
 
           {/* Existing Todos */}
           <div className="px-6 pb-4 flex-1 overflow-y-auto max-h-[300px] todo-popup-scrollbar">
-            <div className="space-y-3">
+            <div className="space-y-3 pt-4">
               {todos.map((todo) => (
                 <div
                   key={todo.id}
