@@ -153,6 +153,15 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
     }
   };
 
+  const restoreFromCompleted = (id: string) => {
+    const completedTodo = completedTodos.find(t => t.id === id);
+    if (completedTodo) {
+      const restoredTodo = { ...completedTodo, completed: false };
+      setTodos(prev => [restoredTodo, ...prev]);
+      setCompletedTodos(prev => prev.filter(t => t.id !== id));
+    }
+  };
+
   const startEditingTodo = (todo: TodoItem) => {
     setEditingTodo(todo.id);
     setEditText(todo.content);
@@ -350,14 +359,14 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
           <div className="border-t border-gray-200 dark:border-gray-700"></div>
 
           {/* Todo Lists */}
-          <div className="px-6 pb-4 flex-1 overflow-y-auto h-[300px] todo-popup-scrollbar">
+          <div className="px-6 pb-4 flex-1 overflow-y-auto h-[400px] todo-popup-scrollbar">
             <div className="space-y-3 pt-4 h-full">
               {showCompleted ? (
                 // Show completed todos
                 completedTodos.length === 0 ? (
                   <div className="flex items-center justify-center h-full">
                     <div className="text-center text-gray-500 text-sm">
-                      <div className="mb-2">✓</div>
+                      <div className="mb-2"><Check className="w-6 h-6 mx-auto" /></div>
                       <div>All clear! No completed tasks yet.</div>
                     </div>
                   </div>
@@ -368,9 +377,12 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
                       className="group p-3 border border-gray-200 dark:border-gray-700 rounded-lg opacity-60"
                     >
                       <div className="flex items-start gap-3">
-                        <div className="w-4 h-4 rounded border-2 bg-green-500 border-green-500 flex items-center justify-center mt-1">
+                        <button
+                          onClick={() => restoreFromCompleted(todo.id)}
+                          className="w-4 h-4 rounded border-2 bg-green-500 border-green-500 flex items-center justify-center mt-1 hover:bg-green-600 transition-colors"
+                        >
                           <div className="w-2 h-2 bg-white rounded-full"></div>
-                        </div>
+                        </button>
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="text-xs font-medium text-gray-900 dark:text-white line-through">
@@ -413,7 +425,7 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
                 todos.filter(todo => !todo.completed).length === 0 ? (
                   <div className="flex items-center justify-center h-full">
                     <div className="text-center text-gray-500 text-sm">
-                      <div className="mb-2">📝</div>
+                      <div className="mb-2"><FileText className="w-6 h-6 mx-auto" /></div>
                       <div>Ready to get started? Add your first task above.</div>
                     </div>
                   </div>
