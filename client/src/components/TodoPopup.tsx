@@ -277,12 +277,12 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
                 onChange={(e) => setTitle(e.target.value)}
                 onKeyDown={handleTitleEdit}
                 onBlur={() => setIsEditingTitle(false)}
-                className="text-xl font-semibold text-gray-900 dark:text-white bg-transparent border-none outline-none focus:ring-0 w-full pl-3"
+                className="text-xl font-semibold text-gray-900 dark:text-white bg-transparent border-none outline-none focus:ring-0 w-full pl-3 px-1 py-0.5"
                 autoFocus
               />
             ) : (
               <h2 
-                className="text-xl font-semibold text-gray-900 dark:text-white cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 rounded px-1 py-0.5 -mx-1 -my-0.5 pl-3"
+                className="text-xl font-semibold text-gray-900 dark:text-white cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 rounded px-1 py-0.5 pl-3"
                 onClick={() => setIsEditingTitle(true)}
               >
                 {title}

@@ -147,12 +147,20 @@
   background: rgba(156, 163, 175, 0.5);
 }
 
-/* Remove scrollbar arrows */
+/* Remove scrollbar arrows completely */
 .todo-popup-scrollbar::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.todo-popup-scrollbar::-webkit-scrollbar-button:start:decrement,
+.todo-popup-scrollbar::-webkit-scrollbar-button:end:increment {
   display: none;
 }
 
 .todo-popup-scrollbar::-webkit-scrollbar-corner {
+  display: none;
   background: transparent;
 }
 
