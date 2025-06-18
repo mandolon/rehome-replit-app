@@ -156,12 +156,9 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
             )}
           </div>
 
-          {/* Author Info */}
+          {/* Timestamp Info */}
           <div className="px-4 pb-3 flex items-center gap-2">
-            <span className="text-sm font-medium text-gray-900 dark:text-white">
-              {currentUser.name}
-            </span>
-            <span className="text-sm text-gray-500">
+            <span className="text-xs text-gray-500">
               Last Updated: Today at 3:12 pm
             </span>
           </div>
@@ -172,7 +169,7 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
               value={newTodo}
               onChange={(e) => setNewTodo(e.target.value)}
               placeholder="Write something or type '/' for commands and AI actions"
-              className="min-h-[100px] border-0 shadow-none resize-none text-gray-700 dark:text-gray-300 placeholder-gray-400 focus-visible:ring-0"
+              className="min-h-[100px] border-0 shadow-none resize-none text-xs text-gray-700 dark:text-gray-300 placeholder-gray-400 focus-visible:ring-0"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
                   handleSubmit();
@@ -182,7 +179,7 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
           </div>
 
           {/* Existing Todos */}
-          <div className="px-4 pb-4 flex-1 overflow-y-auto">
+          <div className="px-4 pb-4 flex-1 overflow-y-auto max-h-[300px]">
             <div className="space-y-3">
               {todos.map((todo) => (
                 <div
@@ -206,7 +203,7 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
                     </button>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-sm font-medium text-gray-900 dark:text-white">
+                        <span className="text-xs font-medium text-gray-900 dark:text-white">
                           {todo.author}
                         </span>
                         <span className="text-xs text-gray-500">
@@ -218,7 +215,7 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
                           <Textarea
                             value={editText}
                             onChange={(e) => setEditText(e.target.value)}
-                            className="text-sm min-h-[60px] resize-none"
+                            className="text-xs min-h-[60px] resize-none"
                             onKeyDown={(e) => {
                               if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
                                 saveEditTodo();
@@ -248,7 +245,7 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
                           </div>
                         </div>
                       ) : (
-                        <p className={`text-sm ${
+                        <p className={`text-xs ${
                           todo.completed 
                             ? 'line-through text-gray-500' 
                             : 'text-gray-700 dark:text-gray-300'
