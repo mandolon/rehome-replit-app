@@ -111,12 +111,12 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed }: TaskBoardFi
               <div className="text-[11px] font-medium text-muted-foreground/70 px-2 py-1">
                 Show date range
               </div>
-              <div className="flex gap-3">
+              <div className="flex gap-3 px-2">
                 <div>
                   <label className="text-xs font-medium text-foreground mb-2 block">Start Date</label>
                   <Popover>
                     <PopoverTrigger asChild>
-                      <button className="w-24 text-left px-2 py-1 text-xs border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">
+                      <button className="w-28 text-left px-2 py-1 text-xs border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">
                         {selectedStartDate ? selectedStartDate.toLocaleDateString() : "Select"}
                       </button>
                     </PopoverTrigger>
@@ -135,7 +135,7 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed }: TaskBoardFi
                   <label className="text-xs font-medium text-foreground mb-2 block">End Date</label>
                   <Popover>
                     <PopoverTrigger asChild>
-                      <button className="w-24 text-left px-2 py-1 text-xs border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">
+                      <button className="w-28 text-left px-2 py-1 text-xs border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">
                         {selectedEndDate ? selectedEndDate.toLocaleDateString() : "Select"}
                       </button>
                     </PopoverTrigger>
