@@ -56,8 +56,8 @@ const AssigneeFilterPopover = ({ selectedPeople, onChange }: AssigneeFilterPopov
         </button>
       </PopoverTrigger>
       <PopoverContent className="w-56 p-2 z-[1100]">
-        <div className="text-[10px] font-medium text-muted-foreground/70 px-2 py-1 uppercase tracking-wide mb-2">
-          Show Assigned To
+        <div className="text-[10px] font-medium text-muted-foreground/70 px-2 py-1 mb-2">
+          Show assigned to
         </div>
         <input
           type="text"
