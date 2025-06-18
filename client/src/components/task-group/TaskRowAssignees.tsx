@@ -97,7 +97,7 @@ const TaskRowAssignees = ({
           <button
             type="button"
             aria-label="Add person"
-            className="ml-2 w-[26px] h-[26px] rounded-full flex items-center justify-center border-2 border-dashed border-muted-foreground hover:border-foreground transition text-muted-foreground hover:text-foreground bg-white dark:bg-background"
+            className="ml-2 w-6 h-6 rounded-full flex items-center justify-center border-2 border-dashed border-muted-foreground hover:border-foreground transition text-muted-foreground hover:text-foreground bg-white dark:bg-background"
             onClick={e => { e.stopPropagation(); setOpen(v => !v); }}
             tabIndex={0}
           >
