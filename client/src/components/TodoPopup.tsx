@@ -338,6 +338,9 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
             )}
           </div>
 
+          {/* Separator line */}
+          <div className="border-t border-gray-200 dark:border-gray-700"></div>
+
           {/* Existing Todos */}
           <div className="px-6 pb-4 flex-1 overflow-y-auto max-h-[300px] todo-popup-scrollbar">
             <div className="space-y-3">

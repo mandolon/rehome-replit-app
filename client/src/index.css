@@ -139,12 +139,21 @@
 
 .todo-popup-scrollbar::-webkit-scrollbar-thumb {
   background: rgba(156, 163, 175, 0.3);
-  border-radius: 3px;
+  border-radius: 10px;
   transition: background-color 0.2s ease;
 }
 
 .todo-popup-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(156, 163, 175, 0.5);
+}
+
+/* Remove scrollbar arrows */
+.todo-popup-scrollbar::-webkit-scrollbar-button {
+  display: none;
+}
+
+.todo-popup-scrollbar::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 /* Dark mode scrollbar */
