@@ -27,11 +27,24 @@ const TaskDetailPage = () => {
   useEffect(() => {
     let fetchedTask: Task | null = null;
     if (taskId) {
+      console.log('TaskDetailPage: Looking for task', taskId);
+      console.log('TaskDetailPage: supabaseTasks', supabaseTasks?.length || 0, 'tasks');
+      console.log('TaskDetailPage: customTasks', customTasks?.length || 0, 'tasks');
+      
+      // Debug: show first few task IDs
+      if (supabaseTasks?.length) {
+        console.log('TaskDetailPage: Available taskIds:', supabaseTasks.slice(0, 3).map(t => t.taskId));
+      }
+      
       // 1. First look in Supabase-powered realtime tasks (if present)
       if (supabaseTasks && supabaseTasks.length > 0) {
         fetchedTask = supabaseTasks.find(
           t => t.taskId === taskId || t.id === Number(taskId)
         ) || null;
+        console.log('TaskDetailPage: Found in supabaseTasks:', !!fetchedTask);
+        if (fetchedTask) {
+          console.log('TaskDetailPage: Found task:', fetchedTask.taskId, fetchedTask.title);
+        }
       }
       // 2. (Legacy fallback) Try customTasks from TaskContext
       if (!fetchedTask && customTasks.length > 0) {
@@ -41,10 +54,12 @@ const TaskDetailPage = () => {
         if (taskFromCustom) {
           fetchedTask = taskFromCustom;
         }
+        console.log('TaskDetailPage: Found in customTasks:', !!fetchedTask);
       }
       // 3. (Optional: fallback to direct backend fetch)
       // (removed getTaskByTaskId/getTaskById which are static/legacy)
     }
+    console.log('TaskDetailPage: Final task:', fetchedTask ? fetchedTask.taskId : 'null');
     setCurrentTask(fetchedTask);
   }, [taskId, refreshTrigger, customTasks, supabaseTasks]);
 
@@ -92,8 +107,8 @@ const TaskDetailPage = () => {
     return check.allowed;
   }, [currentTask, currentUser]);
 
-  // Improved loading/error UI
-  if (supabaseTasksLoading) {
+  // Improved loading/error UI - don't show loading state if we're just waiting for data
+  if (supabaseTasksLoading && !supabaseTasks?.length) {
     return (
       <AppLayout>
         <div className="h-full flex items-center justify-center">
