@@ -54,13 +54,13 @@ const TaskAttachmentTable: React.FC<TaskAttachmentTableProps> = ({
       <table className="w-full text-xs">
         <thead>
           <tr className="border-b text-muted-foreground">
-            <th className="py-2 px-3 text-left font-medium w-[30%] min-w-[130px]">Name</th>
-            <th className="py-2 px-2 text-left font-medium whitespace-nowrap w-[10%] min-w-[60px]">Size</th>
-            <th className="py-2 px-2 text-left font-medium whitespace-nowrap w-[12%] min-w-[80px]">Type</th>
-            <th className="py-2 px-2 text-left font-medium whitespace-nowrap w-[15%] min-w-[100px]">Category</th>
-            <th className="py-2 px-2 text-left font-medium whitespace-nowrap w-[15%] min-w-[90px]">Date Created</th>
-            <th className="py-2 px-2 text-left font-medium whitespace-nowrap w-[12%] min-w-[80px]">Created by</th>
-            {onRemove && <th className="py-2 px-2 text-right font-medium w-[6%] min-w-[56px]"></th>}
+            <th className="py-2 px-3 text-left font-medium">Name</th>
+            <th className="py-2 px-1 text-right font-medium whitespace-nowrap w-16">Size</th>
+            <th className="py-2 px-1 text-center font-medium whitespace-nowrap w-12">Type</th>
+            <th className="py-2 px-1 text-left font-medium whitespace-nowrap w-24">Category</th>
+            <th className="py-2 px-1 text-right font-medium whitespace-nowrap w-20">Date</th>
+            <th className="py-2 px-1 text-right font-medium whitespace-nowrap w-16">Author</th>
+            {onRemove && <th className="py-2 px-1 text-right font-medium w-8"></th>}
           </tr>
         </thead>
         <tbody>
@@ -90,7 +90,7 @@ const TaskAttachmentTable: React.FC<TaskAttachmentTableProps> = ({
                   key={attachment.id}
                   className="hover:bg-muted/50 border-b transition-colors group"
                 >
-                  <td className="px-3 py-2 max-w-[160px] truncate w-[30%]">
+                  <td className="px-3 py-2 truncate">
                     <span className="inline-block align-middle mr-2">📄</span>
                     <a
                       href={attachment.url}
@@ -103,18 +103,18 @@ const TaskAttachmentTable: React.FC<TaskAttachmentTableProps> = ({
                       {attachment.name}
                     </a>
                   </td>
-                  <td className="px-2 py-2 whitespace-nowrap w-[10%] text-muted-foreground">
+                  <td className="px-1 py-2 whitespace-nowrap text-right text-muted-foreground w-16">
                     {formatFileSize(attachment.size)}
                   </td>
-                  <td className="px-2 py-2 whitespace-nowrap w-[12%] text-muted-foreground">
+                  <td className="px-1 py-2 whitespace-nowrap text-center text-muted-foreground w-12">
                     {attachment.fileType}
                   </td>
-                  <td className="px-2 py-2 w-[15%]">
+                  <td className="px-1 py-2 w-24">
                     <Select
                       value={attachment.category}
                       onValueChange={(value) => onCategoryChange?.(attachment.id, value)}
                     >
-                      <SelectTrigger className="h-6 text-xs border-0 bg-transparent hover:bg-accent">
+                      <SelectTrigger className="h-6 text-xs border-0 bg-transparent hover:bg-accent w-full">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -126,14 +126,14 @@ const TaskAttachmentTable: React.FC<TaskAttachmentTableProps> = ({
                       </SelectContent>
                     </Select>
                   </td>
-                  <td className="px-2 py-2 whitespace-nowrap w-[15%] text-muted-foreground">{attachment.dateCreated}</td>
-                  <td className="px-2 py-2 w-[12%]">
-                    <span className="truncate max-w-[70px] text-xs text-muted-foreground block text-ellipsis">
+                  <td className="px-1 py-2 whitespace-nowrap text-right text-muted-foreground w-20">{attachment.dateCreated}</td>
+                  <td className="px-1 py-2 text-right w-16">
+                    <span className="truncate text-xs text-muted-foreground block text-ellipsis">
                       {displayAuthor}
                     </span>
                   </td>
                   {onRemove && (
-                    <td className="px-2 py-2 text-right w-[6%]">
+                    <td className="px-1 py-2 text-right w-8">
                       <button
                         onClick={() => onRemove(attachment.id)}
                         className="p-1 hover:bg-accent rounded opacity-0 group-hover:opacity-100 transition-opacity"
