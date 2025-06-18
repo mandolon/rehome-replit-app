@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { User, Users } from "lucide-react";
+import { User, Users, ChevronDown } from "lucide-react";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -40,9 +40,19 @@ const AssigneeFilterPopover = ({ selectedPeople, onChange }: AssigneeFilterPopov
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button
-          className="flex items-center gap-1 px-2 py-1 text-xs text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+          className={`flex items-center gap-1 px-2 py-1 text-xs rounded border ${
+            selectedPeople.length > 0
+              ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 border-blue-200 dark:border-blue-700'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-transparent hover:border-gray-200 dark:hover:border-gray-700'
+          }`}
         >
           Assignee
+          <ChevronDown className="w-3 h-3" />
+          {selectedPeople.length > 0 && (
+            <span className="ml-1 text-xs text-blue-600 dark:text-blue-300">
+              ({selectedPeople.length})
+            </span>
+          )}
         </button>
       </PopoverTrigger>
       <PopoverContent className="w-56 p-2 z-[1100]">
