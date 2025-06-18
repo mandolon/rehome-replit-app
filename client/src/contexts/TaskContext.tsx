@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
 import { Task } from '@/types/task';
 import { useTaskOperations } from '@/hooks/useTaskOperations';
 
@@ -62,8 +62,8 @@ interface TaskProviderProps {
 export const TaskProvider = ({ children }: TaskProviderProps) => {
   const taskOperations = useTaskOperations();
   
-  // Simplified context value without circular dependencies
-  const value: TaskContextType = {
+  // Memoized context value to prevent infinite re-renders
+  const value: TaskContextType = useMemo(() => ({
     // Task state
     customTasks: taskOperations.customTasks,
     archivedTasks: taskOperations.archivedTasks,
@@ -111,7 +111,20 @@ export const TaskProvider = ({ children }: TaskProviderProps) => {
     
     // Refresh trigger
     triggerRefresh: taskOperations.triggerRefresh
-  };
+  }), [
+    taskOperations.customTasks,
+    taskOperations.archivedTasks,
+    taskOperations.refreshTrigger,
+    taskOperations.createTask,
+    taskOperations.updateTaskById,
+    taskOperations.deleteTask,
+    taskOperations.restoreDeletedTask,
+    taskOperations.archiveTask,
+    taskOperations.navigateToTask,
+    taskOperations.getTasksByStatus,
+    taskOperations.getAllTasks,
+    taskOperations.triggerRefresh
+  ]);
 
   return (
     <TaskContext.Provider value={value}>
