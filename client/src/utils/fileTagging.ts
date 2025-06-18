@@ -223,7 +223,7 @@ export function analyzeFile(file: File): FileAnalysis {
   }
   
   // Remove duplicates and limit tags
-  tags = [...new Set(tags)].slice(0, 8);
+  tags = Array.from(new Set(tags)).slice(0, 8);
   
   return {
     category,

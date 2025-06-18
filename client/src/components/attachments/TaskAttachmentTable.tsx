@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import { TaskAttachment } from "@/contexts/TaskAttachmentContext";
 import { TEAM_USERS } from "@/utils/teamUsers";
 import { formatFirstNameLastInitial } from "@/utils/taskUtils";
+import { getCategoryColor, getTagColor } from "@/utils/fileTagging";
 
 // Util for mapping author string to a Team User object to match tasks table logic
 function findTeamUserByCreatedBy(createdBy: string): { fullName?: string; name?: string; email?: string } | null {
@@ -40,17 +41,18 @@ const TaskAttachmentTable: React.FC<TaskAttachmentTableProps> = ({
       <table className="w-full text-xs">
         <thead>
           <tr className="border-b text-muted-foreground">
-            <th className="py-2 px-3 text-left font-medium w-[50%] min-w-[130px]">Name</th>
-            <th className="py-2 px-2 text-left font-medium whitespace-nowrap w-[12%] min-w-[60px]">Size</th>
-            <th className="py-2 px-2 text-left font-medium whitespace-nowrap w-[16%] min-w-[90px]">Date Created</th>
-            <th className="py-2 px-2 text-left font-medium whitespace-nowrap w-[12%] min-w-[80px]">Created by</th>
-            {onRemove && <th className="py-2 px-2 text-right font-medium w-[10%] min-w-[56px]">Action</th>}
+            <th className="py-2 px-3 text-left font-medium w-[35%] min-w-[130px]">Name</th>
+            <th className="py-2 px-2 text-left font-medium whitespace-nowrap w-[10%] min-w-[60px]">Size</th>
+            <th className="py-2 px-2 text-left font-medium whitespace-nowrap w-[25%] min-w-[120px]">Tags & Category</th>
+            <th className="py-2 px-2 text-left font-medium whitespace-nowrap w-[14%] min-w-[90px]">Date Created</th>
+            <th className="py-2 px-2 text-left font-medium whitespace-nowrap w-[10%] min-w-[80px]">Created by</th>
+            {onRemove && <th className="py-2 px-2 text-right font-medium w-[6%] min-w-[56px]">Action</th>}
           </tr>
         </thead>
         <tbody>
           {attachments.length === 0 ? (
             <tr>
-              <td colSpan={onRemove ? 5 : 4} className="px-3 py-4 text-center text-muted-foreground">
+              <td colSpan={onRemove ? 6 : 5} className="px-3 py-4 text-center text-muted-foreground">
                 No attachments yet.
               </td>
             </tr>
@@ -74,7 +76,7 @@ const TaskAttachmentTable: React.FC<TaskAttachmentTableProps> = ({
                   key={attachment.id}
                   className="hover:bg-muted/50 border-b transition-colors"
                 >
-                  <td className="px-3 py-2 max-w-[200px] truncate w-[50%]">
+                  <td className="px-3 py-2 max-w-[180px] truncate w-[35%]">
                     <span className="inline-block align-middle mr-2">📄</span>
                     <a
                       href={attachment.url}
@@ -87,17 +89,39 @@ const TaskAttachmentTable: React.FC<TaskAttachmentTableProps> = ({
                       {attachment.name}
                     </a>
                   </td>
-                  <td className="px-2 py-2 whitespace-nowrap w-[12%] text-muted-foreground">
+                  <td className="px-2 py-2 whitespace-nowrap w-[10%] text-muted-foreground">
                     {formatFileSize(attachment.size)}
                   </td>
-                  <td className="px-2 py-2 whitespace-nowrap w-[16%] text-muted-foreground">{attachment.dateCreated}</td>
-                  <td className="px-2 py-2 w-[12%]">
-                    <span className="truncate max-w-[90px] text-xs text-muted-foreground block text-ellipsis">
+                  <td className="px-2 py-2 w-[25%]">
+                    <div className="flex flex-wrap gap-1">
+                      {/* Category Badge */}
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getCategoryColor(attachment.category)}`}>
+                        {attachment.category}
+                      </span>
+                      {/* Tags */}
+                      {attachment.tags.slice(0, 3).map((tag) => (
+                        <span 
+                          key={tag} 
+                          className={`px-1.5 py-0.5 rounded text-xs ${getTagColor(tag)}`}
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                      {attachment.tags.length > 3 && (
+                        <span className="px-1.5 py-0.5 rounded text-xs bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                          +{attachment.tags.length - 3}
+                        </span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-2 py-2 whitespace-nowrap w-[14%] text-muted-foreground">{attachment.dateCreated}</td>
+                  <td className="px-2 py-2 w-[10%]">
+                    <span className="truncate max-w-[70px] text-xs text-muted-foreground block text-ellipsis">
                       {displayAuthor}
                     </span>
                   </td>
                   {onRemove && (
-                    <td className="px-2 py-2 text-right w-[10%]">
+                    <td className="px-2 py-2 text-right w-[6%]">
                       <button
                         onClick={() => onRemove(attachment.id)}
                         className="p-1 hover:bg-accent rounded"

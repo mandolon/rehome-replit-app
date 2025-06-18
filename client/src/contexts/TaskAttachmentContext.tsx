@@ -1,5 +1,6 @@
 
 import React, { createContext, useContext, useState, useMemo } from "react";
+import { analyzeFile } from "@/utils/fileTagging";
 
 export interface TaskAttachment {
   id: string;
@@ -35,15 +36,21 @@ export const TaskAttachmentProvider = ({ children }: { children: React.ReactNode
 
   const addAttachments = (taskId: string, files: File[], author: string) => {
     const now = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' });
-    const newAttachments = files.map(file => ({
-      id: Math.random().toString(36).slice(2),
-      taskId,
-      name: file.name,
-      size: file.size,
-      url: URL.createObjectURL(file),
-      author,
-      dateCreated: now,
-    }));
+    const newAttachments: TaskAttachment[] = files.map(file => {
+      const analysis = analyzeFile(file);
+      return {
+        id: Math.random().toString(36).slice(2),
+        taskId,
+        name: file.name,
+        size: file.size,
+        url: URL.createObjectURL(file),
+        author,
+        dateCreated: now,
+        tags: analysis.tags,
+        category: analysis.category,
+        fileType: analysis.fileType,
+      };
+    });
     setAttachmentBucket(prev => ({
       ...prev,
       [taskId]: [...(prev[taskId] || []), ...newAttachments],
