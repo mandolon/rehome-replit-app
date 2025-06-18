@@ -23,6 +23,15 @@ interface TaskBoardContentProps {
   removeAssignee: (taskId: string) => void;
   addCollaborator: (taskId: string, person: any) => void;
   removeCollaborator: (taskId: string, idx: number) => void;
+  // Filter props
+  selectedAssignees: string[];
+  setSelectedAssignees: (assignees: string[]) => void;
+  selectedProject: string;
+  setSelectedProject: (project: string) => void;
+  selectedStartDate: Date | undefined;
+  setSelectedStartDate: (date: Date | undefined) => void;
+  selectedEndDate: Date | undefined;
+  setSelectedEndDate: (date: Date | undefined) => void;
 }
 
 const TaskBoardContent = ({
@@ -41,6 +50,15 @@ const TaskBoardContent = ({
   removeAssignee,
   addCollaborator,
   removeCollaborator,
+  // Filter props
+  selectedAssignees,
+  setSelectedAssignees,
+  selectedProject,
+  setSelectedProject,
+  selectedStartDate,
+  setSelectedStartDate,
+  selectedEndDate,
+  setSelectedEndDate,
 }: TaskBoardContentProps) => {
   const renderedGroups = React.useMemo(
     () => taskGroups
@@ -74,6 +92,14 @@ const TaskBoardContent = ({
           onAddTask={onAddTask} 
           showClosed={showClosed}
           onToggleClosed={onToggleClosed}
+          selectedAssignees={selectedAssignees}
+          setSelectedAssignees={setSelectedAssignees}
+          selectedProject={selectedProject}
+          setSelectedProject={setSelectedProject}
+          selectedStartDate={selectedStartDate}
+          setSelectedStartDate={setSelectedStartDate}
+          selectedEndDate={selectedEndDate}
+          setSelectedEndDate={setSelectedEndDate}
         />
 
         <ScrollArea className="flex-1 min-h-0">
