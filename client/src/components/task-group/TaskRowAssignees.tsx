@@ -101,7 +101,7 @@ const TaskRowAssignees = ({
             onClick={e => { e.stopPropagation(); setOpen(v => !v); }}
             tabIndex={0}
           >
-            <Plus className="w-[18px] h-[18px]" />
+            <Plus className="w-3 h-3" />
           </button>
         </PopoverTrigger>
         <PopoverContent align="start" className="p-1 w-40 bg-popover z-50 border border-border rounded shadow-xl">
