@@ -11,7 +11,7 @@ interface TaskDetailAttachmentsProps {
 }
 
 const TaskDetailAttachments = ({ taskId }: TaskDetailAttachmentsProps) => {
-  const { getAttachments, addAttachments, removeAttachment } = useTaskAttachmentContext();
+  const { getAttachments, addAttachments, removeAttachment, updateAttachmentCategory } = useTaskAttachmentContext();
   const { customTasks } = useTaskContext();
   const { currentUser } = useUser();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -93,17 +93,10 @@ const TaskDetailAttachments = ({ taskId }: TaskDetailAttachmentsProps) => {
         )}
       </div>
       
-      {/* Smart File Organization Filters */}
-      {attachments.length > 0 && (
-        <AttachmentFilters
-          attachments={attachments}
-          onFilterChange={setFilteredAttachments}
-        />
-      )}
-      
       <TaskAttachmentTable
-        attachments={filteredAttachments}
+        attachments={attachments}
         onRemove={(id) => removeAttachment(currentTaskId!, id)}
+        onCategoryChange={(attachmentId, category) => updateAttachmentCategory(currentTaskId!, attachmentId, category)}
       />
     </div>
   );

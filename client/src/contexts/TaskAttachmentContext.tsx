@@ -31,6 +31,7 @@ interface TaskAttachmentContextValue {
   getAttachments: (taskId: string) => TaskAttachment[];
   addAttachments: (taskId: string, files: File[], author: string) => void;
   removeAttachment: (taskId: string, id: string) => void;
+  updateAttachmentCategory: (taskId: string, attachmentId: string, category: string) => void;
 }
 
 const TaskAttachmentContext = createContext<TaskAttachmentContextValue | undefined>(undefined);
@@ -76,8 +77,17 @@ export const TaskAttachmentProvider = ({ children }: { children: React.ReactNode
     }));
   };
 
+  const updateAttachmentCategory = (taskId: string, attachmentId: string, category: string) => {
+    setAttachmentBucket(prev => ({
+      ...prev,
+      [taskId]: (prev[taskId] || []).map(att => 
+        att.id === attachmentId ? { ...att, category } : att
+      ),
+    }));
+  };
+
   const value = useMemo(
-    () => ({ getAttachments, addAttachments, removeAttachment }),
+    () => ({ getAttachments, addAttachments, removeAttachment, updateAttachmentCategory }),
     [attachmentBucket]
   );
 

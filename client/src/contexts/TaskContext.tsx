@@ -62,6 +62,19 @@ interface TaskProviderProps {
 export const TaskProvider = ({ children }: TaskProviderProps) => {
   const taskOperations = useTaskOperations();
   
+  // Status operations
+  const toggleTaskStatus = useMemo(() => (taskId: number) => {
+    const task = taskOperations.customTasks.find(t => t.id === taskId);
+    if (task) {
+      const newStatus = task.status === 'completed' ? 'progress' : 'completed';
+      taskOperations.updateTaskById(taskId, { status: newStatus });
+    }
+  }, [taskOperations.customTasks, taskOperations.updateTaskById]);
+
+  const changeTaskStatus = useMemo(() => (taskId: number, newStatus: "redline" | "progress" | "completed") => {
+    taskOperations.updateTaskById(taskId, { status: newStatus });
+  }, [taskOperations.updateTaskById]);
+
   // Memoized context value to prevent infinite re-renders
   const value: TaskContextType = useMemo(() => ({
     // Task state
@@ -85,16 +98,8 @@ export const TaskProvider = ({ children }: TaskProviderProps) => {
     setEditingValue: () => {},
     
     // Status operations
-    toggleTaskStatus: (taskId: number) => {
-      const task = taskOperations.customTasks.find(t => t.id === taskId);
-      if (task) {
-        const newStatus = task.status === 'completed' ? 'progress' : 'completed';
-        taskOperations.updateTaskById(taskId, { status: newStatus });
-      }
-    },
-    changeTaskStatus: (taskId: number, newStatus: "redline" | "progress" | "completed") => {
-      taskOperations.updateTaskById(taskId, { status: newStatus });
-    },
+    toggleTaskStatus,
+    changeTaskStatus,
     
     // Assignment operations - simplified stubs
     assignPerson: () => {},
