@@ -31,7 +31,7 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
       id: '1',
       title: 'Review quarterly budget report',
       content: 'Need to analyze the Q3 financial data and prepare recommendations for Q4 budget allocation.',
-      author: 'Armando Lopez',
+      author: 'Review quarterly budget report',
       authorAvatar: 'AL',
       timestamp: 'Today at 2:15 pm',
       completed: false
@@ -40,7 +40,7 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
       id: '2',
       title: 'Update client presentation slides',
       content: 'Incorporate latest design changes and add new feature demos for the PinerWorks client meeting.',
-      author: 'Alice Dale',
+      author: 'Update client presentation slides',
       authorAvatar: 'AD',
       timestamp: 'Yesterday at 4:30 pm',
       completed: true
@@ -49,7 +49,7 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
       id: '3',
       title: 'Schedule team standup meetings',
       content: 'Coordinate with all team leads to establish consistent meeting times for next sprint.',
-      author: 'Mark Pinsky',
+      author: 'Schedule team standup meetings',
       authorAvatar: 'MP',
       timestamp: '2 days ago at 10:00 am',
       completed: false
@@ -58,11 +58,12 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
 
   const handleSubmit = () => {
     if (newTodo.trim()) {
+      const todoTitle = newTodo.length > 50 ? newTodo.substring(0, 50) + '...' : newTodo;
       const todo: TodoItem = {
         id: Date.now().toString(),
-        title: newTodo.length > 50 ? newTodo.substring(0, 50) + '...' : newTodo,
+        title: todoTitle,
         content: newTodo,
-        author: currentUser.name,
+        author: todoTitle, // Use todo title instead of author name
         authorAvatar: currentUser.avatar,
         timestamp: 'Just now',
         completed: false
