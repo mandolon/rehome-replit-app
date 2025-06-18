@@ -350,13 +350,16 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
           <div className="border-t border-gray-200 dark:border-gray-700"></div>
 
           {/* Todo Lists */}
-          <div className="px-6 pb-4 flex-1 overflow-y-auto max-h-[300px] todo-popup-scrollbar">
-            <div className="space-y-3 pt-4">
+          <div className="px-6 pb-4 flex-1 overflow-y-auto h-[300px] todo-popup-scrollbar">
+            <div className="space-y-3 pt-4 h-full">
               {showCompleted ? (
                 // Show completed todos
                 completedTodos.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500 text-sm">
-                    No completed todos yet
+                  <div className="flex items-center justify-center h-full">
+                    <div className="text-center text-gray-500 text-sm">
+                      <div className="mb-2">✓</div>
+                      <div>All clear! No completed tasks yet.</div>
+                    </div>
                   </div>
                 ) : (
                   completedTodos.map((todo) => (
@@ -407,7 +410,15 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
                 )
               ) : (
                 // Show active todos
-                todos.filter(todo => !todo.completed).map((todo) => (
+                todos.filter(todo => !todo.completed).length === 0 ? (
+                  <div className="flex items-center justify-center h-full">
+                    <div className="text-center text-gray-500 text-sm">
+                      <div className="mb-2">📝</div>
+                      <div>Ready to get started? Add your first task above.</div>
+                    </div>
+                  </div>
+                ) : (
+                  todos.filter(todo => !todo.completed).map((todo) => (
                 <div
                   key={todo.id}
                   className={`group p-3 border border-gray-200 dark:border-gray-700 rounded-lg transition-all hover:shadow-sm hover:border-gray-300 dark:hover:border-gray-600 ${
@@ -521,7 +532,8 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
                     </div>
                   </div>
                 </div>
-                ))
+                  ))
+                )
               )}
             </div>
           </div>
