@@ -121,23 +121,23 @@ const TaskRow = React.memo(({
         onContextMenuDelete={handleContextMenuDelete}
       >
         <TableRow key={task.id} className="hover:bg-accent/50 group">
-          <TableCell className="py-1 w-[47%]">
+          <TableCell className="py-1.5 w-[47%]">
             {rowContent}
           </TableCell>
-          <TableCell className="py-1 w-[7%] border-l border-r border-l-transparent border-r-transparent hover:border-border transition-colors">
+          <TableCell className="py-1.5 w-[7%] border-l border-r border-l-transparent border-r-transparent hover:border-border transition-colors">
             <TaskRowFiles 
               hasAttachment={task.hasAttachment}
               taskId={task.taskId}
             />
           </TableCell>
-          <TableCell className="text-xs text-muted-foreground py-1 w-[12%]">
+          <TableCell className="text-xs text-muted-foreground py-1.5 w-[12%]">
             {formattedDate}
           </TableCell>
-          <TableCell className="py-1 w-[10%]">
+          <TableCell className="py-1.5 w-[10%]">
             <TaskRowCreatedBy createdBy={task.createdBy} />
           </TableCell>
           {/* Add a named group to assignees cell to make x icons appear only on cell hover */}
-          <TableCell className="py-1 w-[18%] border-l border-r border-l-transparent border-r-transparent hover:border-border transition-colors group/assignees">
+          <TableCell className="py-1.5 w-[18%] border-l border-r border-l-transparent border-r-transparent hover:border-border transition-colors group/assignees">
             {rowAssignees}
           </TableCell>
         </TableRow>

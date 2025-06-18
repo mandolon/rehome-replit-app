@@ -29,7 +29,7 @@ const TasksTabRow = ({ task, onTaskClick, onDeleteClick, onContextMenuDelete }: 
     <ContextMenu>
       <ContextMenuTrigger asChild>
         <div 
-          className="grid grid-cols-12 gap-3 text-xs py-1 hover:bg-accent/50 rounded cursor-pointer border-b border-border/30 group"
+          className="grid grid-cols-12 gap-3 text-xs py-1.5 hover:bg-accent/50 rounded cursor-pointer border-b border-border/30 group"
           onClick={() => onTaskClick(task)}
         >
           <div className="col-span-6 flex items-center gap-2">
