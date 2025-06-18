@@ -405,33 +405,35 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
                           </div>
                         </div>
                       ) : (
-                        <p className={`text-xs ${
-                          todo.completed 
-                            ? 'line-through text-gray-500' 
-                            : 'text-gray-700 dark:text-gray-300'
-                        }`}>
-                          {todo.content}
-                        </p>
-                        
-                        {/* Show attachments if any */}
-                        {todo.attachments && todo.attachments.length > 0 && (
-                          <div className="mt-2 space-y-1">
-                            {todo.attachments.map((attachment) => (
-                              <div
-                                key={attachment.id}
-                                className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded px-2 py-1 text-xs"
-                              >
-                                <span className="text-sm">{getFileIcon(attachment.type)}</span>
-                                <span className="flex-1 truncate text-gray-600 dark:text-gray-400">
-                                  {attachment.name}
-                                </span>
-                                <span className="text-gray-400 text-xs">
-                                  {formatFileSize(attachment.size)}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
+                        <div>
+                          <p className={`text-xs ${
+                            todo.completed 
+                              ? 'line-through text-gray-500' 
+                              : 'text-gray-700 dark:text-gray-300'
+                          }`}>
+                            {todo.content}
+                          </p>
+                          
+                          {/* Show attachments if any */}
+                          {todo.attachments && todo.attachments.length > 0 && (
+                            <div className="mt-2 space-y-1">
+                              {todo.attachments.map((attachment) => (
+                                <div
+                                  key={attachment.id}
+                                  className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded px-2 py-1 text-xs"
+                                >
+                                  <span className="text-sm">{getFileIcon(attachment.type)}</span>
+                                  <span className="flex-1 truncate text-gray-600 dark:text-gray-400">
+                                    {attachment.name}
+                                  </span>
+                                  <span className="text-gray-400 text-xs">
+                                    {formatFileSize(attachment.size)}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
                       )}
                     </div>
                     {/* Action buttons - only show on hover */}
