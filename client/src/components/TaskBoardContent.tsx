@@ -67,7 +67,7 @@ const TaskBoardContent = ({
         <TaskBoardFilters onAddTask={onAddTask} />
 
         <ScrollArea className="flex-1 min-h-0">
-          <div className="p-4 space-y-6">
+          <div className="px-4 pt-2 pb-4 space-y-4">
             {renderedGroups}
           </div>
         </ScrollArea>
