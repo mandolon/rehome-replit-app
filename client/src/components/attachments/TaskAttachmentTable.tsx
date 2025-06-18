@@ -40,6 +40,7 @@ const TaskAttachmentTable: React.FC<TaskAttachmentTableProps> = ({
 }) => {
   
   const categoryOptions = [
+    '',
     'General',
     'Documentation',
     'Design',
