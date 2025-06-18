@@ -16,6 +16,8 @@ interface TaskBoardContentProps {
   onTaskArchive: (taskId: number) => void;
   onTaskDeleted: () => void; // <-- ensure consistent signature
   onAddTask: () => void;
+  showClosed: boolean;
+  onToggleClosed: () => void;
   // Handlers for assignment (Supabase only)
   assignPerson: (taskId: string, person: any) => void;
   removeAssignee: (taskId: string) => void;
@@ -33,38 +35,46 @@ const TaskBoardContent = ({
   onTaskArchive,
   onTaskDeleted, // This will just be a refresh callback
   onAddTask,
+  showClosed,
+  onToggleClosed,
   assignPerson,
   removeAssignee,
   addCollaborator,
   removeCollaborator,
-}: any) => {
+}: TaskBoardContentProps) => {
   const renderedGroups = React.useMemo(
-    () => taskGroups.map((group, groupIndex) => (
-      <TaskGroupSection
-        key={`${groupIndex}-${refreshTrigger}`}
-        group={group}
-        showQuickAdd={showQuickAdd}
-        onSetShowQuickAdd={onSetShowQuickAdd}
-        onQuickAddSave={onQuickAddSave}
-        onTaskClick={onTaskClick}
-        onTaskArchive={onTaskArchive}
-        onTaskDeleted={onTaskDeleted} // Pass unchanged! Now guaranteed to be () => void
-        useContext={false}
-        // Pass these down for assignment
-        assignPerson={assignPerson}
-        removeAssignee={removeAssignee}
-        addCollaborator={addCollaborator}
-        removeCollaborator={removeCollaborator}
-      />
-    )),
-    [taskGroups, showQuickAdd, refreshTrigger, onSetShowQuickAdd, onQuickAddSave, onTaskClick, onTaskArchive, onTaskDeleted, assignPerson, removeAssignee, addCollaborator, removeCollaborator]
+    () => taskGroups
+      .filter((group: TaskGroup) => showClosed || group.status !== 'completed')
+      .map((group: TaskGroup, groupIndex: number) => (
+        <TaskGroupSection
+          key={`${groupIndex}-${refreshTrigger}`}
+          group={group}
+          showQuickAdd={showQuickAdd}
+          onSetShowQuickAdd={onSetShowQuickAdd}
+          onQuickAddSave={onQuickAddSave}
+          onTaskClick={onTaskClick}
+          onTaskArchive={onTaskArchive}
+          onTaskDeleted={onTaskDeleted} // Pass unchanged! Now guaranteed to be () => void
+          useContext={false}
+          // Pass these down for assignment
+          assignPerson={assignPerson}
+          removeAssignee={removeAssignee}
+          addCollaborator={addCollaborator}
+          removeCollaborator={removeCollaborator}
+        />
+      )),
+    [taskGroups, showClosed, showQuickAdd, refreshTrigger, onSetShowQuickAdd, onQuickAddSave, onTaskClick, onTaskArchive, onTaskDeleted, assignPerson, removeAssignee, addCollaborator, removeCollaborator]
   );
 
   return (
     <div className="flex-1 bg-background pl-2 overflow-hidden">
       <div className="h-full flex flex-col">
         <TaskBoardHeader />
-        <TaskBoardFilters onAddTask={onAddTask} />
+        <TaskBoardFilters 
+          onAddTask={onAddTask} 
+          showClosed={showClosed}
+          onToggleClosed={onToggleClosed}
+        />
 
         <ScrollArea className="flex-1 min-h-0">
           <div className="px-4 pt-2 pb-4 space-y-4">

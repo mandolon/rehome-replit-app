@@ -8,9 +8,11 @@ import AssigneeFilterPopover from './AssigneeFilterPopover';
 
 interface TaskBoardFiltersProps {
   onAddTask: () => void;
+  showClosed: boolean;
+  onToggleClosed: () => void;
 }
 
-const TaskBoardFilters = ({ onAddTask }: TaskBoardFiltersProps) => {
+const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed }: TaskBoardFiltersProps) => {
   const [dateFilterOpen, setDateFilterOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedAssignees, setSelectedAssignees] = useState<string[]>([]);
@@ -78,7 +80,14 @@ const TaskBoardFilters = ({ onAddTask }: TaskBoardFiltersProps) => {
             <Filter className="w-3 h-3" />
             Filter
           </button>
-          <button className="flex items-center gap-1 px-2 py-1 text-gray-600 hover:text-gray-700 text-xs">
+          <button 
+            onClick={onToggleClosed}
+            className={`flex items-center gap-1 px-2 py-1 text-xs ${
+              showClosed 
+                ? 'bg-blue-100 text-blue-700' 
+                : 'text-gray-600 hover:text-gray-700'
+            }`}
+          >
             Closed
           </button>
           {/* Old Assignee button replaced by assignee filter above */}
