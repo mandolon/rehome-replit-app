@@ -116,6 +116,7 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
       };
       setTodos([todo, ...todos]);
       setNewTodo('');
+      setTitle('Untitled'); // Reset title to default
     }
   };
 
@@ -369,8 +370,8 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
             }`}
           >
-            <Send className="w-3 h-3" />
-            Send
+            <Plus className="w-3 h-3" />
+            Add
           </button>
         </div>
       </div>
