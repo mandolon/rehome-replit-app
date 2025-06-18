@@ -4,6 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useUser } from '@/contexts/UserContext';
 
+interface TodoAttachment {
+  id: string;
+  name: string;
+  size: number;
+  type: string;
+}
+
 interface TodoItem {
   id: string;
   title: string;
@@ -12,6 +19,7 @@ interface TodoItem {
   authorAvatar: string;
   timestamp: string;
   completed: boolean;
+  attachments?: TodoAttachment[];
 }
 
 interface TodoPopupProps {
@@ -26,7 +34,9 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editingTodo, setEditingTodo] = useState<string | null>(null);
   const [editText, setEditText] = useState('');
+  const [attachments, setAttachments] = useState<TodoAttachment[]>([]);
   const popupRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [todos, setTodos] = useState<TodoItem[]>([
     {
       id: '1',
@@ -35,7 +45,11 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
       author: 'Review quarterly budget report',
       authorAvatar: 'AL',
       timestamp: 'Last Updated: Today at 2:15 pm',
-      completed: false
+      completed: false,
+      attachments: [
+        { id: 'att1', name: 'Q3_Financial_Report.pdf', size: 2500000, type: 'application/pdf' },
+        { id: 'att2', name: 'Budget_Analysis.xlsx', size: 1200000, type: 'application/vnd.ms-excel' }
+      ]
     },
     {
       id: '2',
@@ -71,7 +85,10 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
       author: 'Test mobile responsiveness',
       authorAvatar: 'JJ',
       timestamp: 'Last Updated: 4 days ago at 11:20 am',
-      completed: true
+      completed: true,
+      attachments: [
+        { id: 'att3', name: 'Mobile_Test_Results.docx', size: 800000, type: 'application/msword' }
+      ]
     },
     {
       id: '6',
@@ -112,11 +129,13 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
         author: todoTitle, // Use todo title instead of author name
         authorAvatar: currentUser.avatar,
         timestamp: 'Last Updated: Just now',
-        completed: false
+        completed: false,
+        attachments: attachments.length > 0 ? [...attachments] : undefined
       };
       setTodos([todo, ...todos]);
       setNewTodo('');
       setTitle('Untitled'); // Reset title to default
+      setAttachments([]); // Clear attachments
     }
   };
 
@@ -156,6 +175,43 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
       setTitle('Untitled');
       setIsEditingTitle(false);
     }
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      const newAttachments: TodoAttachment[] = Array.from(files).map(file => ({
+        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+        name: file.name,
+        size: file.size,
+        type: file.type
+      }));
+      setAttachments(prev => [...prev, ...newAttachments]);
+    }
+    // Clear the input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const removeAttachment = (attachmentId: string) => {
+    setAttachments(prev => prev.filter(att => att.id !== attachmentId));
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  const getFileIcon = (type: string) => {
+    if (type.includes('pdf')) return '📄';
+    if (type.includes('image')) return '🖼️';
+    if (type.includes('excel') || type.includes('spreadsheet')) return '📊';
+    if (type.includes('word') || type.includes('document')) return '📝';
+    return '📎';
   };
 
   // Handle click outside to close popup
@@ -254,6 +310,32 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
                 }
               }}
             />
+            
+            {/* Attachments Display */}
+            {attachments.length > 0 && (
+              <div className="mt-3 space-y-2">
+                {attachments.map((attachment) => (
+                  <div
+                    key={attachment.id}
+                    className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded px-2 py-1 text-xs"
+                  >
+                    <span className="text-sm">{getFileIcon(attachment.type)}</span>
+                    <span className="flex-1 truncate text-gray-700 dark:text-gray-300">
+                      {attachment.name}
+                    </span>
+                    <span className="text-gray-500 text-xs">
+                      {formatFileSize(attachment.size)}
+                    </span>
+                    <button
+                      onClick={() => removeAttachment(attachment.id)}
+                      className="text-gray-400 hover:text-red-500 transition-colors"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Existing Todos */}
@@ -330,6 +412,26 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
                         }`}>
                           {todo.content}
                         </p>
+                        
+                        {/* Show attachments if any */}
+                        {todo.attachments && todo.attachments.length > 0 && (
+                          <div className="mt-2 space-y-1">
+                            {todo.attachments.map((attachment) => (
+                              <div
+                                key={attachment.id}
+                                className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded px-2 py-1 text-xs"
+                              >
+                                <span className="text-sm">{getFileIcon(attachment.type)}</span>
+                                <span className="flex-1 truncate text-gray-600 dark:text-gray-400">
+                                  {attachment.name}
+                                </span>
+                                <span className="text-gray-400 text-xs">
+                                  {formatFileSize(attachment.size)}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       )}
                     </div>
                     {/* Action buttons - only show on hover */}
@@ -358,7 +460,11 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
 
         {/* Footer Actions */}
         <div className="px-6 py-3 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
-          <button className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
+          <button 
+            onClick={() => fileInputRef.current?.click()}
+            className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+            title="Attach file"
+          >
             <Paperclip className="w-4 h-4" />
           </button>
           <button
@@ -374,6 +480,16 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
             Add
           </button>
         </div>
+
+        {/* Hidden file input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          multiple
+          onChange={handleFileUpload}
+          className="hidden"
+          accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg,.gif,.txt"
+        />
       </div>
     </div>
   );
