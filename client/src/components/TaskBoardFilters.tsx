@@ -142,18 +142,17 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed }: TaskBoardFi
                   </Popover>
                 </div>
               </div>
-              <div className="flex justify-end">
-                <Button
-                  size="sm"
-                  className="px-3 py-1 text-xs h-7"
-                  onClick={() => setDateFilterOpen(false)}
-                >
-                  Apply
-                </Button>
-              </div>
             </div>
           </PopoverContent>
         </Popover>
+
+        {/* Apply button for Date Created filter */}
+        <button 
+          className="flex items-center gap-1 px-2 py-1 text-xs rounded border text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-transparent hover:border-gray-200 dark:hover:border-gray-700"
+          onClick={() => setDateFilterOpen(false)}
+        >
+          Apply
+        </button>
 
         {/* Assignee Filter Popover */}
         <AssigneeFilterPopover
