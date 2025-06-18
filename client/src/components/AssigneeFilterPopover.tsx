@@ -56,6 +56,9 @@ const AssigneeFilterPopover = ({ selectedPeople, onChange }: AssigneeFilterPopov
         </button>
       </PopoverTrigger>
       <PopoverContent className="w-56 p-2 z-[1100]">
+        <div className="text-[10px] font-medium text-muted-foreground/70 px-2 py-1 uppercase tracking-wide mb-2">
+          Show Assigned To
+        </div>
         <input
           type="text"
           placeholder="Search people"
@@ -68,7 +71,7 @@ const AssigneeFilterPopover = ({ selectedPeople, onChange }: AssigneeFilterPopov
             <button
               key={member.name}
               onClick={() => handleToggle(member)}
-              className={`flex items-center w-full px-2 py-1 text-xs rounded hover:bg-accent
+              className={`flex items-center w-full px-2 py-1 text-xs rounded hover:bg-accent text-foreground
                 ${selectedPeople.includes(member.name) ? "bg-accent" : ""}
               `}
               type="button"

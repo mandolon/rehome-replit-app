@@ -37,10 +37,13 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed }: TaskBoardFi
           </PopoverTrigger>
           <PopoverContent className="w-48 p-2 z-[1100]">
             <div className="space-y-1">
-              <button className="w-full text-left px-2 py-1 text-xs hover:bg-accent rounded">
+              <div className="text-[10px] font-medium text-muted-foreground/70 px-2 py-1 uppercase tracking-wide">
+                Show Status
+              </div>
+              <button className="w-full text-left px-2 py-1 text-xs hover:bg-accent rounded text-foreground">
                 TASK/ REDLINE
               </button>
-              <button className="w-full text-left px-2 py-1 text-xs hover:bg-accent rounded">
+              <button className="w-full text-left px-2 py-1 text-xs hover:bg-accent rounded text-foreground">
                 PROGRESS/ UPDATE
               </button>
             </div>
@@ -57,9 +60,12 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed }: TaskBoardFi
           </PopoverTrigger>
           <PopoverContent className="w-48 p-2 z-[1100]">
             <div className="space-y-1">
+              <div className="text-[10px] font-medium text-muted-foreground/70 px-2 py-1 uppercase tracking-wide">
+                Show Project
+              </div>
               <button 
                 onClick={() => setSelectedProject('default')}
-                className={`w-full text-left px-2 py-1 text-xs rounded hover:bg-accent ${
+                className={`w-full text-left px-2 py-1 text-xs rounded hover:bg-accent text-foreground ${
                   selectedProject === 'default' ? 'bg-accent' : ''
                 }`}
               >
@@ -67,7 +73,7 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed }: TaskBoardFi
               </button>
               <button 
                 onClick={() => setSelectedProject('project-a')}
-                className={`w-full text-left px-2 py-1 text-xs rounded hover:bg-accent ${
+                className={`w-full text-left px-2 py-1 text-xs rounded hover:bg-accent text-foreground ${
                   selectedProject === 'project-a' ? 'bg-accent' : ''
                 }`}
               >
@@ -75,7 +81,7 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed }: TaskBoardFi
               </button>
               <button 
                 onClick={() => setSelectedProject('project-b')}
-                className={`w-full text-left px-2 py-1 text-xs rounded hover:bg-accent ${
+                className={`w-full text-left px-2 py-1 text-xs rounded hover:bg-accent text-foreground ${
                   selectedProject === 'project-b' ? 'bg-accent' : ''
                 }`}
               >
@@ -102,9 +108,12 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed }: TaskBoardFi
           </PopoverTrigger>
           <PopoverContent className="w-auto p-3 z-[1100]">
             <div className="space-y-3">
+              <div className="text-[10px] font-medium text-muted-foreground/70 px-2 py-1 uppercase tracking-wide">
+                Show Date Range
+              </div>
               <div className="flex gap-3">
                 <div>
-                  <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 block">Start Date</label>
+                  <label className="text-xs font-medium text-foreground mb-2 block">Start Date</label>
                   <Popover>
                     <PopoverTrigger asChild>
                       <button className="w-24 text-left px-2 py-1 text-xs border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">
@@ -123,7 +132,7 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed }: TaskBoardFi
                   </Popover>
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 block">End Date</label>
+                  <label className="text-xs font-medium text-foreground mb-2 block">End Date</label>
                   <Popover>
                     <PopoverTrigger asChild>
                       <button className="w-24 text-left px-2 py-1 text-xs border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">
