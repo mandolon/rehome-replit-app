@@ -86,7 +86,7 @@ const TaskDetailTrashButton: React.FC<TaskDetailTrashButtonProps> = ({ task, onD
             className="transition-colors"
           />
         </svg>
-        <span className="font-normal">Move to Trash</span>
+        <span>Move to Trash</span>
       </Button>
       <DeleteTaskDialog
         isOpen={showDeleteDialog}

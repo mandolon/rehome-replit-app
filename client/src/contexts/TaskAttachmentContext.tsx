@@ -39,7 +39,7 @@ const PLACEHOLDER_ATTACHMENTS: TaskAttachment[] = [
     url: "#",
     author: "Sarah Chen",
     dateCreated: "2024-06-15",
-    category: "",
+    category: "Documentation",
     fileType: "PDF"
   },
   {
@@ -50,7 +50,7 @@ const PLACEHOLDER_ATTACHMENTS: TaskAttachment[] = [
     url: "#",
     author: "Mike Johnson",
     dateCreated: "2024-06-16",
-    category: "",
+    category: "Design",
     fileType: "IMG"
   }
 ];
