@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { Task } from '@/types/task';
 
 // TaskContext interface
@@ -84,26 +84,127 @@ const PLACEHOLDER_TASKS: Task[] = [
 ];
 
 export const TaskProvider = ({ children }: TaskProviderProps) => {
+  const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
+  const [editingValue, setEditingValue] = useState<string>('');
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const startEditingTask = (task: Task) => {
+    setEditingTaskId(task.id);
+    setEditingValue(task.title);
+  };
+
+  const saveTaskEdit = async (taskId: number | string) => {
+    if (!editingValue.trim()) {
+      cancelTaskEdit();
+      return;
+    }
+
+    try {
+      // For real tasks, make API call with taskId (string like "T1234")
+      let apiTaskId: string;
+      
+      if (typeof taskId === 'string' && taskId.startsWith('T')) {
+        apiTaskId = taskId;
+      } else {
+        // Find the task to get the taskId for the API call
+        const task = PLACEHOLDER_TASKS.find(t => t.id === taskId);
+        if (!task) return;
+        apiTaskId = task.taskId;
+      }
+
+      const response = await fetch(`/api/tasks/${apiTaskId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: editingValue.trim(),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update task');
+      }
+
+      // Update the placeholder task locally for consistency
+      const taskIndex = PLACEHOLDER_TASKS.findIndex(t => 
+        t.id === taskId || t.taskId === taskId
+      );
+      if (taskIndex !== -1) {
+        PLACEHOLDER_TASKS[taskIndex] = {
+          ...PLACEHOLDER_TASKS[taskIndex],
+          title: editingValue.trim(),
+          updatedAt: new Date().toISOString()
+        };
+      }
+
+      setEditingTaskId(null);
+      setEditingValue('');
+      setRefreshTrigger(prev => prev + 1);
+    } catch (error) {
+      console.error('Failed to save task edit:', error);
+    }
+  };
+
+  const cancelTaskEdit = () => {
+    setEditingTaskId(null);
+    setEditingValue('');
+  };
+
+  const updateTaskById = async (taskId: number, updates: Partial<Task>) => {
+    try {
+      // Find the task to get the taskId for the API call
+      const task = PLACEHOLDER_TASKS.find(t => t.id === taskId);
+      if (!task) return;
+
+      const response = await fetch(`/api/tasks/${task.taskId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updates),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update task');
+      }
+
+      // Update the placeholder task locally
+      const taskIndex = PLACEHOLDER_TASKS.findIndex(t => t.id === taskId);
+      if (taskIndex !== -1) {
+        PLACEHOLDER_TASKS[taskIndex] = {
+          ...PLACEHOLDER_TASKS[taskIndex],
+          ...updates,
+          updatedAt: new Date().toISOString()
+        };
+      }
+
+      setRefreshTrigger(prev => prev + 1);
+    } catch (error) {
+      console.error('Failed to update task:', error);
+    }
+  };
+
   const value: TaskContextType = {
     // Task state
     customTasks: PLACEHOLDER_TASKS,
     archivedTasks: [],
-    editingTaskId: null,
-    editingValue: '',
-    refreshTrigger: 0,
+    editingTaskId,
+    editingValue,
+    refreshTrigger,
     
-    // Task operations - all placeholders
+    // Task operations - updateTaskById now functional
     createTask: () => {},
-    updateTaskById: () => {},
+    updateTaskById,
     deleteTask: async () => {},
     restoreDeletedTask: () => {},
     archiveTask: () => {},
     
-    // Edit operations - all placeholders
-    startEditingTask: () => {},
-    saveTaskEdit: () => {},
-    cancelTaskEdit: () => {},
-    setEditingValue: () => {},
+    // Edit operations - now functional
+    startEditingTask,
+    saveTaskEdit,
+    cancelTaskEdit,
+    setEditingValue,
     
     // Status operations - all placeholders
     toggleTaskStatus: () => {},
@@ -122,8 +223,8 @@ export const TaskProvider = ({ children }: TaskProviderProps) => {
     getTasksByStatus: (status: string) => PLACEHOLDER_TASKS.filter(task => task.status === status),
     getAllTasks: () => PLACEHOLDER_TASKS,
     
-    // Refresh trigger - placeholder
-    triggerRefresh: () => {}
+    // Refresh trigger - now functional
+    triggerRefresh: () => setRefreshTrigger(prev => prev + 1)
   };
 
   return (
