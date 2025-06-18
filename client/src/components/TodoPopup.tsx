@@ -521,7 +521,7 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
                     </div>
                   </div>
                 </div>
-              ))
+                ))
               )}
             </div>
           </div>
