@@ -475,7 +475,6 @@ export const TodoPopup = ({
               onClick={() => setShowCompleted(!showCompleted)}
               className="h-auto px-2 py-1 text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
             >
-              <Check className="w-3 h-3 mr-1" />
               {showCompleted ? 'Hide Completed' : `Show Completed (${completedTodos.length})`}
             </Button>
             

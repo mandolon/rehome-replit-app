@@ -555,9 +555,8 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
         <div className="px-6 py-3 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
           <button 
             onClick={() => setShowCompleted(!showCompleted)}
-            className="px-2 py-1 text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors flex items-center gap-1"
+            className="px-2 py-1 text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
           >
-            <Check className="w-3 h-3" />
             {showCompleted ? 'Hide Completed' : `Show Completed (${completedTodos.length})`}
           </button>
           
