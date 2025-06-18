@@ -51,6 +51,13 @@ const TaskDetailForm = ({ task: originalTask }: TaskDetailFormProps) => {
         status: newStatus,
         archived: willArchive
       };
+      
+      // Set markedComplete fields when marking as completed
+      if (newStatus === "completed" && task.status !== "completed") {
+        updates.markedComplete = new Date().toISOString();
+        updates.markedCompleteBy = currentUser?.username || "Unknown";
+      }
+      
       setTask(prev => ({ ...prev, ...updates, updatedAt: new Date().toISOString() }));
       try {
         const updated = await updateTaskSupabase(task.taskId, updates);

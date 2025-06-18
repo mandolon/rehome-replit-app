@@ -27,6 +27,7 @@ interface TaskRowProps {
   onAssignPerson: (taskId: string, person: { name: string; avatar: string; fullName?: string }) => void;
   onAddCollaborator: (taskId: string, person: { name: string; avatar: string; fullName?: string }) => void;
   onTaskDeleted?: () => void;
+  isCompletedView?: boolean;
 }
 
 const TaskRow = React.memo(({
@@ -45,7 +46,8 @@ const TaskRow = React.memo(({
   onRemoveCollaborator,
   onAssignPerson,
   onAddCollaborator,
-  onTaskDeleted
+  onTaskDeleted,
+  isCompletedView = false
 }: TaskRowProps) => {
   const {
     showDeleteDialog,
@@ -124,22 +126,35 @@ const TaskRow = React.memo(({
           <TableCell className="py-[7px] w-[47%]">
             {rowContent}
           </TableCell>
-          <TableCell className="py-[7px] w-[7%] border-l border-r border-l-transparent border-r-transparent hover:border-border transition-colors">
-            <TaskRowFiles 
-              hasAttachment={task.hasAttachment}
-              taskId={task.taskId}
-            />
-          </TableCell>
+          {!isCompletedView && (
+            <TableCell className="py-[7px] w-[7%] border-l border-r border-l-transparent border-r-transparent hover:border-border transition-colors">
+              <TaskRowFiles 
+                hasAttachment={task.hasAttachment}
+                taskId={task.taskId}
+              />
+            </TableCell>
+          )}
           <TableCell className="text-xs text-muted-foreground py-[7px] w-[12%]">
             {formattedDate}
           </TableCell>
           <TableCell className="py-[7px] w-[10%]">
             <TaskRowCreatedBy createdBy={task.createdBy} />
           </TableCell>
-          {/* Add a named group to assignees cell to make x icons appear only on cell hover */}
-          <TableCell className="py-[7px] w-[18%] border-l border-r border-l-transparent border-r-transparent hover:border-border transition-colors group/assignees">
-            {rowAssignees}
-          </TableCell>
+          {isCompletedView && (
+            <TableCell className="text-xs text-muted-foreground py-[7px] w-[12%]">
+              {task.markedComplete ? formatDate(task.markedComplete) : '-'}
+            </TableCell>
+          )}
+          {isCompletedView && (
+            <TableCell className="text-xs text-muted-foreground py-[7px] w-[10%]">
+              {task.markedCompleteBy || '-'}
+            </TableCell>
+          )}
+          {!isCompletedView && (
+            <TableCell className="py-[7px] w-[18%] border-l border-r border-l-transparent border-r-transparent hover:border-border transition-colors group/assignees">
+              {rowAssignees}
+            </TableCell>
+          )}
         </TableRow>
       </TaskRowContextMenu>
       <DeleteTaskDialog

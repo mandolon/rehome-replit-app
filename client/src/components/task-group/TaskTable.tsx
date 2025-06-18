@@ -162,6 +162,7 @@ const TaskTable = React.memo(React.forwardRef<HTMLDivElement, any>(({
               onAssignPerson={onAssignPerson}
               onAddCollaborator={onAddCollaborator}
               onTaskDeleted={onTaskDeleted}
+              isCompletedView={isCompletedView}
             />
           ))}
         </TableBody>

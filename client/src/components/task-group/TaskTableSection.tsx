@@ -172,6 +172,7 @@ const TaskTableSection = ({
         currentSortDirection={sortDirection}
         onDateCreatedFilterClick={handleDateCreatedFilterClick}
         onAssignedToFilterClick={handleAssignedToFilterClick}
+        isCompletedView={group.status === 'completed'}
       />
 
       {group.status !== 'completed' && (
