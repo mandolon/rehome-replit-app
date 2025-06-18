@@ -25,7 +25,7 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed }: TaskBoardFi
   return (
     <div className="px-4 py-2 border-b border-border">
       <div className="flex items-center gap-2">
-        <span className="text-xs font-bold text-gray-700 dark:text-gray-300">Group by:</span>
+        <span className="text-xs font-bold text-gray-700 dark:text-gray-300 pr-2">Group by:</span>
         
         {/* Status Dropdown */}
         <Popover open={statusDropdownOpen} onOpenChange={setStatusDropdownOpen}>

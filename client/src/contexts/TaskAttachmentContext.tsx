@@ -9,6 +9,9 @@ export interface TaskAttachment {
   url: string;
   author: string;
   dateCreated: string;
+  tags: string[];
+  category: string;
+  fileType: string;
 }
 
 interface TaskAttachmentContextValue {
