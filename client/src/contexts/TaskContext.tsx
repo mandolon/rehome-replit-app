@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo } from 'react';
+import React, { createContext, useContext, useMemo, useCallback } from 'react';
 import { Task } from '@/types/task';
 import { useTaskOperations } from '@/hooks/useTaskOperations';
 
@@ -60,36 +60,49 @@ interface TaskProviderProps {
 }
 
 export const TaskProvider = ({ children }: TaskProviderProps) => {
-  const taskOperations = useTaskOperations();
+  const {
+    customTasks,
+    archivedTasks,
+    refreshTrigger,
+    createTask,
+    updateTaskById,
+    deleteTask,
+    restoreDeletedTask,
+    archiveTask,
+    navigateToTask,
+    getTasksByStatus,
+    getAllTasks,
+    triggerRefresh
+  } = useTaskOperations();
   
-  // Status operations
-  const toggleTaskStatus = useMemo(() => (taskId: number) => {
-    const task = taskOperations.customTasks.find(t => t.id === taskId);
+  // Status operations with stable references
+  const toggleTaskStatus = useCallback((taskId: number) => {
+    const task = customTasks.find(t => t.id === taskId);
     if (task) {
       const newStatus = task.status === 'completed' ? 'progress' : 'completed';
-      taskOperations.updateTaskById(taskId, { status: newStatus });
+      updateTaskById(taskId, { status: newStatus });
     }
-  }, [taskOperations.customTasks, taskOperations.updateTaskById]);
+  }, [customTasks, updateTaskById]);
 
-  const changeTaskStatus = useMemo(() => (taskId: number, newStatus: "redline" | "progress" | "completed") => {
-    taskOperations.updateTaskById(taskId, { status: newStatus });
-  }, [taskOperations.updateTaskById]);
+  const changeTaskStatus = useCallback((taskId: number, newStatus: "redline" | "progress" | "completed") => {
+    updateTaskById(taskId, { status: newStatus });
+  }, [updateTaskById]);
 
-  // Memoized context value to prevent infinite re-renders
+  // Simple memoized context value
   const value: TaskContextType = useMemo(() => ({
     // Task state
-    customTasks: taskOperations.customTasks,
-    archivedTasks: taskOperations.archivedTasks,
+    customTasks,
+    archivedTasks,
     editingTaskId: null,
     editingValue: '',
-    refreshTrigger: taskOperations.refreshTrigger,
+    refreshTrigger,
     
     // Task operations
-    createTask: taskOperations.createTask,
-    updateTaskById: taskOperations.updateTaskById,
-    deleteTask: taskOperations.deleteTask,
-    restoreDeletedTask: taskOperations.restoreDeletedTask,
-    archiveTask: taskOperations.archiveTask,
+    createTask,
+    updateTaskById,
+    deleteTask,
+    restoreDeletedTask,
+    archiveTask,
     
     // Edit operations - simplified stubs
     startEditingTask: () => {},
@@ -108,27 +121,29 @@ export const TaskProvider = ({ children }: TaskProviderProps) => {
     removeCollaborator: () => {},
     
     // Navigation
-    navigateToTask: taskOperations.navigateToTask,
+    navigateToTask,
     
     // Data getters
-    getTasksByStatus: taskOperations.getTasksByStatus,
-    getAllTasks: taskOperations.getAllTasks,
+    getTasksByStatus,
+    getAllTasks,
     
     // Refresh trigger
-    triggerRefresh: taskOperations.triggerRefresh
+    triggerRefresh
   }), [
-    taskOperations.customTasks,
-    taskOperations.archivedTasks,
-    taskOperations.refreshTrigger,
-    taskOperations.createTask,
-    taskOperations.updateTaskById,
-    taskOperations.deleteTask,
-    taskOperations.restoreDeletedTask,
-    taskOperations.archiveTask,
-    taskOperations.navigateToTask,
-    taskOperations.getTasksByStatus,
-    taskOperations.getAllTasks,
-    taskOperations.triggerRefresh
+    customTasks,
+    archivedTasks,
+    refreshTrigger,
+    createTask,
+    updateTaskById,
+    deleteTask,
+    restoreDeletedTask,
+    archiveTask,
+    navigateToTask,
+    getTasksByStatus,
+    getAllTasks,
+    triggerRefresh,
+    toggleTaskStatus,
+    changeTaskStatus
   ]);
 
   return (

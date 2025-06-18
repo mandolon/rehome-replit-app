@@ -88,21 +88,21 @@ export function useTaskOperations() {
 
   const createTaskHandler = useCallback((taskData: any) => {
     createTaskMutation.mutate(taskData);
-  }, [createTaskMutation]);
+  }, [createTaskMutation.mutate]);
 
   const updateTaskById = useCallback((taskId: number, updates: Partial<Task>) => {
     const task = tasks.find(t => t.id === taskId);
     if (task) {
       updateTaskMutation.mutate({ taskId: task.taskId, updates });
     }
-  }, [tasks, updateTaskMutation]);
+  }, [tasks, updateTaskMutation.mutate]);
 
   const deleteTaskHandler = useCallback(async (taskId: number): Promise<void> => {
     const task = tasks.find(t => t.id === taskId);
     if (task) {
       deleteTaskMutation.mutate(task.taskId);
     }
-  }, [tasks, deleteTaskMutation]);
+  }, [tasks, deleteTaskMutation.mutate]);
 
   const restoreDeletedTask = useCallback((taskId: number) => {
     // Implementation for restoring deleted tasks
