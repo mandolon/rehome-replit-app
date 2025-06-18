@@ -29,6 +29,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const u = TEAM_USERS.find(u => u.id === userId);
     if (!u) return null;
     const custom = getUserCustomizations(userId);
+    
+    // Set default company name for Armando Lopez
+    const companyName = u.fullName === "Armando Lopez" ? "PinerWorks" : "";
+    
     return {
       id: u.id,
       name: u.fullName,
@@ -36,7 +40,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       avatar: u.avatar,
       status: u.status === "Active" ? "online" : u.status === "Inactive" ? "offline" : "away",
       bio: "",
-      company: "",
+      company: companyName,
       role: u.role,
       lastActive: u.lastActive || "",
       notificationsMuted: false,

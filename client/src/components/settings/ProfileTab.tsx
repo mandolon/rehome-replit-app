@@ -112,7 +112,7 @@ const ProfileTab = () => {
               value={formData.company}
               onChange={(e) => handleInputChange('company', e.target.value)}
               className="mt-1"
-              placeholder="Enter your company name"
+              placeholder="PinerWorks"
             />
           </div>
 
