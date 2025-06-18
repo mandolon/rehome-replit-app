@@ -63,31 +63,33 @@ const TaskDetailTrashButton: React.FC<TaskDetailTrashButtonProps> = ({ task, onD
   const handleCloseDeleteDialog = () => setShowDeleteDialog(false);
 
   return (
-    <div className="flex justify-end pt-8 pb-1">
-      <Button
-        variant="ghost"
-        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-destructive border-none shadow-none px-2 py-1 h-auto"
-        onClick={handleTrashClick}
-        disabled={isDeleting}
-      >
-        {/* Trash icon: smaller, colored only on hover */}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-4 h-4 transition-colors"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+    <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t p-4 z-50">
+      <div className="flex justify-end max-w-4xl mx-auto">
+        <Button
+          variant="ghost"
+          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-destructive border-none shadow-none px-2 py-1 h-auto"
+          onClick={handleTrashClick}
+          disabled={isDeleting}
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M3 6h18M9 6v12a2 2 0 002 2h2a2 2 0 002-2V6m-9 0a2 2 0 012-2h2a2 2 0 012 2m7 0v12a2 2 0 01-2 2H9a2 2 0 01-2-2V6"
-            className="transition-colors"
-          />
-        </svg>
-        <span>Move to Trash</span>
-      </Button>
+          {/* Trash icon: smaller, colored only on hover */}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-4 h-4 transition-colors"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M3 6h18M9 6v12a2 2 0 002 2h2a2 2 0 002-2V6m-9 0a2 2 0 012-2h2a2 2 0 012 2m7 0v12a2 2 0 01-2 2H9a2 2 0 01-2-2V6"
+              className="transition-colors"
+            />
+          </svg>
+          <span>Move to Trash</span>
+        </Button>
+      </div>
       <DeleteTaskDialog
         isOpen={showDeleteDialog}
         onClose={handleCloseDeleteDialog}
