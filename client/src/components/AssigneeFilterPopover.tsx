@@ -56,17 +56,19 @@ const AssigneeFilterPopover = ({ selectedPeople, onChange }: AssigneeFilterPopov
         </button>
       </PopoverTrigger>
       <PopoverContent className="w-56 p-2 z-[1100]" align="start">
-        <div className="text-[11px] font-medium text-muted-foreground/70 mb-2">
-          Show assigned to
+        <div className="space-y-1">
+          <div className="text-[11px] font-medium text-muted-foreground/70 px-2 py-1">
+            Show assigned to
+          </div>
+          <input
+            type="text"
+            placeholder="Search people"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="pl-3 pr-3 py-1 border border-border rounded text-xs w-full"
+          />
         </div>
-        <input
-          type="text"
-          placeholder="Search people"
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          className="pl-3 pr-3 py-1 border border-border rounded text-xs w-full mb-2"
-        />
-        <div className="space-y-1 max-h-40 overflow-y-auto">
+        <div className="space-y-1 max-h-40 overflow-y-auto mt-2">
           {filteredMembers.map(member => (
             <button
               key={member.name}
