@@ -5,6 +5,7 @@ import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover
 import { Button } from "@/components/ui/button";
 import { Calendar as ShadcnCalendar } from "@/components/ui/calendar";
 import AssigneeFilterPopover from './AssigneeFilterPopover';
+import TodoPopup from './TodoPopup';
 
 interface TaskBoardFiltersProps {
   onAddTask: () => void;
@@ -21,6 +22,7 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed }: TaskBoardFi
   const [selectedStartDate, setSelectedStartDate] = useState<Date | undefined>();
   const [selectedEndDate, setSelectedEndDate] = useState<Date | undefined>();
   const [selectedProject, setSelectedProject] = useState<string>('');
+  const [todoPopupOpen, setTodoPopupOpen] = useState(false);
 
   return (
     <div className="px-4 py-2 border-b border-border">
@@ -164,7 +166,7 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed }: TaskBoardFi
         <div className="ml-auto flex items-center gap-2">
           {/* To Do button */}
           <button 
-            onClick={onAddTask}
+            onClick={() => setTodoPopupOpen(true)}
             className="flex items-center gap-1 px-2 py-1 text-xs rounded border text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-transparent hover:border-gray-200 dark:hover:border-gray-700"
           >
             <Plus className="w-3 h-3" />
@@ -204,6 +206,12 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed }: TaskBoardFi
           </button>
         </div>
       </div>
+
+      {/* Todo Popup */}
+      <TodoPopup 
+        isOpen={todoPopupOpen} 
+        onClose={() => setTodoPopupOpen(false)} 
+      />
     </div>
   );
 };
