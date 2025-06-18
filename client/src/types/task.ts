@@ -26,6 +26,8 @@ export interface Task {
   deletedAt: string | null;
   deletedBy: string | null;
   description: string | null;
+  markedComplete: string | null;
+  markedCompleteBy: string | null;
 }
 
 export interface TaskGroup {

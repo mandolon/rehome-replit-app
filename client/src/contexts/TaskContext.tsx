@@ -79,7 +79,9 @@ const PLACEHOLDER_TASKS: Task[] = [
     updatedAt: "2024-06-15T10:00:00Z",
     deletedAt: null,
     deletedBy: null,
-    description: "A test task for development purposes"
+    description: "A test task for development purposes",
+    markedComplete: null,
+    markedCompleteBy: null
   }
 ];
 

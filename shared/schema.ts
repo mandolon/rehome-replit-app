@@ -28,6 +28,8 @@ export const tasks = pgTable("tasks", {
   deletedAt: text("deleted_at"),
   deletedBy: text("deleted_by"),
   description: text("description"),
+  markedComplete: timestamp("marked_complete"),
+  markedCompleteBy: text("marked_complete_by"),
 });
 
 export const taskMessages = pgTable("task_messages", {
