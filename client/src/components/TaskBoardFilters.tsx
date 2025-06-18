@@ -37,7 +37,7 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed }: TaskBoardFi
           </PopoverTrigger>
           <PopoverContent className="w-48 p-2 z-[1100]">
             <div className="space-y-1">
-              <div className="text-[10px] font-medium text-muted-foreground/70 px-2 py-1">
+              <div className="text-[11px] font-medium text-muted-foreground/70 px-2 py-1">
                 Show status
               </div>
               <button className="w-full text-left px-2 py-1 text-xs hover:bg-accent rounded text-foreground">
@@ -60,7 +60,7 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed }: TaskBoardFi
           </PopoverTrigger>
           <PopoverContent className="w-48 p-2 z-[1100]">
             <div className="space-y-1">
-              <div className="text-[10px] font-medium text-muted-foreground/70 px-2 py-1">
+              <div className="text-[11px] font-medium text-muted-foreground/70 px-2 py-1">
                 Show project
               </div>
               <button 
@@ -108,7 +108,7 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed }: TaskBoardFi
           </PopoverTrigger>
           <PopoverContent className="w-auto p-3 z-[1100]">
             <div className="space-y-3">
-              <div className="text-[10px] font-medium text-muted-foreground/70 px-2 py-1">
+              <div className="text-[11px] font-medium text-muted-foreground/70 px-2 py-1">
                 Show date range
               </div>
               <div className="flex gap-3">
