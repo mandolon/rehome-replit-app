@@ -102,7 +102,7 @@ const TaskAttachmentTable: React.FC<TaskAttachmentTableProps> = ({
             <tr className="border-b text-muted-foreground">
               <th className="py-2 px-3 text-left font-medium">Name</th>
               <th className="py-2 px-1 text-right font-medium whitespace-nowrap w-16">Size</th>
-              <th className="py-2 px-1 text-left font-medium whitespace-nowrap w-24">Category</th>
+              <th className="py-2 px-3 text-left font-medium whitespace-nowrap w-24">Category</th>
               <th className="py-2 px-1 text-right font-medium whitespace-nowrap w-20">Date</th>
               <th className="py-2 px-1 text-right font-medium whitespace-nowrap w-16">Author</th>
               {onRemove && <th className="py-2 px-1 text-right font-medium w-8"></th>}
@@ -153,12 +153,12 @@ const TaskAttachmentTable: React.FC<TaskAttachmentTableProps> = ({
                     <td className="px-1 py-2 whitespace-nowrap text-right text-muted-foreground w-16">
                       {formatFileSize(attachment.size)}
                     </td>
-                    <td className="px-1 py-2 w-24">
+                    <td className="px-3 py-2 w-24">
                       <Select
                         value={attachment.category}
                         onValueChange={(value) => onCategoryChange?.(attachment.id, value)}
                       >
-                        <SelectTrigger className="h-6 text-xs border-0 bg-transparent hover:bg-accent w-full">
+                        <SelectTrigger className="h-6 text-xs border-0 bg-transparent hover:bg-accent w-full px-0">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
