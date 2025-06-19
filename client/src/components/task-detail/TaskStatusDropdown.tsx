@@ -19,9 +19,9 @@ type StatusOption = {
 const STATUS_OPTIONS: StatusOption[] = [
   {
     key: "redline",
-    label: "Redline",
-    color: "text-red-700",
-    style: { backgroundColor: "#fef2f2", borderColor: "#fecaca" },
+    label: "To Do",
+    color: "text-gray-700",
+    style: { backgroundColor: "#f9fafb", borderColor: "#e5e7eb" },
   },
   {
     key: "progress",
