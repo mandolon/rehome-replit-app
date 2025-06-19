@@ -37,29 +37,27 @@ const TaskDetailTitleSection: React.FC<TaskDetailTitleSectionProps> = ({
   };
   return (
     <div className="space-y-4">
-      {/* Task ID with circle icon and status inline - with border */}
-      <div className="border border-border rounded-lg p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+      {/* Task ID with circle icon and status inline */}
+      <div className="flex items-center justify-between">
+        <div className="border border-border rounded-lg px-3 py-2 flex items-center gap-2">
+          <div 
+            className="w-4 h-4 rounded-full border-2 flex items-center justify-center"
+            style={{ borderColor: '#c62a2f' }}
+          >
             <div 
-              className="w-4 h-4 rounded-full border-2 flex items-center justify-center"
-              style={{ borderColor: '#c62a2f' }}
-            >
-              <div 
-                className="w-1.5 h-1.5 rounded-full"
-                style={{ backgroundColor: '#c62a2f' }}
-              />
-            </div>
-            <span className="text-sm font-medium">Task</span>
-            <span className="text-sm font-medium text-muted-foreground">{task.taskId}</span>
-          </div>
-          <div className="flex-shrink-0">
-            <TaskStatusDropdown
-              status={task.status}
-              onChange={onChangeStatus}
-              disabled={isEditing}
+              className="w-1.5 h-1.5 rounded-full"
+              style={{ backgroundColor: '#c62a2f' }}
             />
           </div>
+          <span className="text-sm font-medium">Task</span>
+          <span className="text-sm font-medium text-muted-foreground">{task.taskId}</span>
+        </div>
+        <div className="flex-shrink-0">
+          <TaskStatusDropdown
+            status={task.status}
+            onChange={onChangeStatus}
+            disabled={isEditing}
+          />
         </div>
       </div>
 
