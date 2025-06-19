@@ -108,23 +108,23 @@ const DashboardContent = () => {
           className
         )}
       >
-        <CardHeader className="pb-2">
+        <CardHeader className="pb-2 space-y-1">
           {!card.isWelcome && Icon && (
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-2">
               <div className="p-1.5 bg-muted rounded-lg">
                 <Icon className="w-4 h-4 text-muted-foreground group-hover:text-foreground/80 transition-colors" />
               </div>
             </div>
           )}
-          <CardTitle className="text-sm group-hover:text-foreground/80 transition-colors line-clamp-1">
+          <CardTitle className="text-sm font-semibold group-hover:text-foreground/80 transition-colors line-clamp-1">
             {card.title}
           </CardTitle>
-          <CardDescription className="text-xs line-clamp-1">
+          <CardDescription className="text-xs text-muted-foreground line-clamp-1">
             {card.subtitle}
           </CardDescription>
         </CardHeader>
         {card.description && !card.isWelcome && (
-          <CardContent className="pt-0">
+          <CardContent className="pt-0 pb-4">
             <p className="text-muted-foreground text-xs line-clamp-1">
               {card.description}
             </p>
@@ -180,61 +180,61 @@ const DashboardContent = () => {
                 
                 {/* Secondary Cards - Compact */}
                 <div className="flex-1 space-y-3">
-                  {renderCard(column1Cards[1], 'h-[100px]')}
-                  {renderCard(column1Cards[2], 'h-[100px]')}
+                  {renderCard(column1Cards[1], 'h-[110px]')}
+                  {renderCard(column1Cards[2], 'h-[110px]')}
                 </div>
               </div>
 
               {/* Column 2: Quick Action Cards */}
               <div className="grid grid-cols-1 gap-3 content-start">
-                {column2Cards.map((card) => renderCard(card, 'h-[95px] min-h-[95px]'))}
+                {column2Cards.map((card) => renderCard(card, 'h-[105px] min-h-[105px]'))}
               </div>
 
               {/* Column 3: Analytics Overview */}
               <Card 
-                className="h-full min-h-0 cursor-pointer transition-all duration-300 hover:shadow-lg group"
+                className="h-full cursor-pointer transition-all duration-300 hover:shadow-lg group flex flex-col"
                 onClick={() => handleCardClick(column3Card.href)}
               >
-                <CardHeader className="pb-3">
+                <CardHeader className="pb-2 space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="p-2 bg-green-50 dark:bg-green-950/30 rounded-lg">
-                      <BarChart3 className="w-5 h-5 text-green-600 dark:text-green-400" />
+                      <BarChart3 className="w-4 h-4 text-green-600 dark:text-green-400" />
                     </div>
                   </div>
-                  <CardTitle className="text-lg group-hover:text-foreground/80 transition-colors">
+                  <CardTitle className="text-base font-semibold group-hover:text-foreground/80 transition-colors">
                     Analytics & Reports
                   </CardTitle>
-                  <CardDescription className="text-sm">
+                  <CardDescription className="text-xs text-muted-foreground">
                     Performance Dashboard
                   </CardDescription>
-                  <p className="text-muted-foreground text-xs leading-relaxed">
+                  <p className="text-muted-foreground text-xs leading-tight line-clamp-2">
                     Comprehensive project analytics, team performance metrics, and detailed reports for all your projects.
                   </p>
                 </CardHeader>
-                <CardContent className="space-y-3 flex-1">
-                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border border-green-200/50 dark:border-green-800/50 rounded-lg p-3">
+                <CardContent className="flex-1 space-y-2 pt-0">
+                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border border-green-200/50 dark:border-green-800/50 rounded-lg p-2">
                     <div className="flex items-center justify-between mb-1">
                       <div className="text-foreground font-semibold text-xs">Project Completion</div>
-                      <div className="text-green-600 dark:text-green-400 font-bold text-sm">78%</div>
+                      <div className="text-green-600 dark:text-green-400 font-bold text-xs">78%</div>
                     </div>
                     <div className="text-muted-foreground text-xs">Average across all projects</div>
-                    <div className="mt-2 bg-green-200 dark:bg-green-800 rounded-full h-1.5">
-                      <div className="bg-green-500 h-1.5 rounded-full" style={{width: '78%'}}></div>
+                    <div className="mt-1 bg-green-200 dark:bg-green-800 rounded-full h-1">
+                      <div className="bg-green-500 h-1 rounded-full" style={{width: '78%'}}></div>
                     </div>
                   </div>
                   
-                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border border-blue-200/50 dark:border-blue-800/50 rounded-lg p-3">
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border border-blue-200/50 dark:border-blue-800/50 rounded-lg p-2">
                     <div className="flex items-center justify-between mb-1">
                       <div className="text-foreground font-semibold text-xs">Team Efficiency</div>
-                      <div className="text-blue-600 dark:text-blue-400 font-bold text-sm">+15%</div>
+                      <div className="text-blue-600 dark:text-blue-400 font-bold text-xs">+15%</div>
                     </div>
                     <div className="text-muted-foreground text-xs">Improvement this quarter</div>
                   </div>
                   
-                  <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 border border-purple-200/50 dark:border-purple-800/50 rounded-lg p-3">
+                  <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 border border-purple-200/50 dark:border-purple-800/50 rounded-lg p-2">
                     <div className="flex items-center justify-between mb-1">
                       <div className="text-foreground font-semibold text-xs">Revenue Growth</div>
-                      <div className="text-purple-600 dark:text-purple-400 font-bold text-sm">$24.5k</div>
+                      <div className="text-purple-600 dark:text-purple-400 font-bold text-xs">$24.5k</div>
                     </div>
                     <div className="text-muted-foreground text-xs">Generated this month</div>
                   </div>
