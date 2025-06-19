@@ -1,12 +1,6 @@
 
 import React from "react";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-import { ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 type StatusOption = {
@@ -40,37 +34,28 @@ interface TaskStatusDropdownProps {
 }
 
 const TaskStatusDropdown: React.FC<TaskStatusDropdownProps> = ({ status, onChange, disabled }) => {
-  const current = STATUS_OPTIONS.find((s) => s.key === status) || STATUS_OPTIONS[0];
-  const otherOptions = STATUS_OPTIONS.filter((s) => s.key !== status);
-
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button
+    <div className="flex items-center gap-1">
+      {STATUS_OPTIONS.map((option) => (
+        <Button
+          key={option.key}
+          variant="ghost"
+          size="sm"
+          onClick={() => onChange(option.key)}
           disabled={disabled}
           className={cn(
-            "inline-flex items-center rounded border border-transparent px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-            current.color,
+            "rounded border border-transparent px-2.5 py-0.5 text-xs font-semibold transition-colors h-auto",
+            status === option.key 
+              ? option.color // Selected state: colored background
+              : "bg-transparent text-muted-foreground hover:bg-muted", // Unselected state: muted
             disabled && "opacity-60 pointer-events-none"
           )}
-          aria-label="Change task status"
+          aria-label={`Set status to ${option.label}`}
         >
-          {current.label}
-          <ChevronDown className="w-3 h-3 ml-1" />
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="min-w-[180px] !z-[100]">
-        {otherOptions.map((option) => (
-          <DropdownMenuItem
-            key={option.key}
-            onSelect={() => onChange(option.key)}
-            className="cursor-pointer py-2 px-3"
-          >
-            <span>{option.label}</span>
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+          {option.label}
+        </Button>
+      ))}
+    </div>
   );
 };
 
