@@ -107,7 +107,7 @@ const TaskDetailActivity = ({ taskId }: TaskDetailActivityProps) => {
       </div>
 
       {/* Message List */}
-      <div ref={messageListRef} className="flex-1 overflow-y-auto p-3 space-y-6 max-h-full">
+      <div ref={messageListRef} className="flex-1 overflow-y-auto p-3 space-y-6 max-h-full todo-popup-scrollbar">
         {loading && <div>Loading messages...</div>}
         {error && <div className="text-red-500 text-xs">{error}</div>}
         {!loading && !error && messages.map((msg) => {
