@@ -41,37 +41,27 @@ const DashboardContent = () => {
     }
   ];
 
-  // Column 2: Smaller uniform cards
-  const column2Cards = [
-    {
-      id: 'account-access',
-      title: 'Account Access',
-      subtitle: '3 new requests',
-      icon: Settings,
-      href: '/settings'
-    },
-    {
-      id: 'payments-transfers',
-      title: 'Payments & Transfers',
-      subtitle: '$24.5k this month',
-      icon: FileText,
-      href: '/invoices'
-    },
-    {
-      id: 'fraud-security',
-      title: 'Fraud & Security',
-      subtitle: 'All systems secure',
-      icon: Settings,
-      href: '/settings'
-    },
-    {
-      id: 'spending-insights',
-      title: 'Spending Insights',
-      subtitle: '15% increase',
-      icon: BarChart3,
-      href: '/dashboard'
-    }
-  ];
+  // Column 2: Mixed sized cards
+  const column2FirstCard = {
+    id: 'account-access',
+    title: 'Account Access',
+    subtitle: '3 new requests',
+    icon: Settings,
+    href: '/settings'
+  };
+
+  const column2CombinedCard = {
+    id: 'business-overview',
+    title: 'Business Overview',
+    subtitle: 'Financial & Security Dashboard',
+    description: 'Track payments, security status, and spending insights all in one place.',
+    metrics: [
+      { label: 'Monthly Revenue', value: '$24.5k', trend: 'up' },
+      { label: 'Security Status', value: 'All Secure', trend: 'stable' },
+      { label: 'Spending Growth', value: '+15%', trend: 'up' }
+    ],
+    href: '/dashboard'
+  };
 
   // Column 3: Full height card
   const column3Card = {
@@ -178,9 +168,42 @@ const DashboardContent = () => {
                 </div>
               </div>
 
-              {/* Column 2: Quick Action Cards */}
-              <div className="grid grid-cols-1 gap-3 content-start">
-                {column2Cards.map((card) => renderCard(card, 'h-[105px] min-h-[105px]'))}
+              {/* Column 2: Mixed Size Cards */}
+              <div className="flex flex-col gap-3">
+                {/* Small card */}
+                {renderCard(column2FirstCard, 'h-[105px] min-h-[105px]')}
+                
+                {/* Large combined card */}
+                <Card 
+                  className="flex-1 cursor-pointer transition-all duration-300 hover:shadow-lg group"
+                  onClick={() => handleCardClick(column2CombinedCard.href)}
+                >
+                  <CardHeader className="pb-2 space-y-1">
+                    <CardTitle className="text-sm font-semibold group-hover:text-foreground/80 transition-colors">
+                      {column2CombinedCard.title}
+                    </CardTitle>
+                    <CardDescription className="text-xs text-muted-foreground">
+                      {column2CombinedCard.subtitle}
+                    </CardDescription>
+                    <p className="text-xs text-muted-foreground leading-tight line-clamp-2 pt-1">
+                      {column2CombinedCard.description}
+                    </p>
+                  </CardHeader>
+                  <CardContent className="pt-0 space-y-2">
+                    {column2CombinedCard.metrics.map((metric, index) => (
+                      <div key={index} className="flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground">{metric.label}</span>
+                        <span className={`text-xs font-medium ${
+                          metric.trend === 'up' ? 'text-green-600 dark:text-green-400' : 
+                          metric.trend === 'down' ? 'text-red-600 dark:text-red-400' : 
+                          'text-foreground'
+                        }`}>
+                          {metric.value}
+                        </span>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
               </div>
 
               {/* Column 3: Analytics Overview */}
