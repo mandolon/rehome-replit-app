@@ -109,25 +109,31 @@ const DashboardContent = () => {
       >
         <div className="h-full flex flex-col">
           {!card.isWelcome && Icon && (
-            <div className="flex items-start justify-between mb-4">
-              <Icon className="w-6 h-6 text-gray-600 dark:text-gray-400" />
+            <div className="flex items-start justify-between mb-3">
+              <Icon className="w-5 h-5 text-muted-foreground" />
             </div>
           )}
 
-          <div className="flex-1">
+          <div className="flex-1 min-h-0">
             <h3 className={cn(
-              "font-medium text-foreground mb-1 group-hover:text-foreground/80 transition-colors truncate",
+              "font-medium text-foreground mb-1 group-hover:text-foreground/80 transition-colors",
               card.isWelcome ? "text-base" : "text-sm"
             )}>
               {card.title}
             </h3>
             
-            <p className="text-muted-foreground text-xs mb-2 truncate">
+            <p className="text-muted-foreground text-xs leading-tight">
               {card.subtitle}
             </p>
             
-            {card.description && (
-              <p className="text-muted-foreground text-xs leading-relaxed">
+            {card.description && !card.isWelcome && (
+              <p className="text-muted-foreground text-xs leading-relaxed mt-1">
+                {card.description}
+              </p>
+            )}
+            
+            {card.description && card.isWelcome && (
+              <p className="text-muted-foreground text-xs leading-relaxed mt-2">
                 {card.description}
               </p>
             )}
@@ -167,7 +173,7 @@ const DashboardContent = () => {
 
               {/* Column 2: Uniform smaller cards */}
               <div className="grid grid-cols-1 gap-3 content-start">
-                {column2Cards.map((card) => renderCard(card, 'h-20 min-h-[80px]'))}
+                {column2Cards.map((card) => renderCard(card, 'h-[88px] min-h-[88px]'))}
               </div>
 
               {/* Column 3: Full height card */}
