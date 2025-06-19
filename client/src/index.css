@@ -140,7 +140,7 @@
 
 .todo-popup-scrollbar::-webkit-scrollbar-thumb {
   background: rgba(156, 163, 175, 0.3);
-  border-radius: 10px;
+  border-radius: 1.5px;
   transition: background-color 0.2s ease;
 }
 
@@ -148,21 +148,32 @@
   background: rgba(156, 163, 175, 0.5);
 }
 
-/* Remove scrollbar arrows completely */
+/* Remove scrollbar arrows completely - comprehensive approach */
 .todo-popup-scrollbar::-webkit-scrollbar-button {
-  display: none;
-  width: 0;
-  height: 0;
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 .todo-popup-scrollbar::-webkit-scrollbar-button:start:decrement,
 .todo-popup-scrollbar::-webkit-scrollbar-button:end:increment {
-  display: none;
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.todo-popup-scrollbar::-webkit-scrollbar-button:horizontal:start:decrement,
+.todo-popup-scrollbar::-webkit-scrollbar-button:horizontal:end:increment,
+.todo-popup-scrollbar::-webkit-scrollbar-button:vertical:start:decrement,
+.todo-popup-scrollbar::-webkit-scrollbar-button:vertical:end:increment {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 .todo-popup-scrollbar::-webkit-scrollbar-corner {
-  display: none;
-  background: transparent;
+  display: none !important;
+  background: transparent !important;
 }
 
 /* Dark mode scrollbar */
@@ -172,6 +183,7 @@
 
 .dark .todo-popup-scrollbar::-webkit-scrollbar-thumb {
   background: rgba(75, 85, 99, 0.4);
+  border-radius: 1.5px;
 }
 
 .dark .todo-popup-scrollbar::-webkit-scrollbar-thumb:hover {
