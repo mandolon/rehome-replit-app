@@ -130,7 +130,7 @@
 }
 
 .todo-popup-scrollbar::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 
 .todo-popup-scrollbar::-webkit-scrollbar-track {
