@@ -109,13 +109,6 @@ const DashboardContent = () => {
         )}
       >
         <CardHeader className="pb-2 space-y-1">
-          {!card.isWelcome && Icon && (
-            <div className="flex items-center justify-between mb-2">
-              <div className="p-1.5 bg-muted rounded-lg">
-                <Icon className="w-4 h-4 text-muted-foreground group-hover:text-foreground/80 transition-colors" />
-              </div>
-            </div>
-          )}
           <CardTitle className="text-sm font-semibold group-hover:text-foreground/80 transition-colors line-clamp-1">
             {card.title}
           </CardTitle>
@@ -196,11 +189,6 @@ const DashboardContent = () => {
                 onClick={() => handleCardClick(column3Card.href)}
               >
                 <CardHeader className="pb-2 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="p-2 bg-green-50 dark:bg-green-950/30 rounded-lg">
-                      <BarChart3 className="w-4 h-4 text-green-600 dark:text-green-400" />
-                    </div>
-                  </div>
                   <CardTitle className="text-base font-semibold group-hover:text-foreground/80 transition-colors">
                     Analytics & Reports
                   </CardTitle>
