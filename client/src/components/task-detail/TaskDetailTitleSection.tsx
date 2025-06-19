@@ -39,7 +39,7 @@ const TaskDetailTitleSection: React.FC<TaskDetailTitleSectionProps> = ({
     <div className="space-y-4">
       {/* Task ID with circle icon and status inline */}
       <div className="flex items-center justify-between">
-        <div className="border border-border rounded-lg px-3 py-2 flex items-center gap-2">
+        <div className="border border-border rounded px-2.5 py-0.5 flex items-center gap-2 h-8">
           <div 
             className="w-4 h-4 rounded-full border-2 flex items-center justify-center"
             style={{ borderColor: '#c62a2f' }}
@@ -49,8 +49,9 @@ const TaskDetailTitleSection: React.FC<TaskDetailTitleSectionProps> = ({
               style={{ backgroundColor: '#c62a2f' }}
             />
           </div>
-          <span className="text-sm font-medium">Task</span>
-          <span className="text-sm font-medium text-muted-foreground">{task.taskId}</span>
+          <span className="text-xs font-semibold">Task</span>
+          <div className="w-px h-4 bg-border"></div>
+          <span className="text-xs font-semibold text-muted-foreground">{task.taskId}</span>
         </div>
         <div className="flex-shrink-0">
           <TaskStatusDropdown
