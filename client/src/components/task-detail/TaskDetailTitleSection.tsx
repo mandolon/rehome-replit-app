@@ -39,7 +39,7 @@ const TaskDetailTitleSection: React.FC<TaskDetailTitleSectionProps> = ({
     <div className="space-y-4">
       {/* Task ID with circle icon and status inline */}
       <div className="flex items-center justify-between mt-2">
-        <div className="border border-border rounded px-4 py-0.5 flex items-center gap-2">
+        <div className="border border-border rounded px-5 py-0.5 flex items-center gap-2">
           <div 
             className="w-4 h-4 rounded-full border-2"
             style={{ borderColor: '#c62a2f' }}
