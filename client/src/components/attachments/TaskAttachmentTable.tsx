@@ -30,12 +30,27 @@ function formatFileSize(bytes: number): string {
 // Function to get file type icon with extension text
 function getFileTypeIcon(fileName: string, fileType: string): React.ReactNode {
   const extension = fileName.split('.').pop()?.toUpperCase() || fileType.toUpperCase();
-  const bgColor = '#c62a2f';
+  
+  // Use different colors based on file type
+  const getFileTypeColor = (ext: string) => {
+    switch (ext.toLowerCase()) {
+      case 'pdf': return '#dc2626'; // red
+      case 'doc':
+      case 'docx': return '#2563eb'; // blue
+      case 'xls':
+      case 'xlsx': return '#16a34a'; // green
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif': return '#ea580c'; // orange
+      default: return '#6b7280'; // gray
+    }
+  };
   
   return (
     <div 
       className="inline-flex items-center justify-center w-8 h-6 rounded text-[10px] font-bold text-white mr-2"
-      style={{ backgroundColor: bgColor }}
+      style={{ backgroundColor: getFileTypeColor(extension) }}
     >
       {extension.slice(0, 3)}
     </div>

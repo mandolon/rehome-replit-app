@@ -17,9 +17,9 @@ const TaskDetailHeader = ({ task, onClose, onProjectClick }: TaskDetailHeaderPro
           <ArrowLeft className="w-4 h-4" />
         </button>
         <span className="text-xs text-muted-foreground">PinerWorks</span>
-        <span className="text-xs text-muted-foreground">•</span>
+        <span className="text-xs text-muted-foreground">/</span>
         <span className="text-xs text-muted-foreground">In Progress</span>
-        <span className="text-xs text-muted-foreground">•</span>
+        <span className="text-xs text-muted-foreground">/</span>
         {onProjectClick ? (
           <button 
             onClick={onProjectClick}
