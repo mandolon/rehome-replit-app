@@ -42,35 +42,44 @@ const TaskStatusDropdown: React.FC<TaskStatusDropdownProps> = ({ status, onChang
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button
-          variant="ghost"
+        <button
           disabled={disabled}
           className={cn(
-            "rounded px-2.5 py-0.5 text-xs font-semibold transition-colors h-auto bg-transparent border-0",
+            "inline-flex items-center rounded px-2.5 py-0.5 text-xs font-semibold transition-colors",
             current.color,
             disabled && "opacity-60 pointer-events-none"
           )}
+          style={{ 
+            background: 'transparent', 
+            border: 'none', 
+            outline: 'none',
+            boxShadow: 'none'
+          }}
           aria-label="Change task status"
         >
           {current.label}
           <ChevronDown className="w-3 h-3 ml-1" />
-        </Button>
+        </button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-2" align="end">
         <div className="flex flex-col gap-1">
           {otherOptions.map((option) => (
-            <Button
+            <button
               key={option.key}
-              variant="ghost"
-              size="sm"
               onClick={() => onChange(option.key)}
               className={cn(
-                "rounded px-2.5 py-0.5 text-xs font-semibold transition-colors h-auto justify-start bg-transparent border-0",
+                "rounded px-2.5 py-0.5 text-xs font-semibold transition-colors w-full text-left hover:opacity-80",
                 option.color
               )}
+              style={{ 
+                background: 'transparent', 
+                border: 'none', 
+                outline: 'none',
+                boxShadow: 'none'
+              }}
             >
               {option.label}
-            </Button>
+            </button>
           ))}
         </div>
       </PopoverContent>
