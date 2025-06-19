@@ -29,7 +29,7 @@ const TaskStatusIcon = ({ status, onClick }: TaskStatusIconProps) => {
       case 'completed':
         return 'bg-green-500 text-white';
       case 'redline':
-        return 'border-red-500';
+        return 'border-[#c62a2f]';
       case 'progress':
         return 'border-blue-500';
       default:
@@ -41,7 +41,7 @@ const TaskStatusIcon = ({ status, onClick }: TaskStatusIconProps) => {
   const statusFillHover = (() => {
     switch (status) {
       case 'redline':
-        return 'hover:bg-red-500/50 dark:hover:bg-red-400/40';
+        return 'hover:bg-[#c62a2f]/50 dark:hover:bg-[#c62a2f]/40';
       case 'progress':
         return 'hover:bg-blue-500/50 dark:hover:bg-blue-400/40';
       default:
