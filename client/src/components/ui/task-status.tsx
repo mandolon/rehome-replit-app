@@ -11,14 +11,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 // Status configuration
-const STATUS_CONFIG = {
+export const STATUS_CONFIG = {
   redline: {
     key: 'redline' as const,
     label: 'TASK/ REDLINE',
-    color: 'bg-[#c62a2f]',
-    borderColor: 'border-[#c62a2f]',
-    hoverColor: 'hover:bg-[#c62a2f]/50 dark:hover:bg-[#c62a2f]/40',
-    textColor: 'text-[#c62a2f]',
+    color: 'bg-red-500',
+    borderColor: 'border-red-500',
+    hoverColor: 'hover:bg-red-500/50 dark:hover:bg-red-400/40',
+    textColor: 'text-red-500',
   },
   progress: {
     key: 'progress' as const,

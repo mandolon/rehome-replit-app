@@ -37,7 +37,7 @@ export const useTaskBoard = () => {
   const getTaskGroups = (): TaskGroup[] => {
     if (!tasks || !Array.isArray(tasks)) {
       return [
-        { title: "TASK/ REDLINE", count: 0, color: "bg-[#c62a2f]", status: "redline", tasks: [] },
+        { title: "TASK/ REDLINE", count: 0, color: "bg-red-500", status: "redline", tasks: [] },
         { title: "PROGRESS/ UPDATE", count: 0, color: "bg-blue-500", status: "progress", tasks: [] },
         { title: "COMPLETED", count: 0, color: "bg-green-500", status: "completed", tasks: [] }
       ];
@@ -51,7 +51,7 @@ export const useTaskBoard = () => {
       {
         title: "TASK/ REDLINE",
         count: centralizedRedline.length,
-        color: "bg-[#c62a2f]",
+        color: "bg-red-500",
         status: "redline",
         tasks: centralizedRedline
       },
