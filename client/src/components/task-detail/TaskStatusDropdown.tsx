@@ -46,7 +46,7 @@ const TaskStatusDropdown: React.FC<TaskStatusDropdownProps> = ({ status, onChang
           variant="ghost"
           disabled={disabled}
           className={cn(
-            "rounded border border-transparent px-2.5 py-0.5 text-xs font-semibold transition-colors h-auto",
+            "rounded px-2.5 py-0.5 text-xs font-semibold transition-colors h-auto bg-transparent border-0",
             current.color,
             disabled && "opacity-60 pointer-events-none"
           )}
@@ -65,7 +65,7 @@ const TaskStatusDropdown: React.FC<TaskStatusDropdownProps> = ({ status, onChang
               size="sm"
               onClick={() => onChange(option.key)}
               className={cn(
-                "rounded border border-transparent px-2.5 py-0.5 text-xs font-semibold transition-colors h-auto justify-start",
+                "rounded px-2.5 py-0.5 text-xs font-semibold transition-colors h-auto justify-start bg-transparent border-0",
                 option.color
               )}
             >
