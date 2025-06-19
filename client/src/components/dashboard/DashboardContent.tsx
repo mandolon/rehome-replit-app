@@ -140,9 +140,9 @@ const DashboardContent = () => {
     <div className="flex-1 bg-background overflow-hidden">
       <div className="h-full flex flex-col">
         {/* Header Section with improved spacing */}
-        <div className="flex-shrink-0 px-8 pt-8 pb-6 border-b border-border/50">
+        <div className="flex-shrink-0 px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-4 sm:pb-6 border-b border-border/50">
           <div className="max-w-7xl mx-auto">
-            <h1 className="text-3xl font-semibold text-foreground tracking-tight">{getGreeting()}, Armando</h1>
+            <h1 className="text-2xl sm:text-3xl font-semibold text-foreground tracking-tight">{getGreeting()}, Armando</h1>
             <p className="text-muted-foreground mt-2 text-sm">Here's what's happening with your projects today</p>
           </div>
         </div>
