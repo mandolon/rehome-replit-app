@@ -49,8 +49,14 @@ const TaskDetailTitleSection: React.FC<TaskDetailTitleSectionProps> = ({
   };
   return (
     <div className="space-y-6">
-      {/* Task metadata row - cleaner, more spaced layout */}
+      {/* Task metadata row - status first, then ID (Linear pattern) */}
       <div className="flex items-center gap-4 text-sm text-muted-foreground">
+        <TaskStatusDropdown
+          status={task.status}
+          onChange={onChangeStatus}
+          disabled={isEditing}
+        />
+        <div className="h-4 w-px bg-border"></div>
         <div className="flex items-center gap-2">
           <div 
             className="w-2 h-2 rounded-full"
@@ -58,12 +64,6 @@ const TaskDetailTitleSection: React.FC<TaskDetailTitleSectionProps> = ({
           />
           <span className="font-medium text-foreground">{task.taskId}</span>
         </div>
-        <div className="h-4 w-px bg-border"></div>
-        <TaskStatusDropdown
-          status={task.status}
-          onChange={onChangeStatus}
-          disabled={isEditing}
-        />
       </div>
 
       {/* Task title - prominent and clean */}
