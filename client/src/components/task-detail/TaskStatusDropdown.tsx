@@ -1,6 +1,8 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type StatusOption = {
@@ -34,28 +36,45 @@ interface TaskStatusDropdownProps {
 }
 
 const TaskStatusDropdown: React.FC<TaskStatusDropdownProps> = ({ status, onChange, disabled }) => {
+  const current = STATUS_OPTIONS.find((s) => s.key === status) || STATUS_OPTIONS[0];
+  const otherOptions = STATUS_OPTIONS.filter((s) => s.key !== status);
+
   return (
-    <div className="flex items-center gap-1">
-      {STATUS_OPTIONS.map((option) => (
+    <Popover>
+      <PopoverTrigger asChild>
         <Button
-          key={option.key}
           variant="ghost"
-          size="sm"
-          onClick={() => onChange(option.key)}
           disabled={disabled}
           className={cn(
             "rounded border border-transparent px-2.5 py-0.5 text-xs font-semibold transition-colors h-auto",
-            status === option.key 
-              ? option.color // Selected state: colored background
-              : "bg-transparent text-muted-foreground hover:bg-muted", // Unselected state: muted
+            current.color,
             disabled && "opacity-60 pointer-events-none"
           )}
-          aria-label={`Set status to ${option.label}`}
+          aria-label="Change task status"
         >
-          {option.label}
+          {current.label}
+          <ChevronDown className="w-3 h-3 ml-1" />
         </Button>
-      ))}
-    </div>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-2" align="end">
+        <div className="flex flex-col gap-1">
+          {otherOptions.map((option) => (
+            <Button
+              key={option.key}
+              variant="ghost"
+              size="sm"
+              onClick={() => onChange(option.key)}
+              className={cn(
+                "rounded border border-transparent px-2.5 py-0.5 text-xs font-semibold transition-colors h-auto justify-start",
+                option.color
+              )}
+            >
+              {option.label}
+            </Button>
+          ))}
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 };
 
