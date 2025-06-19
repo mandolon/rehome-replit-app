@@ -41,7 +41,7 @@ const TaskDetailTitleSection: React.FC<TaskDetailTitleSectionProps> = ({
       <div className="flex items-center justify-between mt-2">
         <div className="border border-border rounded px-3 py-1 flex items-center gap-2">
           <div 
-            className="w-4 h-4 rounded-full border-2"
+            className="w-3 h-3 rounded-full border-2"
             style={{ borderColor: '#c62a2f' }}
           >
           </div>
