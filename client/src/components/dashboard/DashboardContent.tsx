@@ -107,33 +107,33 @@ const DashboardContent = () => {
           className
         )}
       >
-        <div className="h-full flex flex-col">
+        <div className="h-full flex flex-col overflow-hidden">
           {!card.isWelcome && Icon && (
-            <div className="flex items-start justify-between mb-3">
-              <Icon className="w-5 h-5 text-muted-foreground" />
+            <div className="flex items-start justify-between mb-2">
+              <Icon className="w-4 h-4 text-muted-foreground" />
             </div>
           )}
 
-          <div className="flex-1 min-h-0">
+          <div className="flex-1 overflow-hidden">
             <h3 className={cn(
-              "font-medium text-foreground mb-1 group-hover:text-foreground/80 transition-colors",
+              "font-medium text-foreground mb-1 group-hover:text-foreground/80 transition-colors line-clamp-2",
               card.isWelcome ? "text-base" : "text-sm"
             )}>
               {card.title}
             </h3>
             
-            <p className="text-muted-foreground text-xs leading-tight">
+            <p className="text-muted-foreground text-xs leading-tight line-clamp-2">
               {card.subtitle}
             </p>
             
             {card.description && !card.isWelcome && (
-              <p className="text-muted-foreground text-xs leading-relaxed mt-1">
+              <p className="text-muted-foreground text-xs leading-tight mt-1 line-clamp-2">
                 {card.description}
               </p>
             )}
             
             {card.description && card.isWelcome && (
-              <p className="text-muted-foreground text-xs leading-relaxed mt-2">
+              <p className="text-muted-foreground text-xs leading-tight mt-2 line-clamp-3">
                 {card.description}
               </p>
             )}
@@ -173,7 +173,7 @@ const DashboardContent = () => {
 
               {/* Column 2: Uniform smaller cards */}
               <div className="grid grid-cols-1 gap-3 content-start">
-                {column2Cards.map((card) => renderCard(card, 'h-[88px] min-h-[88px]'))}
+                {column2Cards.map((card) => renderCard(card, 'h-[110px] min-h-[110px]'))}
               </div>
 
               {/* Column 3: Full height card */}
