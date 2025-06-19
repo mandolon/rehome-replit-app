@@ -155,56 +155,58 @@ const DashboardContent = () => {
   return (
     <div className="flex-1 bg-background pl-2 overflow-hidden">
       <div className="h-full flex flex-col">
-        <div className="px-4 pt-6 pb-4">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[600px]">
-            {/* Column 1: Different sized cards */}
-            <div className="flex flex-col gap-4">
-              {renderCard(column1Cards[0], 'h-64')}
-              {renderCard(column1Cards[1], 'h-40')}
-              {renderCard(column1Cards[2], 'flex-1')}
-            </div>
+        <div className="flex-1 p-4 overflow-auto">
+          <div className="h-full min-h-[500px] max-h-[calc(100vh-120px)]">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-full">
+              {/* Column 1: Different sized cards */}
+              <div className="flex flex-col gap-3 min-h-0">
+                {renderCard(column1Cards[0], 'flex-[2] min-h-[200px]')}
+                {renderCard(column1Cards[1], 'flex-1 min-h-[120px]')}
+                {renderCard(column1Cards[2], 'flex-1 min-h-[100px]')}
+              </div>
 
-            {/* Column 2: Uniform smaller cards */}
-            <div className="grid grid-cols-1 gap-4 content-start">
-              {column2Cards.map((card) => renderCard(card, 'h-32'))}
-            </div>
+              {/* Column 2: Uniform smaller cards */}
+              <div className="grid grid-cols-1 gap-3 content-start">
+                {column2Cards.map((card) => renderCard(card, 'h-24 min-h-[96px]'))}
+              </div>
 
-            {/* Column 3: Full height card */}
-            <div className="h-full">
-              <div
-                onClick={() => handleCardClick(column3Card.href)}
-                className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 cursor-pointer transition-all duration-200 hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 group h-full"
-              >
-                <div className="h-full flex flex-col">
-                  <div className="flex items-start justify-between mb-6">
-                    <BarChart3 className="w-8 h-8 text-gray-600 dark:text-gray-400" />
-                  </div>
+              {/* Column 3: Full height card */}
+              <div className="h-full min-h-[400px] lg:min-h-0">
+                <div
+                  onClick={() => handleCardClick(column3Card.href)}
+                  className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 cursor-pointer transition-all duration-200 hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 group h-full"
+                >
+                  <div className="h-full flex flex-col">
+                    <div className="flex items-start justify-between mb-4">
+                      <BarChart3 className="w-6 h-6 text-gray-600 dark:text-gray-400" />
+                    </div>
 
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900 dark:text-white mb-4 text-xl group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors">
-                      {column3Card.title}
-                    </h3>
-                    
-                    <p className="text-gray-600 dark:text-gray-400 text-base mb-6">
-                      {column3Card.subtitle}
-                    </p>
-                    
-                    <p className="text-gray-500 dark:text-gray-500 text-sm leading-relaxed mb-6">
-                      {column3Card.description}
-                    </p>
+                    <div className="flex-1 min-h-0">
+                      <h3 className="font-semibold text-gray-900 dark:text-white mb-3 text-lg group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors">
+                        {column3Card.title}
+                      </h3>
+                      
+                      <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+                        {column3Card.subtitle}
+                      </p>
+                      
+                      <p className="text-gray-500 dark:text-gray-500 text-xs leading-relaxed mb-4">
+                        {column3Card.description}
+                      </p>
 
-                    <div className="space-y-3">
-                      <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-                        <div className="text-gray-900 dark:text-white font-medium text-sm mb-1">Project Completion</div>
-                        <div className="text-gray-600 dark:text-gray-400 text-xs">78% average across all projects</div>
-                      </div>
-                      <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-                        <div className="text-gray-900 dark:text-white font-medium text-sm mb-1">Team Efficiency</div>
-                        <div className="text-gray-600 dark:text-gray-400 text-xs">+15% improvement this quarter</div>
-                      </div>
-                      <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-                        <div className="text-gray-900 dark:text-white font-medium text-sm mb-1">Revenue Growth</div>
-                        <div className="text-gray-600 dark:text-gray-400 text-xs">$24.5k generated this month</div>
+                      <div className="space-y-2 flex-1">
+                        <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-2">
+                          <div className="text-gray-900 dark:text-white font-medium text-xs mb-1">Project Completion</div>
+                          <div className="text-gray-600 dark:text-gray-400 text-xs">78% average across all projects</div>
+                        </div>
+                        <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-2">
+                          <div className="text-gray-900 dark:text-white font-medium text-xs mb-1">Team Efficiency</div>
+                          <div className="text-gray-600 dark:text-gray-400 text-xs">+15% improvement this quarter</div>
+                        </div>
+                        <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-2">
+                          <div className="text-gray-900 dark:text-white font-medium text-xs mb-1">Revenue Growth</div>
+                          <div className="text-gray-600 dark:text-gray-400 text-xs">$24.5k generated this month</div>
+                        </div>
                       </div>
                     </div>
                   </div>
