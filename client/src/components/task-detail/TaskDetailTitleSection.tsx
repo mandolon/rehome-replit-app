@@ -26,7 +26,7 @@ const TaskDetailTitleSection: React.FC<TaskDetailTitleSectionProps> = ({
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'redline':
-        return '#6b7280'; // gray for "To Do"
+        return '#c62a2f'; // red to match main board
       case 'progress':
         return '#3b82f6'; // blue
       case 'completed':
