@@ -31,7 +31,7 @@ const TaskStatusIcon = ({ status, onClick }: TaskStatusIconProps) => {
       case 'redline':
         return 'border-[#c62a2f]';
       case 'progress':
-        return 'border-[#c62a2f]';
+        return 'border-blue-500';
       default:
         return 'border-gray-300';
     }
@@ -43,7 +43,7 @@ const TaskStatusIcon = ({ status, onClick }: TaskStatusIconProps) => {
       case 'redline':
         return 'hover:bg-[#c62a2f]/50 dark:hover:bg-[#c62a2f]/40';
       case 'progress':
-        return 'hover:bg-[#c62a2f]/50 dark:hover:bg-[#c62a2f]/40';
+        return 'hover:bg-blue-500/50 dark:hover:bg-blue-400/40';
       default:
         return 'hover:bg-gray-300/50 dark:hover:bg-gray-700/40';
     }
@@ -51,12 +51,9 @@ const TaskStatusIcon = ({ status, onClick }: TaskStatusIconProps) => {
 
   const getStatusIcon = () => {
     if (status === 'completed') {
-      // Completed state: fully filled with #c62a2f color
+      // Completed state: fully filled with green color
       return (
-        <div 
-          className="w-4 h-4 rounded-full flex items-center justify-center transition-all duration-200"
-          style={{ backgroundColor: '#c62a2f' }}
-        >
+        <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center transition-all duration-200">
           <Check className="w-2.5 h-2.5 text-white" strokeWidth="3" />
         </div>
       );
@@ -89,9 +86,9 @@ const TaskStatusIcon = ({ status, onClick }: TaskStatusIconProps) => {
             "w-4 h-4 border-2 rounded-full cursor-pointer transition-all duration-200 flex items-center justify-center",
             statusColor,
             statusFillHover,
-            isAnimating && "animate-[scale-in_0.3s_ease-out] border-[#c62a2f]"
+            isAnimating && "animate-[scale-in_0.3s_ease-out] border-green-500"
           )}
-          style={isAnimating ? { backgroundColor: '#c62a2f' } : {}}
+          style={isAnimating ? { backgroundColor: '#16a34a' } : {}}
         >
           {isAnimating && (
             <div className="w-full h-full flex items-center justify-center">

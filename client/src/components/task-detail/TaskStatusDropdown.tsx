@@ -27,13 +27,13 @@ const STATUS_OPTIONS: StatusOption[] = [
     key: "progress",
     label: "PROGRESS/ UPDATE",
     color: "text-white",
-    style: { backgroundColor: "#c62a2f" },
+    style: { backgroundColor: "#2563eb" },
   },
   {
     key: "completed",
     label: "COMPLETED", 
     color: "text-white",
-    style: { backgroundColor: "#c62a2f" },
+    style: { backgroundColor: "#16a34a" },
   },
 ];
 

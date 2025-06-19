@@ -23,18 +23,18 @@ const STATUS_CONFIG = {
   progress: {
     key: 'progress' as const,
     label: 'PROGRESS/ UPDATE',
-    color: 'bg-[#c62a2f]',
-    borderColor: 'border-[#c62a2f]',
-    hoverColor: 'hover:bg-[#c62a2f]/50 dark:hover:bg-[#c62a2f]/40',
-    textColor: 'text-[#c62a2f]',
+    color: 'bg-blue-500',
+    borderColor: 'border-blue-500',
+    hoverColor: 'hover:bg-blue-500/50 dark:hover:bg-blue-400/40',
+    textColor: 'text-blue-500',
   },
   completed: {
     key: 'completed' as const,
     label: 'COMPLETED',
-    color: 'bg-[#c62a2f]',
-    borderColor: 'border-[#c62a2f]',
-    hoverColor: 'hover:bg-[#c62a2f]/50 dark:hover:bg-[#c62a2f]/40',
-    textColor: 'text-[#c62a2f]',
+    color: 'bg-green-500',
+    borderColor: 'border-green-500',
+    hoverColor: 'hover:bg-green-500/50 dark:hover:bg-green-400/40',
+    textColor: 'text-green-500',
   },
 } as const;
 
