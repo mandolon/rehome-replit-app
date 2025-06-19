@@ -103,54 +103,32 @@ const DashboardContent = () => {
         key={card.id}
         onClick={() => handleCardClick(card.href)}
         className={cn(
-          "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 cursor-pointer transition-all duration-200 hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 group",
+          "bg-white dark:bg-gray-800 border border-border rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg hover:border-gray-300 dark:hover:border-gray-600 group",
           className
         )}
       >
         <div className="h-full flex flex-col overflow-hidden">
           {!card.isWelcome && Icon && (
-            <div className="flex items-start justify-between mb-2">
-              <Icon className="w-4 h-4 text-muted-foreground" />
+            <div className="flex items-start justify-between mb-4">
+              <div className="p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                <Icon className="w-5 h-5 text-muted-foreground group-hover:text-foreground/80 transition-colors" />
+              </div>
             </div>
           )}
 
           <div className="flex-1 overflow-hidden">
-            <h3 className={cn(
-              "font-medium text-foreground mb-1 group-hover:text-foreground/80 transition-colors line-clamp-2",
-              card.isWelcome ? "text-sm" : "text-sm"
-            )}>
+            <h3 className="font-semibold text-foreground mb-2 text-base group-hover:text-foreground/80 transition-colors line-clamp-2">
               {card.title}
             </h3>
             
-            <p className="text-muted-foreground text-xs leading-tight line-clamp-2">
+            <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2 mb-2">
               {card.subtitle}
             </p>
             
             {card.description && !card.isWelcome && (
-              <p className="text-muted-foreground text-xs leading-tight mt-1 line-clamp-2">
+              <p className="text-muted-foreground text-xs leading-relaxed mt-2 line-clamp-2">
                 {card.description}
               </p>
-            )}
-            
-            {card.description && card.isWelcome && (
-              <p className="text-muted-foreground text-xs leading-tight mt-2 line-clamp-3">
-                {card.description}
-              </p>
-            )}
-
-            {card.isWelcome && (
-              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
-                <div className="grid grid-cols-2 gap-3 text-xs">
-                  <div className="bg-gray-50 dark:bg-gray-700 rounded p-2">
-                    <div className="text-gray-900 dark:text-white font-medium">24</div>
-                    <div className="text-gray-600 dark:text-gray-400">Active Projects</div>
-                  </div>
-                  <div className="bg-gray-50 dark:bg-gray-700 rounded p-2">
-                    <div className="text-gray-900 dark:text-white font-medium">156</div>
-                    <div className="text-gray-600 dark:text-gray-400">Open Tasks</div>
-                  </div>
-                </div>
-              </div>
             )}
           </div>
         </div>
@@ -159,91 +137,121 @@ const DashboardContent = () => {
   };
 
   return (
-    <div className="flex-1 bg-background pl-2 overflow-hidden">
+    <div className="flex-1 bg-background overflow-hidden">
       <div className="h-full flex flex-col">
-        <div className="flex-1 p-4 overflow-auto">
-          {/* Header Section */}
-          <div className="mb-6">
-            <h1 className="text-2xl font-semibold text-foreground">{getGreeting()}, Armando</h1>
+        {/* Header Section with improved spacing */}
+        <div className="flex-shrink-0 px-8 pt-8 pb-6 border-b border-border/50">
+          <div className="max-w-7xl mx-auto">
+            <h1 className="text-3xl font-semibold text-foreground tracking-tight">{getGreeting()}, Armando</h1>
+            <p className="text-muted-foreground mt-2 text-sm">Here's what's happening with your projects today</p>
           </div>
-          
-          <div className="h-full min-h-[500px] max-h-[calc(100vh-180px)]">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-full">
-              {/* Column 1: Different sized cards */}
-              <div className="flex flex-col gap-3 min-h-0">
-                <div className="flex-[2] min-h-[200px]">
-                  <div className="h-full p-6">
+        </div>
+        
+        {/* Main Content Area */}
+        <div className="flex-1 px-4 sm:px-6 lg:px-8 py-6 lg:py-8 overflow-auto">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8 h-full min-h-[600px]">
+              {/* Column 1: Featured Welcome Card + Secondary Cards */}
+              <div className="flex flex-col gap-5 min-h-0">
+                {/* Welcome Card - Larger, more prominent */}
+                <div className="flex-[2.5] min-h-[280px]">
+                  <div
+                    onClick={() => handleCardClick(column1Cards[0].href)}
+                    className="h-full bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border border-blue-200/50 dark:border-blue-800/50 rounded-xl p-8 cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-blue-100/50 dark:hover:shadow-blue-900/20 group"
+                  >
                     <div className="h-full flex flex-col">
-                      <div className="flex-1 overflow-hidden">
-                        <h3 className="font-medium text-foreground mb-1 text-sm">
+                      <div className="flex-1">
+                        <h2 className="text-xl font-semibold text-foreground mb-3 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">
                           {column1Cards[0].title}
-                        </h3>
+                        </h2>
                         
-                        <p className="text-muted-foreground text-xs leading-tight line-clamp-3">
+                        <p className="text-muted-foreground text-sm leading-relaxed line-clamp-4 mb-6">
                           {column1Cards[0].subtitle}
                         </p>
                       </div>
 
-                      <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
-                        <div className="grid grid-cols-2 gap-3 text-xs">
-                          <div className="bg-gray-50 dark:bg-gray-700 rounded p-2">
-                            <div className="text-gray-900 dark:text-white font-medium">24</div>
-                            <div className="text-gray-600 dark:text-gray-400">Active Projects</div>
+                      <div className="mt-auto pt-6 border-t border-blue-200/50 dark:border-blue-800/50">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-lg p-4">
+                            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">24</div>
+                            <div className="text-xs text-muted-foreground font-medium">Active Projects</div>
                           </div>
-                          <div className="bg-gray-50 dark:bg-gray-700 rounded p-2">
-                            <div className="text-gray-900 dark:text-white font-medium">156</div>
-                            <div className="text-gray-600 dark:text-gray-400">Open Tasks</div>
+                          <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-lg p-4">
+                            <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mb-1">156</div>
+                            <div className="text-xs text-muted-foreground font-medium">Open Tasks</div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-                {renderCard(column1Cards[1], 'flex-1 min-h-[120px]')}
-                {renderCard(column1Cards[2], 'flex-1 min-h-[100px]')}
+                
+                {/* Secondary Cards with improved spacing */}
+                <div className="flex-1 space-y-4">
+                  {renderCard(column1Cards[1], 'h-[140px]')}
+                  {renderCard(column1Cards[2], 'h-[140px]')}
+                </div>
               </div>
 
-              {/* Column 2: Uniform smaller cards */}
-              <div className="grid grid-cols-1 gap-3 content-start">
-                {column2Cards.map((card) => renderCard(card, 'h-[110px] min-h-[110px]'))}
+              {/* Column 2: Quick Action Cards */}
+              <div className="grid grid-cols-1 gap-4 content-start">
+                {column2Cards.map((card) => renderCard(card, 'h-[128px] min-h-[128px]'))}
               </div>
 
-              {/* Column 3: Full height card */}
-              <div className="h-full min-h-[400px] lg:min-h-0">
+              {/* Column 3: Analytics Overview */}
+              <div className="h-full min-h-[500px] lg:min-h-0">
                 <div
                   onClick={() => handleCardClick(column3Card.href)}
-                  className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 cursor-pointer transition-all duration-200 hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 group h-full"
+                  className="bg-white dark:bg-gray-800 border border-border rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg hover:border-gray-300 dark:hover:border-gray-600 group h-full"
                 >
                   <div className="h-full flex flex-col">
-                    <div className="flex items-start justify-between mb-4">
-                      <BarChart3 className="w-6 h-6 text-gray-600 dark:text-gray-400" />
+                    <div className="flex items-start justify-between mb-6">
+                      <div className="p-3 bg-green-50 dark:bg-green-950/30 rounded-lg">
+                        <BarChart3 className="w-6 h-6 text-green-600 dark:text-green-400" />
+                      </div>
                     </div>
 
-                    <div className="flex-1 min-h-0">
-                      <h3 className="font-semibold text-gray-900 dark:text-white mb-3 text-lg group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors">
-                        {column3Card.title}
-                      </h3>
-                      
-                      <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
-                        {column3Card.subtitle}
-                      </p>
-                      
-                      <p className="text-gray-500 dark:text-gray-500 text-xs leading-relaxed mb-4">
-                        {column3Card.description}
-                      </p>
+                    <div className="flex-1 min-h-0 space-y-6">
+                      <div>
+                        <h3 className="font-semibold text-foreground mb-2 text-xl group-hover:text-foreground/80 transition-colors">
+                          {column3Card.title}
+                        </h3>
+                        
+                        <p className="text-muted-foreground text-sm mb-4">
+                          {column3Card.subtitle}
+                        </p>
+                        
+                        <p className="text-muted-foreground text-sm leading-relaxed">
+                          {column3Card.description}
+                        </p>
+                      </div>
 
-                      <div className="space-y-2 flex-1">
-                        <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-2">
-                          <div className="text-gray-900 dark:text-white font-medium text-xs mb-1">Project Completion</div>
-                          <div className="text-gray-600 dark:text-gray-400 text-xs">78% average across all projects</div>
+                      <div className="space-y-4 flex-1">
+                        <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border border-green-200/50 dark:border-green-800/50 rounded-lg p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="text-foreground font-semibold text-sm">Project Completion</div>
+                            <div className="text-green-600 dark:text-green-400 font-bold text-lg">78%</div>
+                          </div>
+                          <div className="text-muted-foreground text-xs">Average across all projects</div>
+                          <div className="mt-3 bg-green-200 dark:bg-green-800 rounded-full h-2">
+                            <div className="bg-green-500 h-2 rounded-full" style={{width: '78%'}}></div>
+                          </div>
                         </div>
-                        <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-2">
-                          <div className="text-gray-900 dark:text-white font-medium text-xs mb-1">Team Efficiency</div>
-                          <div className="text-gray-600 dark:text-gray-400 text-xs">+15% improvement this quarter</div>
+                        
+                        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border border-blue-200/50 dark:border-blue-800/50 rounded-lg p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="text-foreground font-semibold text-sm">Team Efficiency</div>
+                            <div className="text-blue-600 dark:text-blue-400 font-bold text-lg">+15%</div>
+                          </div>
+                          <div className="text-muted-foreground text-xs">Improvement this quarter</div>
                         </div>
-                        <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-2">
-                          <div className="text-gray-900 dark:text-white font-medium text-xs mb-1">Revenue Growth</div>
-                          <div className="text-gray-600 dark:text-gray-400 text-xs">$24.5k generated this month</div>
+                        
+                        <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 border border-purple-200/50 dark:border-purple-800/50 rounded-lg p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="text-foreground font-semibold text-sm">Revenue Growth</div>
+                            <div className="text-purple-600 dark:text-purple-400 font-bold text-lg">$24.5k</div>
+                          </div>
+                          <div className="text-muted-foreground text-xs">Generated this month</div>
                         </div>
                       </div>
                     </div>
