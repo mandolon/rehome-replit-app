@@ -5,9 +5,8 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
-import { Check } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type StatusOption = {
@@ -29,7 +28,7 @@ const STATUS_OPTIONS: StatusOption[] = [
   },
   {
     key: "completed",
-    label: "Completed",
+    label: "Completed", 
     color: "bg-green-500 text-white",
   },
 ];
@@ -42,6 +41,7 @@ interface TaskStatusDropdownProps {
 
 const TaskStatusDropdown: React.FC<TaskStatusDropdownProps> = ({ status, onChange, disabled }) => {
   const current = STATUS_OPTIONS.find((s) => s.key === status) || STATUS_OPTIONS[0];
+  const otherOptions = STATUS_OPTIONS.filter((s) => s.key !== status);
 
   return (
     <DropdownMenu>
@@ -55,22 +55,18 @@ const TaskStatusDropdown: React.FC<TaskStatusDropdownProps> = ({ status, onChang
           )}
           aria-label="Change task status"
         >
-          <span className="w-2 h-2 rounded-full mr-2 bg-white/50" style={{ background: "rgba(255,255,255,0.32)" }}/>
           {current.label}
+          <ChevronDown className="w-3 h-3 ml-1" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-[180px] !z-[100]">
-        <DropdownMenuLabel>Change Status</DropdownMenuLabel>
-        {STATUS_OPTIONS.map((option) => (
+        {otherOptions.map((option) => (
           <DropdownMenuItem
             key={option.key}
             onSelect={() => onChange(option.key)}
-            className={cn("flex items-center gap-2 py-2 px-2 cursor-pointer", option.key === status ? "font-semibold" : "")}
-            disabled={option.key === status}
+            className="cursor-pointer py-2 px-3"
           >
-            <span className={cn("w-3 h-3 rounded-full inline-block", option.color)} />
             <span>{option.label}</span>
-            {option.key === status && <Check className="ml-auto w-4 h-4" />}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

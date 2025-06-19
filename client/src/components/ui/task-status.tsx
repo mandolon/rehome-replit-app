@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 // Status configuration
-export const STATUS_CONFIG = {
+const STATUS_CONFIG = {
   redline: {
     key: 'redline' as const,
     label: 'TASK/ REDLINE',
