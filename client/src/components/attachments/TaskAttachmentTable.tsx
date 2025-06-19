@@ -94,7 +94,7 @@ const TaskAttachmentTable: React.FC<TaskAttachmentTableProps> = ({
     'Reference'
   ];
   return (
-    <div className="border rounded-lg overflow-x-auto">
+    <div className="border rounded-lg overflow-x-auto todo-popup-scrollbar">
       <table className="w-full text-xs">
         <thead>
           <tr className="border-b text-muted-foreground">
