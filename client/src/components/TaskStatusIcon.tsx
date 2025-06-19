@@ -69,8 +69,9 @@ const TaskStatusIcon = ({ status, onClick }: TaskStatusIconProps) => {
             "w-4 h-4 border-2 rounded-full cursor-pointer transition-all duration-200 flex items-center justify-center",
             statusColor,
             statusFillHover,
-            isAnimating && "animate-[scale-in_0.3s_ease-out] bg-green-500 border-green-500"
+            isAnimating && "animate-[scale-in_0.3s_ease-out] border-[#c62a2f]"
           )}
+          style={isAnimating ? { backgroundColor: '#c62a2f' } : {}}
         >
           {isAnimating && (
             <div className="w-full h-full flex items-center justify-center">
@@ -88,8 +89,9 @@ const TaskStatusIcon = ({ status, onClick }: TaskStatusIconProps) => {
             "w-4 h-4 border-2 rounded-full cursor-pointer transition-all duration-200 flex items-center justify-center",
             statusColor,
             statusFillHover,
-            isAnimating && "animate-[scale-in_0.3s_ease-out] bg-green-500 border-green-500"
+            isAnimating && "animate-[scale-in_0.3s_ease-out] border-[#c62a2f]"
           )}
+          style={isAnimating ? { backgroundColor: '#c62a2f' } : {}}
         >
           {isAnimating && (
             <div className="w-full h-full flex items-center justify-center">
