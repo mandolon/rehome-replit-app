@@ -4,15 +4,23 @@ import { cn } from '@/lib/utils';
 
 const DashboardContent = () => {
 
+  // Get current time for greeting
+  const currentHour = new Date().getHours();
+  const getGreeting = () => {
+    if (currentHour < 12) return 'Good morning';
+    if (currentHour < 17) return 'Good afternoon';
+    return 'Good evening';
+  };
+
   // Column 1: Different sized cards
   const column1Cards = [
     {
       id: 'project-management',
-      title: 'Project Management',
-      subtitle: '24 active projects',
-      description: 'Manage and track all your projects',
-      icon: LayoutGrid,
-      href: '/tasks'
+      title: `${getGreeting()}, Armando`,
+      subtitle: 'Welcome back to your project dashboard',
+      description: 'You have 5 urgent tasks requiring attention, 3 projects with upcoming deadlines this week, and 2 team members waiting for your approval on design revisions.',
+      href: '/tasks',
+      isWelcome: true
     },
     {
       id: 'task-updates',
@@ -85,8 +93,9 @@ const DashboardContent = () => {
     title: string;
     subtitle: string;
     description?: string;
-    icon: any;
+    icon?: any;
     href: string;
+    isWelcome?: boolean;
   }, className = '') => {
     const Icon = card.icon;
     return (
@@ -99,12 +108,17 @@ const DashboardContent = () => {
         )}
       >
         <div className="h-full flex flex-col">
-          <div className="flex items-start justify-between mb-4">
-            <Icon className="w-6 h-6 text-gray-600 dark:text-gray-400" />
-          </div>
+          {!card.isWelcome && Icon && (
+            <div className="flex items-start justify-between mb-4">
+              <Icon className="w-6 h-6 text-gray-600 dark:text-gray-400" />
+            </div>
+          )}
 
           <div className="flex-1">
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-2 text-base group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors">
+            <h3 className={cn(
+              "font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors",
+              card.isWelcome ? "text-lg" : "text-base"
+            )}>
               {card.title}
             </h3>
             
@@ -116,6 +130,21 @@ const DashboardContent = () => {
               <p className="text-gray-500 dark:text-gray-500 text-xs leading-relaxed">
                 {card.description}
               </p>
+            )}
+
+            {card.isWelcome && (
+              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded p-2">
+                    <div className="text-gray-900 dark:text-white font-medium">24</div>
+                    <div className="text-gray-600 dark:text-gray-400">Active Projects</div>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded p-2">
+                    <div className="text-gray-900 dark:text-white font-medium">156</div>
+                    <div className="text-gray-600 dark:text-gray-400">Open Tasks</div>
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         </div>
