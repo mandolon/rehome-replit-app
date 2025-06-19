@@ -48,33 +48,25 @@ const TaskDetailTitleSection: React.FC<TaskDetailTitleSectionProps> = ({
     saveTaskEdit(task.id);
   };
   return (
-    <div className="space-y-4">
-      {/* Task ID with circle icon and status inline */}
-      <div className="flex items-center justify-between mt-2">
-        <div className="border border-border rounded px-3 py-1 flex items-center gap-2">
+    <div className="space-y-6">
+      {/* Task metadata row - cleaner, more spaced layout */}
+      <div className="flex items-center gap-4 text-sm text-muted-foreground">
+        <div className="flex items-center gap-2">
           <div 
-            className="w-3 h-3 rounded-full border-2 flex items-center justify-center"
-            style={{ borderColor: getStatusColor(task.status) }}
-          >
-            <div 
-              className="w-1 h-1 rounded-full"
-              style={{ backgroundColor: getStatusColor(task.status) }}
-            />
-          </div>
-          <span className="text-xs font-semibold">Task</span>
-          <div className="w-px h-4 bg-border"></div>
-          <span className="text-xs font-semibold text-muted-foreground">{task.taskId}</span>
-        </div>
-        <div className="flex-shrink-0">
-          <TaskStatusDropdown
-            status={task.status}
-            onChange={onChangeStatus}
-            disabled={isEditing}
+            className="w-2 h-2 rounded-full"
+            style={{ backgroundColor: getStatusColor(task.status) }}
           />
+          <span className="font-medium text-foreground">{task.taskId}</span>
         </div>
+        <div className="h-4 w-px bg-border"></div>
+        <TaskStatusDropdown
+          status={task.status}
+          onChange={onChangeStatus}
+          disabled={isEditing}
+        />
       </div>
 
-      {/* Task title - separate section */}
+      {/* Task title - prominent and clean */}
       <div className="flex-1 min-w-0">
         {isEditing ? (
           <input
@@ -83,16 +75,19 @@ const TaskDetailTitleSection: React.FC<TaskDetailTitleSectionProps> = ({
             onChange={(e) => setEditingValue(e.target.value)}
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
-            className="text-2xl font-semibold opacity-60 bg-transparent border-none outline-none focus:ring-0 px-1 py-0.5 -mx-1 -my-0.5 rounded transition-colors truncate w-full"
+            className="text-3xl font-bold bg-transparent border-none outline-none focus:ring-0 w-full placeholder:text-muted-foreground/50"
             autoFocus
+            placeholder="Task title..."
           />
         ) : (
           <h1
-            className="text-2xl font-semibold cursor-pointer hover:bg-accent/50 rounded px-1 py-0.5 -mx-1 -my-0.5 transition-colors truncate"
+            className="text-3xl font-bold cursor-pointer hover:bg-accent/30 rounded-lg p-2 -mx-2 -my-2 transition-all duration-200 group"
             onClick={() => startEditingTask(task)}
             title="Click to edit title"
           >
-            {task.title}
+            <span className="group-hover:text-foreground/80 transition-colors">
+              {task.title}
+            </span>
           </h1>
         )}
       </div>

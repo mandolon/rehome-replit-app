@@ -19,21 +19,21 @@ type StatusOption = {
 const STATUS_OPTIONS: StatusOption[] = [
   {
     key: "redline",
-    label: "TASK/ REDLINE",
-    color: "text-white",
-    style: { backgroundColor: "#c62a2f" },
+    label: "Redline",
+    color: "text-red-700",
+    style: { backgroundColor: "#fef2f2", borderColor: "#fecaca" },
   },
   {
     key: "progress",
-    label: "PROGRESS/ UPDATE",
-    color: "text-white",
-    style: { backgroundColor: "#2563eb" },
+    label: "In Progress",
+    color: "text-blue-700",
+    style: { backgroundColor: "#eff6ff", borderColor: "#bfdbfe" },
   },
   {
     key: "completed",
-    label: "COMPLETED", 
-    color: "text-white",
-    style: { backgroundColor: "#16a34a" },
+    label: "Completed", 
+    color: "text-green-700",
+    style: { backgroundColor: "#f0fdf4", borderColor: "#bbf7d0" },
   },
 ];
 
@@ -53,7 +53,7 @@ const TaskStatusDropdown: React.FC<TaskStatusDropdownProps> = ({ status, onChang
         <button
           disabled={disabled}
           className={cn(
-            "inline-flex items-center rounded border border-transparent px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+            "inline-flex items-center rounded-md border px-3 py-1.5 text-sm font-medium transition-all hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
             current.color,
             disabled && "opacity-60 pointer-events-none"
           )}
@@ -61,7 +61,7 @@ const TaskStatusDropdown: React.FC<TaskStatusDropdownProps> = ({ status, onChang
           aria-label="Change task status"
         >
           {current.label}
-          <ChevronDown className="w-3 h-3 ml-1" />
+          <ChevronDown className="w-4 h-4 ml-1.5 opacity-60" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-[180px] !z-[100]">

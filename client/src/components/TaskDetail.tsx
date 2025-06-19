@@ -25,8 +25,8 @@ const TaskDetail = ({ isOpen, onClose, onProjectClick, task, onDeleted }: TaskDe
 
       <div className="flex-1 flex overflow-hidden min-h-0">
         {/* Main Content */}
-        <ScrollArea className="flex-1 px-2 min-h-0">
-          <div className="max-w-4xl mx-auto p-3 space-y-4">
+        <ScrollArea className="flex-1 min-h-0">
+          <div className="max-w-4xl mx-auto px-6 py-8 space-y-8">
             <TaskDetailForm task={task} />
             <TaskDetailAttachments taskId={task.taskId} />
             {/* Trash Button moved below attachments */}
