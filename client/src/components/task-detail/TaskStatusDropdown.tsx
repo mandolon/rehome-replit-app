@@ -13,23 +13,27 @@ type StatusOption = {
   key: "redline" | "progress" | "completed";
   label: string;
   color: string;
+  style: React.CSSProperties;
 };
 
 const STATUS_OPTIONS: StatusOption[] = [
   {
     key: "redline",
     label: "TASK/ REDLINE",
-    color: "bg-red-500 text-white",
+    color: "text-white",
+    style: { backgroundColor: "#c62a2f" },
   },
   {
     key: "progress",
     label: "PROGRESS/ UPDATE",
-    color: "bg-blue-500 text-white",
+    color: "text-white",
+    style: { backgroundColor: "#c62a2f" },
   },
   {
     key: "completed",
     label: "COMPLETED", 
-    color: "bg-green-500 text-white",
+    color: "text-white",
+    style: { backgroundColor: "#c62a2f" },
   },
 ];
 
@@ -53,6 +57,7 @@ const TaskStatusDropdown: React.FC<TaskStatusDropdownProps> = ({ status, onChang
             current.color,
             disabled && "opacity-60 pointer-events-none"
           )}
+          style={current.style}
           aria-label="Change task status"
         >
           {current.label}

@@ -27,6 +27,35 @@ function formatFileSize(bytes: number): string {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
 }
 
+// Function to get file type icon with extension text
+function getFileTypeIcon(fileName: string, fileType: string): React.ReactNode {
+  const extension = fileName.split('.').pop()?.toUpperCase() || fileType.toUpperCase();
+  const bgColor = '#c62a2f';
+  
+  return (
+    <div 
+      className="inline-flex items-center justify-center w-8 h-6 rounded text-[10px] font-bold text-white mr-2"
+      style={{ backgroundColor: bgColor }}
+    >
+      {extension.slice(0, 3)}
+    </div>
+  );
+}
+
+// Function to format date in "June 18, 25" style
+function formatDate(dateString: string): string {
+  try {
+    const date = new Date(dateString);
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const month = months[date.getMonth()];
+    const day = date.getDate();
+    const year = date.getFullYear().toString().slice(-2);
+    return `${month} ${day}, ${year}`;
+  } catch {
+    return dateString;
+  }
+}
+
 interface TaskAttachmentTableProps {
   attachments: TaskAttachment[];
   onRemove?: (attachmentId: string) => void;
