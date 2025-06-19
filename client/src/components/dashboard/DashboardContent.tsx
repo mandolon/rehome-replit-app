@@ -128,19 +128,7 @@ const DashboardContent = () => {
       <div className="h-full flex flex-col">
         <div className="px-4 pt-6 pb-4">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[600px]">
-            {/* Column 1: Different sized cards */}
-            <div className="flex flex-col gap-4">
-              {renderCard(column1Cards[0], 'h-64')}
-              {renderCard(column1Cards[1], 'h-40')}
-              {renderCard(column1Cards[2], 'flex-1')}
-            </div>
-
-            {/* Column 2: Uniform smaller cards */}
-            <div className="grid grid-cols-1 gap-4 content-start">
-              {column2Cards.map((card) => renderCard(card, 'h-32'))}
-            </div>
-
-            {/* Column 3: Full height card */}
+            {/* Column 1: Full height card (moved from right) */}
             <div className="h-full">
               <div
                 onClick={() => handleCardClick(column3Card.href)}
@@ -181,6 +169,18 @@ const DashboardContent = () => {
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Column 2: Different sized cards (moved from left) */}
+            <div className="flex flex-col gap-4">
+              {renderCard(column1Cards[0], 'h-64')}
+              {renderCard(column1Cards[1], 'h-40')}
+              {renderCard(column1Cards[2], 'flex-1')}
+            </div>
+
+            {/* Column 3: Uniform smaller cards (stays in middle) */}
+            <div className="grid grid-cols-1 gap-4 content-start">
+              {column2Cards.map((card) => renderCard(card, 'h-32'))}
             </div>
           </div>
         </div>
