@@ -85,7 +85,6 @@ const TaskAttachmentTable: React.FC<TaskAttachmentTableProps> = ({
           <tr className="border-b text-muted-foreground">
             <th className="py-2 px-3 text-left font-medium">Name</th>
             <th className="py-2 px-1 text-right font-medium whitespace-nowrap w-16">Size</th>
-            <th className="py-2 px-1 text-center font-medium whitespace-nowrap w-12">Type</th>
             <th className="py-2 px-1 text-left font-medium whitespace-nowrap w-24">Category</th>
             <th className="py-2 px-1 text-right font-medium whitespace-nowrap w-20">Date</th>
             <th className="py-2 px-1 text-right font-medium whitespace-nowrap w-16">Author</th>
@@ -95,7 +94,7 @@ const TaskAttachmentTable: React.FC<TaskAttachmentTableProps> = ({
         <tbody>
           {attachments.length === 0 ? (
             <tr>
-              <td colSpan={onRemove ? 7 : 6} className="px-3 py-4 text-center text-muted-foreground">
+              <td colSpan={onRemove ? 6 : 5} className="px-3 py-4 text-center text-muted-foreground">
                 No attachments yet.
               </td>
             </tr>
@@ -120,23 +119,22 @@ const TaskAttachmentTable: React.FC<TaskAttachmentTableProps> = ({
                   className="hover:bg-muted/50 border-b transition-colors group"
                 >
                   <td className="px-3 py-2 truncate">
-                    <span className="inline-block align-middle mr-2">📄</span>
-                    <a
-                      href={attachment.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:underline cursor-pointer truncate"
-                      title={attachment.name}
-                      download={attachment.name}
-                    >
-                      {attachment.name}
-                    </a>
+                    <div className="flex items-center">
+                      {getFileTypeIcon(attachment.name, attachment.fileType)}
+                      <a
+                        href={attachment.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline cursor-pointer truncate"
+                        title={attachment.name}
+                        download={attachment.name}
+                      >
+                        {attachment.name}
+                      </a>
+                    </div>
                   </td>
                   <td className="px-1 py-2 whitespace-nowrap text-right text-muted-foreground w-16">
                     {formatFileSize(attachment.size)}
-                  </td>
-                  <td className="px-1 py-2 whitespace-nowrap text-center text-muted-foreground w-12">
-                    {attachment.fileType}
                   </td>
                   <td className="px-1 py-2 w-24">
                     <Select
@@ -155,7 +153,7 @@ const TaskAttachmentTable: React.FC<TaskAttachmentTableProps> = ({
                       </SelectContent>
                     </Select>
                   </td>
-                  <td className="px-1 py-2 whitespace-nowrap text-right text-muted-foreground w-20">{attachment.dateCreated}</td>
+                  <td className="px-1 py-2 whitespace-nowrap text-right text-muted-foreground w-20">{formatDate(attachment.dateCreated)}</td>
                   <td className="px-1 py-2 text-right w-16">
                     <span className="truncate text-xs text-muted-foreground block text-ellipsis">
                       {displayAuthor}

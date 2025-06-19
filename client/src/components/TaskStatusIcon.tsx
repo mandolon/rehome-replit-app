@@ -27,11 +27,11 @@ const TaskStatusIcon = ({ status, onClick }: TaskStatusIconProps) => {
   const statusColor = (() => {
     switch (status) {
       case 'completed':
-        return 'bg-green-500 text-white';
+        return 'text-white';
       case 'redline':
-        return 'border-red-500';
+        return 'border-[#c62a2f]';
       case 'progress':
-        return 'border-blue-500';
+        return 'border-[#c62a2f]';
       default:
         return 'border-gray-300';
     }
@@ -41,9 +41,9 @@ const TaskStatusIcon = ({ status, onClick }: TaskStatusIconProps) => {
   const statusFillHover = (() => {
     switch (status) {
       case 'redline':
-        return 'hover:bg-red-500/50 dark:hover:bg-red-400/40';
+        return 'hover:bg-[#c62a2f]/50 dark:hover:bg-[#c62a2f]/40';
       case 'progress':
-        return 'hover:bg-blue-500/50 dark:hover:bg-blue-400/40';
+        return 'hover:bg-[#c62a2f]/50 dark:hover:bg-[#c62a2f]/40';
       default:
         return 'hover:bg-gray-300/50 dark:hover:bg-gray-700/40';
     }
@@ -51,9 +51,12 @@ const TaskStatusIcon = ({ status, onClick }: TaskStatusIconProps) => {
 
   const getStatusIcon = () => {
     if (status === 'completed') {
-      // Completed state: fully filled green, no hover effect on fill
+      // Completed state: fully filled with #c62a2f color
       return (
-        <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center transition-all duration-200">
+        <div 
+          className="w-4 h-4 rounded-full flex items-center justify-center transition-all duration-200"
+          style={{ backgroundColor: '#c62a2f' }}
+        >
           <Check className="w-2.5 h-2.5 text-white" strokeWidth="3" />
         </div>
       );

@@ -347,5 +347,4 @@ export const TaskGroup = ({
 };
 
 // Export all components and types
-export type { TaskStatus, TaskStatusIconProps, TaskStatusBadgeProps, TaskStatusDropdownProps, TaskGroupHeaderProps, TaskGroupProps };
-export { STATUS_CONFIG };
+export type { TaskStatusIconProps, TaskStatusBadgeProps, TaskStatusDropdownProps, TaskGroupHeaderProps, TaskGroupProps };
