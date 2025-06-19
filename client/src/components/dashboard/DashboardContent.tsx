@@ -16,9 +16,9 @@ const DashboardContent = () => {
   const column1Cards = [
     {
       id: 'project-management',
-      title: `${getGreeting()}, Armando`,
-      subtitle: 'Welcome back to your project dashboard',
-      description: 'You have 5 urgent tasks requiring attention, 3 projects with upcoming deadlines this week, and 2 team members waiting for your approval on design revisions.',
+      title: 'Welcome back to your project dashboard',
+      subtitle: 'You have 5 urgent tasks requiring attention, 3 projects with upcoming deadlines this week, and 2 team members waiting for your approval on design revisions.',
+      description: undefined,
       href: '/tasks',
       isWelcome: true
     },
@@ -117,7 +117,7 @@ const DashboardContent = () => {
           <div className="flex-1 overflow-hidden">
             <h3 className={cn(
               "font-medium text-foreground mb-1 group-hover:text-foreground/80 transition-colors line-clamp-2",
-              card.isWelcome ? "text-base" : "text-sm"
+              card.isWelcome ? "text-sm" : "text-sm"
             )}>
               {card.title}
             </h3>
@@ -139,15 +139,15 @@ const DashboardContent = () => {
             )}
 
             {card.isWelcome && (
-              <div className="mt-3 pt-3 border-t border-border">
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div className="bg-accent rounded p-2">
-                    <div className="text-foreground font-medium text-sm">24</div>
-                    <div className="text-muted-foreground text-xs">Active Projects</div>
+              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded p-2">
+                    <div className="text-gray-900 dark:text-white font-medium">24</div>
+                    <div className="text-gray-600 dark:text-gray-400">Active Projects</div>
                   </div>
-                  <div className="bg-accent rounded p-2">
-                    <div className="text-foreground font-medium text-sm">156</div>
-                    <div className="text-muted-foreground text-xs">Open Tasks</div>
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded p-2">
+                    <div className="text-gray-900 dark:text-white font-medium">156</div>
+                    <div className="text-gray-600 dark:text-gray-400">Open Tasks</div>
                   </div>
                 </div>
               </div>
@@ -162,11 +162,43 @@ const DashboardContent = () => {
     <div className="flex-1 bg-background pl-2 overflow-hidden">
       <div className="h-full flex flex-col">
         <div className="flex-1 p-4 overflow-auto">
-          <div className="h-full min-h-[500px] max-h-[calc(100vh-120px)]">
+          {/* Header Section */}
+          <div className="mb-6">
+            <h1 className="text-2xl font-semibold text-foreground">{getGreeting()}, Armando</h1>
+          </div>
+          
+          <div className="h-full min-h-[500px] max-h-[calc(100vh-180px)]">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-full">
               {/* Column 1: Different sized cards */}
               <div className="flex flex-col gap-3 min-h-0">
-                {renderCard(column1Cards[0], 'flex-[2] min-h-[200px]')}
+                <div className="flex-[2] min-h-[200px]">
+                  <div className="h-full p-6">
+                    <div className="h-full flex flex-col">
+                      <div className="flex-1 overflow-hidden">
+                        <h3 className="font-medium text-foreground mb-1 text-sm">
+                          {column1Cards[0].title}
+                        </h3>
+                        
+                        <p className="text-muted-foreground text-xs leading-tight line-clamp-3">
+                          {column1Cards[0].subtitle}
+                        </p>
+                      </div>
+
+                      <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
+                        <div className="grid grid-cols-2 gap-3 text-xs">
+                          <div className="bg-gray-50 dark:bg-gray-700 rounded p-2">
+                            <div className="text-gray-900 dark:text-white font-medium">24</div>
+                            <div className="text-gray-600 dark:text-gray-400">Active Projects</div>
+                          </div>
+                          <div className="bg-gray-50 dark:bg-gray-700 rounded p-2">
+                            <div className="text-gray-900 dark:text-white font-medium">156</div>
+                            <div className="text-gray-600 dark:text-gray-400">Open Tasks</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 {renderCard(column1Cards[1], 'flex-1 min-h-[120px]')}
                 {renderCard(column1Cards[2], 'flex-1 min-h-[100px]')}
               </div>
