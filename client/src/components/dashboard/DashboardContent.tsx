@@ -116,32 +116,32 @@ const DashboardContent = () => {
 
           <div className="flex-1">
             <h3 className={cn(
-              "font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors",
-              card.isWelcome ? "text-lg" : "text-base"
+              "font-medium text-foreground mb-1 group-hover:text-foreground/80 transition-colors truncate",
+              card.isWelcome ? "text-base" : "text-sm"
             )}>
               {card.title}
             </h3>
             
-            <p className="text-gray-600 dark:text-gray-400 text-sm mb-3">
+            <p className="text-muted-foreground text-xs mb-2 truncate">
               {card.subtitle}
             </p>
             
             {card.description && (
-              <p className="text-gray-500 dark:text-gray-500 text-xs leading-relaxed">
+              <p className="text-muted-foreground text-xs leading-relaxed">
                 {card.description}
               </p>
             )}
 
             {card.isWelcome && (
-              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
-                <div className="grid grid-cols-2 gap-3 text-xs">
-                  <div className="bg-gray-50 dark:bg-gray-700 rounded p-2">
-                    <div className="text-gray-900 dark:text-white font-medium">24</div>
-                    <div className="text-gray-600 dark:text-gray-400">Active Projects</div>
+              <div className="mt-3 pt-3 border-t border-border">
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="bg-accent rounded p-2">
+                    <div className="text-foreground font-medium text-sm">24</div>
+                    <div className="text-muted-foreground text-xs">Active Projects</div>
                   </div>
-                  <div className="bg-gray-50 dark:bg-gray-700 rounded p-2">
-                    <div className="text-gray-900 dark:text-white font-medium">156</div>
-                    <div className="text-gray-600 dark:text-gray-400">Open Tasks</div>
+                  <div className="bg-accent rounded p-2">
+                    <div className="text-foreground font-medium text-sm">156</div>
+                    <div className="text-muted-foreground text-xs">Open Tasks</div>
                   </div>
                 </div>
               </div>
@@ -167,7 +167,7 @@ const DashboardContent = () => {
 
               {/* Column 2: Uniform smaller cards */}
               <div className="grid grid-cols-1 gap-3 content-start">
-                {column2Cards.map((card) => renderCard(card, 'h-24 min-h-[96px]'))}
+                {column2Cards.map((card) => renderCard(card, 'h-20 min-h-[80px]'))}
               </div>
 
               {/* Column 3: Full height card */}
