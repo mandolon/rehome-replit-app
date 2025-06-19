@@ -23,6 +23,18 @@ const TaskDetailTitleSection: React.FC<TaskDetailTitleSectionProps> = ({
   task,
   onChangeStatus
 }) => {
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'redline':
+        return '#c62a2f';
+      case 'progress':
+        return '#3b82f6'; // blue
+      case 'completed':
+        return '#10b981'; // green
+      default:
+        return '#6b7280'; // gray
+    }
+  };
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -42,11 +54,11 @@ const TaskDetailTitleSection: React.FC<TaskDetailTitleSectionProps> = ({
         <div className="border border-border rounded px-3 py-1 flex items-center gap-2">
           <div 
             className="w-3 h-3 rounded-full border-2 flex items-center justify-center"
-            style={{ borderColor: '#c62a2f' }}
+            style={{ borderColor: getStatusColor(task.status) }}
           >
             <div 
               className="w-1 h-1 rounded-full"
-              style={{ backgroundColor: '#c62a2f' }}
+              style={{ backgroundColor: getStatusColor(task.status) }}
             />
           </div>
           <span className="text-xs font-semibold">Task</span>
