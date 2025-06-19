@@ -64,7 +64,10 @@ const TaskStatusDropdown: React.FC<TaskStatusDropdownProps> = ({ status, onChang
           <ChevronDown className="w-3 h-3 ml-1" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="min-w-[180px] !z-[100]">
+      <DropdownMenuContent align="start" className="min-w-[180px] !z-[100]">
+        <div className="px-3 py-2 border-b border-border">
+          <p className="text-xs text-muted-foreground font-medium">Update Status</p>
+        </div>
         {otherOptions.map((option) => (
           <DropdownMenuItem
             key={option.key}
