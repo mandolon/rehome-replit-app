@@ -15,10 +15,10 @@ const STATUS_CONFIG = {
   redline: {
     key: 'redline' as const,
     label: 'TASK/ REDLINE',
-    color: 'bg-red-500',
-    borderColor: 'border-red-500',
-    hoverColor: 'hover:bg-red-500/50 dark:hover:bg-red-400/40',
-    textColor: 'text-red-500',
+    color: 'bg-[#c62a2f]',
+    borderColor: 'border-[#c62a2f]',
+    hoverColor: 'hover:bg-[#c62a2f]/50 dark:hover:bg-[#c62a2f]/40',
+    textColor: 'text-[#c62a2f]',
   },
   progress: {
     key: 'progress' as const,
