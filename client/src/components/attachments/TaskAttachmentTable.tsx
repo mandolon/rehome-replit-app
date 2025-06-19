@@ -5,6 +5,7 @@ import { TaskAttachment } from "@/contexts/TaskAttachmentContext";
 import { TEAM_USERS } from "@/utils/teamUsers";
 import { formatFirstNameLastInitial } from "@/utils/taskUtils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 // Util for mapping author string to a Team User object to match tasks table logic
 function findTeamUserByCreatedBy(createdBy: string): { fullName?: string; name?: string; email?: string } | null {

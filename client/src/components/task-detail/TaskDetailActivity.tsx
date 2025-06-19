@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { useUser } from '@/contexts/UserContext';
 import TaskChatInput from './TaskChatInput';
 import { fetchTaskMessages, insertTaskMessage, subscribeToTaskMessages, TaskMessage } from '@/data/taskMessagesSupabase';
@@ -107,7 +108,8 @@ const TaskDetailActivity = ({ taskId }: TaskDetailActivityProps) => {
       </div>
 
       {/* Message List */}
-      <div ref={messageListRef} className="flex-1 overflow-y-auto p-3 space-y-6 max-h-full todo-popup-scrollbar">
+      <ScrollArea className="flex-1 p-3 max-h-full">
+        <div ref={messageListRef} className="space-y-6">
         {loading && <div>Loading messages...</div>}
         {error && <div className="text-red-500 text-xs">{error}</div>}
         {!loading && !error && messages.map((msg) => {
@@ -149,7 +151,8 @@ const TaskDetailActivity = ({ taskId }: TaskDetailActivityProps) => {
             </div>
           );
         })}
-      </div>
+        </div>
+      </ScrollArea>
 
       {/* Chat Message Input */}
       <TaskChatInput onSendMessage={handleSendMessageInput} disabled={!currentUser || !taskId} />

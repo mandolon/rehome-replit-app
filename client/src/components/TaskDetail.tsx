@@ -5,6 +5,7 @@ import TaskDetailForm from './task-detail/TaskDetailForm';
 import TaskDetailAttachments from './task-detail/TaskDetailAttachments';
 import TaskDetailActivity from './task-detail/TaskDetailActivity';
 import TaskDetailTrashButton from './task-detail/TaskDetailTrashButton';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Task } from '@/types/task';
 
 interface TaskDetailProps {
@@ -24,14 +25,14 @@ const TaskDetail = ({ isOpen, onClose, onProjectClick, task, onDeleted }: TaskDe
 
       <div className="flex-1 flex overflow-hidden min-h-0">
         {/* Main Content */}
-        <div className="flex-1 overflow-y-auto px-2 min-h-0 todo-popup-scrollbar">
+        <ScrollArea className="flex-1 px-2 min-h-0">
           <div className="max-w-4xl mx-auto p-3 space-y-4">
             <TaskDetailForm task={task} />
             <TaskDetailAttachments taskId={task.taskId} />
             {/* Trash Button moved below attachments */}
             <TaskDetailTrashButton task={task} onDeleted={onDeleted} />
           </div>
-        </div>
+        </ScrollArea>
 
         {/* Activity Sidebar */}
         <div className="w-[25vw] min-w-[280px] max-w-[600px] border-l border-border flex-shrink-0 overflow-hidden">
