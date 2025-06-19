@@ -95,104 +95,107 @@ const TaskAttachmentTable: React.FC<TaskAttachmentTableProps> = ({
     'Reference'
   ];
   return (
-    <div className="border rounded-lg overflow-x-auto todo-popup-scrollbar">
-      <table className="w-full text-xs">
-        <thead>
-          <tr className="border-b text-muted-foreground">
-            <th className="py-2 px-3 text-left font-medium">Name</th>
-            <th className="py-2 px-1 text-right font-medium whitespace-nowrap w-16">Size</th>
-            <th className="py-2 px-1 text-left font-medium whitespace-nowrap w-24">Category</th>
-            <th className="py-2 px-1 text-right font-medium whitespace-nowrap w-20">Date</th>
-            <th className="py-2 px-1 text-right font-medium whitespace-nowrap w-16">Author</th>
-            {onRemove && <th className="py-2 px-1 text-right font-medium w-8"></th>}
-          </tr>
-        </thead>
-        <tbody>
-          {attachments.length === 0 ? (
-            <tr>
-              <td colSpan={onRemove ? 6 : 5} className="px-3 py-4 text-center text-muted-foreground">
-                No attachments yet.
-              </td>
+    <ScrollArea className="border rounded-lg">
+      <div className="w-full">
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="border-b text-muted-foreground">
+              <th className="py-2 px-3 text-left font-medium">Name</th>
+              <th className="py-2 px-1 text-right font-medium whitespace-nowrap w-16">Size</th>
+              <th className="py-2 px-1 text-left font-medium whitespace-nowrap w-24">Category</th>
+              <th className="py-2 px-1 text-right font-medium whitespace-nowrap w-20">Date</th>
+              <th className="py-2 px-1 text-right font-medium whitespace-nowrap w-16">Author</th>
+              {onRemove && <th className="py-2 px-1 text-right font-medium w-8"></th>}
             </tr>
-          ) : (
-            attachments.map((attachment) => {
-              // Format author to "FirstName L." using same logic as tasks table
-              const teamUser = findTeamUserByCreatedBy(attachment.author);
-              let displayAuthor = "";
-              if (teamUser?.fullName) {
-                displayAuthor = formatFirstNameLastInitial(teamUser.fullName);
-              } else if (teamUser?.name) {
-                displayAuthor = formatFirstNameLastInitial(teamUser.name);
-              } else if (attachment.author) {
-                displayAuthor = formatFirstNameLastInitial(attachment.author);
-              } else {
-                displayAuthor = "Unknown";
-              }
+          </thead>
+          <tbody>
+            {attachments.length === 0 ? (
+              <tr>
+                <td colSpan={onRemove ? 6 : 5} className="px-3 py-4 text-center text-muted-foreground">
+                  No attachments yet.
+                </td>
+              </tr>
+            ) : (
+              attachments.map((attachment) => {
+                // Format author to "FirstName L." using same logic as tasks table
+                const teamUser = findTeamUserByCreatedBy(attachment.author);
+                let displayAuthor = "";
+                if (teamUser?.fullName) {
+                  displayAuthor = formatFirstNameLastInitial(teamUser.fullName);
+                } else if (teamUser?.name) {
+                  displayAuthor = formatFirstNameLastInitial(teamUser.name);
+                } else if (attachment.author) {
+                  displayAuthor = formatFirstNameLastInitial(attachment.author);
+                } else {
+                  displayAuthor = "Unknown";
+                }
 
-              return (
-                <tr
-                  key={attachment.id}
-                  className="hover:bg-muted/50 border-b transition-colors group"
-                >
-                  <td className="px-3 py-2 truncate">
-                    <div className="flex items-center">
-                      {getFileTypeIcon(attachment.name, attachment.fileType)}
-                      <a
-                        href={attachment.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hover:underline cursor-pointer truncate"
-                        title={attachment.name}
-                        download={attachment.name}
-                      >
-                        {attachment.name}
-                      </a>
-                    </div>
-                  </td>
-                  <td className="px-1 py-2 whitespace-nowrap text-right text-muted-foreground w-16">
-                    {formatFileSize(attachment.size)}
-                  </td>
-                  <td className="px-1 py-2 w-24">
-                    <Select
-                      value={attachment.category}
-                      onValueChange={(value) => onCategoryChange?.(attachment.id, value)}
-                    >
-                      <SelectTrigger className="h-6 text-xs border-0 bg-transparent hover:bg-accent w-full">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categoryOptions.map(category => (
-                          <SelectItem key={category} value={category} className="text-xs">
-                            {category}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </td>
-                  <td className="px-1 py-2 whitespace-nowrap text-right text-muted-foreground w-20">{formatDate(attachment.dateCreated)}</td>
-                  <td className="px-1 py-2 text-right w-16">
-                    <span className="truncate text-xs text-muted-foreground block text-ellipsis">
-                      {displayAuthor}
-                    </span>
-                  </td>
-                  {onRemove && (
-                    <td className="px-1 py-2 text-right w-8 align-bottom">
-                      <button
-                        onClick={() => onRemove(attachment.id)}
-                        className="p-1 hover:bg-accent rounded opacity-0 group-hover:opacity-100 transition-opacity"
-                        aria-label="Remove attachment"
-                      >
-                        <X className="w-4 h-4 text-destructive" />
-                      </button>
+                return (
+                  <tr
+                    key={attachment.id}
+                    className="hover:bg-muted/50 border-b transition-colors group"
+                  >
+                    <td className="px-3 py-2 truncate">
+                      <div className="flex items-center">
+                        {getFileTypeIcon(attachment.name, attachment.fileType)}
+                        <a
+                          href={attachment.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hover:underline cursor-pointer truncate"
+                          title={attachment.name}
+                          download={attachment.name}
+                        >
+                          {attachment.name}
+                        </a>
+                      </div>
                     </td>
-                  )}
-                </tr>
-              );
-            })
-          )}
-        </tbody>
-      </table>
-    </div>
+                    <td className="px-1 py-2 whitespace-nowrap text-right text-muted-foreground w-16">
+                      {formatFileSize(attachment.size)}
+                    </td>
+                    <td className="px-1 py-2 w-24">
+                      <Select
+                        value={attachment.category}
+                        onValueChange={(value) => onCategoryChange?.(attachment.id, value)}
+                      >
+                        <SelectTrigger className="h-6 text-xs border-0 bg-transparent hover:bg-accent w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categoryOptions.map(category => (
+                            <SelectItem key={category} value={category} className="text-xs">
+                              {category}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </td>
+                    <td className="px-1 py-2 whitespace-nowrap text-right text-muted-foreground w-20">{formatDate(attachment.dateCreated)}</td>
+                    <td className="px-1 py-2 text-right w-16">
+                      <span className="truncate text-xs text-muted-foreground block text-ellipsis">
+                        {displayAuthor}
+                      </span>
+                    </td>
+                    {onRemove && (
+                      <td className="px-1 py-2 text-right w-8 align-bottom">
+                        <button
+                          onClick={() => onRemove(attachment.id)}
+                          className="p-1 hover:bg-accent rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                          aria-label="Remove attachment"
+                        >
+                          <X className="w-4 h-4 text-destructive" />
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
+      </div>
+      <ScrollBar orientation="horizontal" />
+    </ScrollArea>
   );
 };
 
