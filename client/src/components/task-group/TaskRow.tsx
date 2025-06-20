@@ -9,6 +9,7 @@ import DeleteTaskDialog from '../DeleteTaskDialog';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { formatDate } from '@/utils/taskUtils';
 import { Task } from '@/types/task';
+import { useTaskToast } from '@/components/ui/unified-toast';
 
 interface TaskRowProps {
   task: any;
@@ -52,6 +53,7 @@ const TaskRow = React.memo(({
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const queryClient = useQueryClient();
+  const { taskDeleted } = useTaskToast();
 
   // Direct API delete mutation
   const deleteTaskMutation = useMutation({
@@ -68,6 +70,7 @@ const TaskRow = React.memo(({
       queryClient.invalidateQueries({ queryKey: ['task-board-data'] });
       setShowDeleteDialog(false);
       setIsDeleting(false);
+      taskDeleted(task.title);
     },
     onError: () => {
       setIsDeleting(false);

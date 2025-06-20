@@ -48,17 +48,25 @@ const Projects = () => {
 
   const deleteProjectMutation = useMutation({
     mutationFn: async (projectId: string) => {
+      // Get project data before deletion
+      const project = projects.find((p: Project) => p.projectId === projectId);
       const response = await fetch(`/api/projects/${projectId}`, {
         method: 'DELETE',
       });
       if (!response.ok) {
         throw new Error('Failed to delete project');
       }
+      return { projectId, projectTitle: project?.title || projectId };
     },
-    onSuccess: (_, projectId) => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/projects'] });
-      const project = projects.find((p: Project) => p.projectId === projectId);
-      projectDeleted(project?.title || projectId);
+      projectDeleted(data.projectTitle);
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        description: error instanceof Error ? error.message : "Failed to delete project.",
+      });
     },
   });
 
