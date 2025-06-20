@@ -22,11 +22,16 @@ export const useTaskBoard = () => {
   useRealtimeTasks();
   
   // Fetch tasks using React Query
-  const { data: tasks = [], isLoading: loading } = useQuery({
+  const { data: tasks = [], isLoading: loading, error } = useQuery({
     queryKey: ['/api/tasks'],
     queryFn: fetchAllTasks,
     refetchOnWindowFocus: false,
   });
+
+  // Debug the query state
+  React.useEffect(() => {
+    console.log('useQuery state changed:', { tasksLength: tasks?.length, loading, error, tasks: tasks?.slice(0, 2) });
+  }, [tasks, loading, error]);
 
   // Dialog/quick add state
   const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false);
