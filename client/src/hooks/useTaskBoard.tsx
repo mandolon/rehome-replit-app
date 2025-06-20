@@ -21,16 +21,19 @@ export const useTaskBoard = () => {
   // Enable real-time updates
   useRealtimeTasks();
   
-  // Fetch tasks using React Query - memoize the queryFn to prevent re-creation
-  const tasksQueryFn = React.useCallback(() => {
-    console.log('Executing fetchAllTasks query');
-    return fetchAllTasks();
-  }, []);
-
+  // Direct API call with React Query - bypass configuration issues
   const { data: tasks = [], isLoading: loading, error } = useQuery({
-    queryKey: ['tasks'],
-    queryFn: tasksQueryFn,
-    enabled: true, // Explicitly enable the query
+    queryKey: ['api-tasks'],
+    queryFn: async () => {
+      console.log('Making direct API call for tasks');
+      const response = await fetch('/api/tasks');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log('Tasks loaded:', data.length);
+      return data;
+    },
   });
 
   // Debug the query state
