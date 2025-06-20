@@ -282,8 +282,11 @@ export class DatabaseStorage implements IStorage {
         deletedAt: null,
         deletedBy: null
       });
+    } else if (item.itemType === 'note') {
+      // Notes are handled client-side only for now
+      // The restoration will be handled by the frontend note system
+      console.log(`Note ${item.itemId} restored from trash`);
     }
-    // Add more item types (notes) here when implemented
     
     // Remove from trash
     await db.delete(trashItems).where(eq(trashItems.id, trashItemId));

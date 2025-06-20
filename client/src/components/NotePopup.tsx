@@ -182,8 +182,41 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
     setEditText('');
   };
 
-  const deleteNote = (id: string) => {
-    setNotes(notes.filter(note => note.id !== id));
+  const deleteNote = async (id: string) => {
+    const noteToDelete = notes.find(note => note.id === id);
+    if (!noteToDelete) return;
+
+    try {
+      // Move note to trash using the existing trash API
+      const response = await fetch('/api/trash', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          itemType: 'note',
+          itemId: noteToDelete.id,
+          title: noteToDelete.title,
+          description: noteToDelete.content,
+          metadata: {
+            timestamp: noteToDelete.timestamp,
+            attachments: noteToDelete.attachments || [],
+            completed: noteToDelete.completed
+          },
+          originalData: noteToDelete,
+          deletedBy: currentUser?.name || 'Anonymous'
+        }),
+      });
+
+      if (response.ok) {
+        // Remove from local state only after successful API call
+        setNotes(notes.filter(note => note.id !== id));
+      } else {
+        console.error('Failed to move note to trash');
+      }
+    } catch (error) {
+      console.error('Error moving note to trash:', error);
+    }
   };
 
   const handleTitleEdit = (e: React.KeyboardEvent) => {
