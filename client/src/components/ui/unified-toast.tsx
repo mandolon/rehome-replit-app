@@ -105,11 +105,29 @@ export const useUnifiedToast = () => {
       );
     }
 
+    // Split message into parts for different font weights
+    const parts = message.match(/^(\w+)\s+"([^"]+)"\s+(.+)$/);
+    
+    let formattedMessage;
+    if (parts) {
+      const [, itemType, itemName, actionText] = parts;
+      formattedMessage = (
+        <span className="text-sm leading-tight">
+          <span className="text-muted-foreground font-normal">{itemType}</span>
+          <span className="text-foreground font-medium mx-1">"{itemName}"</span>
+          <span className="text-muted-foreground font-normal">{actionText}</span>
+        </span>
+      );
+    } else {
+      formattedMessage = <span className="text-sm font-medium text-foreground">{message}</span>;
+    }
+
     toast({
-      description: message,
+      description: formattedMessage,
       variant,
       action: toastAction,
-      duration
+      duration,
+      className: "py-2"
     });
   };
 
