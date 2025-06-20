@@ -82,42 +82,22 @@ export const useTaskBoard = () => {
   // Generate a new taskId for every task insert
   const generateTaskId = () => "T" + Math.floor(Math.random() * 100000).toString().padStart(4, "0");
 
-  // Create task mutation with optimistic updates
+  // Create task mutation with immediate cache update
   const createTaskMutation = useMutation({
     mutationFn: createTask,
-    onMutate: async (newTask) => {
-      // Cancel any outgoing refetches so they don't overwrite our optimistic update
-      await queryClient.cancelQueries({ queryKey: ['tasks'] });
-      
-      // Snapshot the previous value
-      const previousTasks = queryClient.getQueryData(['tasks']);
-      
-      // Optimistically update to the new value
-      queryClient.setQueryData(['tasks'], (old: Task[] = []) => [
-        ...old,
-        {
-          ...newTask,
-          id: Date.now(), // Temporary ID
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          archived: false,
-          deletedAt: null,
-          deletedBy: null,
-          workRecord: false,
-        }
-      ]);
-      
-      // Return a context object with the snapshotted value
-      return { previousTasks };
-    },
-    onError: (err, newTask, context) => {
-      // If the mutation fails, use the context returned from onMutate to roll back
-      queryClient.setQueryData(['tasks'], context?.previousTasks);
-    },
-    onSettled: () => {
-      // Always refetch after error or success to ensure server state
+    onSuccess: (newTask) => {
+      // Immediately update the cache with the server response
+      queryClient.setQueryData(['tasks'], (old: Task[] = []) => {
+        // Remove any temporary optimistic entry and add the real one
+        const filtered = old.filter(task => task.id !== 999999); // Remove temp entries
+        return [...filtered, newTask];
+      });
+      // Also invalidate to ensure consistency
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
       setRefreshTrigger(prev => prev + 1);
+    },
+    onError: (error) => {
+      console.error('Failed to create task:', error);
     },
   });
 
