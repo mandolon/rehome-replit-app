@@ -129,22 +129,20 @@ const ProjectLogTab = ({ selectedWeek, refreshTrigger }: ProjectLogTabProps) => 
   return (
     <div className="space-y-4">
       {/* Project Selector */}
-      <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium">Project:</span>
-          <Select value={selectedProject} onValueChange={setSelectedProject}>
-            <SelectTrigger className="w-64">
-              <SelectValue placeholder="Select a project" />
-            </SelectTrigger>
-            <SelectContent>
-              {projects.map((project) => (
-                <SelectItem key={project.id} value={project.id}>
-                  {project.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+      <div className="flex items-center gap-1 mb-4 h-[28px]">
+        <span className="text-sm font-medium">Project:</span>
+        <Select value={selectedProject} onValueChange={setSelectedProject}>
+          <SelectTrigger className="w-64 h-7">
+            <SelectValue placeholder="Select a project" />
+          </SelectTrigger>
+          <SelectContent>
+            {projects.map((project) => (
+              <SelectItem key={project.id} value={project.id}>
+                {project.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Project Overview Stats */}
