@@ -50,9 +50,24 @@ const TaskRowContextMenu = ({
     setOpen(false);
   };
 
-  const handleAddToWorkRecords = () => {
-    console.log('Adding task to work records:', task.id);
-    // TODO: Implement work records functionality
+  const handleAddToWorkRecords = async () => {
+    try {
+      const response = await fetch(`/api/tasks/${task.taskId}/work-record`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ workRecord: true }),
+      });
+
+      if (response.ok) {
+        console.log('Task added to work records:', task.taskId);
+        // Refresh the page or trigger a re-fetch
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('Error adding task to work records:', error);
+    }
     setOpen(false);
   };
 

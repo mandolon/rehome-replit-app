@@ -114,6 +114,15 @@ export class DatabaseStorage implements IStorage {
     const result = await db.insert(taskMessages).values(message).returning();
     return result[0];
   }
+
+  async getWorkRecords(): Promise<Task[]> {
+    const result = await db
+      .select()
+      .from(tasks)
+      .where(eq(tasks.workRecord, true))
+      .orderBy(desc(tasks.updatedAt));
+    return result;
+  }
 }
 
 export class MemStorage implements IStorage {
@@ -184,6 +193,10 @@ export class MemStorage implements IStorage {
       deletedAt: task.deletedAt ?? null,
       deletedBy: task.deletedBy ?? null,
       description: task.description ?? null,
+      markedComplete: null,
+      markedCompleteBy: null,
+      timeLogged: task.timeLogged ?? "0",
+      workRecord: task.workRecord ?? false,
     };
     this.tasks.set(task.taskId, newTask);
     return newTask;
@@ -196,7 +209,7 @@ export class MemStorage implements IStorage {
     const updated: Task = {
       ...existing,
       ...updates,
-      updatedAt: new Date().toISOString(),
+      updatedAt: new Date(),
     };
     this.tasks.set(taskId, updated);
     return updated;

@@ -39,7 +39,7 @@ const ProjectLogTab = ({ selectedWeek, refreshTrigger }: ProjectLogTabProps) => 
 
   const fetchTasks = async () => {
     try {
-      const response = await fetch('/api/tasks');
+      const response = await fetch('/api/work-records');
       const data: Task[] = await response.json();
       setTasks(data);
       
