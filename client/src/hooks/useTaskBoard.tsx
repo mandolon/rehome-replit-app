@@ -65,7 +65,7 @@ export const useTaskBoard = () => {
     
     const centralizedRedline = tasks.filter((task: any) => task.status === 'redline' && !task.archived && !task.deletedAt);
     const centralizedProgress = tasks.filter((task: any) => task.status === 'progress' && !task.archived && !task.deletedAt);
-    const centralizedCompleted = tasks.filter((task: any) => task.status === 'completed' && !task.archived && !task.deletedAt);
+    const centralizedCompleted = tasks.filter((task: any) => task.status === 'completed' && !task.deletedAt);
 
     const taskGroups: TaskGroup[] = [
       {
