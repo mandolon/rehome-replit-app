@@ -16,7 +16,7 @@ const CreatedByFilterPopover = ({ selectedPeople, onChange }: CreatedByFilterPop
 
   // Fetch all tasks to get unique creators
   const { data: tasks = [] } = useQuery<Task[]>({
-    queryKey: ['tasks'],
+    queryKey: ['api-tasks'],
   });
 
   // Get unique creators from tasks, sorted alphabetically by first name

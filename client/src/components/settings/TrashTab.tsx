@@ -19,29 +19,54 @@ const TrashTab = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  // Fetch all tasks including deleted ones
+  // Fetch all tasks including deleted ones with direct API call
   const { data: allTasks = [], isLoading: loading } = useQuery({
-    queryKey: ['/api/tasks/all'],
-    queryFn: fetchAllTasksIncludingDeleted,
+    queryKey: ['api-tasks-all'],
+    queryFn: async () => {
+      const response = await fetch('/api/tasks/all');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    },
     refetchOnWindowFocus: false,
   });
 
-  // Mutation for restoring tasks
+  // Mutation for restoring tasks with direct API call
   const restoreTaskMutation = useMutation({
-    mutationFn: ({ taskId, updates }: { taskId: string; updates: Partial<Task> }) =>
-      updateTask(taskId, updates),
+    mutationFn: async ({ taskId, updates }: { taskId: string; updates: Partial<Task> }) => {
+      const response = await fetch(`/api/tasks/${taskId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updates),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks/all'] });
+      queryClient.invalidateQueries({ queryKey: ['api-tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['api-tasks-all'] });
     },
   });
 
-  // Mutation for permanently deleting tasks
+  // Mutation for permanently deleting tasks with direct API call
   const permanentDeleteMutation = useMutation({
-    mutationFn: permanentDeleteTask,
+    mutationFn: async (taskId: string) => {
+      const response = await fetch(`/api/tasks/${taskId}/permanent`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return taskId;
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks/all'] });
+      queryClient.invalidateQueries({ queryKey: ['api-tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['api-tasks-all'] });
     },
   });
 
