@@ -59,9 +59,10 @@ const TaskBoardContent = ({
 }: TaskBoardContentProps) => {
   // Apply filters to task groups
   const filteredTaskGroups = useMemo(() => {
+    // If no filters are active, return original task groups
     if (!filters || (
-      filters.selectedAssignees.length === 0 &&
-      filters.selectedCreatedBy.length === 0 &&
+      (!filters.selectedAssignees || filters.selectedAssignees.length === 0) &&
+      (!filters.selectedCreatedBy || filters.selectedCreatedBy.length === 0) &&
       !filters.selectedStartDate &&
       !filters.selectedEndDate
     )) {

@@ -35,7 +35,9 @@ export const useTaskBoard = () => {
 
   // Task groups powered by API
   const getTaskGroups = (): TaskGroup[] => {
+    console.log('getTaskGroups called, tasks:', tasks, 'loading:', loading);
     if (!tasks || !Array.isArray(tasks)) {
+      console.log('Returning empty task groups');
       return [
         { title: "TASK/ REDLINE", count: 0, color: "bg-[#c62a2f]", status: "redline", tasks: [] },
         { title: "PROGRESS/ UPDATE", count: 0, color: "bg-blue-500", status: "progress", tasks: [] },
