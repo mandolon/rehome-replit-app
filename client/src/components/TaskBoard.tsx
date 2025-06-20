@@ -28,6 +28,7 @@ const TaskBoard: React.FC = React.memo(() => {
     removeAssignee,
     addCollaborator,
     removeCollaborator,
+    tasks,
   } = useTaskBoard();
 
   // State for showing/hiding closed tasks
@@ -60,13 +61,8 @@ const TaskBoard: React.FC = React.memo(() => {
     isDeleting,
   } = useTaskDeletion();
 
-  // Board tasks
-  const taskGroups = React.useMemo(() => {
-    console.log('TaskBoard: Computing task groups, refreshTrigger:', refreshTrigger);
-    const groups = getTaskGroups();
-    console.log('TaskBoard: Task groups computed:', groups);
-    return groups;
-  }, [getTaskGroups, refreshTrigger]);
+  // Board tasks - depend on actual tasks data to ensure re-render when tasks load
+  const taskGroups = React.useMemo(() => getTaskGroups(), [getTaskGroups, refreshTrigger, tasks]);
 
   // Quick Add handles attachments as in Supabase system
   const onQuickAddSave = React.useCallback(async (taskData: any) => {
