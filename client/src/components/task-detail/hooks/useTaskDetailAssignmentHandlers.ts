@@ -1,5 +1,5 @@
 
-import { useSupabaseTaskAssignments } from '@/hooks/useSupabaseTaskAssignments';
+import { useTaskAssignments } from '@/hooks/useTaskAssignments';
 import { useTaskContext } from '@/contexts/TaskContext';
 import { Task } from '@/types/task';
 
@@ -17,10 +17,10 @@ export function useTaskDetailAssignmentHandlers(task: Task, setTask: (t: Task) =
 
   // Are we supabase-backed?
   const isSupabaseTask = !!task.taskId && !!task.updatedAt;
-  const supabaseHandlers = useSupabaseTaskAssignments(task, setTask);
+  const apiHandlers = useTaskAssignments(task, setTask);
 
   // Handler selection
-  const handlerSet = isSupabaseTask ? supabaseHandlers : {
+  const handlerSet = isSupabaseTask ? apiHandlers : {
     assignPerson: legacyAssignPerson,
     removeAssignee: legacyRemoveAssignee,
     addCollaborator: legacyAddCollaborator,

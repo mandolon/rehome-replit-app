@@ -57,8 +57,12 @@ export const useTaskDialog = () => {
       collaborators: [],
       createdBy: currentUser?.name ?? currentUser?.email ?? "Unknown",
       archived: false,
+      markedComplete: null,
+      markedCompleteBy: null,
+      timeLogged: "0",
       deletedAt: null,
       deletedBy: null,
+      workRecord: false,
     };
 
     try {
