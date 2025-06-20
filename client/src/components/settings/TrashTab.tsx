@@ -7,7 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { useToast } from '@/hooks/use-toast';
+import { useTrashToast } from '@/components/ui/unified-toast';
 import { formatDate } from '@/utils/taskUtils';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -31,7 +31,7 @@ const TrashTab = () => {
   const [selectedItemType, setSelectedItemType] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'deletedAt' | 'title' | 'itemType'>('deletedAt');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
-  const { toast } = useToast();
+  const { itemRestored, itemDeleted, trashEmptied } = useTrashToast();
   const [restoringIds, setRestoringIds] = useState<string[]>([]);
   const [emptyingTrash, setEmptyingTrash] = useState(false);
   const [optimisticallyRestored, setOptimisticallyRestored] = useState<string[]>([]);
@@ -168,25 +168,7 @@ const TrashTab = () => {
       queryClient.invalidateQueries({ queryKey: ['task-board-data'] });
       queryClient.invalidateQueries({ queryKey: ['/api/projects'] });
       
-      toast({ 
-        description: (
-          <span>
-            <span className="font-semibold">{trashItem.itemType === 'task' ? 'Task' : trashItem.itemType === 'project' ? 'Project' : 'Note'}</span>
-            {" "}has been restored.{" "}
-            <button
-              type="button"
-              className="font-bold underline text-blue-700 hover:text-blue-600 transition-colors"
-              tabIndex={0}
-              onClick={() => {
-                navigate('/tasks');
-              }}
-            >
-              Go to tasks
-            </button>
-          </span>
-        ),
-        duration: 3000 
-      });
+      itemRestored(trashItem.itemType as 'task' | 'project' | 'note', trashItem.title);
     } catch (e) {
       console.error('Error restoring item:', e);
       toast({ 

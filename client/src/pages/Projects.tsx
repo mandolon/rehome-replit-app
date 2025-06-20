@@ -8,6 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { ProjectStatusDropdown } from '@/components/project/ProjectStatusDropdown';
 import { ProjectStatusBadge } from '@/components/project/ProjectStatusBadge';
 import { useProjectToast } from '@/components/ui/unified-toast';
+import { useToast } from '@/hooks/use-toast';
 import { formatDate } from '@/utils/taskUtils';
 
 interface Project {
@@ -31,7 +32,8 @@ const Projects = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const queryClient = useQueryClient();
-  const { projectDeleted } = useProjectToast();
+  const { projectDeleted, projectCreated } = useProjectToast();
+  const { toast } = useToast();
 
   const { data: projects = [], isLoading } = useQuery({
     queryKey: ['/api/projects'],
@@ -53,18 +55,10 @@ const Projects = () => {
         throw new Error('Failed to delete project');
       }
     },
-    onSuccess: () => {
+    onSuccess: (_, projectId) => {
       queryClient.invalidateQueries({ queryKey: ['/api/projects'] });
-      toast({
-        title: "Project moved to trash.",
-      });
-    },
-    onError: (error) => {
-      toast({
-        variant: "destructive",
-        title: "Failed to delete project.",
-        description: error instanceof Error ? error.message : "Please try again.",
-      });
+      const project = projects.find((p: Project) => p.projectId === projectId);
+      projectDeleted(project?.title || projectId);
     },
   });
 
@@ -124,15 +118,12 @@ const Projects = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/projects'] });
-      toast({
-        title: "Sample projects created.",
-      });
+      projectCreated("Sample projects");
     },
     onError: (error) => {
       toast({
         variant: "destructive",
-        title: "Failed to create sample projects.",
-        description: error instanceof Error ? error.message : "Please try again.",
+        description: error instanceof Error ? error.message : "Failed to create sample projects.",
       });
     },
   });
