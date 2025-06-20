@@ -8,6 +8,8 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
+import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
 import { Task } from '@/types/task';
 
 interface TaskRowContextMenuProps {
@@ -26,6 +28,7 @@ const TaskRowContextMenu = ({
   onContextMenuDelete
 }: TaskRowContextMenuProps) => {
   const [open, setOpen] = useState(false);
+  const { toast, dismiss } = useToast();
 
   const handleDuplicateTask = () => {
     console.log('Duplicating task:', task.id);
@@ -61,12 +64,69 @@ const TaskRowContextMenu = ({
       });
 
       if (response.ok) {
-        console.log('Task added to work records:', task.taskId);
-        // Refresh the page or trigger a re-fetch
+        toast({
+          description: (
+            <span>
+              <span className="font-semibold">Task</span>
+              {" "}added to work records.{" "}
+              <button
+                type="button"
+                className="font-bold underline text-blue-700 hover:text-blue-600 transition-colors"
+                tabIndex={0}
+                onClick={() => {
+                  window.location.href = '/timesheets?tab=project-log';
+                  dismiss();
+                }}
+              >
+                View records
+              </button>
+            </span>
+          ),
+          action: (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={async (e) => {
+                e.stopPropagation();
+                // Undo by removing from work records
+                await fetch(`/api/tasks/${task.taskId}/work-record`, {
+                  method: 'PATCH',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ workRecord: false }),
+                });
+                dismiss();
+              }}
+            >
+              Undo
+            </Button>
+          ),
+          duration: 5000,
+        });
         window.location.reload();
+      } else {
+        throw new Error('Failed to add task to work records');
       }
     } catch (error) {
-      console.error('Error adding task to work records:', error);
+      toast({
+        description: (
+          <span>
+            <span className="font-semibold">Failed</span>
+            {" "}to add task to work records. Please try again.{" "}
+            <button
+              type="button"
+              className="font-bold underline text-red-200 hover:text-red-100 transition-colors"
+              tabIndex={0}
+              onClick={() => {
+                window.location.href = '/';
+                dismiss();
+              }}
+            >
+              Go to tasks
+            </button>
+          </span>
+        ),
+        variant: "destructive",
+      });
     }
     setOpen(false);
   };

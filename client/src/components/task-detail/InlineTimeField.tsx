@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
 
 interface InlineTimeFieldProps {
   taskId: string;
@@ -12,7 +13,7 @@ const InlineTimeField = ({ taskId, currentTime, onTimeUpdated }: InlineTimeField
   const [inputValue, setInputValue] = useState(currentTime || '0');
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { toast } = useToast();
+  const { toast, dismiss } = useToast();
 
   const formatTime = (timeStr: string) => {
     const hours = parseFloat(timeStr || '0');
@@ -59,18 +60,72 @@ const InlineTimeField = ({ taskId, currentTime, onTimeUpdated }: InlineTimeField
         throw new Error('Failed to update time');
       }
 
-      onTimeUpdated(numValue.toString());
+      const newTime = numValue.toString();
+      const previousTime = currentTime || '0';
+      onTimeUpdated(newTime);
       setIsEditing(false);
       
       toast({
-        title: "Time updated",
-        description: `Set to ${formatTime(numValue.toString())}`,
+        description: (
+          <span>
+            <span className="font-semibold">Time logged</span>
+            {" "}updated to {formatTime(newTime)}.{" "}
+            <button
+              type="button"
+              className="font-bold underline text-blue-700 hover:text-blue-600 transition-colors"
+              tabIndex={0}
+              onClick={() => {
+                window.location.href = '/timesheets?tab=project-log';
+                dismiss();
+              }}
+            >
+              View in records
+            </button>
+          </span>
+        ),
+        action: (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={async (e) => {
+              e.stopPropagation();
+              // Undo by reverting to previous time
+              const response = await fetch(`/api/tasks/${taskId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ timeLogged: previousTime }),
+              });
+              if (response.ok) {
+                onTimeUpdated(previousTime);
+              }
+              dismiss();
+            }}
+          >
+            Undo
+          </Button>
+        ),
+        duration: 5000,
       });
     } catch (error) {
       console.error('Error updating time:', error);
       toast({
-        title: "Error",
-        description: "Failed to update time",
+        description: (
+          <span>
+            <span className="font-semibold">Failed</span>
+            {" "}to update time logged. Please try again.{" "}
+            <button
+              type="button"
+              className="font-bold underline text-red-200 hover:text-red-100 transition-colors"
+              tabIndex={0}
+              onClick={() => {
+                window.location.href = '/';
+                dismiss();
+              }}
+            >
+              Go to tasks
+            </button>
+          </span>
+        ),
         variant: "destructive",
       });
     } finally {
