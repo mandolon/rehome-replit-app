@@ -148,7 +148,7 @@ const ProjectLogTab = ({ selectedWeek, refreshTrigger }: ProjectLogTabProps) => 
       </div>
 
       {/* Project Overview Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
         <Card className="border-0 shadow-none bg-muted/30">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-3">
             <CardTitle className="text-xs font-medium text-muted-foreground">Total Tasks</CardTitle>
@@ -233,6 +233,7 @@ const ProjectLogTab = ({ selectedWeek, refreshTrigger }: ProjectLogTabProps) => 
                   <TableHead className="text-xs font-medium text-muted-foreground h-8">Title</TableHead>
                   <TableHead className="w-[100px] text-xs font-medium text-muted-foreground h-8">Status</TableHead>
                   <TableHead className="w-[120px] text-xs font-medium text-muted-foreground h-8">Assignee</TableHead>
+                  <TableHead className="w-[100px] text-xs font-medium text-muted-foreground h-8">Time Logged</TableHead>
                   <TableHead className="w-[120px] text-xs font-medium text-muted-foreground h-8">Created</TableHead>
                   <TableHead className="w-[120px] text-xs font-medium text-muted-foreground h-8">Last Update</TableHead>
                   <TableHead className="w-[120px] text-xs font-medium text-muted-foreground h-8">Estimated</TableHead>
@@ -268,6 +269,12 @@ const ProjectLogTab = ({ selectedWeek, refreshTrigger }: ProjectLogTabProps) => 
                       ) : (
                         <span className="text-muted-foreground">Unassigned</span>
                       )}
+                    </TableCell>
+                    <TableCell className="text-xs font-medium">
+                      <div className="flex items-center gap-1">
+                        <Clock className="w-3 h-3 text-muted-foreground" />
+                        {formatTime(task.timeLogged || '0')}
+                      </div>
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">
                       {task.createdAt ? format(new Date(task.createdAt), 'MMM d, yy') : '-'}
