@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 import { TableCell, TableRow } from '@/components/ui/table';
 import TaskRowContent from './TaskRowContent';
 import TaskRowFiles from './TaskRowFiles';
@@ -6,7 +6,7 @@ import TaskRowAssignees from './TaskRowAssignees';
 import TaskRowContextMenu from './TaskRowContextMenu';
 import TaskRowCreatedBy from './TaskRowCreatedBy';
 import DeleteTaskDialog from '../DeleteTaskDialog';
-import { useTaskDeletion } from '@/hooks/useTaskDeletion';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { formatDate } from '@/utils/taskUtils';
 import { Task } from '@/types/task';
 
@@ -49,32 +49,59 @@ const TaskRow = React.memo(({
   onTaskDeleted,
   isCompletedView = false
 }: TaskRowProps) => {
-  const {
-    showDeleteDialog,
-    taskToDelete,
-    isDeleting,
-    handleDeleteClick,
-    handleDeleteTask,
-    handleCloseDeleteDialog
-  } = useTaskDeletion();
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const queryClient = useQueryClient();
+
+  // Direct API delete mutation
+  const deleteTaskMutation = useMutation({
+    mutationFn: async (taskId: string) => {
+      const response = await fetch(`/api/tasks/${taskId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return taskId;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['task-board-data'] });
+      setShowDeleteDialog(false);
+      setIsDeleting(false);
+    },
+    onError: () => {
+      setIsDeleting(false);
+    }
+  });
 
   const formattedDate = useMemo(() => formatDate(task.dateCreated), [task.dateCreated]);
 
   const handleDeleteClickInternal = useCallback((e: React.MouseEvent) => {
-    handleDeleteClick(task, e);
-  }, [handleDeleteClick, task]);
+    e.stopPropagation();
+    setShowDeleteDialog(true);
+  }, []);
 
   const handleContextMenuDelete = useCallback((e: React.MouseEvent) => {
-    // Context menu is already closed by TaskRowContextMenu, so we can directly trigger the dialog
-    handleDeleteClick(task, e);
-  }, [handleDeleteClick, task]);
+    e.stopPropagation();
+    setShowDeleteDialog(true);
+  }, []);
 
   const handleDeleteTaskInternal = useCallback(async () => {
-    await handleDeleteTask(task);
-    if (onTaskDeleted) {
-      onTaskDeleted();
+    setIsDeleting(true);
+    try {
+      await deleteTaskMutation.mutateAsync(task.taskId);
+      if (onTaskDeleted) {
+        onTaskDeleted();
+      }
+    } catch (error) {
+      console.error('Delete failed:', error);
+      setIsDeleting(false);
     }
-  }, [handleDeleteTask, onTaskDeleted, task]);
+  }, [deleteTaskMutation, task.taskId, onTaskDeleted]);
+
+  const handleCloseDeleteDialog = useCallback(() => {
+    setShowDeleteDialog(false);
+  }, []);
 
   const rowContent = useMemo(() => (
     <TaskRowContent
@@ -161,7 +188,7 @@ const TaskRow = React.memo(({
         isOpen={showDeleteDialog}
         onClose={handleCloseDeleteDialog}
         onConfirm={handleDeleteTaskInternal}
-        taskTitle={taskToDelete?.title || task.title}
+        taskTitle={task.title}
         isLoading={isDeleting}
       />
     </>

@@ -1,0 +1,64 @@
+react-dom.development.js:29895 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+AppLayout.tsx:35 Sidebar resize: 12.730125523
+App.tsx:51 App component is rendering, current path: /tasks
+useRealtimeTasks.tsx:37 Attempting WebSocket connection to: wss://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev:443/ws
+useTaskBoard.tsx:26 Making direct API call for tasks
+useTaskBoard.tsx:45 Query state - Loading: true Error: null Tasks count: 0
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+useTaskBoard.tsx:45 Query state - Loading: true Error: null Tasks count: 0
+useRealtimeTasks.tsx:41 WebSocket connected for real-time updates
+useTaskBoard.tsx:32 Tasks loaded: 11
+useTaskBoard.tsx:45 Query state - Loading: false Error: null Tasks count: 11
+useTaskBoard.tsx:47 First task: Object
+TaskBoard.tsx:107  Can't resolve task for deletion
+(anonymous) @ TaskBoard.tsx:107
+useRealtimeTasks.tsx:10 WebSocket message received: Object
+useRealtimeTasks.tsx:10 WebSocket message received: Object
+TaskBoard.tsx:107  Can't resolve task for deletion
+(anonymous) @ TaskBoard.tsx:107
+[NEW] Explain Console errors by using Copilot in Edge: click
+         
+         to explain an error. 
+        Learn more
+        Don't show again

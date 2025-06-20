@@ -4,7 +4,7 @@ import TaskDialog from './TaskDialog';
 import TaskBoardContent from './TaskBoardContent';
 import { useTaskBoard } from '@/hooks/useTaskBoard';
 import { useTaskAttachmentContext } from '@/contexts/TaskAttachmentContext';
-import { useTaskDeletion } from '@/hooks/useTaskDeletion';
+
 import { useRealtimeTasks } from '@/hooks/useRealtimeTasks';
 import { Task } from '@/types/task';
 
@@ -21,7 +21,7 @@ const TaskBoard: React.FC = React.memo(() => {
     handleQuickAddSave,
     handleTaskClick,
     handleTaskArchive,
-    handleTaskDeleted,
+
     assignPerson,
     removeAssignee,
     addCollaborator,
@@ -88,28 +88,11 @@ const TaskBoard: React.FC = React.memo(() => {
   const onDialogOpen = React.useCallback(() => setIsTaskDialogOpen(true), [setIsTaskDialogOpen]);
   const onDialogClose = React.useCallback(() => setIsTaskDialogOpen(false), [setIsTaskDialogOpen]);
 
-  // --- Unified delete handler for this board. Accept Task or id as arg.
-  const onTaskDeleted = React.useCallback(async (task: Task | string | number) => {
-    let realTask: Task | null = null;
-    if (typeof task === "object" && task.taskId) {
-      realTask = task;
-    } else if (typeof task === "string" || typeof task === "number") {
-      // There isn't a global task list here, so we can't always find details. We'll try to infer.
-      // Try to find the task by id/taskId in any group
-      const allTasks = taskGroups.flatMap(g => g.tasks);
-      realTask =
-        allTasks.find(t =>
-          t.taskId === task ||
-          t.id === task
-        ) || null;
-    }
-    if (!realTask) {
-      console.error("Can't resolve task for deletion");
-      return;
-    }
-    // Soft delete via the task deletion hook (will set deletedAt)
-    await handleTaskDeleted(realTask.taskId);
-  }, [handleTaskDeleted, taskGroups]);
+  // Simple callback for task deletion notifications
+  const onTaskDeleted = React.useCallback(() => {
+    // Task deletion is now handled directly in TaskRow component
+    console.log('Task deleted - data will refresh via React Query');
+  }, []);
 
   return (
     <div className="h-full flex flex-col overflow-hidden">
