@@ -119,6 +119,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.put("/api/tasks/:taskId/restore", async (req, res) => {
+    try {
+      const task = await storage.updateTask(req.params.taskId, { 
+        deletedAt: null, 
+        deletedBy: null 
+      });
+      broadcast('task_restored', task);
+      res.json(task);
+    } catch (error: any) {
+      console.error(`Error restoring task ${req.params.taskId}:`, error);
+      res.status(500).json({ 
+        error: "Failed to restore task", 
+        details: error?.message || String(error) 
+      });
+    }
+  });
+
   // Task message routes
   app.get("/api/tasks/:taskId/messages", async (req, res) => {
     try {
