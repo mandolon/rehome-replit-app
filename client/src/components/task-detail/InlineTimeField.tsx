@@ -66,22 +66,8 @@ const InlineTimeField = ({ taskId, currentTime, onTimeUpdated }: InlineTimeField
       setIsEditing(false);
       
       toast({
-        title: "Time logged updated",
-        description: (
-          <span className="text-sm">
-            Set to {formatTime(newTime)}. View in{" "}
-            <button
-              type="button"
-              className="font-medium underline text-blue-600 hover:text-blue-500"
-              onClick={() => {
-                window.location.href = '/timesheets?tab=project-log';
-                dismiss();
-              }}
-            >
-              Project Records
-            </button>
-          </span>
-        ),
+        title: "Time added to task",
+        description: `Set to ${formatTime(newTime)}`,
         action: (
           <ToastAction
             altText="Undo time change"
