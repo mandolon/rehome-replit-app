@@ -113,7 +113,7 @@ const TaskRowContextMenu = ({
   };
 
   return (
-    <ContextMenu>
+    <ContextMenu open={open} onOpenChange={setOpen}>
       <ContextMenuTrigger asChild>
         {children}
       </ContextMenuTrigger>

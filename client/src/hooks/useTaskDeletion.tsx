@@ -6,7 +6,7 @@ import { useTaskContext } from '@/contexts/TaskContext';
 import { Task } from '@/types/task';
 import { Undo } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { updateTaskSupabase } from '@/data/taskSupabase';
+
 import { useUser } from '@/contexts/UserContext';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -50,12 +50,21 @@ export const useTaskDeletion = () => {
       setIsDeleting(true);
       try {
         const deletedByName = currentUser?.name || currentUser?.email || "—";
-        // Use soft delete by updating task with deletedAt and deletedBy fields
+        // Use the API to soft delete the task
         if (taskToDeleteObj.taskId) {
-          await updateTaskSupabase(taskToDeleteObj.taskId, {
-            deletedAt: new Date().toISOString(),
-            deletedBy: deletedByName
+          const response = await fetch(`/api/tasks/${taskToDeleteObj.taskId}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
           });
+          
+          if (!response.ok) {
+            throw new Error('Failed to delete task');
+          }
+          
+          // Invalidate and refetch tasks
+          await queryClient.invalidateQueries({ queryKey: ['tasks'] });
         } else {
           // Legacy: only pass the ID, as the context only expects one argument
           await deleteTask(taskToDeleteObj.id);
@@ -85,12 +94,18 @@ export const useTaskDeletion = () => {
               size="sm"
               onClick={async (e) => {
                 e.stopPropagation();
-                // UNDO soft delete by clearing deletedAt and deletedBy
+                // UNDO soft delete by restoring the task
                 if (taskToDeleteObj?.taskId) {
-                  await updateTaskSupabase(taskToDeleteObj.taskId, {
-                    deletedAt: null,
-                    deletedBy: null
+                  const response = await fetch(`/api/tasks/${taskToDeleteObj.taskId}/restore`, {
+                    method: 'PUT',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
                   });
+                  
+                  if (response.ok) {
+                    await queryClient.invalidateQueries({ queryKey: ['tasks'] });
+                  }
                 } else if (taskToDeleteObj) {
                   restoreDeletedTask(taskToDeleteObj.id);
                 }

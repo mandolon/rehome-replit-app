@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { ChevronDown, User } from 'lucide-react';
+import { ChevronDown, User, Filter } from 'lucide-react';
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { useQuery } from '@tanstack/react-query';
 import type { Task } from '@/types/task';
@@ -16,7 +16,7 @@ const CreatedByFilterPopover = ({ selectedPeople, onChange }: CreatedByFilterPop
 
   // Fetch all tasks to get unique creators
   const { data: tasks = [] } = useQuery<Task[]>({
-    queryKey: ['/api/tasks'],
+    queryKey: ['tasks'],
   });
 
   // Get unique creators from tasks, sorted alphabetically by first name
@@ -55,6 +55,9 @@ const CreatedByFilterPopover = ({ selectedPeople, onChange }: CreatedByFilterPop
           }`}
           title="Filter by creator"
         >
+          {selectedPeople.length > 0 && (
+            <Filter className="w-3 h-3 text-blue-500" />
+          )}
           Created by
           <ChevronDown className="w-3 h-3" />
         </button>
