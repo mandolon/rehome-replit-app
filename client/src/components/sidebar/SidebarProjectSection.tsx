@@ -41,6 +41,7 @@ const SidebarProjectSection = React.memo(({
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [projectDisplayNames, setProjectDisplayNames] = useState<Record<string, string>>({});
+  const [sortBy, setSortBy] = useState<'name' | 'address' | 'date-modified'>('name');
 
   // Fetch all projects to get projectId mapping
   const { data: allProjects = [] } = useQuery({
@@ -182,21 +183,50 @@ const SidebarProjectSection = React.memo(({
     }
   }, [projectTitleToId, updateProjectStatusMutation, deleteProjectMutation, toast]);
 
+  const handleSortAction = useCallback((sortType: string) => {
+    setSortBy(sortType as 'name' | 'address' | 'date-modified');
+  }, []);
+
+  // Sort projects based on current sort criteria
+  const sortedProjects = useMemo(() => {
+    const projectsWithDetails = projects.map(projectTitle => {
+      const projectData = allProjects.find((p: Project) => p.title === projectTitle);
+      return {
+        title: projectTitle,
+        address: projectData?.projectAddress || '',
+        dateModified: projectData?.updatedAt || projectData?.createdAt || '',
+        displayName: projectDisplayNames[projectTitle] || projectTitle
+      };
+    });
+
+    return projectsWithDetails.sort((a, b) => {
+      switch (sortBy) {
+        case 'name':
+          return a.title.localeCompare(b.title);
+        case 'address':
+          return a.address.localeCompare(b.address);
+        case 'date-modified':
+          return new Date(b.dateModified).getTime() - new Date(a.dateModified).getTime();
+        default:
+          return a.title.localeCompare(b.title);
+      }
+    });
+  }, [projects, allProjects, projectDisplayNames, sortBy]);
+
   const projectItems = useMemo(() => 
-    projects.map((project, index) => {
-      const displayName = projectDisplayNames[project] || project;
-      
+    sortedProjects.map((project, index) => {
       return (
         <ProjectItem
           key={index}
-          project={project}
-          displayName={displayName}
+          project={project.title}
+          displayName={project.displayName}
           currentSection={title}
           onProjectClick={handleProjectClick}
           onMenuAction={handleMenuAction}
+          onSortAction={handleSortAction}
         />
       );
-    }), [projects, projectDisplayNames, title, handleProjectClick, handleMenuAction]
+    }), [sortedProjects, title, handleProjectClick, handleMenuAction, handleSortAction]
   );
 
   return (

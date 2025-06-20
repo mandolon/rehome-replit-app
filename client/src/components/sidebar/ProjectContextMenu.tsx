@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Edit, Copy, Archive, Trash2, ArrowRight } from 'lucide-react';
+import { Edit, Copy, Archive, Trash2, ArrowRight, ArrowUpDown } from 'lucide-react';
 import {
   ContextMenuContent,
   ContextMenuItem,
@@ -14,9 +14,10 @@ interface ProjectContextMenuProps {
   projectName: string;
   currentSection: string;
   onMenuAction: (action: string, projectName: string) => void;
+  onSortAction: (sortBy: string) => void;
 }
 
-const ProjectContextMenu = ({ projectName, currentSection, onMenuAction }: ProjectContextMenuProps) => {
+const ProjectContextMenu = ({ projectName, currentSection, onMenuAction, onSortAction }: ProjectContextMenuProps) => {
   return (
     <ContextMenuContent className="w-56">
       <ContextMenuItem onClick={() => onMenuAction('rename', projectName)}>
@@ -49,6 +50,23 @@ const ProjectContextMenu = ({ projectName, currentSection, onMenuAction }: Proje
               Completed
             </ContextMenuItem>
           )}
+        </ContextMenuSubContent>
+      </ContextMenuSub>
+      <ContextMenuSub>
+        <ContextMenuSubTrigger>
+          <ArrowUpDown className="w-4 h-4 mr-2" />
+          Sort by
+        </ContextMenuSubTrigger>
+        <ContextMenuSubContent>
+          <ContextMenuItem onClick={() => onSortAction('name')}>
+            Name (A-Z)
+          </ContextMenuItem>
+          <ContextMenuItem onClick={() => onSortAction('address')}>
+            Address
+          </ContextMenuItem>
+          <ContextMenuItem onClick={() => onSortAction('date-modified')}>
+            Date Modified
+          </ContextMenuItem>
         </ContextMenuSubContent>
       </ContextMenuSub>
       <ContextMenuSeparator />

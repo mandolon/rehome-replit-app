@@ -16,6 +16,7 @@ interface ProjectItemProps {
   currentSection: string;
   onProjectClick: (projectName: string) => void;
   onMenuAction: (action: string, projectName: string) => void;
+  onSortAction: (sortBy: string) => void;
 }
 
 const ProjectItem = ({ 
@@ -23,7 +24,8 @@ const ProjectItem = ({
   displayName, 
   currentSection, 
   onProjectClick, 
-  onMenuAction 
+  onMenuAction,
+  onSortAction
 }: ProjectItemProps) => {
   const { projectId } = useParams();
   const contextMenuRef = useRef<HTMLDivElement>(null);
@@ -88,6 +90,7 @@ const ProjectItem = ({
         projectName={project}
         currentSection={currentSection}
         onMenuAction={onMenuAction}
+        onSortAction={onSortAction}
       />
     </ContextMenu>
   );
