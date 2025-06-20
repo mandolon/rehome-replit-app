@@ -14,7 +14,7 @@ const TimesheetsPage = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [selectedWeek, setSelectedWeek] = useState(new Date());
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [activeTab, setActiveTab] = useState('timesheet');
+  const [activeTab, setActiveTab] = useState('project-log');
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isTaskDetailOpen, setIsTaskDetailOpen] = useState(false);
 

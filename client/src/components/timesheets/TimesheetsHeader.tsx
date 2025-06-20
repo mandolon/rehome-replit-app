@@ -13,8 +13,8 @@ interface TimesheetsHeaderProps {
 
 const TimesheetsHeader = ({ selectedWeek, onWeekChange, onAddTimeEntry, activeTab, onTabChange }: TimesheetsHeaderProps) => {
   const tabs = [
-    { id: 'timesheet', label: 'Timesheet', active: activeTab === 'timesheet' },
     { id: 'project-log', label: 'Project log', active: activeTab === 'project-log' },
+    { id: 'timesheet', label: 'Timesheet', active: activeTab === 'timesheet' },
   ];
 
   return (
