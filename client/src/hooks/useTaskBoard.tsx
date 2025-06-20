@@ -27,9 +27,14 @@ export const useTaskBoard = () => {
     queryFn: fetchAllTasks,
     refetchOnWindowFocus: false,
     retry: 1,
-    staleTime: 5000, // Keep data fresh for 5 seconds
-    gcTime: 300000, // Keep cache for 5 minutes
+    staleTime: 0, // Always refetch to ensure latest data
+    gcTime: 0, // Don't cache to prevent stale data issues
   });
+
+  // Debug logging
+  React.useEffect(() => {
+    console.log('Query state - Loading:', loading, 'Error:', error, 'Tasks:', tasks?.length);
+  }, [loading, error, tasks]);
 
 
 
