@@ -216,7 +216,7 @@ const ProjectLogTab = ({ selectedWeek, refreshTrigger }: ProjectLogTabProps) => 
       {/* Work Log Entries Table */}
       <Card className="border-0 shadow-none bg-muted/30">
         <CardHeader className="pb-2 pt-3 px-3">
-          <CardTitle className="text-sm font-semibold">Work Log Entries</CardTitle>
+          <CardTitle className="text-sm font-semibold">Project Time Entries</CardTitle>
         </CardHeader>
         <CardContent className="px-3 pb-3">
           {filteredTasks.length === 0 ? (
