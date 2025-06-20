@@ -557,7 +557,7 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
             onClick={() => setShowCompleted(!showCompleted)}
             className="px-2 py-1 text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
           >
-            {showCompleted ? 'Hide Completed' : `Show Completed (${completedTodos.length})`}
+            {showCompleted ? 'Hide Completed' : `Show Completed (${completedNotes.length})`}
           </button>
           
           <div className="flex items-center gap-2">
@@ -570,9 +570,9 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
             </button>
             <button
               onClick={handleSubmit}
-              disabled={!newTodo.trim()}
+              disabled={!newNote.trim()}
               className={`px-3 py-1 rounded text-xs font-medium flex items-center gap-1 transition-colors ${
-                newTodo.trim()
+                newNote.trim()
                   ? 'bg-blue-600 hover:bg-blue-700 text-white'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
