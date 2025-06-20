@@ -44,6 +44,18 @@ export const taskMessages = pgTable("task_messages", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const trashItems = pgTable("trash_items", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  itemType: text("item_type").notNull(), // 'task', 'note', 'project', etc.
+  itemId: text("item_id").notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  metadata: jsonb("metadata"), // Store type-specific data
+  deletedBy: text("deleted_by").notNull(),
+  deletedAt: timestamp("deleted_at").defaultNow().notNull(),
+  originalData: jsonb("original_data").notNull(), // Store full original object for restoration
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
@@ -61,9 +73,16 @@ export const insertTaskMessageSchema = createInsertSchema(taskMessages).omit({
   updatedAt: true,
 });
 
+export const insertTrashItemSchema = createInsertSchema(trashItems).omit({
+  id: true,
+  deletedAt: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type Task = typeof tasks.$inferSelect;
 export type InsertTask = z.infer<typeof insertTaskSchema>;
 export type TaskMessage = typeof taskMessages.$inferSelect;
 export type InsertTaskMessage = z.infer<typeof insertTaskMessageSchema>;
+export type TrashItem = typeof trashItems.$inferSelect;
+export type InsertTrashItem = z.infer<typeof insertTrashItemSchema>;

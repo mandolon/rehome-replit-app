@@ -1,4 +1,4 @@
-import { users, tasks, taskMessages, type User, type InsertUser, type Task, type InsertTask, type TaskMessage, type InsertTaskMessage } from "@shared/schema";
+import { users, tasks, taskMessages, trashItems, type User, type InsertUser, type Task, type InsertTask, type TaskMessage, type InsertTaskMessage, type TrashItem, type InsertTrashItem } from "@shared/schema";
 
 export interface IStorage {
   // User methods
@@ -21,6 +21,13 @@ export interface IStorage {
   
   // Work records methods
   getWorkRecords(): Promise<Task[]>;
+  
+  // Trash methods
+  getAllTrashItems(): Promise<TrashItem[]>;
+  moveToTrash(itemType: string, itemId: string, title: string, description: string, metadata: any, originalData: any, deletedBy: string): Promise<TrashItem>;
+  restoreFromTrash(trashItemId: string): Promise<void>;
+  permanentDeleteFromTrash(trashItemId: string): Promise<void>;
+  emptyTrash(): Promise<void>;
 }
 
 import { db } from "./db";
@@ -123,18 +130,108 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(tasks.updatedAt));
     return result;
   }
+
+  // Trash methods
+  async getAllTrashItems(): Promise<TrashItem[]> {
+    return await db.select().from(trashItems)
+      .orderBy(desc(trashItems.deletedAt));
+  }
+
+  async moveToTrash(itemType: string, itemId: string, title: string, description: string, metadata: any, originalData: any, deletedBy: string): Promise<TrashItem> {
+    const trashItem: InsertTrashItem = {
+      itemType,
+      itemId,
+      title,
+      description,
+      metadata,
+      originalData,
+      deletedBy
+    };
+    
+    const result = await db.insert(trashItems).values(trashItem).returning();
+    return result[0];
+  }
+
+  async restoreFromTrash(trashItemId: string): Promise<void> {
+    // Get the trash item
+    const trashItem = await db.select().from(trashItems)
+      .where(eq(trashItems.id, trashItemId))
+      .limit(1);
+    
+    if (!trashItem || trashItem.length === 0) {
+      throw new Error(`Trash item with ID ${trashItemId} not found`);
+    }
+
+    const item = trashItem[0];
+    
+    // Restore based on item type
+    if (item.itemType === 'task') {
+      const originalTask = item.originalData as Task;
+      // Remove the item from task's deletedAt field
+      await db.update(tasks)
+        .set({ 
+          deletedAt: null,
+          deletedBy: null 
+        })
+        .where(eq(tasks.taskId, item.itemId));
+    }
+    // Add more item types (notes, projects) here when implemented
+    
+    // Remove from trash
+    await db.delete(trashItems).where(eq(trashItems.id, trashItemId));
+  }
+
+  async permanentDeleteFromTrash(trashItemId: string): Promise<void> {
+    // Get the trash item
+    const trashItem = await db.select().from(trashItems)
+      .where(eq(trashItems.id, trashItemId))
+      .limit(1);
+    
+    if (!trashItem || trashItem.length === 0) {
+      throw new Error(`Trash item with ID ${trashItemId} not found`);
+    }
+
+    const item = trashItem[0];
+    
+    // Permanently delete the original item based on type
+    if (item.itemType === 'task') {
+      await db.delete(tasks).where(eq(tasks.taskId, item.itemId));
+    }
+    // Add more item types here when implemented
+    
+    // Remove from trash
+    await db.delete(trashItems).where(eq(trashItems.id, trashItemId));
+  }
+
+  async emptyTrash(): Promise<void> {
+    // Get all trash items
+    const allTrashItems = await db.select().from(trashItems);
+    
+    // Permanently delete all original items
+    for (const item of allTrashItems) {
+      if (item.itemType === 'task') {
+        await db.delete(tasks).where(eq(tasks.taskId, item.itemId));
+      }
+      // Add more item types here when implemented
+    }
+    
+    // Clear the trash
+    await db.delete(trashItems);
+  }
 }
 
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
   private tasks: Map<string, Task>;
   private messages: Map<string, TaskMessage[]>;
+  private trashItems: Map<string, TrashItem>;
   currentId: number;
 
   constructor() {
     this.users = new Map();
     this.tasks = new Map();
     this.messages = new Map();
+    this.trashItems = new Map();
     this.currentId = 1;
   }
 
