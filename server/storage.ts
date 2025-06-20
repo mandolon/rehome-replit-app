@@ -18,6 +18,9 @@ export interface IStorage {
   // Task message methods
   getTaskMessages(taskId: string): Promise<TaskMessage[]>;
   createTaskMessage(message: InsertTaskMessage): Promise<TaskMessage>;
+  
+  // Work records methods
+  getWorkRecords(): Promise<Task[]>;
 }
 
 import { db } from "./db";
@@ -235,6 +238,10 @@ export class MemStorage implements IStorage {
     this.messages.set(message.taskId, existing);
     
     return newMessage;
+  }
+
+  async getWorkRecords(): Promise<Task[]> {
+    return Array.from(this.tasks.values()).filter(task => task.workRecord === true);
   }
 }
 

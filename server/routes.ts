@@ -147,5 +147,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Work records routes
+  app.patch("/api/tasks/:taskId/work-record", async (req, res) => {
+    try {
+      const { workRecord } = req.body;
+      const task = await storage.updateTask(req.params.taskId, { workRecord });
+      broadcast('task_updated', task);
+      res.json(task);
+    } catch (error: any) {
+      console.error(`Error updating work record status for task ${req.params.taskId}:`, error);
+      res.status(500).json({ 
+        error: "Failed to update work record status", 
+        details: error?.message || String(error) 
+      });
+    }
+  });
+
+  app.get("/api/work-records", async (req, res) => {
+    try {
+      const workRecords = await storage.getWorkRecords();
+      res.json(workRecords);
+    } catch (error: any) {
+      console.error("Error fetching work records:", error);
+      res.status(500).json({ 
+        error: "Failed to fetch work records", 
+        details: error?.message || String(error) 
+      });
+    }
+  });
+
   return httpServer;
 }
