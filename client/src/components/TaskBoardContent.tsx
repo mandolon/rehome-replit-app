@@ -30,6 +30,12 @@ interface TaskBoardContentProps {
     selectedStartDate?: Date;
     selectedEndDate?: Date;
   };
+  onFiltersChange?: (filters: {
+    selectedAssignees: string[];
+    selectedCreatedBy: string[];
+    selectedStartDate?: Date;
+    selectedEndDate?: Date;
+  }) => void;
 }
 
 const TaskBoardContent = ({
@@ -49,6 +55,7 @@ const TaskBoardContent = ({
   addCollaborator,
   removeCollaborator,
   filters,
+  onFiltersChange,
 }: TaskBoardContentProps) => {
   // Apply filters to task groups
   const filteredTaskGroups = useMemo(() => {
@@ -74,7 +81,7 @@ const TaskBoardContent = ({
 
         // Filter by created by
         if (filters.selectedCreatedBy.length > 0) {
-          if (!filters.selectedCreatedBy.includes(task.createdBy)) {
+          if (!task.createdBy || task.createdBy === 'system' || !filters.selectedCreatedBy.includes(task.createdBy)) {
             return false;
           }
         }
@@ -133,10 +140,7 @@ const TaskBoardContent = ({
           onAddTask={onAddTask} 
           showClosed={showClosed}
           onToggleClosed={onToggleClosed}
-          onFiltersChange={(newFilters) => {
-            // This will be handled by the parent TaskBoard component
-            console.log('Filter change:', newFilters);
-          }}
+          onFiltersChange={onFiltersChange}
         />
 
         <ScrollArea className="flex-1 min-h-0">

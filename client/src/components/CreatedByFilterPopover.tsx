@@ -25,12 +25,13 @@ const CreatedByFilterPopover = ({ selectedPeople, onChange }: CreatedByFilterPop
     
     const uniqueCreators = new Set<string>();
     tasks.forEach((task: Task) => {
-      if (task.createdBy && typeof task.createdBy === 'string') {
+      if (task.createdBy && typeof task.createdBy === 'string' && task.createdBy !== 'system') {
         uniqueCreators.add(task.createdBy);
       }
     });
     
     return Array.from(uniqueCreators)
+      .filter(name => name && name.trim() !== '') // Filter out empty strings
       .map(name => ({ name, avatar: "👤" }))
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [tasks]);

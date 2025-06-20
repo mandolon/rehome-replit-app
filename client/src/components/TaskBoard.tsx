@@ -134,6 +134,7 @@ const TaskBoard: React.FC = React.memo(() => {
         addCollaborator={addCollaborator}
         removeCollaborator={removeCollaborator}
         filters={filters}
+        onFiltersChange={handleFiltersChange}
       />
       <TaskDialog
         isOpen={isTaskDialogOpen}
