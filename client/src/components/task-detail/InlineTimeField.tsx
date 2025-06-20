@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { Button } from '@/components/ui/button';
+import { ToastAction } from '@/components/ui/toast';
 
 interface InlineTimeFieldProps {
   taskId: string;
@@ -66,30 +66,26 @@ const InlineTimeField = ({ taskId, currentTime, onTimeUpdated }: InlineTimeField
       setIsEditing(false);
       
       toast({
+        title: "Time logged updated",
         description: (
-          <span>
-            <span className="font-semibold">Time logged</span>
-            {" "}updated to {formatTime(newTime)}.{" "}
+          <span className="text-sm">
+            Set to {formatTime(newTime)}. View in{" "}
             <button
               type="button"
-              className="font-bold underline text-blue-700 hover:text-blue-600 transition-colors"
-              tabIndex={0}
+              className="font-medium underline text-blue-600 hover:text-blue-500"
               onClick={() => {
                 window.location.href = '/timesheets?tab=project-log';
                 dismiss();
               }}
             >
-              View in records
+              Project Records
             </button>
           </span>
         ),
         action: (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={async (e) => {
-              e.stopPropagation();
-              // Undo by reverting to previous time
+          <ToastAction
+            altText="Undo time change"
+            onClick={async () => {
               const response = await fetch(`/api/tasks/${taskId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
@@ -102,30 +98,15 @@ const InlineTimeField = ({ taskId, currentTime, onTimeUpdated }: InlineTimeField
             }}
           >
             Undo
-          </Button>
+          </ToastAction>
         ),
         duration: 5000,
       });
     } catch (error) {
       console.error('Error updating time:', error);
       toast({
-        description: (
-          <span>
-            <span className="font-semibold">Failed</span>
-            {" "}to update time logged. Please try again.{" "}
-            <button
-              type="button"
-              className="font-bold underline text-red-200 hover:text-red-100 transition-colors"
-              tabIndex={0}
-              onClick={() => {
-                window.location.href = '/';
-                dismiss();
-              }}
-            >
-              Go to tasks
-            </button>
-          </span>
-        ),
+        title: "Failed to update time",
+        description: "Please try again or contact support if the issue persists.",
         variant: "destructive",
       });
     } finally {

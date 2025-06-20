@@ -9,7 +9,7 @@ import {
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
 import { useToast } from '@/hooks/use-toast';
-import { Button } from '@/components/ui/button';
+import { ToastAction } from '@/components/ui/toast';
 import { Task } from '@/types/task';
 
 interface TaskRowContextMenuProps {
@@ -65,30 +65,26 @@ const TaskRowContextMenu = ({
 
       if (response.ok) {
         toast({
+          title: "Task added to work records",
           description: (
-            <span>
-              <span className="font-semibold">Task</span>
-              {" "}added to work records.{" "}
+            <span className="text-sm">
+              View in{" "}
               <button
                 type="button"
-                className="font-bold underline text-blue-700 hover:text-blue-600 transition-colors"
-                tabIndex={0}
+                className="font-medium underline text-blue-600 hover:text-blue-500"
                 onClick={() => {
                   window.location.href = '/timesheets?tab=project-log';
                   dismiss();
                 }}
               >
-                View records
+                Project Time Entries
               </button>
             </span>
           ),
           action: (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={async (e) => {
-                e.stopPropagation();
-                // Undo by removing from work records
+            <ToastAction
+              altText="Undo adding to work records"
+              onClick={async () => {
                 await fetch(`/api/tasks/${task.taskId}/work-record`, {
                   method: 'PATCH',
                   headers: { 'Content-Type': 'application/json' },
@@ -98,7 +94,7 @@ const TaskRowContextMenu = ({
               }}
             >
               Undo
-            </Button>
+            </ToastAction>
           ),
           duration: 5000,
         });
@@ -108,23 +104,8 @@ const TaskRowContextMenu = ({
       }
     } catch (error) {
       toast({
-        description: (
-          <span>
-            <span className="font-semibold">Failed</span>
-            {" "}to add task to work records. Please try again.{" "}
-            <button
-              type="button"
-              className="font-bold underline text-red-200 hover:text-red-100 transition-colors"
-              tabIndex={0}
-              onClick={() => {
-                window.location.href = '/';
-                dismiss();
-              }}
-            >
-              Go to tasks
-            </button>
-          </span>
-        ),
+        title: "Failed to add to work records",
+        description: "Please try again or contact support if the issue persists.",
         variant: "destructive",
       });
     }
