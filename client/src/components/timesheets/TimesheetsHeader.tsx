@@ -10,8 +10,10 @@ interface TimesheetsHeaderProps {
 }
 
 const TimesheetsHeader = ({ selectedWeek, onWeekChange, onAddTimeEntry }: TimesheetsHeaderProps) => {
-  const weekStart = startOfWeek(selectedWeek, { weekStartsOn: 1 });
-  const weekEnd = endOfWeek(selectedWeek, { weekStartsOn: 1 });
+  const tabs = [
+    { id: 'timesheet', label: 'Timesheet', active: true },
+    { id: 'project-log', label: 'Project log', active: false },
+  ];
 
   return (
     <div className="border-b border-border">
@@ -28,31 +30,19 @@ const TimesheetsHeader = ({ selectedWeek, onWeekChange, onAddTimeEntry }: Timesh
         </div>
         
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => onWeekChange(subWeeks(selectedWeek, 1))}
-              className="flex items-center justify-center w-7 h-7 text-muted-foreground hover:text-foreground border border-border rounded hover:bg-accent/50 transition-colors"
-            >
-              <ChevronLeft className="w-3 h-3" />
-            </button>
-            <div className="flex items-center gap-2 px-2 py-1 bg-muted rounded text-xs">
-              <Calendar className="w-3 h-3 text-muted-foreground" />
-              <span className="font-medium">
-                {format(weekStart, 'MMM d')} - {format(weekEnd, 'MMM d, yyyy')}
-              </span>
-            </div>
-            <button
-              onClick={() => onWeekChange(addWeeks(selectedWeek, 1))}
-              className="flex items-center justify-center w-7 h-7 text-muted-foreground hover:text-foreground border border-border rounded hover:bg-accent/50 transition-colors"
-            >
-              <ChevronRight className="w-3 h-3" />
-            </button>
-            <button
-              onClick={() => onWeekChange(new Date())}
-              className="flex items-center gap-2 px-2 py-1 text-xs text-muted-foreground hover:text-foreground border border-border rounded hover:bg-accent/50 transition-colors ml-2"
-            >
-              Today
-            </button>
+          <div className="flex items-center space-x-6">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                className={`text-sm pb-2 border-b-2 transition-colors ${
+                  tab.active
+                    ? 'border-primary text-foreground font-medium'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
           </div>
         </div>
       </div>

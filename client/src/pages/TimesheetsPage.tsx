@@ -4,6 +4,7 @@ import AppLayout from '@/components/layout/AppLayout';
 import TimesheetsHeader from '@/components/timesheets/TimesheetsHeader';
 import TimesheetTable from '@/components/timesheets/TimesheetTable';
 import TimesheetStats from '@/components/timesheets/TimesheetStats';
+import TimesheetCalendarSelector from '@/components/timesheets/TimesheetCalendarSelector';
 import AddTimeEntryDialog from '@/components/timesheets/AddTimeEntryDialog';
 
 const TimesheetsPage = () => {
@@ -27,6 +28,7 @@ const TimesheetsPage = () => {
         
         <div className="flex-1 overflow-hidden p-4 space-y-4">
           <TimesheetStats selectedWeek={selectedWeek} refreshTrigger={refreshTrigger} />
+          <TimesheetCalendarSelector selectedWeek={selectedWeek} onWeekChange={setSelectedWeek} />
           <TimesheetTable selectedWeek={selectedWeek} refreshTrigger={refreshTrigger} />
         </div>
 
