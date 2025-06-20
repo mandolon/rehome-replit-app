@@ -21,19 +21,27 @@ const CreatedByFilterPopover = ({ selectedPeople, onChange }: CreatedByFilterPop
 
   // Get unique creators from tasks, sorted alphabetically by first name
   const creators = useMemo(() => {
-    if (!Array.isArray(tasks)) return [];
+    if (!Array.isArray(tasks)) {
+      console.log('Tasks is not an array:', tasks);
+      return [];
+    }
     
+    console.log('Processing tasks for creators:', tasks.length);
     const uniqueCreators = new Set<string>();
     tasks.forEach((task: Task) => {
+      console.log('Task createdBy:', task.createdBy);
       if (task.createdBy && typeof task.createdBy === 'string' && task.createdBy !== 'system') {
         uniqueCreators.add(task.createdBy);
       }
     });
     
-    return Array.from(uniqueCreators)
+    const result = Array.from(uniqueCreators)
       .filter(name => name && name.trim() !== '') // Filter out empty strings
       .map(name => ({ name, avatar: "👤" }))
       .sort((a, b) => a.name.localeCompare(b.name));
+    
+    console.log('Final creators list:', result);
+    return result;
   }, [tasks]);
 
   const handleToggle = (person: Person) => {
@@ -43,6 +51,11 @@ const CreatedByFilterPopover = ({ selectedPeople, onChange }: CreatedByFilterPop
       onChange([...selectedPeople, person.name]);
     }
   };
+
+  // Don't render if no creators available
+  if (creators.length === 0) {
+    return null;
+  }
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
