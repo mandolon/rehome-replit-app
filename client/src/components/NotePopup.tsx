@@ -382,37 +382,42 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
                             <div className="w-2 h-2 bg-white rounded-full"></div>
                           </button>
                           <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-sm font-medium text-gray-900 dark:text-white line-through">
-                                {note.author}
-                              </span>
-                              <span className="text-xs text-gray-500">
-                                {note.timestamp}
-                              </span>
-                            </div>
-                            <p className="text-xs line-through text-gray-500">
-                              {note.content}
-                            </p>
-                            
-                            {/* Show attachments if any */}
-                            {note.attachments && note.attachments.length > 0 && (
-                              <div className="mt-2 space-y-1">
-                                {note.attachments.map((attachment) => (
-                                  <div
-                                    key={attachment.id}
-                                    className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded px-2 py-1 text-xs opacity-60"
-                                  >
-                                    <span className="text-sm">{getFileIcon(attachment.type)}</span>
-                                    <span className="flex-1 truncate text-gray-600 dark:text-gray-400">
-                                      {attachment.name}
-                                    </span>
-                                    <span className="text-gray-400 text-xs">
-                                      {formatFileSize(attachment.size)}
-                                    </span>
-                                  </div>
-                                ))}
+                            <div className="space-y-3">
+                              <div className="mb-2">
+                                <span className="text-sm font-medium text-gray-900 dark:text-white line-through">
+                                  {note.author}
+                                </span>
                               </div>
-                            )}
+                              
+                              <p className="text-xs leading-relaxed line-through text-gray-500">
+                                {note.content}
+                              </p>
+                              
+                              {/* Show attachments if any */}
+                              {note.attachments && note.attachments.length > 0 && (
+                                <div className="space-y-1">
+                                  {note.attachments.map((attachment) => (
+                                    <div
+                                      key={attachment.id}
+                                      className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded px-2 py-1 text-xs opacity-60"
+                                    >
+                                      <span className="text-sm">{getFileIcon(attachment.type)}</span>
+                                      <span className="flex-1 truncate text-gray-600 dark:text-gray-400">
+                                        {attachment.name}
+                                      </span>
+                                      <span className="text-gray-400 text-xs">
+                                        {formatFileSize(attachment.size)}
+                                      </span>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                              
+                              {/* Timestamp at bottom */}
+                              <div className="text-xs text-gray-400 dark:text-gray-500">
+                                {note.timestamp}
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -450,12 +455,9 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
                       )}
                     </button>
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
+                      <div className="mb-2">
                         <span className="text-sm font-medium text-gray-900 dark:text-white">
                           {note.author}
-                        </span>
-                        <span className="text-xs text-gray-500">
-                          {note.timestamp}
                         </span>
                       </div>
                       {editingNote === note.id ? (
@@ -493,8 +495,8 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
                           </div>
                         </div>
                       ) : (
-                        <div>
-                          <p className={`text-xs ${
+                        <div className="space-y-3">
+                          <p className={`text-xs leading-relaxed ${
                             note.completed 
                               ? 'line-through text-gray-500' 
                               : 'text-gray-700 dark:text-gray-300'
@@ -504,7 +506,7 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
                           
                           {/* Show attachments if any */}
                           {note.attachments && note.attachments.length > 0 && (
-                            <div className="mt-2 space-y-1">
+                            <div className="space-y-1">
                               {note.attachments.map((attachment) => (
                                 <div
                                   key={attachment.id}
@@ -521,6 +523,11 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
                               ))}
                             </div>
                           )}
+                          
+                          {/* Timestamp at bottom */}
+                          <div className="text-xs text-gray-400 dark:text-gray-500">
+                            {note.timestamp}
+                          </div>
                         </div>
                       )}
                     </div>
