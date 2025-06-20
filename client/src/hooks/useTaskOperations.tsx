@@ -20,7 +20,7 @@ export function useTaskOperations() {
     switch (message.event) {
       case 'task_created':
         setCustomTasks(prev => [...prev, message.data]);
-        queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+        queryClient.invalidateQueries({ queryKey: ['api-tasks'] });
         break;
       
       case 'task_updated':
@@ -29,14 +29,14 @@ export function useTaskOperations() {
             task.taskId === message.data.taskId ? message.data : task
           )
         );
-        queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+        queryClient.invalidateQueries({ queryKey: ['api-tasks'] });
         break;
       
       case 'task_deleted':
         setCustomTasks(prev => 
           prev.filter(task => task.taskId !== message.data.taskId)
         );
-        queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+        queryClient.invalidateQueries({ queryKey: ['api-tasks'] });
         break;
       
       default:
@@ -46,11 +46,19 @@ export function useTaskOperations() {
 
   const { isConnected } = useWebSocket(wsUrl, handleWebSocketMessage);
 
-  // Fetch tasks query
+  // Fetch tasks query with direct API call
   const { data: tasks = [], isLoading } = useQuery({
-    queryKey: ['/api/tasks'],
-    queryFn: fetchAllTasks,
-    refetchOnWindowFocus: false,
+    queryKey: ['api-tasks'],
+    queryFn: async () => {
+      console.log('Making direct API call for tasks in useTaskOperations');
+      const response = await fetch('/api/tasks');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log('Tasks loaded in useTaskOperations:', data.length);
+      return data;
+    },
   });
 
   // Update local state when tasks change
@@ -61,28 +69,59 @@ export function useTaskOperations() {
     setArchivedTasks(archived);
   }, [tasks]);
 
-  // Create task mutation
+  // Create task mutation with direct API call
   const createTaskMutation = useMutation({
-    mutationFn: createTask,
+    mutationFn: async (newTask: any) => {
+      const response = await fetch('/api/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newTask),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['api-tasks'] });
     },
   });
 
-  // Update task mutation
+  // Update task mutation with direct API call
   const updateTaskMutation = useMutation({
-    mutationFn: ({ taskId, updates }: { taskId: string; updates: Partial<Task> }) =>
-      updateTask(taskId, updates),
+    mutationFn: async ({ taskId, updates }: { taskId: string; updates: Partial<Task> }) => {
+      const response = await fetch(`/api/tasks/${taskId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updates),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['api-tasks'] });
     },
   });
 
-  // Delete task mutation
+  // Delete task mutation with direct API call
   const deleteTaskMutation = useMutation({
-    mutationFn: deleteTask,
+    mutationFn: async (taskId: string) => {
+      const response = await fetch(`/api/tasks/${taskId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return taskId;
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['api-tasks'] });
     },
   });
 
