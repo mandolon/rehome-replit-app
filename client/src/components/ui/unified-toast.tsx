@@ -163,7 +163,8 @@ export const useProjectToast = () => {
     projectDeleted: (name: string, undoFn?: () => void) => showToast({
       itemType: 'project',
       itemName: name,
-      action: 'deleted',
+      action: 'moved',
+      destination: 'trash',
       variant: 'destructive',
       undoAction: undoFn
     })
@@ -198,7 +199,8 @@ export const useTaskToast = () => {
     taskDeleted: (name: string, undoFn?: () => void) => showToast({
       itemType: 'task',
       itemName: name,
-      action: 'deleted',
+      action: 'moved',
+      destination: 'trash',
       variant: 'destructive',
       undoAction: undoFn
     }),
