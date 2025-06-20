@@ -64,7 +64,7 @@ export const useTaskDeletion = () => {
           }
           
           // Invalidate and refetch tasks
-          await queryClient.invalidateQueries({ queryKey: ['tasks'] });
+          await queryClient.invalidateQueries({ queryKey: ['api-tasks'] });
         } else {
           // Legacy: only pass the ID, as the context only expects one argument
           await deleteTask(taskToDeleteObj.id);
@@ -104,7 +104,7 @@ export const useTaskDeletion = () => {
                   });
                   
                   if (response.ok) {
-                    await queryClient.invalidateQueries({ queryKey: ['tasks'] });
+                    await queryClient.invalidateQueries({ queryKey: ['api-tasks'] });
                   }
                 } else if (taskToDeleteObj) {
                   restoreDeletedTask(taskToDeleteObj.id);
