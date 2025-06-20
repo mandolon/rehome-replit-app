@@ -13,9 +13,10 @@ import { useTaskDetailDescriptionSave } from './hooks/useTaskDetailDescriptionSa
 
 interface TaskDetailFormProps {
   task: Task;
+  onTimeUpdated?: (newTime: string) => void;
 }
 
-const TaskDetailForm = ({ task: originalTask }: TaskDetailFormProps) => {
+const TaskDetailForm = ({ task: originalTask, onTimeUpdated }: TaskDetailFormProps) => {
   const { currentUser } = useUser();
   const {
     editingTaskId,
@@ -119,6 +120,7 @@ const TaskDetailForm = ({ task: originalTask }: TaskDetailFormProps) => {
         removeAssignee={handleRemoveAssignee}
         addCollaborator={handleAddCollaborator}
         removeCollaborator={handleRemoveCollaborator}
+        onTimeUpdated={onTimeUpdated}
       />
       {/* Attachments and Trash sections are outside this form */}
     </div>

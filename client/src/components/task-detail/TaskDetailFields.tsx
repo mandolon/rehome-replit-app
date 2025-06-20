@@ -1,8 +1,9 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useState } from 'react';
 import { TEAM_USERS } from "@/utils/teamUsers";
 import { getCRMUser } from '@/utils/taskUserCRM';
 import { format } from 'date-fns';
 import TaskRowAssignees from '../task-group/TaskRowAssignees';
+import InlineTimeField from './InlineTimeField';
 
 interface TaskDetailFieldsProps {
   task: any;
@@ -11,6 +12,7 @@ interface TaskDetailFieldsProps {
   removeAssignee: (taskId: string) => void;
   addCollaborator?: (taskId: string, person: any) => void;
   removeCollaborator?: (taskId: string, collaboratorIndex: number) => void;
+  onTimeUpdated?: (newTime: string) => void;
 }
 
 const TaskDetailFields: React.FC<TaskDetailFieldsProps> = ({
@@ -19,8 +21,10 @@ const TaskDetailFields: React.FC<TaskDetailFieldsProps> = ({
   assignPerson,
   removeAssignee,
   addCollaborator,
-  removeCollaborator
+  removeCollaborator,
+  onTimeUpdated
 }) => {
+  const [timeLogged, setTimeLogged] = useState(task?.timeLogged || '0');
   const formatCreatedDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
@@ -56,6 +60,11 @@ const TaskDetailFields: React.FC<TaskDetailFieldsProps> = ({
     if (addCollaborator) addCollaborator(taskId, person);
   }, [addCollaborator]);
 
+  const handleTimeUpdated = (newTime: string) => {
+    setTimeLogged(newTime);
+    if (onTimeUpdated) onTimeUpdated(newTime);
+  };
+
   return (
     <div className="grid grid-cols-4 gap-3">
       <div className="space-y-1">
@@ -87,9 +96,13 @@ const TaskDetailFields: React.FC<TaskDetailFieldsProps> = ({
       </div>
       <div className="space-y-1">
         <label className="text-xs text-muted-foreground">
-          Marked Complete
+          Time Logged
         </label>
-        <div className="text-xs text-muted-foreground">—</div>
+        <InlineTimeField
+          taskId={task.taskId}
+          currentTime={timeLogged}
+          onTimeUpdated={handleTimeUpdated}
+        />
       </div>
     </div>
   );
