@@ -1,0 +1,128 @@
+client:536 WebSocket connection to 'wss://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/?token=3eU6twerVlF2' failed: 
+setupWebSocket @ client:536
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=3eU6twerVlF2' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)
+chunk-RPCDYKBN.js?v=fcf40894:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+App.tsx:51 App component is rendering, current path: /tasks
+App.tsx:51 App component is rendering, current path: /login
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+AppLayout.tsx:35 Sidebar resize: 20
+App.tsx:51 App component is rendering, current path: /dashboard
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+App.tsx:51 App component is rendering, current path: /dashboard
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+useTaskBoard.tsx:43 TaskGroups calculation - tasks: 0 loading: true
+useTaskBoard.tsx:57 Task filtering results: Object
+AppLayout.tsx:35 Sidebar resize: 20
+App.tsx:51 App component is rendering, current path: /tasks
+useTaskBoard.tsx:33 useQuery state changed: Object
+useTaskBoard.tsx:43 TaskGroups calculation - tasks: 0 loading: false
+useTaskBoard.tsx:57 Task filtering results: Object
+useTaskBoard.tsx:33 useQuery state changed: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+useTaskBoard.tsx:43 TaskGroups calculation - tasks: 0 loading: false
+useTaskBoard.tsx:57 Task filtering results: Object
+useTaskBoard.tsx:33 useQuery state changed: Object
+useRealtimeTasks.tsx:37 WebSocket connected for real-time updates
+useRealtimeTasks.tsx:37 WebSocket connected for real-time updates
