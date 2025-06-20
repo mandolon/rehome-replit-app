@@ -5,6 +5,7 @@ import { ChevronDown, Play, Pause, CheckCircle } from 'lucide-react';
 import { ProjectStatusBadge } from './ProjectStatusBadge';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useProjectToast } from '@/components/ui/unified-toast';
+import { useToast } from '@/hooks/use-toast';
 
 interface ProjectStatusDropdownProps {
   projectId: string;
@@ -14,6 +15,7 @@ interface ProjectStatusDropdownProps {
 
 export const ProjectStatusDropdown = ({ projectId, currentStatus, disabled }: ProjectStatusDropdownProps) => {
   const queryClient = useQueryClient();
+  const { projectStatusChanged } = useProjectToast();
   const { toast } = useToast();
 
   const updateStatusMutation = useMutation({
@@ -42,16 +44,12 @@ export const ProjectStatusDropdown = ({ projectId, currentStatus, disabled }: Pr
         'completed': 'Completed'
       };
       
-      toast({
-        title: "Project status updated.",
-        description: `Project moved to ${statusLabels[data.status] || data.status}.`,
-      });
+      projectStatusChanged(data.title, statusLabels[data.status] || data.status);
     },
     onError: (error) => {
       toast({
         variant: "destructive",
-        title: "Failed to update project status.",
-        description: error instanceof Error ? error.message : "Please try again.",
+        description: error instanceof Error ? error.message : "Failed to update project status.",
       });
     },
   });
