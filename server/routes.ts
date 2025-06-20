@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer } from "ws";
 import { storage } from "./storage";
-import { insertTaskSchema, insertTaskMessageSchema } from "@shared/schema";
+import { insertTaskSchema, insertTaskMessageSchema, insertProjectSchema } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -243,6 +243,107 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error fetching work records:", error);
       res.status(500).json({ 
         error: "Failed to fetch work records", 
+        details: error?.message || String(error) 
+      });
+    }
+  });
+
+  // Project routes
+  app.get("/api/projects", async (req, res) => {
+    try {
+      const projects = await storage.getAllProjects();
+      res.json(projects);
+    } catch (error: any) {
+      console.error("Error fetching projects:", error);
+      res.status(500).json({ 
+        error: "Failed to fetch projects", 
+        details: error?.message || String(error) 
+      });
+    }
+  });
+
+  app.get("/api/projects/:projectId", async (req, res) => {
+    try {
+      const project = await storage.getProjectByProjectId(req.params.projectId);
+      if (!project) {
+        return res.status(404).json({ error: "Project not found" });
+      }
+      res.json(project);
+    } catch (error: any) {
+      console.error(`Error fetching project ${req.params.projectId}:`, error);
+      res.status(500).json({ 
+        error: "Failed to fetch project", 
+        details: error?.message || String(error) 
+      });
+    }
+  });
+
+  app.post("/api/projects", async (req, res) => {
+    try {
+      const validatedProject = insertProjectSchema.parse(req.body);
+      const project = await storage.createProject(validatedProject);
+      broadcast('project_created', project);
+      res.status(201).json(project);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid project data", details: error.errors });
+      }
+      console.error("Error creating project:", error);
+      res.status(500).json({ error: "Failed to create project" });
+    }
+  });
+
+  app.patch("/api/projects/:projectId", async (req, res) => {
+    try {
+      const project = await storage.updateProject(req.params.projectId, req.body);
+      broadcast('project_updated', project);
+      res.json(project);
+    } catch (error: any) {
+      console.error(`Error updating project ${req.params.projectId}:`, error);
+      if (error.message?.includes("not found")) {
+        return res.status(404).json({ error: "Project not found" });
+      }
+      res.status(500).json({ 
+        error: "Failed to update project", 
+        details: error?.message || String(error) 
+      });
+    }
+  });
+
+  app.patch("/api/projects/:projectId/status", async (req, res) => {
+    try {
+      const { status } = req.body;
+      if (!['in_progress', 'on_hold', 'completed'].includes(status)) {
+        return res.status(400).json({ error: "Invalid status. Must be 'in_progress', 'on_hold', or 'completed'" });
+      }
+      
+      const project = await storage.updateProjectStatus(req.params.projectId, status);
+      broadcast('project_status_updated', project);
+      res.json(project);
+    } catch (error: any) {
+      console.error(`Error updating project status ${req.params.projectId}:`, error);
+      if (error.message?.includes("not found")) {
+        return res.status(404).json({ error: "Project not found" });
+      }
+      res.status(500).json({ 
+        error: "Failed to update project status", 
+        details: error?.message || String(error) 
+      });
+    }
+  });
+
+  app.delete("/api/projects/:projectId", async (req, res) => {
+    try {
+      await storage.deleteProject(req.params.projectId);
+      broadcast('project_deleted', { projectId: req.params.projectId });
+      res.status(204).send();
+    } catch (error: any) {
+      console.error(`Error deleting project ${req.params.projectId}:`, error);
+      if (error.message?.includes("not found")) {
+        return res.status(404).json({ error: "Project not found" });
+      }
+      res.status(500).json({ 
+        error: "Failed to delete project", 
         details: error?.message || String(error) 
       });
     }

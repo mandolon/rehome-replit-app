@@ -10,6 +10,7 @@ import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-route
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import ProjectPage from "./pages/ProjectPage";
+import Projects from "./pages/Projects";
 import TaskDetailPage from "./pages/TaskDetailPage";
 import InboxPage from "./pages/InboxPage";
 import TeamsPage from "./pages/TeamsPage";
@@ -78,6 +79,7 @@ const App = () => {
                               <Route path="/" element={<Index />} />
                               <Route path="/tasks" element={<TasksPage />} />
                               <Route path="/dashboard" element={<Dashboard />} />
+                              <Route path="/projects" element={<Projects />} />
                               <Route path="/project/:projectId" element={<ProjectPage />} />
                               <Route path="/task/:taskId" element={<TaskDetailPage />} />
                               <Route path="/inbox" element={<InboxPage />} />
