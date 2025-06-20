@@ -5,6 +5,7 @@ import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover
 import { Button } from "@/components/ui/button";
 import { Calendar as ShadcnCalendar } from "@/components/ui/calendar";
 import AssigneeFilterPopover from './AssigneeFilterPopover';
+import CreatedByFilterPopover from './CreatedByFilterPopover';
 import TodoPopup from './TodoPopup';
 
 interface TaskBoardFiltersProps {
@@ -17,6 +18,7 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed }: TaskBoardFi
   const [dateFilterOpen, setDateFilterOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedAssignees, setSelectedAssignees] = useState<string[]>([]);
+  const [selectedCreatedBy, setSelectedCreatedBy] = useState<string[]>([]);
   const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
   const [projectsDropdownOpen, setProjectsDropdownOpen] = useState(false);
   const [selectedStartDate, setSelectedStartDate] = useState<Date | undefined>();
@@ -161,6 +163,12 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed }: TaskBoardFi
         <AssigneeFilterPopover
           selectedPeople={selectedAssignees}
           onChange={setSelectedAssignees}
+        />
+
+        {/* Created By Filter Popover */}
+        <CreatedByFilterPopover
+          selectedPeople={selectedCreatedBy}
+          onChange={setSelectedCreatedBy}
         />
 
         <div className="ml-auto flex items-center gap-2">
