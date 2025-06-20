@@ -359,7 +359,7 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
           <div className="border-t border-gray-200 dark:border-gray-700"></div>
 
           {/* Note Lists */}
-          <div className="px-6 pb-4 overflow-y-auto h-[320px] note-popup-scrollbar">
+          <div className="px-6 pb-4 overflow-y-auto h-[320px]">
             <div className="pt-4 h-full">
               {showCompleted ? (
                 // Show completed notes
@@ -563,15 +563,16 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Footer Actions */}
-        <div className="px-6 py-3 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
-          <button 
-            onClick={() => setShowCompleted(!showCompleted)}
-            className="px-2 py-1 text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
-          >
-            {showCompleted ? 'Hide Completed' : `Show Completed (${completedNotes.length})`}
-          </button>
-          
-          <div className="flex items-center gap-2">
+        <div className="px-6 py-3 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between">
+            <button 
+              onClick={() => setShowCompleted(!showCompleted)}
+              className="text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+            >
+              {showCompleted ? 'Hide Completed' : `Show Completed (${completedNotes.length})`}
+            </button>
+            
+            <div className="flex items-center gap-2">
             <button 
               onClick={() => fileInputRef.current?.click()}
               className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
@@ -591,6 +592,7 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
               <Plus className="w-3 h-3" />
               Add
             </button>
+            </div>
           </div>
         </div>
 
