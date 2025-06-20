@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { formatDate } from '@/utils/taskUtils';
-import { fetchAllTasksIncludingDeleted, updateTask, permanentDeleteTask } from '@/data/api';
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Task } from '@/types/task';
 import { useNavigate } from 'react-router-dom';
@@ -32,43 +32,31 @@ const TrashTab = () => {
     refetchOnWindowFocus: false,
   });
 
-  // Mutation for restoring tasks with direct API call
-  const restoreTaskMutation = useMutation({
-    mutationFn: async ({ taskId, updates }: { taskId: string; updates: Partial<Task> }) => {
-      const response = await fetch(`/api/tasks/${taskId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updates),
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['api-tasks'] });
-      queryClient.invalidateQueries({ queryKey: ['api-tasks-all'] });
-    },
-  });
+  // Direct API restore function
+  const restoreTask = async (taskId: string, updates: Partial<Task>) => {
+    const response = await fetch(`/api/tasks/${taskId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updates),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  };
 
-  // Mutation for permanently deleting tasks with direct API call
-  const permanentDeleteMutation = useMutation({
-    mutationFn: async (taskId: string) => {
-      const response = await fetch(`/api/tasks/${taskId}/permanent`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return taskId;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['api-tasks'] });
-      queryClient.invalidateQueries({ queryKey: ['api-tasks-all'] });
-    },
-  });
+  // Direct API permanent delete function
+  const permanentDeleteTask = async (taskId: string) => {
+    const response = await fetch(`/api/tasks/${taskId}/permanent`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return taskId;
+  };
 
   const deletedTasks = useMemo(() => {
     return allTasks.filter(
@@ -98,10 +86,12 @@ const TrashTab = () => {
     }
 
     try {
-      await restoreTaskMutation.mutateAsync({
-        taskId: task.taskId,
-        updates: { deletedAt: null, deletedBy: null }
-      });
+      await restoreTask(task.taskId, { deletedAt: null, deletedBy: null });
+      
+      // Refresh both task lists
+      queryClient.invalidateQueries({ queryKey: ['api-tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['api-tasks-all'] });
+      queryClient.invalidateQueries({ queryKey: ['task-board-data'] });
       
       setOptimisticallyRestored((prev) => [...prev, taskId.toString()]);
 
@@ -158,7 +148,12 @@ const TrashTab = () => {
       // Optimistically remove from UI
       setOptimisticallyDeleted(prev => [...prev, taskId.toString()]);
       
-      await permanentDeleteMutation.mutateAsync(task.taskId);
+      await permanentDeleteTask(task.taskId);
+      
+      // Refresh both task lists
+      queryClient.invalidateQueries({ queryKey: ['api-tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['api-tasks-all'] });
+      queryClient.invalidateQueries({ queryKey: ['task-board-data'] });
       toast({ 
         description: (
           <span>
@@ -214,8 +209,13 @@ const TrashTab = () => {
       setOptimisticallyDeleted(prev => [...prev, ...taskIds]);
       
       // Delete all tasks
-      const promises = deletedTasks.map((task: Task) => permanentDeleteMutation.mutateAsync(task.taskId));
+      const promises = deletedTasks.map((task: Task) => permanentDeleteTask(task.taskId));
       await Promise.all(promises);
+      
+      // Refresh both task lists
+      queryClient.invalidateQueries({ queryKey: ['api-tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['api-tasks-all'] });
+      queryClient.invalidateQueries({ queryKey: ['task-board-data'] });
       
       toast({ 
         description: (
