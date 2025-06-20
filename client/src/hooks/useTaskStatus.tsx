@@ -6,6 +6,7 @@ import { Task } from '@/types/task';
 
 export const useTaskStatus = (onTaskArchive?: (taskId: number) => void) => {
   const { taskCompleted } = useTaskToast();
+  const { toast } = useToast();
 
   const handleTaskStatusClick = (taskId: number, tasks: Task[], onTaskUpdate: (taskId: number, updates: Partial<Task>) => void) => {
     const task = tasks.find(t => t.id === taskId);
@@ -31,22 +32,7 @@ export const useTaskStatus = (onTaskArchive?: (taskId: number) => void) => {
     onTaskUpdate(taskId, { status: previousStatus, archived: false });
     
     toast({
-      description: (
-        <span>
-          <span className="font-semibold">Task</span>
-          {" "}has been restored.{" "}
-          <button
-            type="button"
-            className="font-bold underline text-blue-700 hover:text-blue-600 transition-colors"
-            tabIndex={0}
-            onClick={() => {
-              window.location.href = '/';
-            }}
-          >
-            Go to tasks
-          </button>
-        </span>
-      ),
+      description: "Task has been restored.",
       duration: 3000,
     });
     
