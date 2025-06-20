@@ -266,12 +266,12 @@ const TrashTab = () => {
 
   if (loading) {
     return (
-      <div className="space-y-4">
+      <div className="px-6 py-4 space-y-4">
         <div className="relative">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input placeholder="Search deleted tasks..." className="pl-8" disabled />
         </div>
-        <div className="text-center py-8">
+        <div className="text-center py-12">
           <div className="text-muted-foreground">Loading deleted tasks...</div>
         </div>
       </div>
@@ -279,7 +279,7 @@ const TrashTab = () => {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="px-6 py-4 space-y-4">
       <div className="flex items-center justify-between">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -304,42 +304,48 @@ const TrashTab = () => {
       </div>
 
       {filteredTasks.length === 0 ? (
-        <div className="text-center py-8">
+        <div className="text-center py-12">
           <Trash2 className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
           <div className="text-muted-foreground">
             {searchQuery ? 'No deleted tasks match your search.' : 'Trash is empty.'}
           </div>
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-1">
           {filteredTasks.map((task: Task) => (
             <div
               key={task.id}
-              className="flex items-center justify-between p-3 border rounded-lg bg-muted/20"
+              className="flex items-center justify-between px-4 py-3 hover:bg-accent/50 rounded-lg transition-colors group border-b border-border/50 last:border-b-0"
             >
               <div className="flex-1 min-w-0">
-                <div className="font-medium text-sm truncate">{task.title}</div>
+                <div className="flex items-center gap-3 mb-1">
+                  <span className="font-medium text-foreground text-sm">{task.taskId}</span>
+                  <div className="h-4 w-px bg-border"></div>
+                  <div className="font-medium text-sm text-foreground truncate">{task.title}</div>
+                </div>
                 <div className="text-xs text-muted-foreground">
                   {task.project && `${task.project} • `}
                   Deleted {task.deletedAt ? formatDate(task.deletedAt) : 'recently'}
                 </div>
               </div>
-              <div className="flex items-center gap-2 ml-4">
+              <div className="flex items-center gap-2 ml-4 opacity-0 group-hover:opacity-100 transition-opacity">
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => handleRestore(task.id?.toString() ?? '')}
                   disabled={restoringIds.includes(task.id?.toString() ?? '')}
+                  className="text-xs h-8 px-3"
                 >
-                  <RotateCcw className="w-4 h-4 mr-1" />
+                  <RotateCcw className="w-3 h-3 mr-1" />
                   {restoringIds.includes(task.id?.toString() ?? '') ? 'Restoring...' : 'Restore'}
                 </Button>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => handlePermanentDelete(task.id?.toString() ?? '')}
+                  className="text-xs h-8 px-3 text-destructive hover:text-destructive"
                 >
-                  <Trash2 className="w-4 h-4 mr-1" />
+                  <Trash2 className="w-3 h-3 mr-1" />
                   Delete Forever
                 </Button>
               </div>
