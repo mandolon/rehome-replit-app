@@ -173,7 +173,8 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
         note.id === editingNote ? { 
           ...note, 
           content: editText, 
-          title: editText.length > 50 ? editText.substring(0, 50) + '...' : editText
+          title: editText.length > 50 ? editText.substring(0, 50) + '...' : editText,
+          timestamp: `Last Updated: ${getCurrentDateTime()}`
         } : note
       ));
     }
@@ -260,6 +261,24 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
       hour12: true
     };
     return now.toLocaleDateString('en-US', options);
+  };
+
+  // Sort notes by timestamp (most recent first)
+  const sortNotesByTimestamp = (notesToSort: NoteItem[]) => {
+    return [...notesToSort].sort((a, b) => {
+      // Extract timestamp for comparison - newer notes should come first
+      const aTime = a.timestamp.includes('Just now') ? Date.now() : 
+                   a.timestamp.includes('Today') ? Date.now() - 60000 :
+                   a.timestamp.includes('Yesterday') ? Date.now() - 86400000 :
+                   new Date(a.timestamp.replace('Last Updated: ', '')).getTime();
+      
+      const bTime = b.timestamp.includes('Just now') ? Date.now() : 
+                   b.timestamp.includes('Today') ? Date.now() - 60000 :
+                   b.timestamp.includes('Yesterday') ? Date.now() - 86400000 :
+                   new Date(b.timestamp.replace('Last Updated: ', '')).getTime();
+      
+      return bTime - aTime; // Descending order (newest first)
+    });
   };
 
   if (!isOpen) return null;
@@ -371,7 +390,7 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
                     </div>
                   </div>
                 ) : (
-                  completedNotes.map((note, index) => (
+                  sortNotesByTimestamp(completedNotes).map((note, index) => (
                     <div key={note.id}>
                       <div className="group py-3 opacity-60 transition-all hover:bg-gray-50 dark:hover:bg-gray-800/50">
                         <div className="flex items-start gap-3">
@@ -422,7 +441,7 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
                         </div>
                       </div>
                       {/* Separator line for completed notes */}
-                      {index < completedNotes.length - 1 && (
+                      {index < sortNotesByTimestamp(completedNotes).length - 1 && (
                         <div className="border-b border-gray-100 dark:border-gray-700"></div>
                       )}
                     </div>
@@ -438,7 +457,7 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
                     </div>
                   </div>
                 ) : (
-                  notes.filter(note => !note.completed).map((note, index) => (
+                  sortNotesByTimestamp(notes.filter(note => !note.completed)).map((note, index) => (
                     <div key={note.id}>
                       <div className="group py-3 transition-all hover:bg-gray-50 dark:hover:bg-gray-800/50">
                         <div className="flex items-start gap-3">
@@ -551,7 +570,7 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
                   </div>
                   </div>
                   {/* Separator line - only show if not the last item */}
-                  {index < notes.filter(note => !note.completed).length - 1 && (
+                  {index < sortNotesByTimestamp(notes.filter(note => !note.completed)).length - 1 && (
                     <div className="border-b border-gray-100 dark:border-gray-700"></div>
                   )}
                 </div>
