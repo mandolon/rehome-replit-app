@@ -31,7 +31,7 @@ function compareDateCreated(a: Task, b: Task, direction: "asc" | "desc") {
 }
 
 // Custom hook for sorting tasks
-export function useTaskSorting(tasks: Task[]) {
+export function useTaskSorting(tasks: Task[], isCompletedView: boolean = false) {
   const [sortBy, setSortBy] = useState<null | "dateCreated" | "assignee">(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 
@@ -54,14 +54,17 @@ export function useTaskSorting(tasks: Task[]) {
   }, [sortBy]);
 
   const visibleTasks = useMemo(() => {
-    let filtered = tasks.filter((task) => !task.archived && !task.deletedAt);
+    // For completed view, show archived tasks; for other views, hide them
+    let filtered = tasks.filter((task) => 
+      isCompletedView ? !task.deletedAt : (!task.archived && !task.deletedAt)
+    );
     if (sortBy === "dateCreated") {
       filtered = [...filtered].sort((a, b) => compareDateCreated(a, b, sortDirection));
     } else if (sortBy === "assignee") {
       filtered = [...filtered].sort((a, b) => compareAssignee(a, b, sortDirection));
     }
     return filtered;
-  }, [tasks, sortBy, sortDirection]);
+  }, [tasks, sortBy, sortDirection, isCompletedView]);
 
   return {
     visibleTasks,

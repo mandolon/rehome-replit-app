@@ -86,7 +86,7 @@ const TaskTableSection = ({
     sortDirection,
     handleDateCreatedFilterClick,
     handleAssignedToFilterClick
-  } = useTaskSorting(group.tasks);
+  } = useTaskSorting(group.tasks, group.status === 'completed');
 
   const isShowingQuickAdd = showQuickAdd === group.status;
 
