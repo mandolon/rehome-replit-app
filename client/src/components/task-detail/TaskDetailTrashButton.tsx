@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import DeleteTaskDialog from "@/components/DeleteTaskDialog";
-import { updateTaskSupabase } from "@/data/taskSupabase";
+import { updateTaskAPI } from "@/data/taskAPI";
 import { useTaskContext } from "@/contexts/TaskContext";
 import { Task } from "@/types/task";
 import { toast } from "@/hooks/use-toast";
@@ -30,7 +30,7 @@ const TaskDetailTrashButton: React.FC<TaskDetailTrashButtonProps> = ({ task, onD
     try {
       if (isSupabaseTask) {
         // Soft-delete: set deleted_at to now
-        const deletedTask = await updateTaskSupabase(task.taskId, {
+        const deletedTask = await updateTaskAPI(task.taskId, {
           deletedAt: new Date().toISOString(),
         });
         toast({

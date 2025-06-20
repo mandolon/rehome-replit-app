@@ -1,6 +1,6 @@
 
 import { useCallback, useState } from "react";
-import { updateTaskSupabase } from '@/data/taskSupabase';
+import { updateTaskAPI } from '@/data/taskAPI';
 import { Task } from '@/types/task';
 
 type UseTaskDetailDescriptionSaveResult = {
@@ -26,7 +26,7 @@ export function useTaskDetailDescriptionSave(
       setDesc(newDesc);
       try {
         if (isSupabaseTask) {
-          await updateTaskSupabase(task.taskId, { description: newDesc });
+          await updateTaskAPI(task.taskId, { description: newDesc });
           setTask(t => ({ ...t, description: newDesc, updatedAt: new Date().toISOString() }));
         }
       } finally {

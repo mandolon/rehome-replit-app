@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useUser } from '@/contexts/UserContext';
 import TaskChatInput from './TaskChatInput';
-import { fetchTaskMessages, insertTaskMessage, subscribeToTaskMessages, TaskMessage } from '@/data/taskMessagesSupabase';
+import { fetchTaskMessages, insertTaskMessage, subscribeToTaskMessages, TaskMessage } from '@/data/taskMessagesAPI';
 import { getCRMUser } from '@/utils/taskUserCRM';
 
 interface TaskDetailActivityProps {

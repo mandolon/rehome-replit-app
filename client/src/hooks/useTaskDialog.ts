@@ -5,7 +5,7 @@ import { getProjectDisplayName } from '@/data/projectClientData';
 import { getProjectIdFromDisplayName } from '@/utils/projectMapping';
 import { TEAM_USERS } from '@/utils/teamUsers';
 import { useUser } from '@/contexts/UserContext';
-import { insertTask } from '@/data/taskSupabase';
+import { insertTask } from '@/data/taskAPI';
 
 export const useTaskDialog = () => {
   const [taskName, setTaskName] = useState('');

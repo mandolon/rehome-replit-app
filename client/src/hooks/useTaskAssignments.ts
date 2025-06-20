@@ -53,9 +53,9 @@ export function useTaskAssignments(
       const updatedCollabs = [...collabs, person];
       optimisticUpdate({ collaborators: updatedCollabs });
       try {
-        const updated = await updateTaskSupabase(taskId, { collaborators: updatedCollabs });
+        const updated = await updateTaskAPI(taskId, { collaborators: updatedCollabs });
         setTask(updated);
-        console.log("[Supabase] Added collaborator", person, "to", taskId);
+        console.log("[API] Added collaborator", person, "to", taskId);
       } catch (e) {
         console.error("Failed to add collaborator:", e);
       }
@@ -70,9 +70,9 @@ export function useTaskAssignments(
       const updatedCollabs = collabs.filter((_, i) => i !== collaboratorIndex);
       optimisticUpdate({ collaborators: updatedCollabs });
       try {
-        const updated = await updateTaskSupabase(taskId, { collaborators: updatedCollabs });
+        const updated = await updateTaskAPI(taskId, { collaborators: updatedCollabs });
         setTask(updated);
-        console.log("[Supabase] Removed collaborator index", collaboratorIndex, "from", taskId);
+        console.log("[API] Removed collaborator index", collaboratorIndex, "from", taskId);
       } catch (e) {
         console.error("Failed to remove collaborator:", e);
       }
