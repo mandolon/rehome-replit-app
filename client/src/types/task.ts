@@ -28,6 +28,7 @@ export interface Task {
   description: string | null;
   markedComplete: string | null;
   markedCompleteBy: string | null;
+  timeLogged: string;
 }
 
 export interface TaskGroup {

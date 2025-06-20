@@ -19,6 +19,7 @@ interface Task {
   markedComplete: string | null;
   estimatedCompletion: string;
   description: string;
+  timeLogged: string;
 }
 
 interface ProjectLogTabProps {
@@ -97,11 +98,22 @@ const ProjectLogTab = ({ selectedWeek, refreshTrigger }: ProjectLogTabProps) => 
     ? tasks.filter(task => task.projectId === selectedProject)
     : tasks;
 
+  const formatTime = (timeStr: string) => {
+    const hours = parseFloat(timeStr || '0');
+    if (hours === 0) return '0h';
+    if (hours < 1) return `${Math.round(hours * 60)}m`;
+    if (hours % 1 === 0) return `${hours}h`;
+    const wholeHours = Math.floor(hours);
+    const minutes = Math.round((hours - wholeHours) * 60);
+    return `${wholeHours}h ${minutes}m`;
+  };
+
   const projectStats = {
     total: filteredTasks.length,
     completed: filteredTasks.filter(task => task.status?.toLowerCase() === 'completed').length,
     inProgress: filteredTasks.filter(task => task.status?.toLowerCase() === 'in progress').length,
     todo: filteredTasks.filter(task => task.status?.toLowerCase() === 'todo').length,
+    totalTime: filteredTasks.reduce((sum, task) => sum + parseFloat(task.timeLogged || '0'), 0),
   };
 
   if (loading) {
@@ -185,6 +197,19 @@ const ProjectLogTab = ({ selectedWeek, refreshTrigger }: ProjectLogTabProps) => 
             <div className="text-lg font-bold">{projectStats.todo}</div>
             <p className="text-xs text-muted-foreground">
               Pending tasks
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-0 shadow-none bg-muted/30">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-3">
+            <CardTitle className="text-xs font-medium text-muted-foreground">Total Time</CardTitle>
+            <Clock className="w-3 h-3 text-muted-foreground" />
+          </CardHeader>
+          <CardContent className="px-3 pb-3">
+            <div className="text-lg font-bold">{formatTime(projectStats.totalTime.toString())}</div>
+            <p className="text-xs text-muted-foreground">
+              Time logged
             </p>
           </CardContent>
         </Card>

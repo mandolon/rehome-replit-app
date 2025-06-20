@@ -30,6 +30,7 @@ export const tasks = pgTable("tasks", {
   description: text("description"),
   markedComplete: timestamp("marked_complete"),
   markedCompleteBy: text("marked_complete_by"),
+  timeLogged: text("time_logged").default("0"),
 });
 
 export const taskMessages = pgTable("task_messages", {
