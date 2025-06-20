@@ -118,7 +118,6 @@ const SidebarProjectSection = React.memo(({
       queryClient.invalidateQueries({ queryKey: ['/api/projects'] });
       toast({
         title: "Project moved to trash.",
-        description: "The project has been successfully deleted.",
       });
     },
     onError: (error) => {

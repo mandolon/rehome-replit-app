@@ -57,7 +57,6 @@ const Projects = () => {
       queryClient.invalidateQueries({ queryKey: ['/api/projects'] });
       toast({
         title: "Project moved to trash.",
-        description: "The project has been successfully deleted.",
       });
     },
     onError: (error) => {
@@ -127,7 +126,6 @@ const Projects = () => {
       queryClient.invalidateQueries({ queryKey: ['/api/projects'] });
       toast({
         title: "Sample projects created.",
-        description: "Three sample projects have been added to demonstrate status management.",
       });
     },
     onError: (error) => {
