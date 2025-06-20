@@ -112,22 +112,21 @@ export const useUnifiedToast = () => {
     if (parts) {
       const [, itemType, itemName, actionText] = parts;
       formattedMessage = (
-        <span className="text-sm leading-tight">
+        <span className="leading-tight">
           <span className="text-muted-foreground font-normal">{itemType}</span>
           <span className="text-foreground font-medium mx-1">"{itemName}"</span>
           <span className="text-muted-foreground font-normal">{actionText}</span>
         </span>
       );
     } else {
-      formattedMessage = <span className="text-sm font-medium text-foreground">{message}</span>;
+      formattedMessage = <span className="font-medium text-foreground">{message}</span>;
     }
 
     toast({
       description: formattedMessage,
       variant,
       action: toastAction,
-      duration,
-      className: "py-2"
+      duration
     });
   };
 
