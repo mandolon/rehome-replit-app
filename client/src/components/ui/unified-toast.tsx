@@ -88,7 +88,7 @@ export const useUnifiedToast = () => {
         <ToastAction 
           altText="Undo action"
           onClick={undoAction}
-          className="bg-primary text-primary-foreground hover:bg-primary/90"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-medium"
         >
           Undo
         </ToastAction>
@@ -98,7 +98,7 @@ export const useUnifiedToast = () => {
         <ToastAction 
           altText={`Go to ${navigateLabel}`}
           onClick={() => window.location.href = navigateToPage}
-          className="bg-secondary text-secondary-foreground hover:bg-secondary/90"
+          className="bg-secondary text-secondary-foreground hover:bg-secondary/90 text-xs font-medium"
         >
           {navigateLabel}
         </ToastAction>
