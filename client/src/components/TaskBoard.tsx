@@ -9,10 +9,7 @@ import { useRealtimeTasks } from '@/hooks/useRealtimeTasks';
 import { Task } from '@/types/task';
 
 const TaskBoard: React.FC = React.memo(() => {
-  // Enable real-time updates
-  useRealtimeTasks();
-  
-  // Use Subabase-powered board for state
+  // Use task board hook which already includes real-time updates
   const {
     isTaskDialogOpen,
     setIsTaskDialogOpen,

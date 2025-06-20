@@ -84,13 +84,18 @@ export const useTaskBoard = () => {
   // Generate a new taskId for every task insert
   const generateTaskId = () => "T" + Math.floor(Math.random() * 100000).toString().padStart(4, "0");
 
-  // Create task mutation with immediate refetch
+  // Create task mutation with aggressive cache busting
   const createTaskMutation = useMutation({
     mutationFn: createTask,
-    onSuccess: async () => {
-      // Force immediate refetch of tasks
-      await queryClient.refetchQueries({ queryKey: ['tasks'] });
-      setRefreshTrigger(prev => prev + 1);
+    onSuccess: async (newTask) => {
+      console.log('Task created successfully:', newTask);
+      
+      // Multiple approaches to ensure immediate update
+      queryClient.removeQueries({ queryKey: ['tasks'] }); // Remove cached data
+      await queryClient.invalidateQueries({ queryKey: ['tasks'] }); // Force refetch
+      setRefreshTrigger(prev => prev + 1); // Trigger component update
+      
+      console.log('Cache invalidated and refresh triggered');
     },
     onError: (error) => {
       console.error('Failed to create task:', error);
