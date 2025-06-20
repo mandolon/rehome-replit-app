@@ -21,17 +21,16 @@ export const useTaskBoard = () => {
   // Enable real-time updates
   useRealtimeTasks();
   
-  // Fetch tasks using React Query
+  // Fetch tasks using React Query - memoize the queryFn to prevent re-creation
+  const tasksQueryFn = React.useCallback(() => {
+    console.log('Executing fetchAllTasks query');
+    return fetchAllTasks();
+  }, []);
+
   const { data: tasks = [], isLoading: loading, error } = useQuery({
     queryKey: ['tasks'],
-    queryFn: () => {
-      console.log('Executing fetchAllTasks query');
-      return fetchAllTasks();
-    },
-    refetchOnWindowFocus: false,
-    retry: 1,
-    staleTime: 0, // Always refetch to ensure latest data
-    gcTime: 1000 * 60 * 5, // Keep cache for 5 minutes
+    queryFn: tasksQueryFn,
+    enabled: true, // Explicitly enable the query
   });
 
   // Debug the query state
