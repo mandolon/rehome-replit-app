@@ -165,7 +165,6 @@ export const useProjectToast = () => {
       itemName: name,
       action: 'moved',
       destination: 'trash',
-      variant: 'destructive',
       undoAction: undoFn
     })
   };
@@ -201,7 +200,6 @@ export const useTaskToast = () => {
       itemName: name,
       action: 'moved',
       destination: 'trash',
-      variant: 'destructive',
       undoAction: undoFn
     }),
     
