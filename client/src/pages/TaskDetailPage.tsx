@@ -27,9 +27,9 @@ const TaskDetailPage = () => {
   useEffect(() => {
     let fetchedTask: Task | null = null;
     if (taskId) {
-      // 1. First look in Supabase-powered realtime tasks (if present)
-      if (supabaseTasks && supabaseTasks.length > 0) {
-        fetchedTask = supabaseTasks.find(
+      // 1. Look in current tasks
+      if (tasks && tasks.length > 0) {
+        fetchedTask = tasks.find(
           t => t.taskId === taskId || t.id === Number(taskId)
         ) || null;
       }
@@ -42,11 +42,9 @@ const TaskDetailPage = () => {
           fetchedTask = taskFromCustom;
         }
       }
-      // 3. (Optional: fallback to direct backend fetch)
-      // (removed getTaskByTaskId/getTaskById which are static/legacy)
     }
     setCurrentTask(fetchedTask);
-  }, [taskId, refreshTrigger, customTasks, supabaseTasks]);
+  }, [taskId, refreshTrigger, customTasks, tasks]);
 
   const handleBack = () => {
     if (returnTo) {
@@ -93,7 +91,7 @@ const TaskDetailPage = () => {
   }, [currentTask, currentUser]);
 
   // Improved loading/error UI
-  if (supabaseTasksLoading) {
+  if (isLoading) {
     return (
       <AppLayout>
         <div className="h-full flex items-center justify-center">
