@@ -21,27 +21,19 @@ const CreatedByFilterPopover = ({ selectedPeople, onChange }: CreatedByFilterPop
 
   // Get unique creators from tasks, sorted alphabetically by first name
   const creators = useMemo(() => {
-    if (!Array.isArray(tasks)) {
-      console.log('Tasks is not an array:', tasks);
-      return [];
-    }
+    if (!Array.isArray(tasks)) return [];
     
-    console.log('Processing tasks for creators:', tasks.length);
     const uniqueCreators = new Set<string>();
     tasks.forEach((task: Task) => {
-      console.log('Task createdBy:', task.createdBy);
       if (task.createdBy && typeof task.createdBy === 'string' && task.createdBy !== 'system') {
         uniqueCreators.add(task.createdBy);
       }
     });
     
-    const result = Array.from(uniqueCreators)
+    return Array.from(uniqueCreators)
       .filter(name => name && name.trim() !== '') // Filter out empty strings
       .map(name => ({ name, avatar: "👤" }))
       .sort((a, b) => a.name.localeCompare(b.name));
-    
-    console.log('Final creators list:', result);
-    return result;
   }, [tasks]);
 
   const handleToggle = (person: Person) => {
@@ -51,11 +43,6 @@ const CreatedByFilterPopover = ({ selectedPeople, onChange }: CreatedByFilterPop
       onChange([...selectedPeople, person.name]);
     }
   };
-
-  // Don't render if no creators available
-  if (creators.length === 0) {
-    return null;
-  }
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -77,24 +64,30 @@ const CreatedByFilterPopover = ({ selectedPeople, onChange }: CreatedByFilterPop
           <div className="text-[11px] font-medium text-muted-foreground/70 px-2 py-1">
             Show tasks created by
           </div>
-          {creators.map((person) => (
-            <button
-              key={person.name}
-              onClick={() => handleToggle(person)}
-              className="w-full flex items-center gap-2 px-2 py-1 text-xs hover:bg-accent rounded text-left"
-            >
-              <input
-                type="checkbox"
-                checked={selectedPeople.includes(person.name)}
-                onChange={() => handleToggle(person)}
-                className="w-3 h-3 rounded border-gray-300"
-              />
-              <div className="flex items-center gap-2">
-                <User className="w-3 h-3 text-muted-foreground" />
-                <span className="text-foreground">{person.name}</span>
-              </div>
-            </button>
-          ))}
+          {creators.length === 0 ? (
+            <div className="px-2 py-1 text-xs text-muted-foreground">
+              No creators available
+            </div>
+          ) : (
+            creators.map((person) => (
+              <button
+                key={person.name}
+                onClick={() => handleToggle(person)}
+                className="w-full flex items-center gap-2 px-2 py-1 text-xs hover:bg-accent rounded text-left"
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedPeople.includes(person.name)}
+                  onChange={() => handleToggle(person)}
+                  className="w-3 h-3 rounded border-gray-300"
+                />
+                <div className="flex items-center gap-2">
+                  <User className="w-3 h-3 text-muted-foreground" />
+                  <span className="text-foreground">{person.name}</span>
+                </div>
+              </button>
+            ))
+          )}
           {selectedPeople.length > 0 && (
             <>
               <hr className="my-1 border-gray-200 dark:border-gray-700" />
