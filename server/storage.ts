@@ -353,6 +353,85 @@ export class MemStorage implements IStorage {
   async getWorkRecords(): Promise<Task[]> {
     return Array.from(this.tasks.values()).filter(task => task.workRecord === true);
   }
+
+  // Trash methods
+  async getAllTrashItems(): Promise<TrashItem[]> {
+    return Array.from(this.trashItems.values())
+      .sort((a, b) => new Date(b.deletedAt).getTime() - new Date(a.deletedAt).getTime());
+  }
+
+  async moveToTrash(itemType: string, itemId: string, title: string, description: string, metadata: any, originalData: any, deletedBy: string): Promise<TrashItem> {
+    const trashItem: TrashItem = {
+      id: `trash_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      itemType,
+      itemId,
+      title,
+      description,
+      metadata,
+      originalData,
+      deletedBy,
+      deletedAt: new Date()
+    };
+    
+    this.trashItems.set(trashItem.id, trashItem);
+    return trashItem;
+  }
+
+  async restoreFromTrash(trashItemId: string): Promise<void> {
+    const trashItem = this.trashItems.get(trashItemId);
+    if (!trashItem) {
+      throw new Error(`Trash item with ID ${trashItemId} not found`);
+    }
+
+    // Restore based on item type
+    if (trashItem.itemType === 'task') {
+      const task = this.tasks.get(trashItem.itemId);
+      if (task) {
+        const updatedTask: Task = {
+          ...task,
+          deletedAt: null,
+          deletedBy: null
+        };
+        this.tasks.set(trashItem.itemId, updatedTask);
+      }
+    }
+    // Add more item types here when implemented
+    
+    // Remove from trash
+    this.trashItems.delete(trashItemId);
+  }
+
+  async permanentDeleteFromTrash(trashItemId: string): Promise<void> {
+    const trashItem = this.trashItems.get(trashItemId);
+    if (!trashItem) {
+      throw new Error(`Trash item with ID ${trashItemId} not found`);
+    }
+
+    // Permanently delete the original item based on type
+    if (trashItem.itemType === 'task') {
+      this.tasks.delete(trashItem.itemId);
+    }
+    // Add more item types here when implemented
+    
+    // Remove from trash
+    this.trashItems.delete(trashItemId);
+  }
+
+  async emptyTrash(): Promise<void> {
+    // Get all trash items
+    const allTrashItems = Array.from(this.trashItems.values());
+    
+    // Permanently delete all original items
+    for (const item of allTrashItems) {
+      if (item.itemType === 'task') {
+        this.tasks.delete(item.itemId);
+      }
+      // Add more item types here when implemented
+    }
+    
+    // Clear the trash
+    this.trashItems.clear();
+  }
 }
 
 // Use DatabaseStorage by default, fallback to MemStorage if needed
