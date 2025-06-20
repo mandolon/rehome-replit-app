@@ -27,6 +27,8 @@ export const useTaskBoard = () => {
     queryFn: fetchAllTasks,
     refetchOnWindowFocus: false,
     retry: 1,
+    staleTime: 0, // Always consider data stale to enable immediate refetching
+    gcTime: 30000, // Keep cache for 30 seconds
   });
 
 
@@ -82,18 +84,12 @@ export const useTaskBoard = () => {
   // Generate a new taskId for every task insert
   const generateTaskId = () => "T" + Math.floor(Math.random() * 100000).toString().padStart(4, "0");
 
-  // Create task mutation with immediate cache update
+  // Create task mutation with immediate refetch
   const createTaskMutation = useMutation({
     mutationFn: createTask,
-    onSuccess: (newTask) => {
-      // Immediately update the cache with the server response
-      queryClient.setQueryData(['tasks'], (old: Task[] = []) => {
-        // Remove any temporary optimistic entry and add the real one
-        const filtered = old.filter(task => task.id !== 999999); // Remove temp entries
-        return [...filtered, newTask];
-      });
-      // Also invalidate to ensure consistency
-      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+    onSuccess: async () => {
+      // Force immediate refetch of tasks
+      await queryClient.refetchQueries({ queryKey: ['tasks'] });
       setRefreshTrigger(prev => prev + 1);
     },
     onError: (error) => {
