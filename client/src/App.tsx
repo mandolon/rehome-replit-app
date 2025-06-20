@@ -15,6 +15,7 @@ import InboxPage from "./pages/InboxPage";
 import TeamsPage from "./pages/TeamsPage";
 import InvoicePage from "./pages/InvoicePage";
 import TimesheetsPage from "./pages/TimesheetsPage";
+import WorkRecordsPage from "./pages/WorkRecordsPage";
 import WhiteboardsPage from "./pages/WhiteboardsPage";
 import ClientWhiteboards from "./pages/ClientWhiteboards";
 import SettingsPage from "./pages/SettingsPage";
@@ -85,6 +86,7 @@ const App = () => {
                               <Route path="/client/dashboard" element={<ClientDashboard />} />
                               <Route path="/invoices" element={<InvoicePage />} />
                               <Route path="/timesheets" element={<TimesheetsPage />} />
+                              <Route path="/work-records" element={<WorkRecordsPage />} />
                               <Route path="/whiteboards" element={<WhiteboardsPage />} />
                               <Route path="/client/whiteboards" element={<ClientWhiteboards />} />
                               <Route path="/settings" element={<SettingsPage />} />

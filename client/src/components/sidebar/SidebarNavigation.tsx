@@ -10,6 +10,7 @@ import {
   Users,
   Receipt,
   FileImage,
+  FileText,
   ClipboardList,
   Clock
 } from 'lucide-react';
@@ -46,6 +47,7 @@ const SidebarNavigation = React.memo(({ isCollapsed, isOpen, onToggle }: Sidebar
   const handleNavigateInvoices = useCallback(() => navigate('/invoices'), [navigate]);
   const handleNavigateWhiteboards = useCallback(() => navigate('/whiteboards'), [navigate]);
   const handleNavigateTimesheets = useCallback(() => navigate('/timesheets'), [navigate]);
+  const handleNavigateWorkRecords = useCallback(() => navigate('/work-records'), [navigate]);
 
   // Client gets dashboard and Whiteboards
   const clientNavItems = [
@@ -65,6 +67,7 @@ const SidebarNavigation = React.memo(({ isCollapsed, isOpen, onToggle }: Sidebar
       { icon: Receipt, label: 'Invoices', active: false, onClick: handleNavigateInvoices },
       { icon: FileImage, label: 'Whiteboards', active: false, onClick: handleNavigateWhiteboards },
       { icon: Clock, label: 'Timesheets', active: false, onClick: handleNavigateTimesheets },
+      { icon: FileText, label: 'Work Records', active: false, onClick: handleNavigateWorkRecords },
       { icon: LayoutDashboard, label: 'Client Dashboard', active: false, onClick: handleNavigateClientDashboard }
       // Help item removed!
     ];
@@ -78,6 +81,7 @@ const SidebarNavigation = React.memo(({ isCollapsed, isOpen, onToggle }: Sidebar
     handleNavigateInvoices,
     handleNavigateWhiteboards,
     handleNavigateTimesheets,
+    handleNavigateWorkRecords,
     handleNavigateClientDashboard,
     handleNavigateClientWhiteboards,
   ]);
