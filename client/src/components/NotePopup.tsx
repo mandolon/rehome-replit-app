@@ -383,7 +383,7 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
                           </button>
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <span className="text-xs font-medium text-gray-900 dark:text-white line-through">
+                              <span className="text-sm font-medium text-gray-900 dark:text-white line-through">
                                 {note.author}
                               </span>
                               <span className="text-xs text-gray-500">
@@ -451,7 +451,7 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
                     </button>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs font-medium text-gray-900 dark:text-white">
+                        <span className="text-sm font-medium text-gray-900 dark:text-white">
                           {note.author}
                         </span>
                         <span className="text-xs text-gray-500">
@@ -525,7 +525,7 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
                       )}
                     </div>
                     {/* Action buttons - only show on hover */}
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity flex flex-col gap-1">
                       <button
                         onClick={() => startEditingNote(note)}
                         className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500 hover:text-gray-700"
