@@ -7,12 +7,14 @@ interface TimesheetsHeaderProps {
   selectedWeek: Date;
   onWeekChange: (date: Date) => void;
   onAddTimeEntry: () => void;
+  activeTab: string;
+  onTabChange: (tab: string) => void;
 }
 
-const TimesheetsHeader = ({ selectedWeek, onWeekChange, onAddTimeEntry }: TimesheetsHeaderProps) => {
+const TimesheetsHeader = ({ selectedWeek, onWeekChange, onAddTimeEntry, activeTab, onTabChange }: TimesheetsHeaderProps) => {
   const tabs = [
-    { id: 'timesheet', label: 'Timesheet', active: true },
-    { id: 'project-log', label: 'Project log', active: false },
+    { id: 'timesheet', label: 'Timesheet', active: activeTab === 'timesheet' },
+    { id: 'project-log', label: 'Project log', active: activeTab === 'project-log' },
   ];
 
   return (
@@ -34,6 +36,7 @@ const TimesheetsHeader = ({ selectedWeek, onWeekChange, onAddTimeEntry }: Timesh
             {tabs.map((tab) => (
               <button
                 key={tab.id}
+                onClick={() => onTabChange(tab.id)}
                 className={`text-sm pb-2 border-b-2 transition-colors ${
                   tab.active
                     ? 'border-primary text-foreground font-medium'
