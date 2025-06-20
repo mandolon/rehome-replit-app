@@ -7,7 +7,7 @@ import { Table, TableBody, TableHead, TableHeader, TableRow, TableCell } from '@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { ProjectStatusDropdown } from '@/components/project/ProjectStatusDropdown';
 import { ProjectStatusBadge } from '@/components/project/ProjectStatusBadge';
-import { useToast } from '@/hooks/use-toast';
+import { useProjectToast } from '@/components/ui/unified-toast';
 import { formatDate } from '@/utils/taskUtils';
 
 interface Project {
@@ -31,7 +31,7 @@ const Projects = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const queryClient = useQueryClient();
-  const { toast } = useToast();
+  const { projectDeleted } = useProjectToast();
 
   const { data: projects = [], isLoading } = useQuery({
     queryKey: ['/api/projects'],
