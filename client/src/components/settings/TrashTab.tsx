@@ -218,7 +218,7 @@ const TrashTab = () => {
       // Optimistically remove all items from UI
       setOptimisticallyDeleted(prev => [...prev, ...trashItemIds]);
       
-      const response = await fetch('/api/trash/empty', {
+      const response = await fetch('/api/trash', {
         method: 'DELETE',
       });
       
