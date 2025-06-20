@@ -209,10 +209,13 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
       });
 
       if (response.ok) {
+        console.log('Note successfully moved to trash:', noteToDelete);
         // Remove from local state only after successful API call
         setNotes(notes.filter(note => note.id !== id));
       } else {
-        console.error('Failed to move note to trash');
+        console.error('Failed to move note to trash:', response.status, response.statusText);
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
       }
     } catch (error) {
       console.error('Error moving note to trash:', error);

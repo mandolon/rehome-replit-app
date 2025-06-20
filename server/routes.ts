@@ -363,6 +363,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/trash", async (req, res) => {
+    try {
+      const { itemType, itemId, title, description, metadata, originalData, deletedBy } = req.body;
+      
+      if (!itemType || !itemId || !title) {
+        return res.status(400).json({ error: "Missing required fields: itemType, itemId, title" });
+      }
+
+      const trashItem = await storage.moveToTrash(
+        itemType,
+        itemId,
+        title,
+        description || '',
+        metadata || {},
+        originalData || {},
+        deletedBy || 'Anonymous'
+      );
+
+      broadcast('item_moved_to_trash', { trashItem });
+      res.status(201).json(trashItem);
+    } catch (error: any) {
+      console.error("Error moving item to trash:", error);
+      res.status(500).json({ 
+        error: "Failed to move item to trash", 
+        details: error?.message || String(error) 
+      });
+    }
+  });
+
   app.post("/api/trash/:trashItemId/restore", async (req, res) => {
     try {
       await storage.restoreFromTrash(req.params.trashItemId);

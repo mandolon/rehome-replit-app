@@ -532,7 +532,7 @@ const TrashTab = () => {
       </div>
 
       {/* Content Section */}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-auto">
         {filteredTrashItems.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center py-12">
             <Trash2 className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
@@ -541,7 +541,7 @@ const TrashTab = () => {
             </div>
           </div>
         ) : (
-          <div className="px-4 pt-6 pb-4">
+          <div className="px-4 pt-6 pb-4 min-h-full">
             <Table>
               <TableHeader>
                 <TableRow className="border-b border-border transition-colors hover:bg-accent/50 group">
