@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ChevronDown, Play, Pause, CheckCircle } from 'lucide-react';
 import { ProjectStatusBadge } from './ProjectStatusBadge';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useToast } from '@/hooks/use-toast';
+import { useProjectToast } from '@/components/ui/unified-toast';
 
 interface ProjectStatusDropdownProps {
   projectId: string;

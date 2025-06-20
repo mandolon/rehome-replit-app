@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useTrashToast } from '@/components/ui/unified-toast';
+import { useToast } from '@/hooks/use-toast';
 import { formatDate } from '@/utils/taskUtils';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -32,6 +33,7 @@ const TrashTab = () => {
   const [sortBy, setSortBy] = useState<'deletedAt' | 'title' | 'itemType'>('deletedAt');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const { itemRestored, itemDeleted, trashEmptied } = useTrashToast();
+  const { toast } = useToast();
   const [restoringIds, setRestoringIds] = useState<string[]>([]);
   const [emptyingTrash, setEmptyingTrash] = useState(false);
   const [optimisticallyRestored, setOptimisticallyRestored] = useState<string[]>([]);
@@ -171,24 +173,9 @@ const TrashTab = () => {
       itemRestored(trashItem.itemType as 'task' | 'project' | 'note', trashItem.title);
     } catch (e) {
       console.error('Error restoring item:', e);
-      toast({ 
-        description: (
-          <span>
-            <span className="font-semibold">{trashItem.itemType === 'task' ? 'Task' : trashItem.itemType === 'project' ? 'Project' : 'Note'}</span>
-            {" "}restore failed.{" "}
-            <button
-              type="button"
-              className="font-bold underline text-red-200 hover:text-red-100 transition-colors"
-              tabIndex={0}
-              onClick={() => {
-                navigate('/tasks');
-              }}
-            >
-              Go to tasks
-            </button>
-          </span>
-        ),
-        variant: 'destructive' 
+      toast({
+        description: `${trashItem.itemType === 'task' ? 'Task' : trashItem.itemType === 'project' ? 'Project' : 'Note'} "${trashItem.title}" restore failed.`,
+        variant: 'destructive'
       });
     } finally {
       setRestoringIds((prev) => prev.filter(id => id !== trashItemId));
@@ -209,46 +196,13 @@ const TrashTab = () => {
       queryClient.invalidateQueries({ queryKey: ['api-trash-items'] });
       queryClient.invalidateQueries({ queryKey: ['api-tasks'] });
       queryClient.invalidateQueries({ queryKey: ['task-board-data'] });
-      toast({ 
-        description: (
-          <span>
-            <span className="font-semibold">{trashItem.itemType === 'task' ? 'Task' : trashItem.itemType === 'project' ? 'Project' : 'Note'}</span>
-            {" "}permanently deleted.{" "}
-            <button
-              type="button"
-              className="font-bold underline text-blue-700 hover:text-blue-600 transition-colors"
-              tabIndex={0}
-              onClick={() => {
-                navigate('/tasks');
-              }}
-            >
-              Go to tasks
-            </button>
-          </span>
-        ),
-        duration: 3000 
-      });
+      itemDeleted(trashItem.itemType as 'task' | 'project' | 'note', trashItem.title);
     } catch (e) {
       // Revert optimistic update on error
       setOptimisticallyDeleted(prev => prev.filter(id => id !== trashItemId));
-      toast({ 
-        description: (
-          <span>
-            <span className="font-semibold">{trashItem.itemType === 'task' ? 'Task' : trashItem.itemType === 'project' ? 'Project' : 'Note'}</span>
-            {" "}deletion failed.{" "}
-            <button
-              type="button"
-              className="font-bold underline text-red-200 hover:text-red-100 transition-colors"
-              tabIndex={0}
-              onClick={() => {
-                navigate('/tasks');
-              }}
-            >
-              Go to tasks
-            </button>
-          </span>
-        ),
-        variant: 'destructive' 
+      toast({
+        description: `${trashItem.itemType === 'task' ? 'Task' : trashItem.itemType === 'project' ? 'Project' : 'Note'} "${trashItem.title}" deletion failed.`,
+        variant: 'destructive'
       });
     }
   };
@@ -277,47 +231,14 @@ const TrashTab = () => {
       queryClient.invalidateQueries({ queryKey: ['api-tasks'] });
       queryClient.invalidateQueries({ queryKey: ['task-board-data'] });
       
-      toast({ 
-        description: (
-          <span>
-            <span className="font-semibold">Trash</span>
-            {" "}has been emptied.{" "}
-            <button
-              type="button"
-              className="font-bold underline text-blue-700 hover:text-blue-600 transition-colors"
-              tabIndex={0}
-              onClick={() => {
-                navigate('/tasks');
-              }}
-            >
-              Go to tasks
-            </button>
-          </span>
-        ),
-        duration: 3000 
-      });
+      trashEmptied();
     } catch (error) {
       // Revert optimistic updates on error
       setOptimisticallyDeleted(prev => prev.filter(id => !trashItemIds.includes(id)));
       console.error('Error emptying trash:', error);
-      toast({ 
-        description: (
-          <span>
-            <span className="font-semibold">Trash</span>
-            {" "}emptying failed.{" "}
-            <button
-              type="button"
-              className="font-bold underline text-red-200 hover:text-red-100 transition-colors"
-              tabIndex={0}
-              onClick={() => {
-                navigate('/tasks');
-              }}
-            >
-              Go to tasks
-            </button>
-          </span>
-        ),
-        variant: 'destructive' 
+      toast({
+        description: "Trash emptying failed.",
+        variant: 'destructive'
       });
     } finally {
       setEmptyingTrash(false);
