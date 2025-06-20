@@ -81,7 +81,9 @@ const PLACEHOLDER_TASKS: Task[] = [
     deletedBy: null,
     description: "A test task for development purposes",
     markedComplete: null,
-    markedCompleteBy: null
+    markedCompleteBy: null,
+    timeLogged: "0",
+    workRecord: false
   }
 ];
 
@@ -232,7 +234,7 @@ export const TaskProvider = ({ children }: TaskProviderProps) => {
         await updateTaskById(taskId, { 
           status: 'completed', 
           archived: true,
-          markedComplete: new Date(),
+          markedComplete: new Date().toISOString(),
           markedCompleteBy: 'current_user' // Should be actual user
         });
       }
@@ -242,7 +244,7 @@ export const TaskProvider = ({ children }: TaskProviderProps) => {
       
       if (newStatus === 'completed') {
         updates.archived = true;
-        updates.markedComplete = new Date();
+        updates.markedComplete = new Date().toISOString();
         updates.markedCompleteBy = 'current_user'; // Should be actual user
       } else {
         updates.archived = false;
