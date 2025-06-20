@@ -21,19 +21,23 @@ export const useTaskBoard = () => {
   // Enable real-time updates
   useRealtimeTasks();
   
-  // Direct API call with React Query - bypass configuration issues
+  // Completely isolated query with unique key to avoid conflicts
+  const fetchTasksDirectly = React.useCallback(async () => {
+    console.log('Making direct API call for tasks');
+    const response = await fetch('/api/tasks');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Tasks loaded:', data.length);
+    return data;
+  }, []);
+
   const { data: tasks = [], isLoading: loading, error } = useQuery({
-    queryKey: ['api-tasks'],
-    queryFn: async () => {
-      console.log('Making direct API call for tasks');
-      const response = await fetch('/api/tasks');
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      console.log('Tasks loaded:', data.length);
-      return data;
-    },
+    queryKey: ['task-board-data'],
+    queryFn: fetchTasksDirectly,
+    retry: false,
+    refetchOnWindowFocus: false,
   });
 
   // Debug the query state
@@ -115,13 +119,13 @@ export const useTaskBoard = () => {
     },
     onMutate: async (newTask) => {
       // Cancel any outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ['api-tasks'] });
+      await queryClient.cancelQueries({ queryKey: ['task-board-data'] });
       
       // Snapshot the previous value
-      const previousTasks = queryClient.getQueryData(['api-tasks']);
+      const previousTasks = queryClient.getQueryData(['task-board-data']);
       
       // Optimistically update to show the new task immediately
-      queryClient.setQueryData(['api-tasks'], (old: Task[] = []) => [
+      queryClient.setQueryData(['task-board-data'], (old: Task[] = []) => [
         ...old,
         {
           ...newTask,
@@ -139,11 +143,11 @@ export const useTaskBoard = () => {
     },
     onError: (err, newTask, context) => {
       // If the mutation fails, roll back
-      queryClient.setQueryData(['api-tasks'], context?.previousTasks);
+      queryClient.setQueryData(['task-board-data'], context?.previousTasks);
     },
     onSettled: () => {
       // Always refetch after error or success
-      queryClient.invalidateQueries({ queryKey: ['api-tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['task-board-data'] });
       setRefreshTrigger(prev => prev + 1);
     },
   });
@@ -198,7 +202,7 @@ export const useTaskBoard = () => {
     },
     onSuccess: () => {
       console.log('Update mutation success, invalidating cache');
-      queryClient.invalidateQueries({ queryKey: ['api-tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['task-board-data'] });
       setRefreshTrigger(prev => prev + 1);
     },
   });
@@ -218,7 +222,7 @@ export const useTaskBoard = () => {
     },
     onSuccess: (deletedTaskId) => {
       console.log('Delete mutation success, invalidating cache');
-      queryClient.invalidateQueries({ queryKey: ['api-tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['task-board-data'] });
       setRefreshTrigger(prev => prev + 1);
     },
   });

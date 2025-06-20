@@ -1,0 +1,109 @@
+react-dom.development.js:29895 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+AppLayout.tsx:35 Sidebar resize: 12.730125523
+App.tsx:51 App component is rendering, current path: /tasks
+useRealtimeTasks.tsx:37 Attempting WebSocket connection to: wss://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev:443/ws
+useTaskBoard.tsx:41 Query state - Loading: true Error: null Tasks count: 0
+useTaskBoard.tsx:41 Query state - Loading: false Error: Error: Missing queryFn: '["api-tasks"]'
+    at utils.ts:418:22
+    at Object.fetchFn [as fn] (query.ts:429:14)
+    at run (retryer.ts:153:49)
+    at Object.start (retryer.ts:218:9)
+    at _a4.fetch (query.ts:540:26)
+    at _a9.executeFetch_fn (queryObserver.ts:346:71)
+    at _a9.onSubscribe (queryObserver.ts:108:9)
+    at _a9.subscribe (subscribable.ts:11:10)
+    at useBaseQuery.ts:92:22
+    at subscribeToStore (react-dom.development.js:16139:10) Tasks count: 0
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+ProjectItem.tsx:34 ProjectItem - Checking if active: Object
+useTaskBoard.tsx:41 Query state - Loading: false Error: Error: Missing queryFn: '["api-tasks"]'
+    at utils.ts:418:22
+    at Object.fetchFn [as fn] (query.ts:429:14)
+    at run (retryer.ts:153:49)
+    at Object.start (retryer.ts:218:9)
+    at _a4.fetch (query.ts:540:26)
+    at _a9.executeFetch_fn (queryObserver.ts:346:71)
+    at _a9.onSubscribe (queryObserver.ts:108:9)
+    at _a9.subscribe (subscribable.ts:11:10)
+    at useBaseQuery.ts:92:22
+    at subscribeToStore (react-dom.development.js:16139:10) Tasks count: 0
+useRealtimeTasks.tsx:41 WebSocket connected for real-time updates
+useTaskBoard.tsx:41 Query state - Loading: false Error: Error: Missing queryFn: '["api-tasks"]'
+    at utils.ts:418:22
+    at Object.fetchFn [as fn] (query.ts:429:14)
+    at run (retryer.ts:153:49)
+    at Object.start (retryer.ts:218:9)
+    at _a4.fetch (query.ts:540:26)
+    at _a9.executeFetch_fn (queryObserver.ts:346:71)
+    at _a9.onSubscribe (queryObserver.ts:108:9)
+    at _a9.subscribe (subscribable.ts:11:10)
+    at useBaseQuery.ts:92:22
+    at subscribeToStore (react-dom.development.js:16139:10) Tasks count: 0
+projectMapping.ts:6 Converting display name to project ID: Peterson - 2015 10th Street
+projectMapping.ts:10 Converted project ID: peterson-2015-10th-street
+projectMapping.ts:14 Found project in client data: peterson-2015-10th-street
+useTaskBoard.tsx:41 Query state - Loading: false Error: Error: Missing queryFn: '["api-tasks"]'
+    at utils.ts:418:22
+    at Object.fetchFn [as fn] (query.ts:429:14)
+    at run (retryer.ts:153:49)
+    at Object.start (retryer.ts:218:9)
+    at _a4.fetch (query.ts:540:26)
+    at _a9.executeFetch_fn (queryObserver.ts:346:71)
+    at _a9.onSubscribe (queryObserver.ts:108:9)
+    at _a9.subscribe (subscribable.ts:11:10)
+    at useBaseQuery.ts:92:22
+    at subscribeToStore (react-dom.development.js:16139:10) Tasks count: 0
+useTaskBoard.tsx:101 Creating task: Object
+useTaskBoard.tsx:41 Query state - Loading: false Error: null Tasks count: 1
+useTaskBoard.tsx:43 First task: Object
+useRealtimeTasks.tsx:10 WebSocket message received: Object
+useTaskBoard.tsx:113 Task created successfully: Object
+useTaskBoard.tsx:28 Making direct API call for tasks
+useTaskBoard.tsx:34 Tasks loaded: 11
+useTaskBoard.tsx:41 Query state - Loading: false Error: null Tasks count: 11
+useTaskBoard.tsx:43 First task: Object
+[NEW] Explain Console errors by using Copilot in Edge: click
+         
+         to explain an error. 
+        Learn more
+        Don't show again
