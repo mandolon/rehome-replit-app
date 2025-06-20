@@ -86,14 +86,13 @@ export const useUnifiedToast = () => {
     
     if (undoAction) {
       toastAction = (
-        <ToastAction 
-          altText="Undo action"
+        <button 
           onClick={undoAction}
-          className="bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-medium flex items-center gap-1"
+          className="text-xs font-medium text-primary hover:text-primary/80 underline underline-offset-2 flex items-center gap-1 whitespace-nowrap"
         >
           <Undo2 className="w-3 h-3" />
           Undo
-        </ToastAction>
+        </button>
       );
     } else if (navigateToPage && navigateLabel) {
       toastAction = (
@@ -107,16 +106,29 @@ export const useUnifiedToast = () => {
     }
 
     // Split message into parts for different font weights
-    const parts = message.match(/^(\w+)\s+"([^"]+)"\s+(.+)$/);
+    const parts = message.match(/^(\w+)\s+"([^"]+)"\s+moved to (.+)\.$/);
     
     let formattedMessage;
     if (parts) {
-      const [, itemType, itemName, actionText] = parts;
+      const [, itemType, itemName, destination] = parts;
+      const isTrashDestination = destination === 'trash';
+      
       formattedMessage = (
         <span className="leading-tight">
           <span className="text-muted-foreground font-normal">{itemType}</span>
           <span className="text-foreground font-medium mx-1">"{itemName}"</span>
-          <span className="text-muted-foreground font-normal">{actionText}</span>
+          <span className="text-muted-foreground font-normal">moved to </span>
+          {isTrashDestination ? (
+            <button 
+              onClick={() => window.location.href = '/settings?tab=trash'}
+              className="text-foreground font-medium underline decoration-dotted underline-offset-2 hover:text-primary"
+            >
+              {destination}
+            </button>
+          ) : (
+            <span className="text-foreground font-medium">{destination}</span>
+          )}
+          <span className="text-muted-foreground font-normal">.</span>
         </span>
       );
     } else {
@@ -202,9 +214,7 @@ export const useTaskToast = () => {
       itemName: name,
       action: 'moved',
       destination: 'trash',
-      undoAction: undoFn,
-      navigateToPage: '/settings?tab=trash',
-      navigateLabel: 'Go to trash'
+      undoAction: undoFn
     }),
     
     taskAssigned: (name: string, assignee: string) => showToast({
