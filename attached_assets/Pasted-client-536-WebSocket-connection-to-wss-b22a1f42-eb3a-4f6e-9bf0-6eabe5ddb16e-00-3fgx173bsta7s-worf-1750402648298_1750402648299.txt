@@ -1,0 +1,179 @@
+client:536 WebSocket connection to 'wss://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/?token=Z5fqWE78Nxmc' failed: 
+setupWebSocket @ client:536
+(anonymous) @ client:531
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=Z5fqWE78Nxmc' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)
+setupWebSocket @ client:536
+fallback @ client:509
+(anonymous) @ client:555
+chunk-RPCDYKBN.js?v=fcf40894:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+SidebarHeader.tsx:20 SidebarHeader - currentUser: {id: 't0', name: 'Armando Lopez', email: 'armando.lopez@example.com', avatar: 'AL', status: 'online', …}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Adams - 1063 40th Street', projectIdFromName: 'adams-1063-40th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Ogden - Thew - 2709 T Street', projectIdFromName: 'ogden-thew-2709-t-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Henderson - 1524 Tiverton', projectIdFromName: 'henderson-1524-tiverton', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Peterson - 2015 10th Street', projectIdFromName: 'peterson-2015-10th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Johnson - 2200 I Street', projectIdFromName: 'johnson-2200-i-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Adamo - 6605 S. Land Park Dr.', projectIdFromName: 'adamo-6605-s-land-park-dr', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'McVarish - Salmina - 6251 El Dorado Street', projectIdFromName: 'mcvarish-salmina-6251-el-dorado-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Andre - 2119 H Street', projectIdFromName: 'andre-2119-h-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Fleming - Veisze - 1111 33rd Street', projectIdFromName: 'fleming-veisze-1111-33rd-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Ganson - 2125 I Street', projectIdFromName: 'ganson-2125-i-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'DeCarlo - 1141 Swanston Dr', projectIdFromName: 'decarlo-1141-swanston-dr', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Green - 920 U Street', projectIdFromName: 'green-920-u-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Kubein - Plymouth Project', projectIdFromName: 'kubein-plymouth-project', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'McLeod - Joffe - 2436 59th Street', projectIdFromName: 'mcleod-joffe-2436-59th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Piner - Piner Haus Garage', projectIdFromName: 'piner-piner-haus-garage', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Rathbun - USFS Cabin', projectIdFromName: 'rathbun-usfs-cabin', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Vasquez - Gutierrez - 2508 55th Street', projectIdFromName: 'vasquez-gutierrez-2508-55th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Wilcox - 1808 U Street', projectIdFromName: 'wilcox-1808-u-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Donaldson - 2717 58th Street', projectIdFromName: 'donaldson-2717-58th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Unknown - 14401 Grand Island Road', projectIdFromName: 'unknown-14401-grand-island-road', urlProjectId: undefined, isActive: false}
+useTaskBoard.tsx:43 TaskGroups calculation - tasks: 0 loading: true
+useTaskBoard.tsx:57 Task filtering results: {total: 0, redline: 0, progress: 0, completed: 0, sampleTask: null}
+AppLayout.tsx:35 Sidebar resize: 20
+App.tsx:51 App component is rendering, current path: /tasks
+useTaskBoard.tsx:33 useQuery state changed: {tasksLength: 0, loading: true, error: null, tasks: Array(0)}
+useTaskBoard.tsx:43 TaskGroups calculation - tasks: 0 loading: false
+useTaskBoard.tsx:57 Task filtering results: {total: 0, redline: 0, progress: 0, completed: 0, sampleTask: null}
+useTaskBoard.tsx:33 useQuery state changed: {tasksLength: 0, loading: false, error: Error: Missing queryFn: '["/api/tasks"]'
+    at https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fg…, tasks: Array(0)}
+SidebarHeader.tsx:20 SidebarHeader - currentUser: {id: 't0', name: 'Armando Lopez', email: 'armando.lopez@example.com', avatar: 'AL', status: 'online', …}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Adams - 1063 40th Street', projectIdFromName: 'adams-1063-40th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Ogden - Thew - 2709 T Street', projectIdFromName: 'ogden-thew-2709-t-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Henderson - 1524 Tiverton', projectIdFromName: 'henderson-1524-tiverton', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Peterson - 2015 10th Street', projectIdFromName: 'peterson-2015-10th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Johnson - 2200 I Street', projectIdFromName: 'johnson-2200-i-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Adamo - 6605 S. Land Park Dr.', projectIdFromName: 'adamo-6605-s-land-park-dr', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'McVarish - Salmina - 6251 El Dorado Street', projectIdFromName: 'mcvarish-salmina-6251-el-dorado-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Andre - 2119 H Street', projectIdFromName: 'andre-2119-h-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Fleming - Veisze - 1111 33rd Street', projectIdFromName: 'fleming-veisze-1111-33rd-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Ganson - 2125 I Street', projectIdFromName: 'ganson-2125-i-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'DeCarlo - 1141 Swanston Dr', projectIdFromName: 'decarlo-1141-swanston-dr', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Green - 920 U Street', projectIdFromName: 'green-920-u-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Kubein - Plymouth Project', projectIdFromName: 'kubein-plymouth-project', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'McLeod - Joffe - 2436 59th Street', projectIdFromName: 'mcleod-joffe-2436-59th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Piner - Piner Haus Garage', projectIdFromName: 'piner-piner-haus-garage', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Rathbun - USFS Cabin', projectIdFromName: 'rathbun-usfs-cabin', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Vasquez - Gutierrez - 2508 55th Street', projectIdFromName: 'vasquez-gutierrez-2508-55th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Wilcox - 1808 U Street', projectIdFromName: 'wilcox-1808-u-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Donaldson - 2717 58th Street', projectIdFromName: 'donaldson-2717-58th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Unknown - 14401 Grand Island Road', projectIdFromName: 'unknown-14401-grand-island-road', urlProjectId: undefined, isActive: false}
+useTaskBoard.tsx:43 TaskGroups calculation - tasks: 0 loading: false
+useTaskBoard.tsx:57 Task filtering results: {total: 0, redline: 0, progress: 0, completed: 0, sampleTask: null}
+useTaskBoard.tsx:33 useQuery state changed: {tasksLength: 0, loading: false, error: Error: Missing queryFn: '["/api/tasks"]'
+    at https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fg…, tasks: Array(0)}
+useRealtimeTasks.tsx:37 WebSocket connected for real-time updates
+useRealtimeTasks.tsx:37 WebSocket connected for real-time updates
+useTaskBoard.tsx:43 TaskGroups calculation - tasks: 0 loading: false
+useTaskBoard.tsx:57 Task filtering results: {total: 0, redline: 0, progress: 0, completed: 0, sampleTask: null}
+useTaskBoard.tsx:33 useQuery state changed: {tasksLength: 0, loading: false, error: Error: Missing queryFn: '["/api/tasks"]'
+    at https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fg…, tasks: Array(0)}
+chunk-RPCDYKBN.js?v=fcf40894:521 Warning: validateDOMNesting(...): <button> cannot appear as a descendant of <button>.
+    at button
+    at button
+    at _c (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/src/components/ui/button.tsx:47:11)
+    at https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=fcf40894:79:13
+    at https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=fcf40894:56:13
+    at https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=fcf40894:42:13
+    at https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=fcf40894:79:13
+    at https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2K77HOHX.js?v=fcf40894:56:13
+    at https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=fcf40894:42:13
+    at https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-ZL4O2VWE.js?v=fcf40894:1927:13
+    at https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=fcf40894:115:13
+    at Provider (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-5AJU3CG7.js?v=fcf40894:38:15)
+    at Provider (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-5AJU3CG7.js?v=fcf40894:38:15)
+    at Popper (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-ZL4O2VWE.js?v=fcf40894:1919:11)
+    at Popover (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-popover.js?v=fcf40894:64:5)
+    at div
+    at QuickAddAssigneePopover (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/src/components/quick-add/QuickAddAssigneePopover.tsx:25:3)
+    at div
+    at QuickAddTaskActions (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/src/components/quick-add/QuickAddTaskActions.tsx:22:3)
+    at div
+    at div
+    at QuickAddTask (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/src/components/QuickAddTask.tsx:24:25)
+    at div
+    at TaskTableSection (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/src/components/task-group/TaskTableSection.tsx:25:3)
+    at div
+    at https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/src/components/TaskGroupSection.tsx:22:3
+    at div
+    at div
+    at div
+    at https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=fcf40894:42:13
+    at https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-scroll-area.js?v=fcf40894:114:13
+    at div
+    at https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-AXMZZQ2X.js?v=fcf40894:42:13
+    at Provider (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-5AJU3CG7.js?v=fcf40894:38:15)
+    at https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-scroll-area.js?v=fcf40894:52:7
+    at _c (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/src/components/ui/scroll-area.tsx:21:11)
+    at div
+    at div
+    at TaskBoardContent (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/src/components/TaskBoardContent.tsx:24:3)
+    at div
+    at https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/src/components/TaskBoard.tsx:27:3
+    at div
+    at div
+    at div
+    at div
+    at div
+    at PanelWithForwardedRef (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-resizable-panels.js?v=fcf40894:40:3)
+    at forwardRef(Panel)
+    at div
+    at PanelGroupWithForwardedRef (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-resizable-panels.js?v=fcf40894:1423:3)
+    at forwardRef(PanelGroup)
+    at div
+    at AppLayout (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/src/components/layout/AppLayout.tsx:24:22)
+    at _c
+    at RenderedRoute (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-router-dom.js?v=fcf40894:5455:26)
+    at Routes (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-router-dom.js?v=fcf40894:6188:3)
+    at ProtectedRoute (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/src/components/auth/ProtectedRoute.tsx:20:27)
+    at RenderedRoute (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-router-dom.js?v=fcf40894:5455:26)
+    at Routes (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-router-dom.js?v=fcf40894:6188:3)
+    at ImpersonationGate (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/src/components/ImpersonationGate.tsx:22:30)
+    at TaskProvider (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/src/contexts/TaskContext.tsx:54:32)
+    at TaskAttachmentProvider (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/src/contexts/TaskAttachmentContext.tsx:53:42)
+    at ProjectDataProvider (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/src/contexts/ProjectDataContext.tsx:29:39)
+    at SidebarProvider (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/src/contexts/SidebarContext.tsx:30:35)
+    at UserProvider (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/src/contexts/UserContext.tsx:32:32)
+    at Router (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-router-dom.js?v=fcf40894:6131:13)
+    at BrowserRouter (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-router-dom.js?v=fcf40894:9149:3)
+    at Provider (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-5AJU3CG7.js?v=fcf40894:38:15)
+    at TooltipProvider (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=fcf40894:63:5)
+    at QueryClientProvider (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=fcf40894:2805:3)
+    at V (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/next-themes.js?v=fcf40894:44:25)
+    at J (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/next-themes.js?v=fcf40894:42:18)
+    at AppProviders (https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/src/App.tsx?v=NffqxrpP4ibQlXigPxWRA:53:25)
+    at App
+printWarning @ chunk-RPCDYKBN.js?v=fcf40894:521
+error @ chunk-RPCDYKBN.js?v=fcf40894:505
+validateDOMNesting @ chunk-RPCDYKBN.js?v=fcf40894:8256
+createInstance @ chunk-RPCDYKBN.js?v=fcf40894:8328
+completeWork @ chunk-RPCDYKBN.js?v=fcf40894:16290
+completeUnitOfWork @ chunk-RPCDYKBN.js?v=fcf40894:19224
+performUnitOfWork @ chunk-RPCDYKBN.js?v=fcf40894:19206
+workLoopSync @ chunk-RPCDYKBN.js?v=fcf40894:19137
+renderRootSync @ chunk-RPCDYKBN.js?v=fcf40894:19116
+performSyncWorkOnRoot @ chunk-RPCDYKBN.js?v=fcf40894:18874
+flushSyncCallbacks @ chunk-RPCDYKBN.js?v=fcf40894:9119
+(anonymous) @ chunk-RPCDYKBN.js?v=fcf40894:18627
+projectMapping.ts:6 Converting display name to project ID: Kubein - Plymouth Project
+projectMapping.ts:10 Converted project ID: kubein-plymouth-project
+projectMapping.ts:14 Found project in client data: kubein-plymouth-project
+useTaskBoard.tsx:43 TaskGroups calculation - tasks: 0 loading: false
+useTaskBoard.tsx:57 Task filtering results: {total: 0, redline: 0, progress: 0, completed: 0, sampleTask: null}
+useTaskBoard.tsx:33 useQuery state changed: {tasksLength: 0, loading: false, error: Error: Missing queryFn: '["/api/tasks"]'
+    at https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fg…, tasks: Array(0)}
+useRealtimeTasks.tsx:10 WebSocket message received: {event: 'task_created', data: {…}}
+api.ts:6 fetchAllTasks called
+useTaskBoard.tsx:43 TaskGroups calculation - tasks: 0 loading: true
+useTaskBoard.tsx:57 Task filtering results: {total: 0, redline: 0, progress: 0, completed: 0, sampleTask: null}
+useTaskBoard.tsx:33 useQuery state changed: {tasksLength: 0, loading: true, error: null, tasks: Array(0)}
+useRealtimeTasks.tsx:10 WebSocket message received: {event: 'task_created', data: {…}}
+useTaskBoard.tsx:43 TaskGroups calculation - tasks: 0 loading: true
+useTaskBoard.tsx:57 Task filtering results: {total: 0, redline: 0, progress: 0, completed: 0, sampleTask: null}
+useTaskBoard.tsx:33 useQuery state changed: {tasksLength: 0, loading: true, error: null, tasks: Array(0)}
+api.ts:8 fetchAllTasks result: 12 tasks, first task: {id: 23, taskId: 'T39134', title: 'test 2', projectId: 'kubein-plymouth-project', project: 'Kubein - Plymouth Project', …}
+useTaskBoard.tsx:43 TaskGroups calculation - tasks: 12 loading: false
+useTaskBoard.tsx:57 Task filtering results: {total: 12, redline: 11, progress: 1, completed: 0, sampleTask: {…}}
+useTaskBoard.tsx:33 useQuery state changed: {tasksLength: 12, loading: false, error: null, tasks: Array(2)}

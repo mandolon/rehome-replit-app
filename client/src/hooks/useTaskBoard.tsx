@@ -24,8 +24,9 @@ export const useTaskBoard = () => {
   // Fetch tasks using React Query
   const { data: tasks = [], isLoading: loading, error } = useQuery({
     queryKey: ['/api/tasks'],
-    queryFn: fetchAllTasks,
+    queryFn: () => fetchAllTasks(),
     refetchOnWindowFocus: false,
+    staleTime: 30000, // 30 seconds
   });
 
   // Debug the query state
