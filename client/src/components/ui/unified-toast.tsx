@@ -241,18 +241,15 @@ export const useTrashToast = () => {
     itemDeleted: (type: 'task' | 'project' | 'note', name: string) => showToast({
       itemType: type,
       itemName: name,
-      action: 'deleted',
-      variant: 'destructive'
+      action: 'moved',
+      destination: 'trash'
     }),
     
     trashEmptied: () => showToast({
       itemType: 'item',
       itemName: 'All items',
       action: 'deleted',
-      customMessage: 'Trash emptied.',
-      variant: 'destructive',
-      navigateToPage: '/tasks',
-      navigateLabel: 'View Tasks'
+      customMessage: 'Trash emptied.'
     })
   };
 };
