@@ -40,7 +40,11 @@ export const useTaskBoard = () => {
 
   // Task groups powered by API - memoized to prevent unnecessary recalculations
   const taskGroups = React.useMemo((): TaskGroup[] => {
+    console.log('Building task groups with tasks:', tasks);
+    console.log('Tasks type:', typeof tasks, 'Is array:', Array.isArray(tasks), 'Length:', tasks?.length);
+    
     if (!tasks || !Array.isArray(tasks)) {
+      console.log('No tasks or not array, returning empty groups');
       return [
         { title: "TASK/ REDLINE", count: 0, color: "bg-[#c62a2f]", status: "redline", tasks: [] },
         { title: "PROGRESS/ UPDATE", count: 0, color: "bg-blue-500", status: "progress", tasks: [] },
