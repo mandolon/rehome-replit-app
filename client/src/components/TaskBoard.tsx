@@ -12,14 +12,14 @@ const TaskBoard: React.FC = React.memo(() => {
   // Enable real-time updates
   useRealtimeTasks();
   
-  // Use Supabase-powered board for state
+  // Use Subabase-powered board for state
   const {
     isTaskDialogOpen,
     setIsTaskDialogOpen,
     showQuickAdd,
     setShowQuickAdd,
     refreshTrigger,
-    getTaskGroups,
+    taskGroups,
     handleCreateTask,
     handleQuickAddSave,
     handleTaskClick,
@@ -28,7 +28,6 @@ const TaskBoard: React.FC = React.memo(() => {
     removeAssignee,
     addCollaborator,
     removeCollaborator,
-    tasks,
   } = useTaskBoard();
 
   // State for showing/hiding closed tasks
@@ -61,8 +60,7 @@ const TaskBoard: React.FC = React.memo(() => {
     isDeleting,
   } = useTaskDeletion();
 
-  // Board tasks - depend on actual tasks data to ensure re-render when tasks load
-  const taskGroups = React.useMemo(() => getTaskGroups(), [getTaskGroups, refreshTrigger, tasks]);
+  // Board tasks are now directly provided by the hook
 
   // Quick Add handles attachments as in Supabase system
   const onQuickAddSave = React.useCallback(async (taskData: any) => {

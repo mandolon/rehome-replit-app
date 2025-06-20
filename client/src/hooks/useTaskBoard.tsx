@@ -1,5 +1,5 @@
 
-import { useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Task, TaskGroup, TaskUser } from '@/types/task';
@@ -33,11 +33,9 @@ export const useTaskBoard = () => {
   const [showQuickAdd, setShowQuickAdd] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  // Task groups powered by API
-  const getTaskGroups = useCallback((): TaskGroup[] => {
-    console.log('getTaskGroups called with tasks:', tasks?.length, 'loading:', loading);
+  // Task groups powered by API - memoized to prevent unnecessary recalculations
+  const taskGroups = React.useMemo((): TaskGroup[] => {
     if (!tasks || !Array.isArray(tasks)) {
-      console.log('Returning empty groups - no tasks data');
       return [
         { title: "TASK/ REDLINE", count: 0, color: "bg-[#c62a2f]", status: "redline", tasks: [] },
         { title: "PROGRESS/ UPDATE", count: 0, color: "bg-blue-500", status: "progress", tasks: [] },
@@ -48,13 +46,6 @@ export const useTaskBoard = () => {
     const centralizedRedline = tasks.filter((task: any) => task.status === 'redline' && !task.archived && !task.deletedAt);
     const centralizedProgress = tasks.filter((task: any) => task.status === 'progress' && !task.archived && !task.deletedAt);
     const centralizedCompleted = tasks.filter((task: any) => task.status === 'completed' && !task.archived && !task.deletedAt);
-    
-    console.log('Task groups:', {
-      redline: centralizedRedline.length,
-      progress: centralizedProgress.length,
-      completed: centralizedCompleted.length,
-      allTasks: tasks.map(t => ({ taskId: t.taskId, status: t.status, archived: t.archived, deletedAt: t.deletedAt }))
-    });
 
     const taskGroups: TaskGroup[] = [
       {
@@ -81,6 +72,9 @@ export const useTaskBoard = () => {
     ];
     return taskGroups;
   }, [tasks, refreshTrigger]);
+
+  // Expose taskGroups directly instead of through a function
+  const getTaskGroups = useCallback(() => taskGroups, [taskGroups]);
 
   // Generate a new taskId for every task insert
   const generateTaskId = () => "T" + Math.floor(Math.random() * 100000).toString().padStart(4, "0");
@@ -188,6 +182,7 @@ export const useTaskBoard = () => {
     showQuickAdd,
     setShowQuickAdd,
     refreshTrigger,
+    taskGroups,
     getTaskGroups,
     handleCreateTask,
     handleQuickAddSave,
