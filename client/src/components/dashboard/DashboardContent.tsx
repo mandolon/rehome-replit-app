@@ -94,25 +94,24 @@ const DashboardContent = () => {
         key={card.id}
         onClick={() => handleCardClick(card.href)}
         className={cn(
-          "cursor-pointer transition-all duration-300 hover:shadow-lg group",
+          "border-0 shadow-none bg-muted/30 cursor-pointer transition-all duration-300 hover:bg-muted/40 group",
           className
         )}
       >
-        <CardHeader className="pb-2 space-y-1">
-          <CardTitle className="text-sm font-semibold group-hover:text-foreground/80 transition-colors line-clamp-1">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-3">
+          <CardTitle className="text-xs font-medium text-muted-foreground group-hover:text-foreground/80 transition-colors line-clamp-1">
             {card.title}
           </CardTitle>
-          <CardDescription className="text-xs text-muted-foreground line-clamp-1">
-            {card.subtitle}
-          </CardDescription>
+          {Icon && <Icon className="w-3 h-3 text-muted-foreground" />}
         </CardHeader>
-        {card.description && !card.isWelcome && (
-          <CardContent className="pt-0 pb-4">
-            <p className="text-muted-foreground text-xs line-clamp-1">
+        <CardContent className="px-3 pb-3">
+          <div className="text-lg font-bold">{card.subtitle}</div>
+          {card.description && (
+            <p className="text-xs text-muted-foreground line-clamp-1">
               {card.description}
             </p>
-          </CardContent>
-        )}
+          )}
+        </CardContent>
       </Card>
     );
   };
@@ -134,28 +133,28 @@ const DashboardContent = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6 h-full max-h-[calc(100vh-140px)]">
               {/* Column 1: Featured Welcome Card + Secondary Cards */}
               <div className="flex flex-col gap-3 min-h-0">
-                {/* Welcome Card - Compact but prominent */}
+                {/* Welcome Card - Matching Timesheets style */}
                 <Card 
-                  className="flex-[1.8] min-h-[200px] bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border-blue-200/50 dark:border-blue-800/50 cursor-pointer transition-all duration-300 hover:shadow-lg group"
+                  className="flex-[1.8] min-h-[200px] border-0 shadow-none bg-muted/30 cursor-pointer transition-all duration-300 hover:bg-muted/40 group"
                   onClick={() => handleCardClick(column1Cards[0].href)}
                 >
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-lg group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">
+                  <CardHeader className="pb-3 pt-3 px-3">
+                    <CardTitle className="text-sm font-medium text-muted-foreground group-hover:text-foreground/80 transition-colors">
                       Welcome back to your project dashboard
                     </CardTitle>
-                    <CardDescription className="text-xs leading-relaxed line-clamp-3">
+                    <CardDescription className="text-xs leading-relaxed line-clamp-3 mt-2">
                       You have 5 urgent tasks requiring attention, 3 projects with upcoming deadlines this week, and 2 team members waiting for your approval on design revisions.
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="pt-0">
+                  <CardContent className="px-3 pb-3">
                     <div className="grid grid-cols-2 gap-3">
-                      <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-lg p-2">
-                        <div className="text-lg font-bold text-blue-600 dark:text-blue-400 mb-0.5">24</div>
-                        <div className="text-xs text-muted-foreground font-medium">Active Projects</div>
+                      <div className="bg-muted/50 rounded-lg p-2">
+                        <div className="text-lg font-bold">24</div>
+                        <div className="text-xs text-muted-foreground">Active Projects</div>
                       </div>
-                      <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-lg p-2">
-                        <div className="text-lg font-bold text-indigo-600 dark:text-indigo-400 mb-0.5">156</div>
-                        <div className="text-xs text-muted-foreground font-medium">Open Tasks</div>
+                      <div className="bg-muted/50 rounded-lg p-2">
+                        <div className="text-lg font-bold">156</div>
+                        <div className="text-xs text-muted-foreground">Open Tasks</div>
                       </div>
                     </div>
                   </CardContent>
@@ -175,79 +174,77 @@ const DashboardContent = () => {
                 
                 {/* Large combined card */}
                 <Card 
-                  className="flex-1 cursor-pointer transition-all duration-300 hover:shadow-lg group"
+                  className="flex-1 border-0 shadow-none bg-muted/30 cursor-pointer transition-all duration-300 hover:bg-muted/40 group"
                   onClick={() => handleCardClick(column2CombinedCard.href)}
                 >
-                  <CardHeader className="pb-2 space-y-1">
-                    <CardTitle className="text-sm font-semibold group-hover:text-foreground/80 transition-colors">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-3">
+                    <CardTitle className="text-xs font-medium text-muted-foreground group-hover:text-foreground/80 transition-colors">
                       {column2CombinedCard.title}
                     </CardTitle>
-                    <CardDescription className="text-xs text-muted-foreground">
-                      {column2CombinedCard.subtitle}
-                    </CardDescription>
-                    <p className="text-xs text-muted-foreground leading-tight line-clamp-2 pt-1">
+                    <BarChart3 className="w-3 h-3 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent className="px-3 pb-3">
+                    <div className="text-lg font-bold mb-1">{column2CombinedCard.subtitle}</div>
+                    <p className="text-xs text-muted-foreground leading-tight line-clamp-2 mb-3">
                       {column2CombinedCard.description}
                     </p>
-                  </CardHeader>
-                  <CardContent className="pt-0 space-y-2">
-                    {column2CombinedCard.metrics.map((metric, index) => (
-                      <div key={index} className="flex items-center justify-between">
-                        <span className="text-xs text-muted-foreground">{metric.label}</span>
-                        <span className={`text-xs font-medium ${
-                          metric.trend === 'up' ? 'text-green-600 dark:text-green-400' : 
-                          metric.trend === 'down' ? 'text-red-600 dark:text-red-400' : 
-                          'text-foreground'
-                        }`}>
-                          {metric.value}
-                        </span>
-                      </div>
-                    ))}
+                    <div className="space-y-2">
+                      {column2CombinedCard.metrics.map((metric, index) => (
+                        <div key={index} className="flex items-center justify-between">
+                          <span className="text-xs text-muted-foreground">{metric.label}</span>
+                          <span className="text-xs font-bold">
+                            {metric.value}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </CardContent>
                 </Card>
               </div>
 
               {/* Column 3: Analytics Overview */}
               <Card 
-                className="h-full cursor-pointer transition-all duration-300 hover:shadow-lg group flex flex-col"
+                className="h-full border-0 shadow-none bg-muted/30 cursor-pointer transition-all duration-300 hover:bg-muted/40 group flex flex-col"
                 onClick={() => handleCardClick(column3Card.href)}
               >
-                <CardHeader className="pb-2 space-y-2">
-                  <CardTitle className="text-base font-semibold group-hover:text-foreground/80 transition-colors">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 pt-3 px-3">
+                  <CardTitle className="text-xs font-medium text-muted-foreground group-hover:text-foreground/80 transition-colors">
                     Analytics & Reports
                   </CardTitle>
-                  <CardDescription className="text-xs text-muted-foreground">
-                    Performance Dashboard
-                  </CardDescription>
-                  <p className="text-muted-foreground text-xs leading-tight line-clamp-2">
+                  <TrendingUp className="w-3 h-3 text-muted-foreground" />
+                </CardHeader>
+                <CardContent className="flex-1 px-3 pb-3">
+                  <div className="text-lg font-bold mb-1">Performance Dashboard</div>
+                  <p className="text-muted-foreground text-xs leading-tight line-clamp-2 mb-3">
                     Comprehensive project analytics, team performance metrics, and detailed reports for all your projects.
                   </p>
-                </CardHeader>
-                <CardContent className="flex-1 space-y-2 pt-0">
-                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border border-green-200/50 dark:border-green-800/50 rounded-lg p-2">
-                    <div className="flex items-center justify-between mb-1">
-                      <div className="text-foreground font-semibold text-xs">Project Completion</div>
-                      <div className="text-green-600 dark:text-green-400 font-bold text-xs">78%</div>
+                  <div className="space-y-2">
+                    <div className="bg-muted/50 rounded-lg p-2">
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="text-xs text-muted-foreground">Project Completion</div>
+                        <div className="text-lg font-bold">78%</div>
+                      </div>
+                      <div className="text-xs text-muted-foreground">Average across all projects</div>
+                      <div className="mt-1 bg-muted rounded-full h-1">
+                        <div className="bg-foreground/60 h-1 rounded-full" style={{width: '78%'}}></div>
+                      </div>
                     </div>
-                    <div className="text-muted-foreground text-xs">Average across all projects</div>
-                    <div className="mt-1 bg-green-200 dark:bg-green-800 rounded-full h-1">
-                      <div className="bg-green-500 h-1 rounded-full" style={{width: '78%'}}></div>
+                    
+                    <div className="bg-muted/50 rounded-lg p-2">
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="text-xs text-muted-foreground">Team Efficiency</div>
+                        <div className="text-lg font-bold">+15%</div>
+                      </div>
+                      <div className="text-xs text-muted-foreground">Improvement this quarter</div>
                     </div>
-                  </div>
-                  
-                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border border-blue-200/50 dark:border-blue-800/50 rounded-lg p-2">
-                    <div className="flex items-center justify-between mb-1">
-                      <div className="text-foreground font-semibold text-xs">Team Efficiency</div>
-                      <div className="text-blue-600 dark:text-blue-400 font-bold text-xs">+15%</div>
+                    
+                    <div className="bg-muted/50 rounded-lg p-2">
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="text-xs text-muted-foreground">Revenue Growth</div>
+                        <div className="text-lg font-bold">$24.5k</div>
+                      </div>
+                      <div className="text-xs text-muted-foreground">Generated this month</div>
                     </div>
-                    <div className="text-muted-foreground text-xs">Improvement this quarter</div>
-                  </div>
-                  
-                  <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 border border-purple-200/50 dark:border-purple-800/50 rounded-lg p-2">
-                    <div className="flex items-center justify-between mb-1">
-                      <div className="text-foreground font-semibold text-xs">Revenue Growth</div>
-                      <div className="text-purple-600 dark:text-purple-400 font-bold text-xs">$24.5k</div>
-                    </div>
-                    <div className="text-muted-foreground text-xs">Generated this month</div>
                   </div>
                 </CardContent>
               </Card>
