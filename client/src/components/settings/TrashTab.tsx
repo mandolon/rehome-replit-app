@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import { Search, RotateCcw, Trash2, FileText, FolderOpen, Paperclip } from 'lucide-react';
+import { Search, RotateCcw, Trash2, FileText, FolderOpen, Paperclip, ChevronDown, ArrowUpDown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableHead, TableHeader, TableRow, TableCell } from '@/components/ui/table';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
 import { formatDate } from '@/utils/taskUtils';
 
@@ -24,6 +25,9 @@ interface TrashItem {
 
 const TrashTab = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedItemType, setSelectedItemType] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<'deletedAt' | 'title' | 'itemType'>('deletedAt');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const { toast } = useToast();
   const [restoringIds, setRestoringIds] = useState<string[]>([]);
   const [emptyingTrash, setEmptyingTrash] = useState(false);
@@ -79,13 +83,60 @@ const TrashTab = () => {
   }, [allTrashItems, optimisticallyRestored, optimisticallyDeleted]);
 
   const filteredTrashItems = useMemo(() => {
-    if (!searchQuery.trim()) return visibleTrashItems;
-    return visibleTrashItems.filter((item: TrashItem) =>
-      item.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.itemId?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.itemType?.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [visibleTrashItems, searchQuery]);
+    let filtered = visibleTrashItems;
+
+    // Filter by item type
+    if (selectedItemType !== 'all') {
+      filtered = filtered.filter((item: TrashItem) => item.itemType === selectedItemType);
+    }
+
+    // Filter by search query
+    if (searchQuery.trim()) {
+      filtered = filtered.filter((item: TrashItem) =>
+        item.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.itemId?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.itemType?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // Sort items
+    return filtered.sort((a: TrashItem, b: TrashItem) => {
+      let aValue: string | number, bValue: string | number;
+      
+      switch (sortBy) {
+        case 'title':
+          aValue = a.title.toLowerCase();
+          bValue = b.title.toLowerCase();
+          break;
+        case 'itemType':
+          aValue = a.itemType;
+          bValue = b.itemType;
+          break;
+        case 'deletedAt':
+        default:
+          aValue = new Date(a.deletedAt).getTime();
+          bValue = new Date(b.deletedAt).getTime();
+          break;
+      }
+
+      if (sortDirection === 'asc') {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    });
+
+    return filtered;
+  }, [visibleTrashItems, searchQuery, selectedItemType, sortBy, sortDirection]);
+
+  const itemTypeCounts = useMemo(() => {
+    const counts = { all: 0, task: 0, project: 0, note: 0 };
+    visibleTrashItems.forEach((item: TrashItem) => {
+      counts.all++;
+      counts[item.itemType as keyof typeof counts]++;
+    });
+    return counts;
+  }, [visibleTrashItems]);
 
   const handleRestore = async (trashItemId: string) => {
     setRestoringIds((prev) => [...prev, trashItemId]);
@@ -285,29 +336,68 @@ const TrashTab = () => {
     switch (itemType) {
       case 'task':
         return (
-          <div className="w-6 h-6 bg-blue-100 dark:bg-blue-900/30 rounded flex items-center justify-center">
+          <div className="w-6 h-6 bg-blue-100 dark:bg-blue-900/30 rounded-md flex items-center justify-center ring-1 ring-blue-200 dark:ring-blue-800/50">
             <div className="w-2 h-2 bg-blue-600 rounded-full" />
           </div>
         );
       case 'project':
         return (
-          <div className="w-6 h-6 bg-green-100 dark:bg-green-900/30 rounded flex items-center justify-center">
+          <div className="w-6 h-6 bg-green-100 dark:bg-green-900/30 rounded-md flex items-center justify-center ring-1 ring-green-200 dark:ring-green-800/50">
             <FolderOpen className="w-3 h-3 text-green-600" />
           </div>
         );
       case 'note':
         return (
-          <div className="w-6 h-6 bg-orange-100 dark:bg-orange-900/30 rounded flex items-center justify-center">
+          <div className="w-6 h-6 bg-orange-100 dark:bg-orange-900/30 rounded-md flex items-center justify-center ring-1 ring-orange-200 dark:ring-orange-800/50">
             <FileText className="w-3 h-3 text-orange-600" />
           </div>
         );
       default:
         return (
-          <div className="w-6 h-6 bg-gray-100 dark:bg-gray-900/30 rounded flex items-center justify-center">
+          <div className="w-6 h-6 bg-gray-100 dark:bg-gray-900/30 rounded-md flex items-center justify-center ring-1 ring-gray-200 dark:ring-gray-800/50">
             <Trash2 className="w-3 h-3 text-gray-600" />
           </div>
         );
     }
+  };
+
+  const getItemTypeLabel = (itemType: string) => {
+    switch (itemType) {
+      case 'task':
+        return 'Task';
+      case 'project':
+        return 'Project';
+      case 'note':
+        return 'Note';
+      default:
+        return 'Item';
+    }
+  };
+
+  const getItemTypeColor = (itemType: string) => {
+    switch (itemType) {
+      case 'task':
+        return 'text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-950/50';
+      case 'project':
+        return 'text-green-600 bg-green-50 dark:text-green-400 dark:bg-green-950/50';
+      case 'note':
+        return 'text-orange-600 bg-orange-50 dark:text-orange-400 dark:bg-orange-950/50';
+      default:
+        return 'text-gray-600 bg-gray-50 dark:text-gray-400 dark:bg-gray-950/50';
+    }
+  };
+
+  const getItemContext = (item: TrashItem) => {
+    if (item.itemType === 'task' && item.metadata?.project) {
+      return `Project: ${item.metadata.project}`;
+    }
+    if (item.itemType === 'project' && item.metadata?.taskCount) {
+      return `${item.metadata.taskCount} tasks`;
+    }
+    if (item.itemType === 'note' && item.metadata?.category) {
+      return `Category: ${item.metadata.category}`;
+    }
+    return null;
   };
 
   if (loading) {
@@ -354,15 +444,67 @@ const TrashTab = () => {
           )}
         </div>
         
-        {/* Search Bar */}
-        <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            placeholder="Search deleted items..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
+        {/* Search and Filter Controls */}
+        <div className="flex flex-col gap-4">
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Search deleted items..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          
+          <div className="flex flex-wrap gap-3 items-center">
+            <div className="flex gap-1">
+              {[
+                { key: 'all', label: 'All Items', count: itemTypeCounts.all },
+                { key: 'task', label: 'Tasks', count: itemTypeCounts.task },
+                { key: 'project', label: 'Projects', count: itemTypeCounts.project },
+                { key: 'note', label: 'Notes', count: itemTypeCounts.note }
+              ].map((filter) => (
+                <Button
+                  key={filter.key}
+                  variant={selectedItemType === filter.key ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setSelectedItemType(filter.key)}
+                  className="h-8 px-3 text-xs"
+                >
+                  {filter.label} ({filter.count})
+                </Button>
+              ))}
+            </div>
+            
+            <div className="h-4 w-px bg-border" />
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-8 px-3 text-xs">
+                  <ArrowUpDown className="w-3 h-3 mr-2" />
+                  Sort by {sortBy === 'deletedAt' ? 'Date' : sortBy === 'itemType' ? 'Type' : 'Title'}
+                  <ChevronDown className="w-3 h-3 ml-1" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => { setSortBy('deletedAt'); setSortDirection('desc'); }}>
+                  Date Deleted (Newest)
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => { setSortBy('deletedAt'); setSortDirection('asc'); }}>
+                  Date Deleted (Oldest)
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => { setSortBy('title'); setSortDirection('asc'); }}>
+                  Title (A-Z)
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => { setSortBy('title'); setSortDirection('desc'); }}>
+                  Title (Z-A)
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => { setSortBy('itemType'); setSortDirection('asc'); }}>
+                  Type (A-Z)
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
 
@@ -404,8 +546,11 @@ const TrashTab = () => {
                     className="border-b border-border transition-colors hover:bg-accent/50 group cursor-pointer"
                   >
                     <TableCell className="py-3 pl-8">
-                      <div className="flex items-center">
+                      <div className="flex items-center gap-3">
                         {getItemIcon(item.itemType)}
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getItemTypeColor(item.itemType)}`}>
+                          {getItemTypeLabel(item.itemType)}
+                        </span>
                       </div>
                     </TableCell>
                     <TableCell className="py-3">
@@ -417,6 +562,11 @@ const TrashTab = () => {
                           <div className="font-medium text-sm text-foreground truncate">{item.title}</div>
                           {item.description && (
                             <div className="text-xs text-muted-foreground truncate mt-0.5">{item.description}</div>
+                          )}
+                          {getItemContext(item) && (
+                            <div className="text-xs text-muted-foreground truncate mt-0.5 italic">
+                              {getItemContext(item)}
+                            </div>
                           )}
                         </div>
                       </div>
