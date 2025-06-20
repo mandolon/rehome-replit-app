@@ -1,12 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
-import { Filter, Search, Plus, Calendar, ChevronDown, CheckCircle, ListTodo } from 'lucide-react';
+import { Filter, Search, Plus, Calendar, ChevronDown, CheckCircle } from 'lucide-react';
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Calendar as ShadcnCalendar } from "@/components/ui/calendar";
 import AssigneeFilterPopover from './AssigneeFilterPopover';
 import CreatedByFilterPopover from './CreatedByFilterPopover';
-import TodoPopup from './TodoPopup';
+import NotePopup from './NotePopup';
 
 interface TaskBoardFiltersProps {
   onAddTask: () => void;
@@ -30,7 +30,7 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed, onFiltersChan
   const [selectedStartDate, setSelectedStartDate] = useState<Date | undefined>();
   const [selectedEndDate, setSelectedEndDate] = useState<Date | undefined>();
   const [selectedProject, setSelectedProject] = useState<string>('');
-  const [todoPopupOpen, setTodoPopupOpen] = useState(false);
+  const [notePopupOpen, setNotePopupOpen] = useState(false);
 
   // Notify parent component when filters change
   useEffect(() => {
@@ -190,13 +190,13 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed, onFiltersChan
         />
 
         <div className="ml-auto flex items-center gap-2">
-          {/* To Do button */}
+          {/* Add Note button */}
           <button 
-            onClick={() => setTodoPopupOpen(true)}
+            onClick={() => setNotePopupOpen(true)}
             className="flex items-center gap-1 px-2 py-1 text-xs rounded border text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-transparent hover:border-gray-200 dark:hover:border-gray-700"
           >
             <Plus className="w-3 h-3" />
-            To Do
+            Add Note
           </button>
 
           {/* Completed button moved here */}
@@ -233,10 +233,10 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed, onFiltersChan
         </div>
       </div>
 
-      {/* Todo Popup */}
-      <TodoPopup 
-        isOpen={todoPopupOpen} 
-        onClose={() => setTodoPopupOpen(false)} 
+      {/* Note Popup */}
+      <NotePopup 
+        isOpen={notePopupOpen} 
+        onClose={() => setNotePopupOpen(false)} 
       />
     </div>
   );
