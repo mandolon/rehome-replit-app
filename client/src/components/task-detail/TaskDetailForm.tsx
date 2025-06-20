@@ -56,7 +56,7 @@ const TaskDetailForm = ({ task: originalTask, onTimeUpdated }: TaskDetailFormPro
       // Set markedComplete fields when marking as completed
       if (newStatus === "completed" && task.status !== "completed") {
         updates.markedComplete = new Date().toISOString();
-        updates.markedCompleteBy = currentUser?.username || "Unknown";
+        updates.markedCompleteBy = currentUser?.name || "Unknown";
       }
       
       setTask(prev => ({ ...prev, ...updates, updatedAt: new Date().toISOString() }));
