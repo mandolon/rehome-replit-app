@@ -159,12 +159,18 @@ export const TaskProvider = ({ children }: TaskProviderProps) => {
       const task = PLACEHOLDER_TASKS.find(t => t.id === taskId);
       if (!task) return;
 
+      // Prepare updates with proper date handling
+      const sanitizedUpdates = { ...updates };
+      
+      // Keep date fields as strings for frontend consistency
+      // Server will handle conversion to Date objects
+
       const response = await fetch(`/api/tasks/${task.taskId}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(updates),
+        body: JSON.stringify(sanitizedUpdates),
       });
 
       if (!response.ok) {
@@ -208,9 +214,44 @@ export const TaskProvider = ({ children }: TaskProviderProps) => {
     cancelTaskEdit,
     setEditingValue,
     
-    // Status operations - all placeholders
-    toggleTaskStatus: () => {},
-    changeTaskStatus: () => {},
+    // Status operations
+    toggleTaskStatus: async (taskId: number) => {
+      const task = PLACEHOLDER_TASKS.find(t => t.id === taskId);
+      if (!task) return;
+
+      if (task.status === 'completed') {
+        // Uncomplete the task
+        await updateTaskById(taskId, { 
+          status: 'progress', 
+          archived: false,
+          markedComplete: null,
+          markedCompleteBy: null
+        });
+      } else {
+        // Complete the task
+        await updateTaskById(taskId, { 
+          status: 'completed', 
+          archived: true,
+          markedComplete: new Date(),
+          markedCompleteBy: 'current_user' // Should be actual user
+        });
+      }
+    },
+    changeTaskStatus: async (taskId: number, newStatus: "redline" | "progress" | "completed") => {
+      const updates: Partial<Task> = { status: newStatus };
+      
+      if (newStatus === 'completed') {
+        updates.archived = true;
+        updates.markedComplete = new Date();
+        updates.markedCompleteBy = 'current_user'; // Should be actual user
+      } else {
+        updates.archived = false;
+        updates.markedComplete = null;
+        updates.markedCompleteBy = null;
+      }
+      
+      await updateTaskById(taskId, updates);
+    },
     
     // Assignment operations - all placeholders
     assignPerson: () => {},

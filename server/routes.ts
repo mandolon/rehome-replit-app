@@ -93,7 +93,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch("/api/tasks/:taskId", async (req, res) => {
     try {
-      const task = await storage.updateTask(req.params.taskId, req.body);
+      // Convert date fields from strings to Date objects
+      const updates = { ...req.body };
+      
+      if (updates.markedComplete && typeof updates.markedComplete === 'string') {
+        updates.markedComplete = new Date(updates.markedComplete);
+      }
+      if (updates.dueDate && typeof updates.dueDate === 'string') {
+        updates.dueDate = new Date(updates.dueDate);
+      }
+      if (updates.deletedAt && typeof updates.deletedAt === 'string') {
+        updates.deletedAt = new Date(updates.deletedAt);
+      }
+      if (updates.createdAt && typeof updates.createdAt === 'string') {
+        updates.createdAt = new Date(updates.createdAt);
+      }
+      if (updates.updatedAt && typeof updates.updatedAt === 'string') {
+        updates.updatedAt = new Date(updates.updatedAt);
+      }
+      
+      const task = await storage.updateTask(req.params.taskId, updates);
       if (!task) {
         return res.status(404).json({ error: "Task not found" });
       }
