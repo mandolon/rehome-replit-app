@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import TaskBoardHeader from './TaskBoardHeader';
 import TaskBoardFilters from './TaskBoardFilters';
 import TaskGroupSection from './TaskGroupSection';
@@ -48,6 +48,7 @@ const TaskBoardContent = ({
   removeAssignee,
   addCollaborator,
   removeCollaborator,
+  filters,
 }: TaskBoardContentProps) => {
   // Apply filters to task groups
   const filteredTaskGroups = useMemo(() => {
@@ -99,8 +100,9 @@ const TaskBoardContent = ({
       count: group.tasks.length
     }));
   }, [taskGroups, filters]);
+
   const renderedGroups = React.useMemo(
-    () => taskGroups
+    () => filteredTaskGroups
       .filter((group: TaskGroup) => showClosed ? group.status === 'completed' : group.status !== 'completed')
       .map((group: TaskGroup, groupIndex: number) => (
         <TaskGroupSection
@@ -131,6 +133,10 @@ const TaskBoardContent = ({
           onAddTask={onAddTask} 
           showClosed={showClosed}
           onToggleClosed={onToggleClosed}
+          onFiltersChange={(newFilters) => {
+            // This will be handled by the parent TaskBoard component
+            console.log('Filter change:', newFilters);
+          }}
         />
 
         <ScrollArea className="flex-1 min-h-0">
