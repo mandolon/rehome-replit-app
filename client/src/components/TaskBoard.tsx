@@ -1,38 +1,28 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import TaskDialog from './TaskDialog';
 import TaskBoardContent from './TaskBoardContent';
-import { useTaskBoard } from '@/hooks/useTaskBoard';
-import { useTaskAttachmentContext } from '@/contexts/TaskAttachmentContext';
-
-import { useRealtimeTasks } from '@/hooks/useRealtimeTasks';
+import { useTaskData } from '@/hooks/useTaskData';
 import { Task } from '@/types/task';
 
 const TaskBoard: React.FC = React.memo(() => {
-  // Use task board hook which already includes real-time updates
+  // Use clean task data hook
   const {
-    isTaskDialogOpen,
-    setIsTaskDialogOpen,
-    showQuickAdd,
-    setShowQuickAdd,
-    refreshTrigger,
     taskGroups,
-    handleCreateTask,
-    handleQuickAddSave,
-    handleTaskClick,
-    handleTaskArchive,
+    isLoading,
+    createTask,
+    updateTask,
+    deleteTask
+  } = useTaskData();
 
-    assignPerson,
-    removeAssignee,
-    addCollaborator,
-    removeCollaborator,
-  } = useTaskBoard();
-
-  // State for showing/hiding closed tasks
-  const [showClosed, setShowClosed] = React.useState(false);
+  // Local state for UI
+  const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false);
+  const [showQuickAdd, setShowQuickAdd] = useState<string | null>(null);
+  const [showClosed, setShowClosed] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   
   // State for filters
-  const [filters, setFilters] = React.useState<{
+  const [filters, setFilters] = useState<{
     selectedAssignees: string[];
     selectedCreatedBy: string[];
     selectedStartDate?: Date;
