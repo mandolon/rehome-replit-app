@@ -37,8 +37,8 @@ const InlineTimeField = ({ taskId, currentTime, onTimeUpdated }: InlineTimeField
     const numValue = parseFloat(inputValue);
     if (isNaN(numValue) || numValue < 0) {
       toast({
-        title: "Invalid input",
-        description: "Please enter a valid number (e.g., 0.5, 1, 1.5, 2)",
+        title: "Invalid input.",
+        description: "Please enter a valid number (e.g., 0.5, 1, 1.5, 2).",
         variant: "destructive",
       });
       return;
@@ -90,7 +90,7 @@ const InlineTimeField = ({ taskId, currentTime, onTimeUpdated }: InlineTimeField
     } catch (error) {
       console.error('Error updating time:', error);
       toast({
-        title: "Failed to update time",
+        title: "Failed to update time.",
         description: "Please try again or contact support if the issue persists.",
         variant: "destructive",
       });

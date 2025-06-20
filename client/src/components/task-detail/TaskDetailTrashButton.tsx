@@ -34,7 +34,7 @@ const TaskDetailTrashButton: React.FC<TaskDetailTrashButtonProps> = ({ task, onD
           deletedAt: new Date().toISOString(),
         });
         toast({
-          title: "Task Trashed",
+          title: "Task trashed.",
           description: "Task moved to trash.",
           duration: 3000,
         });
@@ -43,7 +43,7 @@ const TaskDetailTrashButton: React.FC<TaskDetailTrashButtonProps> = ({ task, onD
       } else {
         await legacyDeleteTask(task.id);
         toast({
-          title: "Task Trashed",
+          title: "Task trashed.",
           description: "Task moved to trash.",
           duration: 3000,
         });
@@ -52,7 +52,7 @@ const TaskDetailTrashButton: React.FC<TaskDetailTrashButtonProps> = ({ task, onD
       }
     } catch (err) {
       toast({
-        title: "Delete Failed",
+        title: "Delete failed.",
         description: (err as any)?.message || "Could not move task to trash.",
         variant: "destructive",
       });

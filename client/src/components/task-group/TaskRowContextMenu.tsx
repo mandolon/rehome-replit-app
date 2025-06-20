@@ -60,7 +60,7 @@ const TaskRowContextMenu = ({
 
       if (response.ok) {
         toast({
-          title: "Task added to work records",
+          title: "Task added to work records.",
           description: (
             <span className="text-sm">
               View in{" "}
@@ -99,7 +99,7 @@ const TaskRowContextMenu = ({
       }
     } catch (error) {
       toast({
-        title: "Failed to add to work records",
+        title: "Failed to add to work records.",
         description: "Please try again or contact support if the issue persists.",
         variant: "destructive",
       });
