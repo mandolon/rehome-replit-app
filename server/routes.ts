@@ -248,5 +248,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Trash routes
+  app.get("/api/trash", async (req, res) => {
+    try {
+      const trashItems = await storage.getAllTrashItems();
+      res.json(trashItems);
+    } catch (error: any) {
+      console.error("Error fetching trash items:", error);
+      res.status(500).json({ 
+        error: "Failed to fetch trash items", 
+        details: error?.message || String(error) 
+      });
+    }
+  });
+
+  app.post("/api/trash/:trashItemId/restore", async (req, res) => {
+    try {
+      await storage.restoreFromTrash(req.params.trashItemId);
+      broadcast('trash_item_restored', { trashItemId: req.params.trashItemId });
+      res.status(204).send();
+    } catch (error: any) {
+      console.error(`Error restoring trash item ${req.params.trashItemId}:`, error);
+      res.status(500).json({ 
+        error: "Failed to restore item from trash", 
+        details: error?.message || String(error) 
+      });
+    }
+  });
+
+  app.delete("/api/trash/:trashItemId", async (req, res) => {
+    try {
+      await storage.permanentDeleteFromTrash(req.params.trashItemId);
+      broadcast('trash_item_deleted', { trashItemId: req.params.trashItemId });
+      res.status(204).send();
+    } catch (error: any) {
+      console.error(`Error permanently deleting trash item ${req.params.trashItemId}:`, error);
+      res.status(500).json({ 
+        error: "Failed to permanently delete item from trash", 
+        details: error?.message || String(error) 
+      });
+    }
+  });
+
+  app.delete("/api/trash", async (req, res) => {
+    try {
+      await storage.emptyTrash();
+      broadcast('trash_emptied', {});
+      res.status(204).send();
+    } catch (error: any) {
+      console.error("Error emptying trash:", error);
+      res.status(500).json({ 
+        error: "Failed to empty trash", 
+        details: error?.message || String(error) 
+      });
+    }
+  });
+
   return httpServer;
 }

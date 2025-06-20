@@ -96,13 +96,25 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteTask(taskId: string): Promise<void> {
-    // Soft delete: set deletedAt timestamp and deletedBy
-    await db.update(tasks)
-      .set({ 
-        deletedAt: new Date().toISOString(),
-        deletedBy: 'system' // TODO: get actual user when auth is implemented
-      })
-      .where(eq(tasks.taskId, taskId));
+    // Get the task first to store in trash
+    const task = await this.getTaskByTaskId(taskId);
+    if (!task) {
+      throw new Error(`Task with ID ${taskId} not found`);
+    }
+
+    // Move to universal trash system
+    await this.moveToTrash(
+      'task',
+      taskId,
+      task.title,
+      task.description || '',
+      { project: task.project, status: task.status },
+      task,
+      'system' // TODO: get actual user when auth is implemented
+    );
+
+    // Hard delete from tasks table since it's now in trash
+    await db.delete(tasks).where(eq(tasks.taskId, taskId));
   }
 
   async permanentDeleteTask(taskId: string): Promise<void> {
@@ -314,15 +326,23 @@ export class MemStorage implements IStorage {
 
   async deleteTask(taskId: string): Promise<void> {
     const task = this.tasks.get(taskId);
-    if (task) {
-      const updatedTask: Task = {
-        ...task,
-        deletedAt: new Date().toISOString(),
-        deletedBy: 'system',
-        updatedAt: new Date()
-      };
-      this.tasks.set(taskId, updatedTask);
+    if (!task) {
+      throw new Error(`Task with ID ${taskId} not found`);
     }
+
+    // Move to universal trash system
+    await this.moveToTrash(
+      'task',
+      taskId,
+      task.title,
+      task.description || '',
+      { project: task.project, status: task.status },
+      task,
+      'system'
+    );
+
+    // Remove from tasks since it's now in trash
+    this.tasks.delete(taskId);
   }
 
   async permanentDeleteTask(taskId: string): Promise<void> {
