@@ -274,8 +274,16 @@ export class DatabaseStorage implements IStorage {
           deletedBy: null 
         })
         .where(eq(tasks.taskId, item.itemId));
+    } else if (item.itemType === 'project') {
+      const originalProject = item.originalData as Project;
+      // Re-insert the project back into the projects table
+      await db.insert(projects).values({
+        ...originalProject,
+        deletedAt: null,
+        deletedBy: null
+      });
     }
-    // Add more item types (notes, projects) here when implemented
+    // Add more item types (notes) here when implemented
     
     // Remove from trash
     await db.delete(trashItems).where(eq(trashItems.id, trashItemId));
@@ -323,6 +331,7 @@ export class DatabaseStorage implements IStorage {
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
   private tasks: Map<string, Task>;
+  private projects: Map<string, Project>;
   private messages: Map<string, TaskMessage[]>;
   private trashItems: Map<string, TrashItem>;
   currentId: number;
@@ -330,6 +339,7 @@ export class MemStorage implements IStorage {
   constructor() {
     this.users = new Map();
     this.tasks = new Map();
+    this.projects = new Map();
     this.messages = new Map();
     this.trashItems = new Map();
     this.currentId = 1;
@@ -458,6 +468,107 @@ export class MemStorage implements IStorage {
     return newMessage;
   }
 
+  // Project methods
+  async getAllProjects(): Promise<Project[]> {
+    return Array.from(this.projects.values())
+      .filter(project => !project.deletedAt)
+      .sort((a, b) => 
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+  }
+
+  async getProjectByProjectId(projectId: string): Promise<Project | undefined> {
+    return this.projects.get(projectId);
+  }
+
+  async createProject(project: InsertProject): Promise<Project> {
+    const now = new Date();
+    const newProject: Project = {
+      id: this.currentId++,
+      projectId: project.projectId,
+      title: project.title,
+      description: project.description || null,
+      status: project.status || 'in_progress',
+      clientName: project.clientName || null,
+      projectAddress: project.projectAddress || null,
+      startDate: project.startDate || null,
+      dueDate: project.dueDate || null,
+      estimatedCompletion: project.estimatedCompletion || null,
+      priority: project.priority || 'medium',
+      createdBy: project.createdBy,
+      createdAt: now,
+      updatedAt: now,
+      deletedAt: null,
+      deletedBy: null,
+    };
+    
+    this.projects.set(project.projectId, newProject);
+    return newProject;
+  }
+
+  async updateProject(projectId: string, updates: Partial<Project>): Promise<Project> {
+    const existing = this.projects.get(projectId);
+    if (!existing) {
+      throw new Error(`Project with ID ${projectId} not found`);
+    }
+
+    const updated: Project = {
+      ...existing,
+      ...updates,
+      updatedAt: new Date(),
+    };
+    this.projects.set(projectId, updated);
+    return updated;
+  }
+
+  async updateProjectStatus(projectId: string, status: 'in_progress' | 'on_hold' | 'completed'): Promise<Project> {
+    const existing = this.projects.get(projectId);
+    if (!existing) {
+      throw new Error(`Project with ID ${projectId} not found`);
+    }
+
+    const updated: Project = {
+      ...existing,
+      status,
+      updatedAt: new Date(),
+    };
+    this.projects.set(projectId, updated);
+    return updated;
+  }
+
+  async deleteProject(projectId: string): Promise<void> {
+    const project = this.projects.get(projectId);
+    if (!project) {
+      throw new Error(`Project with ID ${projectId} not found`);
+    }
+
+    // Count associated tasks
+    const taskCount = Array.from(this.tasks.values())
+      .filter(task => task.projectId === projectId).length;
+
+    // Move to universal trash system
+    await this.moveToTrash(
+      'project',
+      projectId,
+      project.title,
+      project.description || '',
+      { 
+        clientName: project.clientName,
+        status: project.status,
+        taskCount
+      },
+      project,
+      'system'
+    );
+
+    // Remove from projects since it's now in trash
+    this.projects.delete(projectId);
+  }
+
+  async permanentDeleteProject(projectId: string): Promise<void> {
+    this.projects.delete(projectId);
+  }
+
   async getWorkRecords(): Promise<Task[]> {
     return Array.from(this.tasks.values()).filter(task => task.workRecord === true);
   }
@@ -502,8 +613,14 @@ export class MemStorage implements IStorage {
         };
         this.tasks.set(trashItem.itemId, updatedTask);
       }
+    } else if (trashItem.itemType === 'project') {
+      const originalProject = trashItem.originalData as Project;
+      this.projects.set(trashItem.itemId, {
+        ...originalProject,
+        deletedAt: null,
+        deletedBy: null
+      });
     }
-    // Add more item types here when implemented
     
     // Remove from trash
     this.trashItems.delete(trashItemId);
@@ -518,8 +635,9 @@ export class MemStorage implements IStorage {
     // Permanently delete the original item based on type
     if (trashItem.itemType === 'task') {
       this.tasks.delete(trashItem.itemId);
+    } else if (trashItem.itemType === 'project') {
+      this.projects.delete(trashItem.itemId);
     }
-    // Add more item types here when implemented
     
     // Remove from trash
     this.trashItems.delete(trashItemId);
