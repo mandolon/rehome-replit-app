@@ -3,10 +3,7 @@ import { Task } from '@/types/task';
 
 // Task API functions
 export async function fetchAllTasks(): Promise<Task[]> {
-  console.log('fetchAllTasks called');
-  const result = await apiRequest('/api/tasks');
-  console.log('fetchAllTasks result:', result?.length, 'tasks, first task:', result?.[0]);
-  return result;
+  return apiRequest('/api/tasks');
 }
 
 export async function fetchAllTasksIncludingDeleted(): Promise<Task[]> {

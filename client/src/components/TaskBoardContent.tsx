@@ -57,8 +57,46 @@ const TaskBoardContent = ({
   filters,
   onFiltersChange,
 }: TaskBoardContentProps) => {
-  // For now, disable filtering to fix the initial loading issue
-  const filteredTaskGroups = taskGroups;
+  // Apply filters to task groups
+  const filteredTaskGroups = React.useMemo(() => {
+    if (!filters) return taskGroups;
+
+    return taskGroups.map(group => ({
+      ...group,
+      tasks: group.tasks.filter((task: any) => {
+        // Filter by assignees
+        if (filters.selectedAssignees.length > 0) {
+          const assigneeName = task.assignee?.name || task.assignee?.fullName;
+          if (!assigneeName || !filters.selectedAssignees.includes(assigneeName)) {
+            return false;
+          }
+        }
+
+        // Filter by created by
+        if (filters.selectedCreatedBy.length > 0) {
+          if (!task.createdBy || !filters.selectedCreatedBy.includes(task.createdBy)) {
+            return false;
+          }
+        }
+
+        // Filter by date range
+        if (filters.selectedStartDate || filters.selectedEndDate) {
+          const taskDate = new Date(task.createdAt);
+          if (filters.selectedStartDate && taskDate < filters.selectedStartDate) {
+            return false;
+          }
+          if (filters.selectedEndDate && taskDate > filters.selectedEndDate) {
+            return false;
+          }
+        }
+
+        return true;
+      })
+    })).map(group => ({
+      ...group,
+      count: group.tasks.length
+    }));
+  }, [taskGroups, filters]);
 
   const renderedGroups = React.useMemo(
     () => filteredTaskGroups

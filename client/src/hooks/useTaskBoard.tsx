@@ -24,20 +24,12 @@ export const useTaskBoard = () => {
   // Fetch tasks using React Query
   const { data: tasks = [], isLoading: loading, error } = useQuery({
     queryKey: ['tasks'],
-    queryFn: async () => {
-      console.log('Query function executing');
-      const result = await fetchAllTasks();
-      console.log('Query function result:', result);
-      return result;
-    },
+    queryFn: fetchAllTasks,
     refetchOnWindowFocus: false,
     retry: 1,
   });
 
-  // Debug the query state
-  React.useEffect(() => {
-    console.log('useQuery state changed:', { tasksLength: tasks?.length, loading, error, tasks: tasks?.slice(0, 2) });
-  }, [tasks, loading, error]);
+
 
   // Dialog/quick add state
   const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false);
@@ -46,9 +38,7 @@ export const useTaskBoard = () => {
 
   // Task groups powered by API - memoized to prevent unnecessary recalculations
   const taskGroups = React.useMemo((): TaskGroup[] => {
-    console.log('TaskGroups calculation - tasks:', tasks?.length, 'loading:', loading);
     if (!tasks || !Array.isArray(tasks)) {
-      console.log('No tasks data, returning empty groups');
       return [
         { title: "TASK/ REDLINE", count: 0, color: "bg-[#c62a2f]", status: "redline", tasks: [] },
         { title: "PROGRESS/ UPDATE", count: 0, color: "bg-blue-500", status: "progress", tasks: [] },
@@ -59,14 +49,6 @@ export const useTaskBoard = () => {
     const centralizedRedline = tasks.filter((task: any) => task.status === 'redline' && !task.archived && !task.deletedAt);
     const centralizedProgress = tasks.filter((task: any) => task.status === 'progress' && !task.archived && !task.deletedAt);
     const centralizedCompleted = tasks.filter((task: any) => task.status === 'completed' && !task.archived && !task.deletedAt);
-    
-    console.log('Task filtering results:', {
-      total: tasks.length,
-      redline: centralizedRedline.length,
-      progress: centralizedProgress.length,
-      completed: centralizedCompleted.length,
-      sampleTask: tasks[0] ? { taskId: tasks[0].taskId, status: tasks[0].status, archived: tasks[0].archived, deletedAt: tasks[0].deletedAt } : null
-    });
 
     const taskGroups: TaskGroup[] = [
       {
@@ -104,7 +86,7 @@ export const useTaskBoard = () => {
   const createTaskMutation = useMutation({
     mutationFn: createTask,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
       setRefreshTrigger(prev => prev + 1);
     },
   });

@@ -7,7 +7,8 @@ import { Task } from '@/types/task';
 import { Undo } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { updateTaskSupabase } from '@/data/taskSupabase';
-import { useUser } from '@/contexts/UserContext'; // <-- ADDED
+import { useUser } from '@/contexts/UserContext';
+import { useQueryClient } from '@tanstack/react-query';
 
 export const useTaskDeletion = () => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -17,7 +18,8 @@ export const useTaskDeletion = () => {
   const { deleteTask, restoreDeletedTask } = useTaskContext();
   const { toast, dismiss } = useToast();
   const navigate = useNavigate();
-  const { currentUser } = useUser(); // <-- ADDED
+  const { currentUser } = useUser();
+  const queryClient = useQueryClient();
 
   function isSupabaseTask(task: Task) {
     return !!task.taskId && !!task.updatedAt;
