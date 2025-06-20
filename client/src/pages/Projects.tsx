@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Search, FolderOpen, Trash2, MoreHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -34,6 +34,41 @@ const Projects = () => {
   const queryClient = useQueryClient();
   const { projectDeleted, projectCreated } = useProjectToast();
   const { toast } = useToast();
+  
+  const handleUndoProjectDelete = useCallback(async (projectId: string) => {
+    try {
+      // First find the trash item for this project
+      const trashResponse = await fetch('/api/trash');
+      if (!trashResponse.ok) {
+        throw new Error('Failed to fetch trash items');
+      }
+      
+      const trashItems = await trashResponse.json();
+      const trashItem = trashItems.find((item: any) => 
+        item.itemType === 'project' && item.itemId === projectId
+      );
+      
+      if (!trashItem) {
+        throw new Error('Project not found in trash');
+      }
+      
+      // Restore using the trash item ID
+      const restoreResponse = await fetch(`/api/trash/${trashItem.id}/restore`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!restoreResponse.ok) {
+        throw new Error('Failed to restore project');
+      }
+      
+      queryClient.invalidateQueries({ queryKey: ['/api/projects'] });
+    } catch (error) {
+      console.error('Restore failed:', error);
+    }
+  }, [queryClient]);
 
   const { data: projects = [], isLoading } = useQuery({
     queryKey: ['/api/projects'],
@@ -60,7 +95,7 @@ const Projects = () => {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/projects'] });
-      projectDeleted(data.projectTitle);
+      projectDeleted(data.projectTitle, () => handleUndoProjectDelete(data.projectId));
     },
     onError: (error) => {
       toast({
