@@ -1,4 +1,4 @@
-import { users, tasks, taskMessages, trashItems, type User, type InsertUser, type Task, type InsertTask, type TaskMessage, type InsertTaskMessage, type TrashItem, type InsertTrashItem } from "@shared/schema";
+import { users, tasks, taskMessages, projects, trashItems, type User, type InsertUser, type Task, type InsertTask, type TaskMessage, type InsertTaskMessage, type Project, type InsertProject, type TrashItem, type InsertTrashItem } from "@shared/schema";
 
 export interface IStorage {
   // User methods
@@ -18,6 +18,15 @@ export interface IStorage {
   // Task message methods
   getTaskMessages(taskId: string): Promise<TaskMessage[]>;
   createTaskMessage(message: InsertTaskMessage): Promise<TaskMessage>;
+  
+  // Project methods
+  getAllProjects(): Promise<Project[]>;
+  getProjectByProjectId(projectId: string): Promise<Project | undefined>;
+  createProject(project: InsertProject): Promise<Project>;
+  updateProject(projectId: string, updates: Partial<Project>): Promise<Project>;
+  updateProjectStatus(projectId: string, status: 'in_progress' | 'on_hold' | 'completed'): Promise<Project>;
+  deleteProject(projectId: string): Promise<void>;
+  permanentDeleteProject(projectId: string): Promise<void>;
   
   // Work records methods
   getWorkRecords(): Promise<Task[]>;
@@ -132,6 +141,85 @@ export class DatabaseStorage implements IStorage {
   async createTaskMessage(message: InsertTaskMessage): Promise<TaskMessage> {
     const result = await db.insert(taskMessages).values(message).returning();
     return result[0];
+  }
+
+  // Project methods
+  async getAllProjects(): Promise<Project[]> {
+    return await db.select().from(projects)
+      .where(sql`${projects.deletedAt} IS NULL`)
+      .orderBy(desc(projects.createdAt));
+  }
+
+  async getProjectByProjectId(projectId: string): Promise<Project | undefined> {
+    const result = await db.select().from(projects).where(eq(projects.projectId, projectId)).limit(1);
+    return result[0];
+  }
+
+  async createProject(project: InsertProject): Promise<Project> {
+    const result = await db.insert(projects).values(project).returning();
+    return result[0];
+  }
+
+  async updateProject(projectId: string, updates: Partial<Project>): Promise<Project> {
+    const result = await db.update(projects)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(projects.projectId, projectId))
+      .returning();
+    
+    if (!result || result.length === 0) {
+      throw new Error(`Project with ID ${projectId} not found`);
+    }
+    
+    return result[0];
+  }
+
+  async updateProjectStatus(projectId: string, status: 'in_progress' | 'on_hold' | 'completed'): Promise<Project> {
+    const result = await db.update(projects)
+      .set({ status, updatedAt: new Date() })
+      .where(eq(projects.projectId, projectId))
+      .returning();
+    
+    if (!result || result.length === 0) {
+      throw new Error(`Project with ID ${projectId} not found`);
+    }
+    
+    return result[0];
+  }
+
+  async deleteProject(projectId: string): Promise<void> {
+    // Get the project first to store in trash
+    const project = await this.getProjectByProjectId(projectId);
+    if (!project) {
+      throw new Error(`Project with ID ${projectId} not found`);
+    }
+
+    // Count associated tasks
+    const taskCount = await db.select({ count: sql<number>`count(*)` })
+      .from(tasks)
+      .where(eq(tasks.projectId, projectId));
+
+    // Move to universal trash system
+    await this.moveToTrash(
+      'project',
+      projectId,
+      project.title,
+      project.description || '',
+      { 
+        clientName: project.clientName,
+        status: project.status,
+        taskCount: taskCount[0]?.count || 0
+      },
+      project,
+      'system' // TODO: get actual user when auth is implemented
+    );
+
+    // Hard delete from projects table since it's now in trash
+    await db.delete(projects).where(eq(projects.projectId, projectId));
+  }
+
+  async permanentDeleteProject(projectId: string): Promise<void> {
+    // Hard delete: permanently remove from database
+    await db.delete(projects).where(eq(projects.projectId, projectId));
   }
 
   async getWorkRecords(): Promise<Task[]> {
