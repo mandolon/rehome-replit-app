@@ -4,6 +4,7 @@ import { ChevronDown, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
+import { useProjectToast } from '@/components/ui/unified-toast';
 import { useToast } from '@/hooks/use-toast';
 import {
   Collapsible,
@@ -39,6 +40,7 @@ const SidebarProjectSection = React.memo(({
 }: SidebarProjectSectionProps) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { projectStatusChanged, projectDeleted } = useProjectToast();
   const { toast } = useToast();
   const [projectDisplayNames, setProjectDisplayNames] = useState<Record<string, string>>({});
   const [sortBy, setSortBy] = useState<'name' | 'address' | 'date-modified'>('name');
@@ -90,10 +92,7 @@ const SidebarProjectSection = React.memo(({
         'completed': 'Completed'
       };
       
-      toast({
-        title: "Project status updated.",
-        description: `Project moved to ${statusLabels[data.status] || data.status}.`,
-      });
+      projectStatusChanged(data.title, statusLabels[data.status] || data.status);
     },
     onError: (error) => {
       toast({
@@ -114,17 +113,15 @@ const SidebarProjectSection = React.memo(({
         throw new Error('Failed to delete project');
       }
     },
-    onSuccess: () => {
+    onSuccess: (_, projectId) => {
       queryClient.invalidateQueries({ queryKey: ['/api/projects'] });
-      toast({
-        title: "Project moved to trash.",
-      });
+      const project = allProjects.find((p: Project) => p.projectId === projectId);
+      projectDeleted(project?.title || projectId);
     },
     onError: (error) => {
       toast({
         variant: "destructive",
-        title: "Failed to delete project.",
-        description: error instanceof Error ? error.message : "Please try again.",
+        description: error instanceof Error ? error.message : "Failed to delete project.",
       });
     },
   });
