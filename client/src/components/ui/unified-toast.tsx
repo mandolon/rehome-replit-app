@@ -95,13 +95,12 @@ export const useUnifiedToast = () => {
       );
     } else if (navigateToPage && navigateLabel) {
       toastAction = (
-        <ToastAction 
-          altText={`Go to ${navigateLabel}`}
+        <button 
           onClick={() => window.location.href = navigateToPage}
-          className="bg-secondary text-secondary-foreground hover:bg-secondary/90 text-xs font-medium"
+          className="text-xs font-medium text-primary hover:text-primary/80 underline underline-offset-2"
         >
           {navigateLabel}
-        </ToastAction>
+        </button>
       );
     }
 
