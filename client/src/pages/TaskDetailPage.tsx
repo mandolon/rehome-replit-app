@@ -7,7 +7,7 @@ import { getProjectIdFromDisplayName } from '@/utils/projectMapping';
 import { useTaskContext } from '@/contexts/TaskContext';
 import { useUser } from '@/contexts/UserContext';
 import { TaskUser, Task } from '@/types/task';
-import { useTaskBoard } from '@/hooks/useTaskBoard';
+import { useTaskData } from '@/hooks/useTaskData';
 import { canUserViewTask } from '@/utils/taskVisibility';
 
 const TaskDetailPage = () => {
@@ -21,8 +21,8 @@ const TaskDetailPage = () => {
 
   const [currentTask, setCurrentTask] = useState<Task | null>(null);
 
-  // NEW: Get realtime tasks from Supabase-powered board
-  const { supabaseTasks, supabaseTasksLoading } = useTaskBoard();
+  // Get tasks from the clean data hook
+  const { tasks, isLoading } = useTaskData();
 
   useEffect(() => {
     let fetchedTask: Task | null = null;

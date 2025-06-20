@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import TaskDialog from './TaskDialog';
 import TaskBoardContent from './TaskBoardContent';
@@ -31,48 +30,39 @@ const TaskBoard: React.FC = React.memo(() => {
     selectedAssignees: [],
     selectedCreatedBy: [],
   });
-  
-  const handleToggleClosed = React.useCallback(() => {
-    console.log('Toggle closed called, current state:', showClosed);
-    setShowClosed(!showClosed);
-  }, [showClosed]);
 
-  const handleFiltersChange = React.useCallback((newFilters: typeof filters) => {
+  const handleFiltersChange = React.useCallback((newFilters: {
+    selectedAssignees: string[];
+    selectedCreatedBy: string[];
+    selectedStartDate?: Date;
+    selectedEndDate?: Date;
+  }) => {
     setFilters(newFilters);
   }, []);
-  const { addAttachments } = useTaskAttachmentContext();
 
-  // Task deletion is now handled directly in TaskRow components
+  // Event handlers
+  const handleTaskClick = (task: Task) => {
+    setSelectedTask(task);
+  };
 
-  // Board tasks are now directly provided by the hook
+  const handleCreateTask = async (taskData: Partial<Task>) => {
+    await createTask(taskData);
+    setIsTaskDialogOpen(false);
+  };
 
-  // Quick Add handles attachments as in Supabase system
-  const onQuickAddSave = React.useCallback(async (taskData: any) => {
-    await handleQuickAddSave(taskData);
-
-    // If attachments exist, try to find the new task (by title/project/dateCreated) and add them
-    if (taskData.attachments && taskData.attachments.length > 0) {
-      let foundTask = null;
-      for (const group of taskGroups) {
-        foundTask = group.tasks.find((t: any) =>
-          t.title === taskData.title &&
-          t.projectId === taskData.projectId &&
-          t.dateCreated === taskData.dateCreated
-        );
-        if (foundTask) break;
-      }
-      if (foundTask && foundTask.taskId) {
-        addAttachments(foundTask.taskId, taskData.attachments, "ME");
-      } else {
-        console.warn('Could not find created task to add attachments.');
-      }
-    }
+  const handleQuickAddSave = async (taskData: any) => {
+    await createTask(taskData);
     setShowQuickAdd(null);
-  }, [handleQuickAddSave, addAttachments, taskGroups, setShowQuickAdd]);
+  };
 
-  // Dialog open/close
-  const onDialogOpen = React.useCallback(() => setIsTaskDialogOpen(true), [setIsTaskDialogOpen]);
-  const onDialogClose = React.useCallback(() => setIsTaskDialogOpen(false), [setIsTaskDialogOpen]);
+  const handleTaskArchive = async (taskId: number) => {
+    // Archive task implementation
+    console.log('Archive task:', taskId);
+  };
+
+  const handleToggleClosed = () => setShowClosed(prev => !prev);
+  const onDialogOpen = () => setIsTaskDialogOpen(true);
+  const onDialogClose = () => setIsTaskDialogOpen(false);
 
   // Simple callback for task deletion notifications
   const onTaskDeleted = React.useCallback(() => {
@@ -80,14 +70,31 @@ const TaskBoard: React.FC = React.memo(() => {
     console.log('Task deleted - data will refresh via React Query');
   }, []);
 
+  // Simplified assignment handlers (can be enhanced later)
+  const assignPerson = (taskId: string, person: any) => {
+    console.log('Assign person:', { taskId, person });
+  };
+
+  const removeAssignee = (taskId: string) => {
+    console.log('Remove assignee:', taskId);
+  };
+
+  const addCollaborator = (taskId: string, person: any) => {
+    console.log('Add collaborator:', { taskId, person });
+  };
+
+  const removeCollaborator = (taskId: string, idx: number) => {
+    console.log('Remove collaborator:', { taskId, idx });
+  };
+
   return (
     <div className="h-full flex flex-col overflow-hidden">
       <TaskBoardContent
         taskGroups={taskGroups}
         showQuickAdd={showQuickAdd}
-        refreshTrigger={refreshTrigger}
+        refreshTrigger={0} // No longer needed with direct API calls
         onSetShowQuickAdd={setShowQuickAdd}
-        onQuickAddSave={onQuickAddSave}
+        onQuickAddSave={handleQuickAddSave}
         onTaskClick={handleTaskClick}
         onTaskArchive={handleTaskArchive}
         onTaskDeleted={onTaskDeleted}
@@ -110,5 +117,6 @@ const TaskBoard: React.FC = React.memo(() => {
   );
 });
 
-TaskBoard.displayName = "TaskBoard";
+TaskBoard.displayName = 'TaskBoard';
+
 export default TaskBoard;
