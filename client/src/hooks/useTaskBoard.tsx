@@ -28,15 +28,8 @@ export const useTaskBoard = () => {
     refetchOnWindowFocus: false,
     retry: 1,
     staleTime: 0, // Always refetch to ensure latest data
-    gcTime: 0, // Don't cache to prevent stale data issues
+    gcTime: 1000 * 60 * 5, // Keep cache for 5 minutes
   });
-
-  // Debug logging
-  React.useEffect(() => {
-    console.log('Query state - Loading:', loading, 'Error:', error, 'Tasks:', tasks?.length);
-  }, [loading, error, tasks]);
-
-
 
   // Dialog/quick add state
   const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false);
@@ -45,11 +38,7 @@ export const useTaskBoard = () => {
 
   // Task groups powered by API - memoized to prevent unnecessary recalculations
   const taskGroups = React.useMemo((): TaskGroup[] => {
-    console.log('Building task groups with tasks:', tasks);
-    console.log('Tasks type:', typeof tasks, 'Is array:', Array.isArray(tasks), 'Length:', tasks?.length);
-    
     if (!tasks || !Array.isArray(tasks)) {
-      console.log('No tasks or not array, returning empty groups');
       return [
         { title: "TASK/ REDLINE", count: 0, color: "bg-[#c62a2f]", status: "redline", tasks: [] },
         { title: "PROGRESS/ UPDATE", count: 0, color: "bg-blue-500", status: "progress", tasks: [] },
