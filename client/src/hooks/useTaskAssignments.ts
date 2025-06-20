@@ -1,55 +1,89 @@
 
-import { useCallback } from 'react';
-import { Task } from '@/types/task';
-import { getTasksByStatus } from '@/data/taskData';
+import { useState, useCallback } from "react";
+import { updateTaskAPI } from "@/data/taskAPI";
+import { Task, TaskUser } from "@/types/task";
 
-export const useTaskAssignments = (
-  customTasks: Task[],
-  updateTaskById: (taskId: number, updates: Partial<Task>) => void
-) => {
-  // Accept taskId as string everywhere and handle both cases
-  const assignPerson = useCallback((taskId: string, person: { name: string; avatar: string; fullName?: string }) => {
-    const taskNumericId = Number(taskId);
-    updateTaskById(taskNumericId, { assignee: person });
-    console.log(`Assigned ${person.fullName || person.name} to task ${taskId}`);
-  }, [updateTaskById]);
+/**
+ * Provides assignment/collab actions for API-backed tasks.
+ * Accepts latest Task + state setter for optimistic UI.
+ */
+export function useTaskAssignments(
+  task: Task,
+  setTask: (task: Task) => void
+) {
+  // Optimistic/local update helper
+  const optimisticUpdate = (updates: Partial<Task>) => {
+    setTask({ ...task, ...updates, updatedAt: new Date().toISOString() });
+  };
 
-  const removeAssignee = useCallback((taskId: string) => {
-    const taskNumericId = Number(taskId);
-    updateTaskById(taskNumericId, { assignee: null });
-    console.log(`Removed assignee from task ${taskId}`);
-  }, [updateTaskById]);
+  const assignPerson = useCallback(
+    async (taskId: string, person: TaskUser) => {
+      if (!taskId) return;
+      optimisticUpdate({ assignee: person });
+      try {
+        const updated = await updateTaskAPI(taskId, { assignee: person });
+        setTask(updated);
+        console.log("[API] Assigned", person, "to", taskId);
+      } catch (e) {
+        console.error("Failed to assign person:", e);
+      }
+    },
+    [task, setTask]
+  );
 
-  const addCollaborator = useCallback((taskId: string, person: { name: string; avatar: string; fullName?: string }) => {
-    const taskNumericId = Number(taskId);
-    const centralizedTask = getTasksByStatus('redline').concat(getTasksByStatus('progress')).concat(getTasksByStatus('completed')).find(t => t.id === taskNumericId);
-    const customTask = customTasks.find(t => t.id === taskNumericId);
-    const currentTask = centralizedTask || customTask;
-    
-    if (currentTask) {
-      const updatedCollaborators = [...(currentTask.collaborators || []), person];
-      updateTaskById(taskNumericId, { collaborators: updatedCollaborators });
-    }
-    console.log(`Added ${person.fullName || person.name} as collaborator to task ${taskId}`);
-  }, [customTasks, updateTaskById]);
+  const removeAssignee = useCallback(
+    async (taskId: string) => {
+      optimisticUpdate({ assignee: null });
+      try {
+        const updated = await updateTaskAPI(taskId, { assignee: null });
+        setTask(updated);
+        console.log("[API] Removed assignee from", taskId);
+      } catch (e) {
+        console.error("Failed to remove assignee:", e);
+      }
+    },
+    [task, setTask]
+  );
 
-  const removeCollaborator = useCallback((taskId: string, collaboratorIndex: number) => {
-    const taskNumericId = Number(taskId);
-    const centralizedTask = getTasksByStatus('redline').concat(getTasksByStatus('progress')).concat(getTasksByStatus('completed')).find(t => t.id === taskNumericId);
-    const customTask = customTasks.find(t => t.id === taskNumericId);
-    const currentTask = centralizedTask || customTask;
-    
-    if (currentTask) {
-      const updatedCollaborators = currentTask.collaborators?.filter((_, index) => index !== collaboratorIndex) || [];
-      updateTaskById(taskNumericId, { collaborators: updatedCollaborators });
-    }
-    console.log(`Removed collaborator ${collaboratorIndex} from task ${taskId}`);
-  }, [customTasks, updateTaskById]);
+  const addCollaborator = useCallback(
+    async (taskId: string, person: TaskUser) => {
+      const collabs = Array.isArray(task.collaborators) ? [...task.collaborators] : [];
+      // Don't add duplicates
+      if (collabs.some(c => c.name === person.name)) return;
+      const updatedCollabs = [...collabs, person];
+      optimisticUpdate({ collaborators: updatedCollabs });
+      try {
+        const updated = await updateTaskSupabase(taskId, { collaborators: updatedCollabs });
+        setTask(updated);
+        console.log("[Supabase] Added collaborator", person, "to", taskId);
+      } catch (e) {
+        console.error("Failed to add collaborator:", e);
+      }
+    },
+    [task, setTask]
+  );
+
+  const removeCollaborator = useCallback(
+    async (taskId: string, collaboratorIndex: number) => {
+      const collabs = Array.isArray(task.collaborators) ? [...task.collaborators] : [];
+      if (collaboratorIndex < 0 || collaboratorIndex >= collabs.length) return;
+      const updatedCollabs = collabs.filter((_, i) => i !== collaboratorIndex);
+      optimisticUpdate({ collaborators: updatedCollabs });
+      try {
+        const updated = await updateTaskSupabase(taskId, { collaborators: updatedCollabs });
+        setTask(updated);
+        console.log("[Supabase] Removed collaborator index", collaboratorIndex, "from", taskId);
+      } catch (e) {
+        console.error("Failed to remove collaborator:", e);
+      }
+    },
+    [task, setTask]
+  );
 
   return {
     assignPerson,
     removeAssignee,
     addCollaborator,
-    removeCollaborator
+    removeCollaborator,
   };
-};
+}

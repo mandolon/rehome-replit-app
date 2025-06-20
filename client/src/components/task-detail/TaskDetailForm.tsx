@@ -6,7 +6,7 @@ import { Task } from '@/types/task';
 import TaskDetailTitleSection from './TaskDetailTitleSection';
 import TaskDetailDescription from './TaskDetailDescription';
 import TaskDetailFields from './TaskDetailFields';
-import { updateTaskSupabase } from '@/data/taskSupabase';
+import { updateTaskAPI } from '@/data/taskAPI';
 import { toast } from "@/hooks/use-toast";
 import { useTaskDetailAssignmentHandlers } from './hooks/useTaskDetailAssignmentHandlers';
 import { useTaskDetailDescriptionSave } from './hooks/useTaskDetailDescriptionSave';
@@ -61,7 +61,7 @@ const TaskDetailForm = ({ task: originalTask, onTimeUpdated }: TaskDetailFormPro
       
       setTask(prev => ({ ...prev, ...updates, updatedAt: new Date().toISOString() }));
       try {
-        const updated = await updateTaskSupabase(task.taskId, updates);
+        const updated = await updateTaskAPI(task.taskId, updates);
         setTask(updated);
         toast({
           title: "Status Updated",
