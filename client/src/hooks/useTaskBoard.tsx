@@ -24,12 +24,23 @@ export const useTaskBoard = () => {
   // Fetch tasks using React Query
   const { data: tasks = [], isLoading: loading, error } = useQuery({
     queryKey: ['tasks'],
-    queryFn: fetchAllTasks,
+    queryFn: () => {
+      console.log('Executing fetchAllTasks query');
+      return fetchAllTasks();
+    },
     refetchOnWindowFocus: false,
     retry: 1,
     staleTime: 0, // Always refetch to ensure latest data
     gcTime: 1000 * 60 * 5, // Keep cache for 5 minutes
   });
+
+  // Debug the query state
+  React.useEffect(() => {
+    console.log('Query state - Loading:', loading, 'Error:', error, 'Tasks count:', tasks?.length);
+    if (tasks?.length > 0) {
+      console.log('First task:', tasks[0]);
+    }
+  }, [loading, error, tasks]);
 
   // Dialog/quick add state
   const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false);
