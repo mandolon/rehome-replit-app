@@ -1,0 +1,79 @@
+[NEW] Explain Console errors by using Copilot in Edge: click
+         
+         to explain an error. 
+        Learn more
+        Don't show again
+react-dom.development.js:29895 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+SidebarHeader.tsx:20 SidebarHeader - currentUser: {id: 't0', name: 'Armando Lopez', email: 'armando.lopez@example.com', avatar: 'AL', status: 'online', …}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Adams - 1063 40th Street', projectIdFromName: 'adams-1063-40th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Ogden - Thew - 2709 T Street', projectIdFromName: 'ogden-thew-2709-t-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Henderson - 1524 Tiverton', projectIdFromName: 'henderson-1524-tiverton', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Peterson - 2015 10th Street', projectIdFromName: 'peterson-2015-10th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Johnson - 2200 I Street', projectIdFromName: 'johnson-2200-i-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Adamo - 6605 S. Land Park Dr.', projectIdFromName: 'adamo-6605-s-land-park-dr', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'McVarish - Salmina - 6251 El Dorado Street', projectIdFromName: 'mcvarish-salmina-6251-el-dorado-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Andre - 2119 H Street', projectIdFromName: 'andre-2119-h-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Fleming - Veisze - 1111 33rd Street', projectIdFromName: 'fleming-veisze-1111-33rd-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Ganson - 2125 I Street', projectIdFromName: 'ganson-2125-i-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'DeCarlo - 1141 Swanston Dr', projectIdFromName: 'decarlo-1141-swanston-dr', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Green - 920 U Street', projectIdFromName: 'green-920-u-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Kubein - Plymouth Project', projectIdFromName: 'kubein-plymouth-project', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'McLeod - Joffe - 2436 59th Street', projectIdFromName: 'mcleod-joffe-2436-59th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Piner - Piner Haus Garage', projectIdFromName: 'piner-piner-haus-garage', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Rathbun - USFS Cabin', projectIdFromName: 'rathbun-usfs-cabin', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Vasquez - Gutierrez - 2508 55th Street', projectIdFromName: 'vasquez-gutierrez-2508-55th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Wilcox - 1808 U Street', projectIdFromName: 'wilcox-1808-u-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Donaldson - 2717 58th Street', projectIdFromName: 'donaldson-2717-58th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Unknown - 14401 Grand Island Road', projectIdFromName: 'unknown-14401-grand-island-road', urlProjectId: undefined, isActive: false}
+AppLayout.tsx:35 Sidebar resize: 12.730125523
+App.tsx:51 App component is rendering, current path: /tasks
+useRealtimeTasks.tsx:37 Attempting WebSocket connection to: wss://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev:443/ws
+useTaskBoard.tsx:28 Making direct API call for tasks
+useTaskBoard.tsx:41 Query state - Loading: true Error: null Tasks count: 0
+SidebarHeader.tsx:20 SidebarHeader - currentUser: {id: 't0', name: 'Armando Lopez', email: 'armando.lopez@example.com', avatar: 'AL', status: 'online', …}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Adams - 1063 40th Street', projectIdFromName: 'adams-1063-40th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Ogden - Thew - 2709 T Street', projectIdFromName: 'ogden-thew-2709-t-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Henderson - 1524 Tiverton', projectIdFromName: 'henderson-1524-tiverton', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Peterson - 2015 10th Street', projectIdFromName: 'peterson-2015-10th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Johnson - 2200 I Street', projectIdFromName: 'johnson-2200-i-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Adamo - 6605 S. Land Park Dr.', projectIdFromName: 'adamo-6605-s-land-park-dr', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'McVarish - Salmina - 6251 El Dorado Street', projectIdFromName: 'mcvarish-salmina-6251-el-dorado-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Andre - 2119 H Street', projectIdFromName: 'andre-2119-h-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Fleming - Veisze - 1111 33rd Street', projectIdFromName: 'fleming-veisze-1111-33rd-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Ganson - 2125 I Street', projectIdFromName: 'ganson-2125-i-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'DeCarlo - 1141 Swanston Dr', projectIdFromName: 'decarlo-1141-swanston-dr', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Green - 920 U Street', projectIdFromName: 'green-920-u-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Kubein - Plymouth Project', projectIdFromName: 'kubein-plymouth-project', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'McLeod - Joffe - 2436 59th Street', projectIdFromName: 'mcleod-joffe-2436-59th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Piner - Piner Haus Garage', projectIdFromName: 'piner-piner-haus-garage', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Rathbun - USFS Cabin', projectIdFromName: 'rathbun-usfs-cabin', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Vasquez - Gutierrez - 2508 55th Street', projectIdFromName: 'vasquez-gutierrez-2508-55th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Wilcox - 1808 U Street', projectIdFromName: 'wilcox-1808-u-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Donaldson - 2717 58th Street', projectIdFromName: 'donaldson-2717-58th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:34 ProjectItem - Checking if active: {projectName: 'Unknown - 14401 Grand Island Road', projectIdFromName: 'unknown-14401-grand-island-road', urlProjectId: undefined, isActive: false}
+useTaskBoard.tsx:41 Query state - Loading: true Error: null Tasks count: 0
+useRealtimeTasks.tsx:41 WebSocket connected for real-time updates
+useTaskBoard.tsx:34 Tasks loaded: 14
+useTaskBoard.tsx:41 Query state - Loading: false Error: null Tasks count: 14
+useTaskBoard.tsx:43 First task: {id: 25, taskId: 'T8055', title: 'sdasdfa', projectId: 'peterson-2015-10th-street', project: 'Peterson - 2015 10th Street', …}
+useRealtimeTasks.tsx:10 WebSocket message received: {event: 'task_deleted', data: {…}}
+TaskBoard.tsx:106  Can't resolve task for deletion
+(anonymous) @ TaskBoard.tsx:106
+(anonymous) @ TaskRow.tsx:75
+await in (anonymous)
+handleEvent @ primitive.tsx:7
+callCallback2 @ react-dom.development.js:4164
+invokeGuardedCallbackDev @ react-dom.development.js:4213
+invokeGuardedCallback @ react-dom.development.js:4277
+invokeGuardedCallbackAndCatchFirstError @ react-dom.development.js:4291
+executeDispatch @ react-dom.development.js:9041
+processDispatchQueueItemsInOrder @ react-dom.development.js:9073
+processDispatchQueue @ react-dom.development.js:9086
+dispatchEventsForPlugins @ react-dom.development.js:9097
+(anonymous) @ react-dom.development.js:9288
+batchedUpdates$1 @ react-dom.development.js:26179
+batchedUpdates @ react-dom.development.js:3991
+dispatchEventForPluginEventSystem @ react-dom.development.js:9287
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ react-dom.development.js:6465
+dispatchEvent @ react-dom.development.js:6457
+dispatchDiscreteEvent @ react-dom.development.js:6430

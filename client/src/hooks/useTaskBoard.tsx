@@ -95,18 +95,33 @@ export const useTaskBoard = () => {
   // Generate a new taskId for every task insert
   const generateTaskId = () => "T" + Math.floor(Math.random() * 100000).toString().padStart(4, "0");
 
-  // Create task mutation with optimistic updates
+  // Create task mutation with direct API call and optimistic updates
   const createTaskMutation = useMutation({
-    mutationFn: createTask,
+    mutationFn: async (newTask: any) => {
+      console.log('Creating task:', newTask);
+      const response = await fetch('/api/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newTask),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      console.log('Task created successfully:', result);
+      return result;
+    },
     onMutate: async (newTask) => {
       // Cancel any outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ['tasks'] });
+      await queryClient.cancelQueries({ queryKey: ['api-tasks'] });
       
       // Snapshot the previous value
-      const previousTasks = queryClient.getQueryData(['tasks']);
+      const previousTasks = queryClient.getQueryData(['api-tasks']);
       
       // Optimistically update to show the new task immediately
-      queryClient.setQueryData(['tasks'], (old: Task[] = []) => [
+      queryClient.setQueryData(['api-tasks'], (old: Task[] = []) => [
         ...old,
         {
           ...newTask,
@@ -124,11 +139,11 @@ export const useTaskBoard = () => {
     },
     onError: (err, newTask, context) => {
       // If the mutation fails, roll back
-      queryClient.setQueryData(['tasks'], context?.previousTasks);
+      queryClient.setQueryData(['api-tasks'], context?.previousTasks);
     },
     onSettled: () => {
       // Always refetch after error or success
-      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['api-tasks'] });
       setRefreshTrigger(prev => prev + 1);
     },
   });
@@ -163,21 +178,47 @@ export const useTaskBoard = () => {
     navigate(`/task/${task.taskId}`);
   };
 
-  // Update task mutation
+  // Update task mutation with direct API call
   const updateTaskMutation = useMutation({
-    mutationFn: ({ taskId, updates }: { taskId: string; updates: Partial<Task> }) =>
-      updateTask(taskId, updates),
+    mutationFn: async ({ taskId, updates }: { taskId: string; updates: Partial<Task> }) => {
+      console.log('Updating task:', taskId, updates);
+      const response = await fetch(`/api/tasks/${taskId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updates),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      console.log('Task updated successfully:', result);
+      return result;
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+      console.log('Update mutation success, invalidating cache');
+      queryClient.invalidateQueries({ queryKey: ['api-tasks'] });
       setRefreshTrigger(prev => prev + 1);
     },
   });
 
-  // Delete task mutation
+  // Delete task mutation with direct API call
   const deleteTaskMutation = useMutation({
-    mutationFn: deleteTask,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+    mutationFn: async (taskId: string) => {
+      console.log('Deleting task:', taskId);
+      const response = await fetch(`/api/tasks/${taskId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      console.log('Task deleted successfully:', taskId);
+      return taskId;
+    },
+    onSuccess: (deletedTaskId) => {
+      console.log('Delete mutation success, invalidating cache');
+      queryClient.invalidateQueries({ queryKey: ['api-tasks'] });
       setRefreshTrigger(prev => prev + 1);
     },
   });
