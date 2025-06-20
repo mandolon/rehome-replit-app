@@ -7,16 +7,30 @@ import TimesheetStats from '@/components/timesheets/TimesheetStats';
 import TimesheetCalendarSelector from '@/components/timesheets/TimesheetCalendarSelector';
 import ProjectLogTab from '@/components/timesheets/ProjectLogTab';
 import AddTimeEntryDialog from '@/components/timesheets/AddTimeEntryDialog';
+import TaskDetail from '@/components/TaskDetail';
+import { Task } from '@/types/task';
 
 const TimesheetsPage = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [selectedWeek, setSelectedWeek] = useState(new Date());
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [activeTab, setActiveTab] = useState('timesheet');
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [isTaskDetailOpen, setIsTaskDetailOpen] = useState(false);
 
   const handleAddTimeEntry = () => {
     setRefreshTrigger(prev => prev + 1);
     setIsAddDialogOpen(false);
+  };
+
+  const handleTaskClick = (task: Task) => {
+    setSelectedTask(task);
+    setIsTaskDetailOpen(true);
+  };
+
+  const handleTaskDetailClose = () => {
+    setIsTaskDetailOpen(false);
+    setSelectedTask(null);
   };
 
   return (
@@ -38,7 +52,11 @@ const TimesheetsPage = () => {
               <TimesheetTable selectedWeek={selectedWeek} refreshTrigger={refreshTrigger} />
             </>
           ) : (
-            <ProjectLogTab selectedWeek={selectedWeek} refreshTrigger={refreshTrigger} />
+            <ProjectLogTab 
+              selectedWeek={selectedWeek} 
+              refreshTrigger={refreshTrigger} 
+              onTaskClick={handleTaskClick}
+            />
           )}
         </div>
 
@@ -46,6 +64,16 @@ const TimesheetsPage = () => {
           isOpen={isAddDialogOpen}
           onClose={() => setIsAddDialogOpen(false)}
           onSave={handleAddTimeEntry}
+        />
+
+        <TaskDetail
+          isOpen={isTaskDetailOpen}
+          onClose={handleTaskDetailClose}
+          task={selectedTask}
+          onDeleted={() => {
+            setRefreshTrigger(prev => prev + 1);
+            handleTaskDetailClose();
+          }}
         />
       </div>
     </AppLayout>

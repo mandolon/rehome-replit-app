@@ -25,9 +25,10 @@ interface Task {
 interface ProjectLogTabProps {
   selectedWeek: Date;
   refreshTrigger: number;
+  onTaskClick?: (task: Task) => void;
 }
 
-const ProjectLogTab = ({ selectedWeek, refreshTrigger }: ProjectLogTabProps) => {
+const ProjectLogTab = ({ selectedWeek, refreshTrigger, onTaskClick }: ProjectLogTabProps) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedProject, setSelectedProject] = useState<string>('');
   const [projects, setProjects] = useState<{ id: string; name: string }[]>([]);
@@ -243,11 +244,20 @@ const ProjectLogTab = ({ selectedWeek, refreshTrigger }: ProjectLogTabProps) => 
                     <TableCell className="font-medium text-xs">
                       <div className="flex items-center gap-2">
                         {getStatusIcon(task.status)}
-                        {task.taskId}
+                        <span 
+                          className="text-blue-600 hover:underline cursor-pointer"
+                          onClick={() => onTaskClick?.(task)}
+                        >
+                          {task.taskId}
+                        </span>
                       </div>
                     </TableCell>
                     <TableCell className="text-xs">
-                      <div className="max-w-[200px] truncate" title={task.title}>
+                      <div 
+                        className="max-w-[200px] truncate text-blue-600 hover:underline cursor-pointer" 
+                        title={task.title}
+                        onClick={() => onTaskClick?.(task)}
+                      >
                         {task.title}
                       </div>
                     </TableCell>
