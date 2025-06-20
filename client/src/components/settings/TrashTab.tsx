@@ -271,9 +271,10 @@ const TrashTab = () => {
   const handleEmptyTrash = async () => {
     if (visibleTrashItems.length === 0) return;
     
+    const trashItemIds = visibleTrashItems.map((item: TrashItem) => item.id);
+    
     try {
       setEmptyingTrash(true);
-      const trashItemIds = visibleTrashItems.map((item: TrashItem) => item.id);
       
       // Optimistically remove all items from UI
       setOptimisticallyDeleted(prev => [...prev, ...trashItemIds]);
@@ -543,19 +544,19 @@ const TrashTab = () => {
             <Table>
               <TableHeader>
                 <TableRow className="border-b border-border transition-colors hover:bg-accent/50 group">
-                  <TableHead className="text-muted-foreground font-medium text-xs py-1.5 h-auto align-baseline w-[8%] pl-8 transition-colors group-hover:bg-accent/50">
+                  <TableHead className="text-muted-foreground font-medium text-xs py-1 h-8 align-baseline w-[8%] pl-6 transition-colors group-hover:bg-accent/50">
                     Type
                   </TableHead>
-                  <TableHead className="text-muted-foreground font-medium text-xs py-1.5 h-auto align-baseline w-[12%] transition-colors group-hover:bg-accent/50">
+                  <TableHead className="text-muted-foreground font-medium text-xs py-1 h-8 align-baseline w-[12%] transition-colors group-hover:bg-accent/50">
                     ID
                   </TableHead>
-                  <TableHead className="text-muted-foreground font-medium text-xs py-1.5 h-auto align-baseline w-[40%] transition-colors group-hover:bg-accent/50">
+                  <TableHead className="text-muted-foreground font-medium text-xs py-1 h-8 align-baseline w-[40%] transition-colors group-hover:bg-accent/50">
                     Title
                   </TableHead>
-                  <TableHead className="text-muted-foreground font-medium text-xs py-1.5 h-auto align-baseline w-[20%] transition-colors group-hover:bg-accent/50">
+                  <TableHead className="text-muted-foreground font-medium text-xs py-1 h-8 align-baseline w-[20%] transition-colors group-hover:bg-accent/50">
                     Deleted Date
                   </TableHead>
-                  <TableHead className="text-muted-foreground font-medium text-xs py-1.5 h-auto align-baseline w-[20%] transition-colors group-hover:bg-accent/50">
+                  <TableHead className="text-muted-foreground font-medium text-xs py-1 h-8 align-baseline w-[20%] transition-colors group-hover:bg-accent/50">
                     Actions
                   </TableHead>
                 </TableRow>
@@ -564,45 +565,45 @@ const TrashTab = () => {
                 {filteredTrashItems.map((item: TrashItem) => (
                   <TableRow
                     key={item.id}
-                    className="border-b border-border transition-colors hover:bg-accent/50 group cursor-pointer"
+                    className="border-b border-border transition-colors hover:bg-accent/50 group cursor-pointer h-12"
                   >
-                    <TableCell className="py-3 pl-8">
-                      <div className="flex items-center gap-3">
+                    <TableCell className="py-2 pl-6">
+                      <div className="flex items-center gap-2">
                         {getItemIcon(item.itemType)}
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getItemTypeColor(item.itemType)}`}>
+                        <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${getItemTypeColor(item.itemType)}`}>
                           {getItemTypeLabel(item.itemType)}
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell className="py-3">
-                      <span className="font-medium text-foreground text-sm">{item.itemId}</span>
+                    <TableCell className="py-2">
+                      <span className="font-medium text-foreground text-xs">{item.itemId}</span>
                     </TableCell>
-                    <TableCell className="py-3">
-                      <div className="flex items-center gap-3">
+                    <TableCell className="py-2">
+                      <div className="flex items-center gap-2">
                         <div className="flex-1 min-w-0">
-                          <div className="font-medium text-sm text-foreground truncate">{item.title}</div>
+                          <div className="font-medium text-xs text-foreground truncate">{item.title}</div>
                           {item.description && (
-                            <div className="text-xs text-muted-foreground truncate mt-0.5">{item.description}</div>
+                            <div className="text-xs text-muted-foreground truncate">{item.description}</div>
                           )}
                           {getItemContext(item) && (
-                            <div className="text-xs text-muted-foreground truncate mt-0.5">{getItemContext(item)}</div>
+                            <div className="text-xs text-muted-foreground truncate">{getItemContext(item)}</div>
                           )}
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell className="py-3">
+                    <TableCell className="py-2">
                       <span className="text-xs text-muted-foreground">
                         {formatDate(item.deletedAt)}
                       </span>
                     </TableCell>
-                    <TableCell className="py-3">
-                      <div className="flex items-center gap-2">
+                    <TableCell className="py-2">
+                      <div className="flex items-center gap-1">
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => handleRestore(item.id)}
                           disabled={restoringIds.includes(item.id)}
-                          className="h-7 px-2 text-xs"
+                          className="h-6 px-2 text-xs"
                         >
                           {restoringIds.includes(item.id) ? (
                             'Restoring...'
@@ -617,7 +618,7 @@ const TrashTab = () => {
                           variant="ghost"
                           size="sm"
                           onClick={() => handlePermanentDelete(item.id)}
-                          className="h-7 px-2 text-xs text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/20"
+                          className="h-6 px-2 text-xs text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/20"
                         >
                           <Trash2 className="w-3 h-3 mr-1" />
                           Delete
