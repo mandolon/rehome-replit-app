@@ -3,6 +3,8 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
+import { useToast } from '@/hooks/use-toast';
 import {
   Collapsible,
   CollapsibleContent,
@@ -20,6 +22,13 @@ interface SidebarProjectSectionProps {
   refreshTrigger?: number;
 }
 
+interface Project {
+  id: number;
+  projectId: string;
+  title: string;
+  status: 'in_progress' | 'on_hold' | 'completed';
+}
+
 const SidebarProjectSection = React.memo(({ 
   title, 
   projects, 
@@ -29,7 +38,96 @@ const SidebarProjectSection = React.memo(({
   refreshTrigger 
 }: SidebarProjectSectionProps) => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
   const [projectDisplayNames, setProjectDisplayNames] = useState<Record<string, string>>({});
+
+  // Fetch all projects to get projectId mapping
+  const { data: allProjects = [] } = useQuery({
+    queryKey: ['/api/projects'],
+    queryFn: async () => {
+      const response = await fetch('/api/projects');
+      if (!response.ok) {
+        throw new Error('Failed to fetch projects');
+      }
+      return response.json();
+    },
+  });
+
+  // Create a mapping from project title to projectId
+  const projectTitleToId = useMemo(() => {
+    const mapping: Record<string, string> = {};
+    allProjects.forEach((project: Project) => {
+      mapping[project.title] = project.projectId;
+    });
+    return mapping;
+  }, [allProjects]);
+
+  // Mutation for updating project status
+  const updateProjectStatusMutation = useMutation({
+    mutationFn: async ({ projectId, status }: { projectId: string; status: 'in_progress' | 'on_hold' | 'completed' }) => {
+      const response = await fetch(`/api/projects/${projectId}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update project status');
+      }
+
+      return response.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/projects'] });
+      
+      const statusLabels: Record<string, string> = {
+        'in_progress': 'In Progress',
+        'on_hold': 'On Hold',
+        'completed': 'Completed'
+      };
+      
+      toast({
+        title: "Project status updated.",
+        description: `Project moved to ${statusLabels[data.status] || data.status}.`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Failed to update project status.",
+        description: error instanceof Error ? error.message : "Please try again.",
+      });
+    },
+  });
+
+  // Mutation for deleting project
+  const deleteProjectMutation = useMutation({
+    mutationFn: async (projectId: string) => {
+      const response = await fetch(`/api/projects/${projectId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        throw new Error('Failed to delete project');
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/projects'] });
+      toast({
+        title: "Project moved to trash.",
+        description: "The project has been successfully deleted.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Failed to delete project.",
+        description: error instanceof Error ? error.message : "Please try again.",
+      });
+    },
+  });
 
   // Update project display names when refresh trigger changes
   useEffect(() => {
@@ -48,32 +146,41 @@ const SidebarProjectSection = React.memo(({
   }, [navigate]);
 
   const handleMenuAction = useCallback((action: string, projectName: string) => {
-    console.log(`${action} for project: ${projectName}`);
+    const projectId = projectTitleToId[projectName];
+    
+    if (!projectId) {
+      toast({
+        variant: "destructive",
+        title: "Project not found.",
+        description: "Could not find the project to update.",
+      });
+      return;
+    }
     
     switch (action) {
       case 'rename':
-        // Handle rename
+        // TODO: Implement rename functionality
         break;
       case 'duplicate':
-        // Handle duplicate
+        // TODO: Implement duplicate functionality
         break;
       case 'archive':
-        // Handle archive
+        // TODO: Implement archive functionality
         break;
       case 'delete':
-        // Handle delete
+        deleteProjectMutation.mutate(projectId);
         break;
       case 'move-to-progress':
-        // Handle move to in progress
+        updateProjectStatusMutation.mutate({ projectId, status: 'in_progress' });
         break;
       case 'move-to-hold':
-        // Handle move to on hold
+        updateProjectStatusMutation.mutate({ projectId, status: 'on_hold' });
         break;
       case 'move-to-completed':
-        // Handle move to completed
+        updateProjectStatusMutation.mutate({ projectId, status: 'completed' });
         break;
     }
-  }, []);
+  }, [projectTitleToId, updateProjectStatusMutation, deleteProjectMutation, toast]);
 
   const projectItems = useMemo(() => 
     projects.map((project, index) => {

@@ -3,7 +3,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 import { Folder, MoreHorizontal, Plus } from 'lucide-react';
 import SidebarProjectSection from './SidebarProjectSection';
 import CreateProjectDialog from './CreateProjectDialog';
-import { projectStatusData } from '@/data/projectStatus';
+import { useQuery } from '@tanstack/react-query';
 
 interface Workspace {
   name: string;
@@ -56,10 +56,31 @@ const SidebarWorkspace = React.memo(({ workspace, refreshTrigger }: SidebarWorks
     });
   }, []);
 
-  // Use centralized project data
-  const inProgressProjects = useMemo(() => projectStatusData.inProgress, [refreshTrigger]);
-  const onHoldProjects = useMemo(() => projectStatusData.onHold, [refreshTrigger]);
-  const completedProjects = useMemo(() => projectStatusData.completed, [refreshTrigger]);
+  // Fetch real project data from API
+  const { data: projects = [] } = useQuery({
+    queryKey: ['/api/projects'],
+    queryFn: async () => {
+      const response = await fetch('/api/projects');
+      if (!response.ok) {
+        throw new Error('Failed to fetch projects');
+      }
+      return response.json();
+    },
+  });
+
+  // Group projects by status
+  const inProgressProjects = useMemo(() => 
+    projects.filter((p: any) => p.status === 'in_progress').map((p: any) => p.title), 
+    [projects, refreshTrigger]
+  );
+  const onHoldProjects = useMemo(() => 
+    projects.filter((p: any) => p.status === 'on_hold').map((p: any) => p.title), 
+    [projects, refreshTrigger]
+  );
+  const completedProjects = useMemo(() => 
+    projects.filter((p: any) => p.status === 'completed').map((p: any) => p.title), 
+    [projects, refreshTrigger]
+  );
 
   const toggleInProgress = useCallback(() => toggleSection('inProgress'), [toggleSection]);
   const toggleOnHold = useCallback(() => toggleSection('onHold'), [toggleSection]);
