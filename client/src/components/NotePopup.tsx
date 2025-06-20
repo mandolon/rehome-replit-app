@@ -360,7 +360,7 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
 
           {/* Note Lists */}
           <div className="px-6 pb-4 overflow-y-auto h-[320px] note-popup-scrollbar">
-            <div className="space-y-3 pt-4 h-full">
+            <div className="pt-4 h-full">
               {showCompleted ? (
                 // Show completed notes
                 completedNotes.length === 0 ? (
@@ -371,52 +371,55 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
                     </div>
                   </div>
                 ) : (
-                  completedNotes.map((note) => (
-                    <div
-                      key={note.id}
-                      className="group p-3 border border-gray-200 dark:border-gray-700 rounded-lg opacity-60"
-                    >
-                      <div className="flex items-start gap-3">
-                        <button
-                          onClick={() => restoreFromCompleted(note.id)}
-                          className="w-4 h-4 rounded border-2 bg-green-500 border-green-500 flex items-center justify-center mt-1 hover:bg-green-600 transition-colors"
-                        >
-                          <div className="w-2 h-2 bg-white rounded-full"></div>
-                        </button>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-xs font-medium text-gray-900 dark:text-white line-through">
-                              {note.author}
-                            </span>
-                            <span className="text-xs text-gray-500">
-                              {note.timestamp}
-                            </span>
-                          </div>
-                          <p className="text-xs line-through text-gray-500">
-                            {note.content}
-                          </p>
-                          
-                          {/* Show attachments if any */}
-                          {note.attachments && note.attachments.length > 0 && (
-                            <div className="mt-2 space-y-1">
-                              {note.attachments.map((attachment) => (
-                                <div
-                                  key={attachment.id}
-                                  className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded px-2 py-1 text-xs opacity-60"
-                                >
-                                  <span className="text-sm">{getFileIcon(attachment.type)}</span>
-                                  <span className="flex-1 truncate text-gray-600 dark:text-gray-400">
-                                    {attachment.name}
-                                  </span>
-                                  <span className="text-gray-400 text-xs">
-                                    {formatFileSize(attachment.size)}
-                                  </span>
-                                </div>
-                              ))}
+                  completedNotes.map((note, index) => (
+                    <div key={note.id}>
+                      <div className="group py-3 opacity-60 transition-all hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                        <div className="flex items-start gap-3">
+                          <button
+                            onClick={() => restoreFromCompleted(note.id)}
+                            className="w-4 h-4 rounded border-2 bg-green-500 border-green-500 flex items-center justify-center mt-1 hover:bg-green-600 transition-colors"
+                          >
+                            <div className="w-2 h-2 bg-white rounded-full"></div>
+                          </button>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-xs font-medium text-gray-900 dark:text-white line-through">
+                                {note.author}
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                {note.timestamp}
+                              </span>
                             </div>
-                          )}
+                            <p className="text-xs line-through text-gray-500">
+                              {note.content}
+                            </p>
+                            
+                            {/* Show attachments if any */}
+                            {note.attachments && note.attachments.length > 0 && (
+                              <div className="mt-2 space-y-1">
+                                {note.attachments.map((attachment) => (
+                                  <div
+                                    key={attachment.id}
+                                    className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded px-2 py-1 text-xs opacity-60"
+                                  >
+                                    <span className="text-sm">{getFileIcon(attachment.type)}</span>
+                                    <span className="flex-1 truncate text-gray-600 dark:text-gray-400">
+                                      {attachment.name}
+                                    </span>
+                                    <span className="text-gray-400 text-xs">
+                                      {formatFileSize(attachment.size)}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
+                      {/* Separator line for completed notes */}
+                      {index < completedNotes.length - 1 && (
+                        <div className="border-b border-gray-100 dark:border-gray-700"></div>
+                      )}
                     </div>
                   ))
                 )
@@ -430,14 +433,10 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
                     </div>
                   </div>
                 ) : (
-                  notes.filter(note => !note.completed).map((note) => (
-                <div
-                  key={note.id}
-                  className={`group p-3 border border-gray-200 dark:border-gray-700 rounded-lg transition-all hover:shadow-sm hover:border-gray-300 dark:hover:border-gray-600 ${
-                    note.completed ? 'opacity-60' : ''
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
+                  notes.filter(note => !note.completed).map((note, index) => (
+                    <div key={note.id}>
+                      <div className="group py-3 transition-all hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                        <div className="flex items-start gap-3">
                     <button
                       onClick={() => toggleComplete(note.id)}
                       className={`w-4 h-4 rounded border-2 flex items-center justify-center mt-1 ${
@@ -528,7 +527,7 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
                     {/* Action buttons - only show on hover */}
                     <div className="opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
                       <button
-                        onClick={() => startEditingNote(todo)}
+                        onClick={() => startEditingNote(note)}
                         className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500 hover:text-gray-700"
                         title="Edit"
                       >
@@ -543,6 +542,11 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
                       </button>
                     </div>
                   </div>
+                  </div>
+                  {/* Separator line - only show if not the last item */}
+                  {index < notes.filter(note => !note.completed).length - 1 && (
+                    <div className="border-b border-gray-100 dark:border-gray-700"></div>
+                  )}
                 </div>
                   ))
                 )
