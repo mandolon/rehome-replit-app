@@ -66,8 +66,7 @@ const InlineTimeField = ({ taskId, currentTime, onTimeUpdated }: InlineTimeField
       setIsEditing(false);
       
       toast({
-        title: "Time added to task",
-        description: `Set to ${formatTime(newTime)}`,
+        title: `Time added to task - set to ${formatTime(newTime)}.`,
         action: (
           <ToastAction
             altText="Undo time change"
