@@ -27,8 +27,8 @@ export const useTaskBoard = () => {
     queryFn: fetchAllTasks,
     refetchOnWindowFocus: false,
     retry: 1,
-    staleTime: 0, // Always consider data stale to enable immediate refetching
-    gcTime: 30000, // Keep cache for 30 seconds
+    staleTime: 5000, // Keep data fresh for 5 seconds
+    gcTime: 300000, // Keep cache for 5 minutes
   });
 
 
@@ -84,21 +84,41 @@ export const useTaskBoard = () => {
   // Generate a new taskId for every task insert
   const generateTaskId = () => "T" + Math.floor(Math.random() * 100000).toString().padStart(4, "0");
 
-  // Create task mutation with aggressive cache busting
+  // Create task mutation with optimistic updates
   const createTaskMutation = useMutation({
     mutationFn: createTask,
-    onSuccess: async (newTask) => {
-      console.log('Task created successfully:', newTask);
+    onMutate: async (newTask) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['tasks'] });
       
-      // Multiple approaches to ensure immediate update
-      queryClient.removeQueries({ queryKey: ['tasks'] }); // Remove cached data
-      await queryClient.invalidateQueries({ queryKey: ['tasks'] }); // Force refetch
-      setRefreshTrigger(prev => prev + 1); // Trigger component update
+      // Snapshot the previous value
+      const previousTasks = queryClient.getQueryData(['tasks']);
       
-      console.log('Cache invalidated and refresh triggered');
+      // Optimistically update to show the new task immediately
+      queryClient.setQueryData(['tasks'], (old: Task[] = []) => [
+        ...old,
+        {
+          ...newTask,
+          id: Date.now(), // Temporary ID until server responds
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          archived: false,
+          deletedAt: null,
+          deletedBy: null,
+          workRecord: false,
+        }
+      ]);
+      
+      return { previousTasks };
     },
-    onError: (error) => {
-      console.error('Failed to create task:', error);
+    onError: (err, newTask, context) => {
+      // If the mutation fails, roll back
+      queryClient.setQueryData(['tasks'], context?.previousTasks);
+    },
+    onSettled: () => {
+      // Always refetch after error or success
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      setRefreshTrigger(prev => prev + 1);
     },
   });
 
