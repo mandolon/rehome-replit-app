@@ -42,6 +42,41 @@ const SidebarProjectSection = React.memo(({
   const queryClient = useQueryClient();
   const { projectStatusChanged, projectDeleted } = useProjectToast();
   const { toast } = useToast();
+  
+  const handleUndoProjectDelete = useCallback(async (projectId: string) => {
+    try {
+      // First find the trash item for this project
+      const trashResponse = await fetch('/api/trash');
+      if (!trashResponse.ok) {
+        throw new Error('Failed to fetch trash items');
+      }
+      
+      const trashItems = await trashResponse.json();
+      const trashItem = trashItems.find((item: any) => 
+        item.itemType === 'project' && item.itemId === projectId
+      );
+      
+      if (!trashItem) {
+        throw new Error('Project not found in trash');
+      }
+      
+      // Restore using the trash item ID
+      const restoreResponse = await fetch(`/api/trash/${trashItem.id}/restore`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!restoreResponse.ok) {
+        throw new Error('Failed to restore project');
+      }
+      
+      queryClient.invalidateQueries({ queryKey: ['/api/projects'] });
+    } catch (error) {
+      console.error('Restore failed:', error);
+    }
+  }, [queryClient]);
   const [projectDisplayNames, setProjectDisplayNames] = useState<Record<string, string>>({});
   const [sortBy, setSortBy] = useState<'name' | 'address' | 'date-modified'>('name');
 
@@ -118,7 +153,7 @@ const SidebarProjectSection = React.memo(({
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/projects'] });
-      projectDeleted(data.projectTitle);
+      projectDeleted(data.projectTitle, () => handleUndoProjectDelete(data.projectId));
     },
     onError: (error) => {
       toast({

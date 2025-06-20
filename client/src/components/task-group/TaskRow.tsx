@@ -54,6 +54,42 @@ const TaskRow = React.memo(({
   const [isDeleting, setIsDeleting] = useState(false);
   const queryClient = useQueryClient();
   const { taskDeleted } = useTaskToast();
+  
+  const handleUndoDelete = useCallback(async () => {
+    try {
+      // First find the trash item for this task
+      const trashResponse = await fetch('/api/trash');
+      if (!trashResponse.ok) {
+        throw new Error('Failed to fetch trash items');
+      }
+      
+      const trashItems = await trashResponse.json();
+      const trashItem = trashItems.find((item: any) => 
+        item.itemType === 'task' && item.itemId === task.taskId
+      );
+      
+      if (!trashItem) {
+        throw new Error('Task not found in trash');
+      }
+      
+      // Restore using the trash item ID
+      const restoreResponse = await fetch(`/api/trash/${trashItem.id}/restore`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!restoreResponse.ok) {
+        throw new Error('Failed to restore task');
+      }
+      
+      queryClient.invalidateQueries({ queryKey: ['task-board-data'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+    } catch (error) {
+      console.error('Restore failed:', error);
+    }
+  }, [task.taskId, queryClient]);
 
   // Direct API delete mutation
   const deleteTaskMutation = useMutation({
@@ -70,7 +106,7 @@ const TaskRow = React.memo(({
       queryClient.invalidateQueries({ queryKey: ['task-board-data'] });
       setShowDeleteDialog(false);
       setIsDeleting(false);
-      taskDeleted(task.title);
+      taskDeleted(task.title, handleUndoDelete);
     },
     onError: () => {
       setIsDeleting(false);

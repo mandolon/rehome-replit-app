@@ -1,5 +1,6 @@
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
+import { Undo2 } from "lucide-react";
 export interface UnifiedToastOptions {
   itemType: 'task' | 'project' | 'note' | 'user' | 'item';
   itemName: string;
@@ -88,8 +89,9 @@ export const useUnifiedToast = () => {
         <ToastAction 
           altText="Undo action"
           onClick={undoAction}
-          className="bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-medium"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-medium flex items-center gap-1"
         >
+          <Undo2 className="w-3 h-3" />
           Undo
         </ToastAction>
       );
@@ -200,7 +202,9 @@ export const useTaskToast = () => {
       itemName: name,
       action: 'moved',
       destination: 'trash',
-      undoAction: undoFn
+      undoAction: undoFn,
+      navigateToPage: '/settings?tab=trash',
+      navigateLabel: 'Go to trash'
     }),
     
     taskAssigned: (name: string, assignee: string) => showToast({
