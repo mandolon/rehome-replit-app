@@ -35,7 +35,7 @@ const TimesheetsPage = () => {
 
   return (
     <AppLayout>
-      <div className="flex flex-col h-full">
+      <div className="flex flex-col h-full relative">
         <TimesheetsHeader 
           selectedWeek={selectedWeek}
           onWeekChange={setSelectedWeek}
@@ -60,20 +60,24 @@ const TimesheetsPage = () => {
           )}
         </div>
 
+        {isTaskDetailOpen && (
+          <div className="absolute top-0 left-0 right-0 bottom-0 z-50 bg-background flex flex-col">
+            <TaskDetail
+              isOpen={isTaskDetailOpen}
+              onClose={handleTaskDetailClose}
+              task={selectedTask}
+              onDeleted={() => {
+                setRefreshTrigger(prev => prev + 1);
+                handleTaskDetailClose();
+              }}
+            />
+          </div>
+        )}
+
         <AddTimeEntryDialog
           isOpen={isAddDialogOpen}
           onClose={() => setIsAddDialogOpen(false)}
           onSave={handleAddTimeEntry}
-        />
-
-        <TaskDetail
-          isOpen={isTaskDetailOpen}
-          onClose={handleTaskDetailClose}
-          task={selectedTask}
-          onDeleted={() => {
-            setRefreshTrigger(prev => prev + 1);
-            handleTaskDetailClose();
-          }}
         />
       </div>
     </AppLayout>
