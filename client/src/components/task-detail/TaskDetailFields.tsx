@@ -96,7 +96,7 @@ const TaskDetailFields: React.FC<TaskDetailFieldsProps> = ({
       </div>
       <div className="space-y-1">
         <label className="text-xs text-muted-foreground">
-          Time Logged
+          Track Time
         </label>
         <InlineTimeField
           taskId={task.taskId}
