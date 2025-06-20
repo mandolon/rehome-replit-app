@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar as ShadcnCalendar } from "@/components/ui/calendar";
 import AssigneeFilterPopover from './AssigneeFilterPopover';
 import CreatedByFilterPopover from './CreatedByFilterPopover';
-import TodoPopup from './TodoPopup';
+import NotePopup from './NotePopup';
 
 interface TaskBoardFiltersProps {
   onAddTask: () => void;
@@ -234,7 +234,7 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed, onFiltersChan
       </div>
 
       {/* Note Popup */}
-      <TodoPopup 
+      <NotePopup 
         isOpen={notePopupOpen} 
         onClose={() => setNotePopupOpen(false)} 
       />

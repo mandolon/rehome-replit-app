@@ -4,14 +4,14 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useUser } from '@/contexts/UserContext';
 
-interface TodoAttachment {
+interface NoteAttachment {
   id: string;
   name: string;
   size: number;
   type: string;
 }
 
-interface TodoItem {
+interface NoteItem {
   id: string;
   title: string;
   content: string;
@@ -19,27 +19,27 @@ interface TodoItem {
   authorAvatar: string;
   timestamp: string;
   completed: boolean;
-  attachments?: TodoAttachment[];
+  attachments?: NoteAttachment[];
 }
 
-interface TodoPopupProps {
+interface NotePopupProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
+const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
   const { currentUser } = useUser();
-  const [newTodo, setNewTodo] = useState('');
+  const [newNote, setNewNote] = useState('');
   const [title, setTitle] = useState('Untitled');
   const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [editingTodo, setEditingTodo] = useState<string | null>(null);
+  const [editingNote, setEditingNote] = useState<string | null>(null);
   const [editText, setEditText] = useState('');
-  const [attachments, setAttachments] = useState<TodoAttachment[]>([]);
-  const [completedTodos, setCompletedTodos] = useState<TodoItem[]>([]);
+  const [attachments, setAttachments] = useState<NoteAttachment[]>([]);
+  const [completedNotes, setCompletedNotes] = useState<NoteItem[]>([]);
   const [showCompleted, setShowCompleted] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [todos, setTodos] = useState<TodoItem[]>([
+  const [notes, setNotes] = useState<NoteItem[]>([
     {
       id: '1',
       title: 'Review quarterly budget report',
@@ -122,67 +122,67 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
   ]);
 
   const handleSubmit = () => {
-    if (newTodo.trim()) {
-      const todoTitle = newTodo.length > 50 ? newTodo.substring(0, 50) + '...' : newTodo;
-      const todo: TodoItem = {
+    if (newNote.trim()) {
+      const noteTitle = newNote.length > 50 ? newNote.substring(0, 50) + '...' : newNote;
+      const note: NoteItem = {
         id: Date.now().toString(),
-        title: todoTitle,
-        content: newTodo,
-        author: todoTitle, // Use todo title instead of author name
+        title: noteTitle,
+        content: newNote,
+        author: noteTitle, // Use note title instead of author name
         authorAvatar: currentUser.avatar,
         timestamp: 'Last Updated: Just now',
         completed: false,
         attachments: attachments.length > 0 ? [...attachments] : undefined
       };
-      setTodos([todo, ...todos]);
-      setNewTodo('');
+      setNotes([note, ...notes]);
+      setNewNote('');
       setTitle('Untitled'); // Reset title to default
       setAttachments([]); // Clear attachments
     }
   };
 
   const toggleComplete = (id: string) => {
-    const todo = todos.find(t => t.id === id);
-    if (todo) {
-      if (!todo.completed) {
+    const note = notes.find(t => t.id === id);
+    if (note) {
+      if (!note.completed) {
         // Moving to completed
-        const completedTodo = { ...todo, completed: true };
-        setCompletedTodos(prev => [completedTodo, ...prev]);
-        setTodos(prev => prev.filter(t => t.id !== id));
+        const completedNote = { ...note, completed: true };
+        setCompletedNotes(prev => [completedNote, ...prev]);
+        setNotes(prev => prev.filter(t => t.id !== id));
       }
     }
   };
 
   const restoreFromCompleted = (id: string) => {
-    const completedTodo = completedTodos.find(t => t.id === id);
-    if (completedTodo) {
-      const restoredTodo = { ...completedTodo, completed: false };
-      setTodos(prev => [restoredTodo, ...prev]);
-      setCompletedTodos(prev => prev.filter(t => t.id !== id));
+    const completedNote = completedNotes.find(t => t.id === id);
+    if (completedNote) {
+      const restoredNote = { ...completedNote, completed: false };
+      setNotes(prev => [restoredNote, ...prev]);
+      setCompletedNotes(prev => prev.filter(t => t.id !== id));
     }
   };
 
-  const startEditingTodo = (todo: TodoItem) => {
-    setEditingTodo(todo.id);
-    setEditText(todo.content);
+  const startEditingNote = (note: NoteItem) => {
+    setEditingNote(note.id);
+    setEditText(note.content);
   };
 
-  const saveEditTodo = () => {
-    if (editingTodo && editText.trim()) {
-      setTodos(todos.map(todo => 
-        todo.id === editingTodo ? { 
-          ...todo, 
+  const saveEditNote = () => {
+    if (editingNote && editText.trim()) {
+      setNotes(notes.map(note => 
+        note.id === editingNote ? { 
+          ...note, 
           content: editText, 
           title: editText.length > 50 ? editText.substring(0, 50) + '...' : editText
-        } : todo
+        } : note
       ));
     }
-    setEditingTodo(null);
+    setEditingNote(null);
     setEditText('');
   };
 
-  const deleteTodo = (id: string) => {
-    setTodos(todos.filter(todo => todo.id !== id));
+  const deleteNote = (id: string) => {
+    setNotes(notes.filter(note => note.id !== id));
   };
 
   const handleTitleEdit = (e: React.KeyboardEvent) => {
@@ -197,7 +197,7 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files) {
-      const newAttachments: TodoAttachment[] = Array.from(files).map(file => ({
+      const newAttachments: NoteAttachment[] = Array.from(files).map(file => ({
         id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
         name: file.name,
         size: file.size,
@@ -314,11 +314,11 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
             </span>
           </div>
 
-          {/* New Todo Input */}
+          {/* New Note Input */}
           <div className="px-6 pb-4">
             <Textarea
-              value={newTodo}
-              onChange={(e) => setNewTodo(e.target.value)}
+              value={newNote}
+              onChange={(e) => setNewNote(e.target.value)}
               placeholder="Write something or type '/' for commands and AI actions"
               className="min-h-[100px] border-0 shadow-none resize-none text-xs text-gray-700 dark:text-gray-300 placeholder-gray-400 focus-visible:ring-0"
               onKeyDown={(e) => {
@@ -358,27 +358,27 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
           {/* Separator line */}
           <div className="border-t border-gray-200 dark:border-gray-700"></div>
 
-          {/* Todo Lists */}
-          <div className="px-6 pb-4 overflow-y-auto h-[320px] todo-popup-scrollbar">
+          {/* Note Lists */}
+          <div className="px-6 pb-4 overflow-y-auto h-[320px] note-popup-scrollbar">
             <div className="space-y-3 pt-4 h-full">
               {showCompleted ? (
-                // Show completed todos
-                completedTodos.length === 0 ? (
+                // Show completed notes
+                completedNotes.length === 0 ? (
                   <div className="flex items-center justify-center h-full">
                     <div className="text-center text-gray-500 text-sm">
                       <div className="mb-2"><Check className="w-6 h-6 mx-auto" /></div>
-                      <div>All clear! No completed tasks yet.</div>
+                      <div>All clear! No completed notes yet.</div>
                     </div>
                   </div>
                 ) : (
-                  completedTodos.map((todo) => (
+                  completedNotes.map((note) => (
                     <div
-                      key={todo.id}
+                      key={note.id}
                       className="group p-3 border border-gray-200 dark:border-gray-700 rounded-lg opacity-60"
                     >
                       <div className="flex items-start gap-3">
                         <button
-                          onClick={() => restoreFromCompleted(todo.id)}
+                          onClick={() => restoreFromCompleted(note.id)}
                           className="w-4 h-4 rounded border-2 bg-green-500 border-green-500 flex items-center justify-center mt-1 hover:bg-green-600 transition-colors"
                         >
                           <div className="w-2 h-2 bg-white rounded-full"></div>
@@ -386,20 +386,20 @@ const TodoPopup: React.FC<TodoPopupProps> = ({ isOpen, onClose }) => {
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="text-xs font-medium text-gray-900 dark:text-white line-through">
-                              {todo.author}
+                              {note.author}
                             </span>
                             <span className="text-xs text-gray-500">
-                              {todo.timestamp}
+                              {note.timestamp}
                             </span>
                           </div>
                           <p className="text-xs line-through text-gray-500">
-                            {todo.content}
+                            {note.content}
                           </p>
                           
                           {/* Show attachments if any */}
-                          {todo.attachments && todo.attachments.length > 0 && (
+                          {note.attachments && note.attachments.length > 0 && (
                             <div className="mt-2 space-y-1">
-                              {todo.attachments.map((attachment) => (
+                              {note.attachments.map((attachment) => (
                                 <div
                                   key={attachment.id}
                                   className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded px-2 py-1 text-xs opacity-60"
