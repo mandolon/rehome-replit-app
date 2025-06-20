@@ -52,11 +52,7 @@ const TaskBoard: React.FC = React.memo(() => {
   }, []);
   const { addAttachments } = useTaskAttachmentContext();
 
-  // --- Task Deletion logic from useTaskDeletion
-  const {
-    handleDeleteTask, // Will soft delete as expected for SB & legacy
-    isDeleting,
-  } = useTaskDeletion();
+  // Task deletion is now handled directly in TaskRow components
 
   // Board tasks are now directly provided by the hook
 
