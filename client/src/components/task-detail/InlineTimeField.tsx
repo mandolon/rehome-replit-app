@@ -102,29 +102,29 @@ const InlineTimeField = ({ taskId, currentTime, onTimeUpdated }: InlineTimeField
     }
   }, [isEditing]);
 
-  if (isEditing) {
-    return (
-      <input
-        ref={inputRef}
-        type="text"
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        onKeyDown={handleKeyDown}
-        onBlur={handleBlur}
-        disabled={loading}
-        className="text-xs bg-transparent border-b border-border focus:border-primary outline-none w-16"
-        placeholder="0"
-      />
-    );
-  }
-
   return (
-    <div 
-      onClick={handleClick}
-      className="text-xs cursor-pointer hover:text-foreground transition-colors"
-      title="Click to edit time logged"
-    >
-      {formatTime(currentTime)}
+    <div className="relative">
+      {isEditing ? (
+        <input
+          ref={inputRef}
+          type="text"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+          onBlur={handleBlur}
+          disabled={loading}
+          className="text-xs bg-background border border-border focus:border-primary outline-none px-1 py-0.5 rounded w-16"
+          placeholder="0"
+        />
+      ) : (
+        <div 
+          onClick={handleClick}
+          className="text-xs cursor-pointer hover:text-foreground transition-colors px-1 py-0.5 min-w-[24px] inline-block"
+          title="Click to edit time logged"
+        >
+          {formatTime(currentTime)}
+        </div>
+      )}
     </div>
   );
 };
