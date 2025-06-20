@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Edit, Check, Trash2 } from 'lucide-react';
+import { Edit, Check, Trash2, Clock } from 'lucide-react';
 import {
   ContextMenu,
   ContextMenuContent,
@@ -50,6 +50,12 @@ const TaskRowContextMenu = ({
     setOpen(false);
   };
 
+  const handleAddToWorkRecords = () => {
+    console.log('Adding task to work records:', task.id);
+    // TODO: Implement work records functionality
+    setOpen(false);
+  };
+
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>
@@ -67,6 +73,11 @@ const TaskRowContextMenu = ({
         <ContextMenuItem onClick={handleDuplicateTask}>
           <div className="w-4 h-4 mr-2" />
           Duplicate
+        </ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuItem onClick={handleAddToWorkRecords}>
+          <Clock className="w-4 h-4 mr-2" />
+          Add to work records
         </ContextMenuItem>
         <ContextMenuSeparator />
         <ContextMenuItem 
