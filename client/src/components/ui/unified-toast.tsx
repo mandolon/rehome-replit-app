@@ -97,7 +97,7 @@ export const useUnifiedToast = () => {
       toastAction = (
         <button 
           onClick={() => window.location.href = navigateToPage}
-          className="text-xs font-medium text-primary hover:text-primary/80 underline underline-offset-2"
+          className="text-xs font-medium text-primary hover:text-primary/80 underline underline-offset-2 whitespace-nowrap"
         >
           {navigateLabel}
         </button>
