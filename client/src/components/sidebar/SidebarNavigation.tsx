@@ -12,7 +12,8 @@ import {
   FileImage,
   FileText,
   ClipboardList,
-  Clock
+  Clock,
+  FolderOpen
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
@@ -41,6 +42,7 @@ const SidebarNavigation = React.memo(({ isCollapsed, isOpen, onToggle }: Sidebar
   const handleNavigateClientWhiteboards = useCallback(() => navigate('/client/whiteboards'), [navigate]);
   const handleNavigateHome = useCallback(() => navigate('/'), [navigate]);
   const handleNavigateTasks = useCallback(() => navigate('/tasks'), [navigate]);
+  const handleNavigateProjects = useCallback(() => navigate('/projects'), [navigate]);
   const handleNavigateInbox = useCallback(() => navigate('/inbox'), [navigate]);
   const handleNavigateChat = useCallback(() => {}, []);
   const handleNavigateTeams = useCallback(() => navigate('/teams'), [navigate]);
@@ -61,6 +63,7 @@ const SidebarNavigation = React.memo(({ isCollapsed, isOpen, onToggle }: Sidebar
     return [
       { icon: Home, label: 'Home', active: false, onClick: handleNavigateHome },
       { icon: ClipboardList, label: 'Task Board (Final)', active: false, onClick: handleNavigateTasks },
+      { icon: FolderOpen, label: 'Projects', active: false, onClick: handleNavigateProjects },
       { icon: Inbox, label: 'Inbox', active: false, onClick: handleNavigateInbox },
       { icon: MessageSquare, label: 'Chat', active: false, onClick: handleNavigateChat },
       { icon: Users, label: 'Teams', active: false, onClick: handleNavigateTeams },
@@ -69,12 +72,12 @@ const SidebarNavigation = React.memo(({ isCollapsed, isOpen, onToggle }: Sidebar
       { icon: Clock, label: 'Timesheets', active: false, onClick: handleNavigateTimesheets },
       { icon: FileText, label: 'Work Records', active: false, onClick: handleNavigateWorkRecords },
       { icon: LayoutDashboard, label: 'Client Dashboard', active: false, onClick: handleNavigateClientDashboard }
-      // Help item removed!
     ];
   }, [
     clientMode,
     handleNavigateHome,
     handleNavigateTasks,
+    handleNavigateProjects,
     handleNavigateInbox,
     handleNavigateChat,
     handleNavigateTeams,
