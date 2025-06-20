@@ -421,45 +421,45 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
                   ))
                 )
               ) : (
-                // Show active todos
-                todos.filter(todo => !todo.completed).length === 0 ? (
+                // Show active notes
+                notes.filter(note => !note.completed).length === 0 ? (
                   <div className="flex items-center justify-center h-full">
                     <div className="text-center text-gray-500 text-sm">
                       <div className="mb-2"><FileText className="w-6 h-6 mx-auto" /></div>
-                      <div>Ready to get started? Add your first task above.</div>
+                      <div>Ready to get started? Add your first note above.</div>
                     </div>
                   </div>
                 ) : (
-                  todos.filter(todo => !todo.completed).map((todo) => (
+                  notes.filter(note => !note.completed).map((note) => (
                 <div
-                  key={todo.id}
+                  key={note.id}
                   className={`group p-3 border border-gray-200 dark:border-gray-700 rounded-lg transition-all hover:shadow-sm hover:border-gray-300 dark:hover:border-gray-600 ${
-                    todo.completed ? 'opacity-60' : ''
+                    note.completed ? 'opacity-60' : ''
                   }`}
                 >
                   <div className="flex items-start gap-3">
                     <button
-                      onClick={() => toggleComplete(todo.id)}
+                      onClick={() => toggleComplete(note.id)}
                       className={`w-4 h-4 rounded border-2 flex items-center justify-center mt-1 ${
-                        todo.completed
+                        note.completed
                           ? 'bg-green-500 border-green-500'
                           : 'border-gray-300 dark:border-gray-600'
                       }`}
                     >
-                      {todo.completed && (
+                      {note.completed && (
                         <div className="w-2 h-2 bg-white rounded-full"></div>
                       )}
                     </button>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-xs font-medium text-gray-900 dark:text-white">
-                          {todo.author}
+                          {note.author}
                         </span>
                         <span className="text-xs text-gray-500">
-                          {todo.timestamp}
+                          {note.timestamp}
                         </span>
                       </div>
-                      {editingTodo === todo.id ? (
+                      {editingNote === note.id ? (
                         <div className="space-y-2">
                           <Textarea
                             value={editText}
@@ -467,9 +467,9 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
                             className="text-xs min-h-[60px] resize-none"
                             onKeyDown={(e) => {
                               if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-                                saveEditTodo();
+                                saveEditNote();
                               } else if (e.key === 'Escape') {
-                                setEditingTodo(null);
+                                setEditingNote(null);
                                 setEditText('');
                               }
                             }}
@@ -477,14 +477,14 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
                           />
                           <div className="flex gap-2">
                             <button
-                              onClick={saveEditTodo}
+                              onClick={saveEditNote}
                               className="px-2 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600"
                             >
                               Save
                             </button>
                             <button
                               onClick={() => {
-                                setEditingTodo(null);
+                                setEditingNote(null);
                                 setEditText('');
                               }}
                               className="px-2 py-1 bg-gray-300 text-gray-700 text-xs rounded hover:bg-gray-400"
@@ -496,17 +496,17 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
                       ) : (
                         <div>
                           <p className={`text-xs ${
-                            todo.completed 
+                            note.completed 
                               ? 'line-through text-gray-500' 
                               : 'text-gray-700 dark:text-gray-300'
                           }`}>
-                            {todo.content}
+                            {note.content}
                           </p>
                           
                           {/* Show attachments if any */}
-                          {todo.attachments && todo.attachments.length > 0 && (
+                          {note.attachments && note.attachments.length > 0 && (
                             <div className="mt-2 space-y-1">
-                              {todo.attachments.map((attachment) => (
+                              {note.attachments.map((attachment) => (
                                 <div
                                   key={attachment.id}
                                   className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded px-2 py-1 text-xs"
@@ -528,14 +528,14 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
                     {/* Action buttons - only show on hover */}
                     <div className="opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
                       <button
-                        onClick={() => startEditingTodo(todo)}
+                        onClick={() => startEditingNote(todo)}
                         className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500 hover:text-gray-700"
                         title="Edit"
                       >
                         <Edit2 className="w-3 h-3" />
                       </button>
                       <button
-                        onClick={() => deleteTodo(todo.id)}
+                        onClick={() => deleteNote(note.id)}
                         className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-500 hover:text-red-600"
                         title="Delete"
                       >
@@ -597,4 +597,4 @@ const NotePopup: React.FC<NotePopupProps> = ({ isOpen, onClose }) => {
   );
 };
 
-export default TodoPopup;
+export default NotePopup;
