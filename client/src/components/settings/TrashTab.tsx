@@ -1,9 +1,12 @@
 import React, { useState, useMemo } from 'react';
-import { Search, RotateCcw, Trash2, FileText, FolderOpen, Paperclip, ChevronDown, ArrowUpDown } from 'lucide-react';
+import { Search, RotateCcw, Trash2, FileText, FolderOpen, ChevronDown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableHead, TableHeader, TableRow, TableCell } from '@/components/ui/table';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { formatDate } from '@/utils/taskUtils';
 
@@ -424,11 +427,11 @@ const TrashTab = () => {
             <div className="ml-auto flex items-center gap-2">
               <div className="relative">
                 <Search className="w-3 h-3 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input 
-                  type="text" 
-                  placeholder="Search deleted items..." 
+                <Input
+                  type="text"
+                  placeholder="Search deleted items..."
                   disabled
-                  className="pl-7 pr-3 py-1 border border-border rounded text-xs w-48"
+                  className="pl-7 pr-3 py-1 h-7 text-xs w-48"
                 />
               </div>
             </div>
@@ -476,25 +479,23 @@ const TrashTab = () => {
             { key: 'project', label: 'Projects', count: itemTypeCounts.project },
             { key: 'note', label: 'Notes', count: itemTypeCounts.note }
           ].map((filter) => (
-            <button
+            <Button
               key={filter.key}
+              variant={selectedItemType === filter.key ? "default" : "ghost"}
+              size="sm"
               onClick={() => setSelectedItemType(filter.key)}
-              className={`flex items-center gap-1 px-2 py-1 text-xs rounded border ${
-                selectedItemType === filter.key
-                  ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 border-blue-200 dark:border-blue-700'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-transparent hover:border-gray-200 dark:hover:border-gray-700'
-              }`}
+              className="h-7 px-2 text-xs"
             >
               {filter.label} ({filter.count})
-            </button>
+            </Button>
           ))}
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-1 px-2 py-1 text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 rounded text-xs border border-transparent hover:border-gray-200 dark:hover:border-gray-700">
+              <Button variant="ghost" size="sm" className="h-7 px-2 text-xs">
                 Sort by {sortBy === 'deletedAt' ? 'Date' : sortBy === 'itemType' ? 'Type' : 'Title'}
-                <ChevronDown className="w-3 h-3" />
-              </button>
+                <ChevronDown className="w-3 h-3 ml-1" />
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => { setSortBy('deletedAt'); setSortDirection('desc'); }}>
@@ -518,12 +519,12 @@ const TrashTab = () => {
           <div className="ml-auto flex items-center gap-2">
             <div className="relative">
               <Search className="w-3 h-3 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <input 
-                type="text" 
-                placeholder="Search deleted items..." 
+              <Input
+                type="text"
+                placeholder="Search deleted items..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-7 pr-3 py-1 border border-border rounded text-xs w-48"
+                className="pl-7 pr-3 py-1 h-7 text-xs w-48"
               />
             </div>
           </div>
@@ -570,9 +571,9 @@ const TrashTab = () => {
                     <TableCell className="py-2 pl-6">
                       <div className="flex items-center gap-2">
                         {getItemIcon(item.itemType)}
-                        <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${getItemTypeColor(item.itemType)}`}>
+                        <Badge variant="secondary" className={`px-1.5 py-0.5 text-xs font-medium ${getItemTypeColor(item.itemType)}`}>
                           {getItemTypeLabel(item.itemType)}
-                        </span>
+                        </Badge>
                       </div>
                     </TableCell>
                     <TableCell className="py-2">
