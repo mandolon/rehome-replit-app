@@ -21,6 +21,7 @@ const TaskBoard: React.FC = React.memo(() => {
     handleQuickAddSave,
     handleTaskClick,
     handleTaskArchive,
+    handleTaskDeleted,
     assignPerson,
     removeAssignee,
     addCollaborator,
@@ -107,8 +108,8 @@ const TaskBoard: React.FC = React.memo(() => {
       return;
     }
     // Soft delete via the task deletion hook (will set deletedAt)
-    await handleDeleteTask(realTask);
-  }, [handleDeleteTask, taskGroups]);
+    await handleTaskDeleted(realTask.taskId);
+  }, [handleTaskDeleted, taskGroups]);
 
   return (
     <div className="h-full flex flex-col overflow-hidden">
