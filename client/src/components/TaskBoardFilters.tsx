@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Filter, Search, Plus, Calendar, ChevronDown, CheckCircle, ListTodo } from 'lucide-react';
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
@@ -12,9 +12,15 @@ interface TaskBoardFiltersProps {
   onAddTask: () => void;
   showClosed: boolean;
   onToggleClosed: () => void;
+  onFiltersChange?: (filters: {
+    selectedAssignees: string[];
+    selectedCreatedBy: string[];
+    selectedStartDate?: Date;
+    selectedEndDate?: Date;
+  }) => void;
 }
 
-const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed }: TaskBoardFiltersProps) => {
+const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed, onFiltersChange }: TaskBoardFiltersProps) => {
   const [dateFilterOpen, setDateFilterOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedAssignees, setSelectedAssignees] = useState<string[]>([]);
@@ -25,6 +31,18 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed }: TaskBoardFi
   const [selectedEndDate, setSelectedEndDate] = useState<Date | undefined>();
   const [selectedProject, setSelectedProject] = useState<string>('');
   const [todoPopupOpen, setTodoPopupOpen] = useState(false);
+
+  // Notify parent component when filters change
+  useEffect(() => {
+    if (onFiltersChange) {
+      onFiltersChange({
+        selectedAssignees,
+        selectedCreatedBy,
+        selectedStartDate,
+        selectedEndDate,
+      });
+    }
+  }, [selectedAssignees, selectedCreatedBy, selectedStartDate, selectedEndDate, onFiltersChange]);
 
   return (
     <div className="px-4 py-2 border-b border-border">

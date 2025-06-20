@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { ChevronDown, User } from 'lucide-react';
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { useQuery } from '@tanstack/react-query';
+import type { Task } from '@/types/task';
 
 type Person = { name: string; avatar: string; };
 
@@ -14,15 +15,17 @@ const CreatedByFilterPopover = ({ selectedPeople, onChange }: CreatedByFilterPop
   const [isOpen, setIsOpen] = useState(false);
 
   // Fetch all tasks to get unique creators
-  const { data: tasks = [] } = useQuery({
+  const { data: tasks = [] } = useQuery<Task[]>({
     queryKey: ['/api/tasks'],
   });
 
   // Get unique creators from tasks, sorted alphabetically by first name
   const creators = useMemo(() => {
+    if (!Array.isArray(tasks)) return [];
+    
     const uniqueCreators = new Set<string>();
-    tasks.forEach(task => {
-      if (task.createdBy) {
+    tasks.forEach((task: Task) => {
+      if (task.createdBy && typeof task.createdBy === 'string') {
         uniqueCreators.add(task.createdBy);
       }
     });

@@ -23,6 +23,13 @@ interface TaskBoardContentProps {
   removeAssignee: (taskId: string) => void;
   addCollaborator: (taskId: string, person: any) => void;
   removeCollaborator: (taskId: string, idx: number) => void;
+  // Filter props
+  filters?: {
+    selectedAssignees: string[];
+    selectedCreatedBy: string[];
+    selectedStartDate?: Date;
+    selectedEndDate?: Date;
+  };
 }
 
 const TaskBoardContent = ({
@@ -42,6 +49,56 @@ const TaskBoardContent = ({
   addCollaborator,
   removeCollaborator,
 }: TaskBoardContentProps) => {
+  // Apply filters to task groups
+  const filteredTaskGroups = useMemo(() => {
+    if (!filters || (
+      filters.selectedAssignees.length === 0 &&
+      filters.selectedCreatedBy.length === 0 &&
+      !filters.selectedStartDate &&
+      !filters.selectedEndDate
+    )) {
+      return taskGroups;
+    }
+
+    return taskGroups.map(group => ({
+      ...group,
+      tasks: group.tasks.filter(task => {
+        // Filter by assignee
+        if (filters.selectedAssignees.length > 0) {
+          const assigneeName = task.assignee?.name || '';
+          if (!filters.selectedAssignees.includes(assigneeName)) {
+            return false;
+          }
+        }
+
+        // Filter by created by
+        if (filters.selectedCreatedBy.length > 0) {
+          if (!filters.selectedCreatedBy.includes(task.createdBy)) {
+            return false;
+          }
+        }
+
+        // Filter by date range
+        if (filters.selectedStartDate || filters.selectedEndDate) {
+          const taskDate = task.dateCreated ? new Date(task.dateCreated) : null;
+          if (!taskDate) return false;
+
+          if (filters.selectedStartDate && taskDate < filters.selectedStartDate) {
+            return false;
+          }
+          if (filters.selectedEndDate && taskDate > filters.selectedEndDate) {
+            return false;
+          }
+        }
+
+        return true;
+      }),
+      count: 0 // Will be recalculated
+    })).map(group => ({
+      ...group,
+      count: group.tasks.length
+    }));
+  }, [taskGroups, filters]);
   const renderedGroups = React.useMemo(
     () => taskGroups
       .filter((group: TaskGroup) => showClosed ? group.status === 'completed' : group.status !== 'completed')
