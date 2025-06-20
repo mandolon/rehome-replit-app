@@ -33,8 +33,8 @@ const TimesheetsPage = () => {
         <div className="flex-1 overflow-hidden p-4 space-y-4">
           {activeTab === 'timesheet' ? (
             <>
-              <TimesheetStats selectedWeek={selectedWeek} refreshTrigger={refreshTrigger} />
               <TimesheetCalendarSelector selectedWeek={selectedWeek} onWeekChange={setSelectedWeek} />
+              <TimesheetStats selectedWeek={selectedWeek} refreshTrigger={refreshTrigger} />
               <TimesheetTable selectedWeek={selectedWeek} refreshTrigger={refreshTrigger} />
             </>
           ) : (
