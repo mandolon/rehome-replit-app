@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutGrid, Users, ClipboardList, FileText, Settings, BarChart3 } from 'lucide-react';
+import { LayoutGrid, Users, ClipboardList, FileText, Settings, BarChart3, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
