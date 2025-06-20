@@ -7,7 +7,7 @@ import { getProjectIdFromDisplayName } from '@/utils/projectMapping';
 import { useTaskContext } from '@/contexts/TaskContext';
 import { useUser } from '@/contexts/UserContext';
 import { TaskUser, Task } from '@/types/task';
-import { useTaskData } from '@/hooks/useTaskData';
+import { useTaskBoard } from '@/hooks/useTaskBoard';
 import { canUserViewTask } from '@/utils/taskVisibility';
 
 const TaskDetailPage = () => {
@@ -21,15 +21,15 @@ const TaskDetailPage = () => {
 
   const [currentTask, setCurrentTask] = useState<Task | null>(null);
 
-  // Get tasks from the clean data hook
-  const { tasks, isLoading } = useTaskData();
+  // NEW: Get realtime tasks from Supabase-powered board
+  const { supabaseTasks, supabaseTasksLoading } = useTaskBoard();
 
   useEffect(() => {
     let fetchedTask: Task | null = null;
     if (taskId) {
-      // 1. Look in current tasks
-      if (tasks && tasks.length > 0) {
-        fetchedTask = tasks.find(
+      // 1. First look in Supabase-powered realtime tasks (if present)
+      if (supabaseTasks && supabaseTasks.length > 0) {
+        fetchedTask = supabaseTasks.find(
           t => t.taskId === taskId || t.id === Number(taskId)
         ) || null;
       }
@@ -42,9 +42,11 @@ const TaskDetailPage = () => {
           fetchedTask = taskFromCustom;
         }
       }
+      // 3. (Optional: fallback to direct backend fetch)
+      // (removed getTaskByTaskId/getTaskById which are static/legacy)
     }
     setCurrentTask(fetchedTask);
-  }, [taskId, refreshTrigger, customTasks, tasks]);
+  }, [taskId, refreshTrigger, customTasks, supabaseTasks]);
 
   const handleBack = () => {
     if (returnTo) {
@@ -91,7 +93,7 @@ const TaskDetailPage = () => {
   }, [currentTask, currentUser]);
 
   // Improved loading/error UI
-  if (isLoading) {
+  if (supabaseTasksLoading) {
     return (
       <AppLayout>
         <div className="h-full flex items-center justify-center">

@@ -6,8 +6,7 @@ import TaskRowAssignees from './TaskRowAssignees';
 import TaskRowContextMenu from './TaskRowContextMenu';
 import TaskRowCreatedBy from './TaskRowCreatedBy';
 import DeleteTaskDialog from '../DeleteTaskDialog';
-import { taskApi } from '@/api/tasks';
-import { useToast } from '@/hooks/use-toast';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { formatDate } from '@/utils/taskUtils';
 import { Task } from '@/types/task';
 
@@ -52,7 +51,28 @@ const TaskRow = React.memo(({
 }: TaskRowProps) => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  // Direct API delete mutation
+  const deleteTaskMutation = useMutation({
+    mutationFn: async (taskId: string) => {
+      const response = await fetch(`/api/tasks/${taskId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return taskId;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['task-board-data'] });
+      setShowDeleteDialog(false);
+      setIsDeleting(false);
+    },
+    onError: () => {
+      setIsDeleting(false);
+    }
+  });
 
   const formattedDate = useMemo(() => formatDate(task.dateCreated), [task.dateCreated]);
 
@@ -69,22 +89,15 @@ const TaskRow = React.memo(({
   const handleDeleteTaskInternal = useCallback(async () => {
     setIsDeleting(true);
     try {
-      await taskApi.deleteTask(task.taskId);
-      setShowDeleteDialog(false);
-      setIsDeleting(false);
-      toast({ description: 'Task moved to trash' });
+      await deleteTaskMutation.mutateAsync(task.taskId);
       if (onTaskDeleted) {
         onTaskDeleted();
       }
     } catch (error) {
       console.error('Delete failed:', error);
       setIsDeleting(false);
-      toast({ 
-        description: 'Failed to delete task',
-        variant: 'destructive' 
-      });
     }
-  }, [task.taskId, onTaskDeleted, toast]);
+  }, [deleteTaskMutation, task.taskId, onTaskDeleted]);
 
   const handleCloseDeleteDialog = useCallback(() => {
     setShowDeleteDialog(false);

@@ -1,10 +1,11 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Search, RotateCcw, Trash2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { formatDate } from '@/utils/taskUtils';
-import { taskApi } from '@/api/tasks';
+
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Task } from '@/types/task';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,30 +16,47 @@ const TrashTab = () => {
   const [emptyingTrash, setEmptyingTrash] = useState(false);
   const [optimisticallyRestored, setOptimisticallyRestored] = useState<string[]>([]);
   const [optimisticallyDeleted, setOptimisticallyDeleted] = useState<string[]>([]);
-  const [allTasks, setAllTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
-  // Load all tasks including deleted ones
-  const loadAllTasks = async () => {
-    try {
-      setLoading(true);
-      const tasks = await taskApi.getAllTasks();
-      setAllTasks(tasks);
-    } catch (error) {
-      console.error('Error loading tasks:', error);
-      toast({ 
-        description: 'Failed to load tasks',
-        variant: 'destructive' 
-      });
-    } finally {
-      setLoading(false);
+  // Fetch all tasks including deleted ones with direct API call
+  const { data: allTasks = [], isLoading: loading } = useQuery({
+    queryKey: ['api-tasks-all'],
+    queryFn: async () => {
+      const response = await fetch('/api/tasks/all');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    },
+    refetchOnWindowFocus: false,
+  });
+
+  // Direct API restore function
+  const restoreTask = async (taskId: string, updates: Partial<Task>) => {
+    const response = await fetch(`/api/tasks/${taskId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updates),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+    return response.json();
   };
 
-  useEffect(() => {
-    loadAllTasks();
-  }, []);
+  // Direct API permanent delete function
+  const permanentDeleteTask = async (taskId: string) => {
+    const response = await fetch(`/api/tasks/${taskId}/permanent`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return taskId;
+  };
 
   const deletedTasks = useMemo(() => {
     return allTasks.filter(
@@ -68,10 +86,12 @@ const TrashTab = () => {
     }
 
     try {
-      await taskApi.restoreTask(task.taskId);
+      await restoreTask(task.taskId, { deletedAt: null, deletedBy: null });
       
-      // Refresh the task list
-      await loadAllTasks();
+      // Refresh both task lists
+      queryClient.invalidateQueries({ queryKey: ['api-tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['api-tasks-all'] });
+      queryClient.invalidateQueries({ queryKey: ['task-board-data'] });
       
       setOptimisticallyRestored((prev) => [...prev, taskId.toString()]);
 
@@ -128,10 +148,12 @@ const TrashTab = () => {
       // Optimistically remove from UI
       setOptimisticallyDeleted(prev => [...prev, taskId.toString()]);
       
-      await taskApi.permanentDeleteTask(task.taskId);
+      await permanentDeleteTask(task.taskId);
       
-      // Refresh the task list
-      await loadAllTasks();
+      // Refresh both task lists
+      queryClient.invalidateQueries({ queryKey: ['api-tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['api-tasks-all'] });
+      queryClient.invalidateQueries({ queryKey: ['task-board-data'] });
       toast({ 
         description: (
           <span>
@@ -187,11 +209,13 @@ const TrashTab = () => {
       setOptimisticallyDeleted(prev => [...prev, ...taskIds]);
       
       // Delete all tasks
-      const promises = deletedTasks.map((task: Task) => taskApi.permanentDeleteTask(task.taskId));
+      const promises = deletedTasks.map((task: Task) => permanentDeleteTask(task.taskId));
       await Promise.all(promises);
       
-      // Refresh the task list
-      await loadAllTasks();
+      // Refresh both task lists
+      queryClient.invalidateQueries({ queryKey: ['api-tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['api-tasks-all'] });
+      queryClient.invalidateQueries({ queryKey: ['task-board-data'] });
       
       toast({ 
         description: (
