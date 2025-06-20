@@ -68,10 +68,9 @@ const TaskBoard: React.FC = React.memo(() => {
 
     // If attachments exist, try to find the new task (by title/project/dateCreated) and add them
     if (taskData.attachments && taskData.attachments.length > 0) {
-      const latestGroups = getTaskGroups();
       let foundTask = null;
-      for (const group of latestGroups) {
-        foundTask = group.tasks.find(t =>
+      for (const group of taskGroups) {
+        foundTask = group.tasks.find((t: any) =>
           t.title === taskData.title &&
           t.projectId === taskData.projectId &&
           t.dateCreated === taskData.dateCreated
@@ -85,7 +84,7 @@ const TaskBoard: React.FC = React.memo(() => {
       }
     }
     setShowQuickAdd(null);
-  }, [handleQuickAddSave, addAttachments, getTaskGroups, setShowQuickAdd]);
+  }, [handleQuickAddSave, addAttachments, taskGroups, setShowQuickAdd]);
 
   // Dialog open/close
   const onDialogOpen = React.useCallback(() => setIsTaskDialogOpen(true), [setIsTaskDialogOpen]);
