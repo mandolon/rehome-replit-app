@@ -91,18 +91,19 @@ const TrashTab = () => {
     }
 
     // Filter by search query
-    if (searchQuery.trim()) {
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
       filtered = filtered.filter((item: TrashItem) =>
-        item.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.itemId?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.itemType?.toLowerCase().includes(searchQuery.toLowerCase())
+        item.title.toLowerCase().includes(query) ||
+        item.itemId.toLowerCase().includes(query) ||
+        (item.description && item.description.toLowerCase().includes(query))
       );
     }
 
     // Sort items
-    return filtered.sort((a: TrashItem, b: TrashItem) => {
-      let aValue: string | number, bValue: string | number;
-      
+    filtered.sort((a: TrashItem, b: TrashItem) => {
+      let aValue, bValue;
+
       switch (sortBy) {
         case 'title':
           aValue = a.title.toLowerCase();
@@ -120,45 +121,51 @@ const TrashTab = () => {
       }
 
       if (sortDirection === 'asc') {
-        return aValue > bValue ? 1 : -1;
+        return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
       } else {
-        return aValue < bValue ? 1 : -1;
+        return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
       }
     });
 
     return filtered;
-  }, [visibleTrashItems, searchQuery, selectedItemType, sortBy, sortDirection]);
+  }, [visibleTrashItems, selectedItemType, searchQuery, sortBy, sortDirection]);
 
   const itemTypeCounts = useMemo(() => {
-    const counts = { all: 0, task: 0, project: 0, note: 0 };
+    const counts = {
+      all: visibleTrashItems.length,
+      task: 0,
+      project: 0,
+      note: 0
+    };
+
     visibleTrashItems.forEach((item: TrashItem) => {
-      counts.all++;
-      counts[item.itemType as keyof typeof counts]++;
+      if (item.itemType === 'task') counts.task++;
+      else if (item.itemType === 'project') counts.project++;
+      else if (item.itemType === 'note') counts.note++;
     });
+
     return counts;
   }, [visibleTrashItems]);
 
   const handleRestore = async (trashItemId: string) => {
-    setRestoringIds((prev) => [...prev, trashItemId]);
     const trashItem = allTrashItems.find((item: TrashItem) => item.id === trashItemId);
-
-    if (!trashItem) {
-      console.error("[TrashTab] Restore failed: Trash item not found.", { trashItemId });
-      setRestoringIds((prev) => prev.filter(id => id !== trashItemId));
-      return;
-    }
+    if (!trashItem) return;
 
     try {
+      setRestoringIds((prev) => [...prev, trashItemId]);
+      
+      // Optimistically remove from UI
+      setOptimisticallyRestored(prev => [...prev, trashItemId]);
+      
       await restoreTrashItem(trashItemId);
       
-      // Refresh trash items and related data
+      // Refresh related data
       queryClient.invalidateQueries({ queryKey: ['api-trash-items'] });
       queryClient.invalidateQueries({ queryKey: ['api-tasks'] });
       queryClient.invalidateQueries({ queryKey: ['task-board-data'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/projects'] });
       
-      setOptimisticallyRestored((prev) => [...prev, trashItemId]);
-
-      toast({
+      toast({ 
         description: (
           <span>
             <span className="font-semibold">{trashItem.itemType === 'task' ? 'Task' : trashItem.itemType === 'project' ? 'Project' : 'Note'}</span>
@@ -171,11 +178,11 @@ const TrashTab = () => {
                 navigate('/tasks');
               }}
             >
-              Go to {trashItem.itemType === 'task' ? 'tasks' : trashItem.itemType === 'project' ? 'projects' : 'notes'}
+              Go to tasks
             </button>
           </span>
         ),
-        duration: 3500,
+        duration: 3000 
       });
     } catch (e) {
       console.error('Error restoring item:', e);
@@ -264,15 +271,14 @@ const TrashTab = () => {
   const handleEmptyTrash = async () => {
     if (visibleTrashItems.length === 0) return;
     
-    setEmptyingTrash(true);
-    const trashItemIds = visibleTrashItems.map((item: TrashItem) => item.id);
-    
     try {
+      setEmptyingTrash(true);
+      const trashItemIds = visibleTrashItems.map((item: TrashItem) => item.id);
+      
       // Optimistically remove all items from UI
       setOptimisticallyDeleted(prev => [...prev, ...trashItemIds]);
       
-      // Empty all trash items via API
-      const response = await fetch('/api/trash', {
+      const response = await fetch('/api/trash/empty', {
         method: 'DELETE',
       });
       
@@ -280,7 +286,7 @@ const TrashTab = () => {
         throw new Error('Failed to empty trash');
       }
       
-      // Refresh trash items and related data
+      // Refresh data
       queryClient.invalidateQueries({ queryKey: ['api-trash-items'] });
       queryClient.invalidateQueries({ queryKey: ['api-tasks'] });
       queryClient.invalidateQueries({ queryKey: ['task-board-data'] });
@@ -403,16 +409,28 @@ const TrashTab = () => {
   if (loading) {
     return (
       <div className="h-full flex flex-col">
-        <div className="border-b border-border px-4 py-3">
-          <div className="flex items-center justify-between mb-4">
+        <div className="border-b border-border px-4 py-1">
+          <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-medium text-foreground">Trash</h2>
-              <p className="text-sm text-muted-foreground mt-1">Deleted items from your workspace</p>
+              <h2 className="text-base font-semibold text-foreground">Trash</h2>
+              <p className="text-xs text-muted-foreground">Deleted items from your workspace</p>
             </div>
           </div>
-          <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input placeholder="Search deleted items..." className="pl-10" disabled />
+        </div>
+        <div className="px-4 py-2 border-b border-border">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold text-gray-700 dark:text-gray-300 pr-2">Filter by:</span>
+            <div className="ml-auto flex items-center gap-2">
+              <div className="relative">
+                <Search className="w-3 h-3 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input 
+                  type="text" 
+                  placeholder="Search deleted items..." 
+                  disabled
+                  className="pl-7 pr-3 py-1 border border-border rounded text-xs w-48"
+                />
+              </div>
+            </div>
           </div>
         </div>
         <div className="flex-1 flex items-center justify-center">
@@ -425,11 +443,11 @@ const TrashTab = () => {
   return (
     <div className="h-full flex flex-col">
       {/* Header Section - matching task board style */}
-      <div className="border-b border-border px-4 py-3">
-        <div className="flex items-center justify-between mb-4">
+      <div className="border-b border-border px-4 py-1">
+        <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-medium text-foreground">Trash</h2>
-            <p className="text-sm text-muted-foreground mt-1">Deleted items from your workspace</p>
+            <h2 className="text-base font-semibold text-foreground">Trash</h2>
+            <p className="text-xs text-muted-foreground">Deleted items from your workspace</p>
           </div>
           {visibleTrashItems.length > 0 && (
             <Button
@@ -437,73 +455,76 @@ const TrashTab = () => {
               size="sm"
               onClick={handleEmptyTrash}
               disabled={emptyingTrash}
+              className="text-xs"
             >
-              <Trash2 className="w-4 h-4 mr-2" />
+              <Trash2 className="w-3 h-3 mr-1" />
               {emptyingTrash ? 'Emptying...' : 'Empty Trash'}
             </Button>
           )}
         </div>
-        
-        {/* Search and Filter Controls */}
-        <div className="flex flex-col gap-4">
-          <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              placeholder="Search deleted items..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
-          </div>
+      </div>
+
+      {/* Filters Section - matching task board filters */}
+      <div className="px-4 py-2 border-b border-border">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-bold text-gray-700 dark:text-gray-300 pr-2">Filter by:</span>
           
-          <div className="flex flex-wrap gap-3 items-center">
-            <div className="flex gap-1">
-              {[
-                { key: 'all', label: 'All Items', count: itemTypeCounts.all },
-                { key: 'task', label: 'Tasks', count: itemTypeCounts.task },
-                { key: 'project', label: 'Projects', count: itemTypeCounts.project },
-                { key: 'note', label: 'Notes', count: itemTypeCounts.note }
-              ].map((filter) => (
-                <Button
-                  key={filter.key}
-                  variant={selectedItemType === filter.key ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setSelectedItemType(filter.key)}
-                  className="h-8 px-3 text-xs"
-                >
-                  {filter.label} ({filter.count})
-                </Button>
-              ))}
+          {[
+            { key: 'all', label: 'All Items', count: itemTypeCounts.all },
+            { key: 'task', label: 'Tasks', count: itemTypeCounts.task },
+            { key: 'project', label: 'Projects', count: itemTypeCounts.project },
+            { key: 'note', label: 'Notes', count: itemTypeCounts.note }
+          ].map((filter) => (
+            <button
+              key={filter.key}
+              onClick={() => setSelectedItemType(filter.key)}
+              className={`flex items-center gap-1 px-2 py-1 text-xs rounded border ${
+                selectedItemType === filter.key
+                  ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 border-blue-200 dark:border-blue-700'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-transparent hover:border-gray-200 dark:hover:border-gray-700'
+              }`}
+            >
+              {filter.label} ({filter.count})
+            </button>
+          ))}
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center gap-1 px-2 py-1 text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 rounded text-xs border border-transparent hover:border-gray-200 dark:hover:border-gray-700">
+                Sort by {sortBy === 'deletedAt' ? 'Date' : sortBy === 'itemType' ? 'Type' : 'Title'}
+                <ChevronDown className="w-3 h-3" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => { setSortBy('deletedAt'); setSortDirection('desc'); }}>
+                Date Deleted (Newest)
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => { setSortBy('deletedAt'); setSortDirection('asc'); }}>
+                Date Deleted (Oldest)
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => { setSortBy('title'); setSortDirection('asc'); }}>
+                Title (A-Z)
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => { setSortBy('title'); setSortDirection('desc'); }}>
+                Title (Z-A)
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => { setSortBy('itemType'); setSortDirection('asc'); }}>
+                Type (A-Z)
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          
+          <div className="ml-auto flex items-center gap-2">
+            <div className="relative">
+              <Search className="w-3 h-3 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input 
+                type="text" 
+                placeholder="Search deleted items..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-7 pr-3 py-1 border border-border rounded text-xs w-48"
+              />
             </div>
-            
-            <div className="h-4 w-px bg-border" />
-            
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-8 px-3 text-xs">
-                  <ArrowUpDown className="w-3 h-3 mr-2" />
-                  Sort by {sortBy === 'deletedAt' ? 'Date' : sortBy === 'itemType' ? 'Type' : 'Title'}
-                  <ChevronDown className="w-3 h-3 ml-1" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => { setSortBy('deletedAt'); setSortDirection('desc'); }}>
-                  Date Deleted (Newest)
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => { setSortBy('deletedAt'); setSortDirection('asc'); }}>
-                  Date Deleted (Oldest)
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => { setSortBy('title'); setSortDirection('asc'); }}>
-                  Title (A-Z)
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => { setSortBy('title'); setSortDirection('desc'); }}>
-                  Title (Z-A)
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => { setSortBy('itemType'); setSortDirection('asc'); }}>
-                  Type (A-Z)
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         </div>
       </div>
@@ -564,42 +585,42 @@ const TrashTab = () => {
                             <div className="text-xs text-muted-foreground truncate mt-0.5">{item.description}</div>
                           )}
                           {getItemContext(item) && (
-                            <div className="text-xs text-muted-foreground truncate mt-0.5 italic">
-                              {getItemContext(item)}
-                            </div>
+                            <div className="text-xs text-muted-foreground truncate mt-0.5">{getItemContext(item)}</div>
                           )}
                         </div>
                       </div>
                     </TableCell>
                     <TableCell className="py-3">
-                      <span className="text-sm text-muted-foreground">{formatDate(item.deletedAt)}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {formatDate(item.deletedAt)}
+                      </span>
                     </TableCell>
                     <TableCell className="py-3">
-                      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center gap-2">
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRestore(item.id);
-                          }}
+                          onClick={() => handleRestore(item.id)}
                           disabled={restoringIds.includes(item.id)}
-                          className="text-xs h-7 px-2 hover:bg-accent/80"
+                          className="h-7 px-2 text-xs"
                         >
-                          <RotateCcw className="w-3 h-3 mr-1" />
-                          {restoringIds.includes(item.id) ? 'Restoring...' : 'Restore'}
+                          {restoringIds.includes(item.id) ? (
+                            'Restoring...'
+                          ) : (
+                            <>
+                              <RotateCcw className="w-3 h-3 mr-1" />
+                              Restore
+                            </>
+                          )}
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handlePermanentDelete(item.id);
-                          }}
-                          className="text-xs h-7 px-2 text-destructive hover:text-destructive hover:bg-destructive/10"
+                          onClick={() => handlePermanentDelete(item.id)}
+                          className="h-7 px-2 text-xs text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/20"
                         >
                           <Trash2 className="w-3 h-3 mr-1" />
-                          Delete Forever
+                          Delete
                         </Button>
                       </div>
                     </TableCell>
