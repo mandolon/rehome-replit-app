@@ -13,10 +13,11 @@ export function useRealtimeTasks() {
         case 'task_created':
         case 'task_updated':
         case 'task_deleted':
+        case 'task_restored':
         case 'message_created':
           // Invalidate and refetch tasks when any task-related event occurs
-          queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
-          queryClient.invalidateQueries({ queryKey: ['/api/tasks/all'] });
+          queryClient.invalidateQueries({ queryKey: ['tasks'] });
+          queryClient.invalidateQueries({ queryKey: ['work-records'] });
           break;
         
         default:

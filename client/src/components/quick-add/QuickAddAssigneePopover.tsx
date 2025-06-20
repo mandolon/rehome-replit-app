@@ -57,16 +57,23 @@ const QuickAddAssigneePopover: React.FC<QuickAddAssigneePopoverProps> = ({
                 >
                   {assigneeWithColor.name}
                 </div>
-                <button
-                  type="button"
-                  className="absolute -top-1.5 -right-1 rounded-full bg-muted/90 text-xs text-destructive hover:bg-destructive hover:text-white px-1"
+                <div
+                  className="absolute -top-1.5 -right-1 rounded-full bg-muted/90 text-xs text-destructive hover:bg-destructive hover:text-white px-1 cursor-pointer"
                   style={{ lineHeight: 1, fontSize: 13 }}
                   onClick={e => { e.stopPropagation(); setAssignee(null); }}
-                  tabIndex={-1}
                   title="Clear assignee"
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setAssignee(null);
+                    }
+                  }}
                 >
                   <X className="w-3 h-3" />
-                </button>
+                </div>
               </>
             ) : (
               <span className="w-7 h-7 flex items-center justify-center rounded-full bg-muted">

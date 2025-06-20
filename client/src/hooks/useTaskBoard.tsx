@@ -82,10 +82,40 @@ export const useTaskBoard = () => {
   // Generate a new taskId for every task insert
   const generateTaskId = () => "T" + Math.floor(Math.random() * 100000).toString().padStart(4, "0");
 
-  // Create task mutation
+  // Create task mutation with optimistic updates
   const createTaskMutation = useMutation({
     mutationFn: createTask,
-    onSuccess: () => {
+    onMutate: async (newTask) => {
+      // Cancel any outgoing refetches so they don't overwrite our optimistic update
+      await queryClient.cancelQueries({ queryKey: ['tasks'] });
+      
+      // Snapshot the previous value
+      const previousTasks = queryClient.getQueryData(['tasks']);
+      
+      // Optimistically update to the new value
+      queryClient.setQueryData(['tasks'], (old: Task[] = []) => [
+        ...old,
+        {
+          ...newTask,
+          id: Date.now(), // Temporary ID
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          archived: false,
+          deletedAt: null,
+          deletedBy: null,
+          workRecord: false,
+        }
+      ]);
+      
+      // Return a context object with the snapshotted value
+      return { previousTasks };
+    },
+    onError: (err, newTask, context) => {
+      // If the mutation fails, use the context returned from onMutate to roll back
+      queryClient.setQueryData(['tasks'], context?.previousTasks);
+    },
+    onSettled: () => {
+      // Always refetch after error or success to ensure server state
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
       setRefreshTrigger(prev => prev + 1);
     },
