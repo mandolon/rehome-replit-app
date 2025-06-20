@@ -61,7 +61,12 @@ const TaskBoard: React.FC = React.memo(() => {
   } = useTaskDeletion();
 
   // Board tasks
-  const taskGroups = React.useMemo(() => getTaskGroups(), [getTaskGroups, refreshTrigger]);
+  const taskGroups = React.useMemo(() => {
+    console.log('TaskBoard: Computing task groups, refreshTrigger:', refreshTrigger);
+    const groups = getTaskGroups();
+    console.log('TaskBoard: Task groups computed:', groups);
+    return groups;
+  }, [getTaskGroups, refreshTrigger]);
 
   // Quick Add handles attachments as in Supabase system
   const onQuickAddSave = React.useCallback(async (taskData: any) => {
