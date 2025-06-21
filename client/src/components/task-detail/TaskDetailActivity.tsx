@@ -101,14 +101,14 @@ const TaskDetailActivity = ({ taskId }: TaskDetailActivityProps) => {
   }
 
   return (
-    <div className="h-full flex flex-col bg-muted/30">
+    <div className="h-full flex flex-col bg-muted/30 dark:bg-gray-900/30">
       {/* Activity Header */}
-      <div className="p-3 bg-white" style={{ borderBottom: '1px solid #bbbbbb' }}>
-        <h3 className="text-sm font-semibold">Activity</h3>
+      <div className="p-3 bg-white dark:bg-gray-800" style={{ borderBottom: '1px solid #bbbbbb' }}>
+        <h3 className="text-sm font-semibold text-foreground">Activity</h3>
       </div>
 
       {/* Message List */}
-      <ScrollArea className="flex-1 p-3 max-h-full bg-muted/30">
+      <ScrollArea className="flex-1 p-3 max-h-full bg-muted/30 dark:bg-gray-900/30">
         <div ref={messageListRef} className="space-y-6">
         {loading && <div>Loading messages...</div>}
         {error && <div className="text-red-500 text-xs">{error}</div>}
