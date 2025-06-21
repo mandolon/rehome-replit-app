@@ -127,8 +127,11 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
   // Get all navigable items (search results or recent searches)
   const getNavigableItems = () => {
     if (searchQuery.length > 0) {
-      return getFilteredResults();
+      const results = getFilteredResults();
+      console.log('getNavigableItems for search:', results.length, 'items');
+      return results;
     } else {
+      console.log('getNavigableItems for recent searches:', recentSearches.length, 'items');
       return recentSearches;
     }
   };
@@ -230,18 +233,26 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
 
   // Filter results based on active filter and search query
   const getFilteredResults = () => {
-    if (!searchResults) return [];
+    console.log('getFilteredResults called - searchResults:', searchResults, 'activeFilter:', activeFilter);
+    if (!searchResults) {
+      console.log('No search results, returning empty array');
+      return [];
+    }
     
     if (activeFilter === 'all') {
-      return [
+      const results = [
         ...formatResults(searchResults.people?.slice(0, 2), 'people'),
         ...formatResults(searchResults.projects?.slice(0, 2), 'projects'),
         ...formatResults(searchResults.tasks?.slice(0, 2), 'tasks')
       ];
+      console.log('All filter results:', results);
+      return results;
     }
     
     const data = searchResults[activeFilter as keyof typeof searchResults];
-    return formatResults(data, activeFilter);
+    const results = formatResults(data, activeFilter);
+    console.log('Filtered results for', activeFilter, ':', results);
+    return results;
   };
 
   // Handle click outside to close popup
