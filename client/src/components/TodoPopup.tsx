@@ -16,14 +16,23 @@ interface TodoPopupProps {
 const TodoPopup = ({ isOpen, onClose }: TodoPopupProps) => {
   const [todos, setTodos] = useState<TodoItem[]>([]);
   const [newTodoText, setNewTodoText] = useState('');
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isOpen && inputRef.current) {
       inputRef.current.focus();
+      setSelectedIndex(-1);
     }
   }, [isOpen]);
+
+  // Reset selected index when todos change
+  useEffect(() => {
+    if (selectedIndex >= todos.length) {
+      setSelectedIndex(todos.length - 1);
+    }
+  }, [todos, selectedIndex]);
 
   // Handle click outside to close popup
   useEffect(() => {
@@ -42,6 +51,52 @@ const TodoPopup = ({ isOpen, onClose }: TodoPopupProps) => {
     };
   }, [isOpen, onClose]);
 
+  const toggleTodo = (id: string) => {
+    setTodos(todos.map(todo => 
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo
+    ));
+  };
+
+  // Global keyboard navigation
+  useEffect(() => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      if (!isOpen) return;
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setSelectedIndex(prev => {
+          const newIndex = prev < todos.length - 1 ? prev + 1 : prev;
+          return newIndex;
+        });
+        // Blur input to allow navigation
+        if (inputRef.current && document.activeElement === inputRef.current) {
+          inputRef.current.blur();
+        }
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setSelectedIndex(prev => {
+          const newIndex = prev > -1 ? prev - 1 : -1;
+          return newIndex;
+        });
+        // Blur input to allow navigation
+        if (inputRef.current && document.activeElement === inputRef.current) {
+          inputRef.current.blur();
+        }
+      } else if (e.key === 'Enter' && selectedIndex >= 0 && selectedIndex < todos.length) {
+        e.preventDefault();
+        toggleTodo(todos[selectedIndex].id);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleGlobalKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleGlobalKeyDown);
+    };
+  }, [isOpen, todos, selectedIndex, toggleTodo]);
+
   const addTodo = () => {
     if (newTodoText.trim()) {
       const newTodo: TodoItem = {
@@ -54,17 +109,11 @@ const TodoPopup = ({ isOpen, onClose }: TodoPopupProps) => {
     }
   };
 
-  const toggleTodo = (id: string) => {
-    setTodos(todos.map(todo => 
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    ));
-  };
-
   const deleteTodo = (id: string) => {
     setTodos(todos.filter(todo => todo.id !== id));
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleInputKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       addTodo();
     }
@@ -122,7 +171,11 @@ const TodoPopup = ({ isOpen, onClose }: TodoPopupProps) => {
                   {todos.map((todo, index) => (
                     <div
                       key={todo.id}
-                      className="group py-1 transition-all hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded"
+                      className={`group py-1 transition-all rounded ${
+                        index === selectedIndex
+                          ? 'bg-blue-100 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700'
+                          : 'hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                      }`}
                     >
                       <div className="flex items-center gap-2">
                         <span className="flex-shrink-0 w-6 text-sm text-gray-500 dark:text-gray-400 text-center">
