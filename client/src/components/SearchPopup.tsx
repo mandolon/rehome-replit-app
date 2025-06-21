@@ -192,6 +192,8 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     );
   };
 
+  if (!isOpen) return null;
+
   return (
     <>
       {/* Backdrop */}
