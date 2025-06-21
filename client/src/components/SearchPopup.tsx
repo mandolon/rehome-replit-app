@@ -261,9 +261,11 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
                   navigate('/teams');
                   break;
                 case 'projects':
+                  console.log('Keyboard project navigation:', { selectedItem });
                   if (selectedItem.projectId) {
                     navigate(`/project/${selectedItem.projectId}`);
                   } else {
+                    console.warn('No projectId in keyboard navigation, falling back to projects page');
                     navigate('/projects');
                   }
                   break;
@@ -397,7 +399,13 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
         break;
       case 'projects':
         const projectId = result.projectId || result.id;
-        navigate(`/project/${projectId}`);
+        console.log('Project clicked:', { result, projectId });
+        if (projectId) {
+          navigate(`/project/${projectId}`);
+        } else {
+          console.warn('No projectId found, falling back to projects page');
+          navigate('/projects');
+        }
         break;
       case 'people':
         navigate(`/teams`);
@@ -509,9 +517,11 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           navigate('/teams');
           break;
         case 'projects':
+          console.log('Recent project clicked:', { search });
           if (search.projectId) {
             navigate(`/project/${search.projectId}`);
           } else {
+            console.warn('No projectId in recent search, falling back to projects page');
             navigate('/projects');
           }
           break;
