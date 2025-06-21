@@ -11,7 +11,7 @@ interface TaskDetailHeaderProps {
 
 const TaskDetailHeader = ({ task, onClose, onProjectClick }: TaskDetailHeaderProps) => {
   return (
-    <div className="border-b border-border px-6 py-4 flex-shrink-0 bg-background/80 backdrop-blur-sm">
+    <div className="border-b border-border px-6 py-2 flex-shrink-0 bg-background/80 backdrop-blur-sm">
       <div className="flex items-center gap-3">
         <button 
           onClick={onClose} 
