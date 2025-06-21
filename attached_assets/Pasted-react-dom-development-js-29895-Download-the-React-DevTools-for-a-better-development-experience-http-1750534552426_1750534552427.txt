@@ -1,0 +1,206 @@
+react-dom.development.js:29895 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+AppLayout.tsx:35 Sidebar resize: 12.7123570021
+App.tsx:52 App component is rendering, current path: /tasks
+useRealtimeTasks.tsx:37 Attempting WebSocket connection to: wss://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev:443/ws
+useTaskBoard.tsx:26 Making direct API call for tasks
+useTaskBoard.tsx:45 Query state - Loading: true Error: null Tasks count: 0
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+useTaskBoard.tsx:45 Query state - Loading: true Error: null Tasks count: 0
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+useTaskBoard.tsx:32 Tasks loaded: 7
+useTaskBoard.tsx:45 Query state - Loading: false Error: null Tasks count: 7
+useTaskBoard.tsx:47 First task: Object
+useRealtimeTasks.tsx:41 WebSocket connected for real-time updates
+PageHeader.tsx:54 Searching for: p with filter: all
+SearchPopup.tsx:224 getFilteredResults called - searchResults: Object activeFilter: all
+SearchPopup.tsx:236 All filter results: Array(4)
+SearchPopup.tsx:518 Result 0: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:518 Result 1: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:518 Result 2: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:518 Result 3: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:301 ArrowDown pressed, navigableItems: 0 selectedIndex: -1
+SearchPopup.tsx:307 No navigable items available
+SearchPopup.tsx:301 ArrowDown pressed, navigableItems: 0 selectedIndex: -1
+SearchPopup.tsx:307 No navigable items available
+SearchPopup.tsx:301 ArrowDown pressed, navigableItems: 0 selectedIndex: -1
+SearchPopup.tsx:307 No navigable items available
+SearchPopup.tsx:301 ArrowDown pressed, navigableItems: 0 selectedIndex: -1
+SearchPopup.tsx:307 No navigable items available
+SearchPopup.tsx:301 ArrowDown pressed, navigableItems: 0 selectedIndex: -1
+SearchPopup.tsx:307 No navigable items available
+SearchPopup.tsx:301 ArrowDown pressed, navigableItems: 0 selectedIndex: -1
+SearchPopup.tsx:307 No navigable items available
+SearchPopup.tsx:224 getFilteredResults called - searchResults: Object activeFilter: all
+SearchPopup.tsx:236 All filter results: Array(4)
+[NEW] Explain Console errors by using Copilot in Edge: click
+         
+         to explain an error. 
+        Learn more
+        Don't show again
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(10), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:518 Result 0: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:518 Result 1: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:518 Result 2: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:518 Result 3: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:301 ArrowDown pressed, navigableItems: 4 selectedIndex: -1
+SearchPopup.tsx:304 Setting selectedIndex to: 0
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(10), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:518 Result 0: isSelected=true, searchQuery.length=1, selectedIndex=0
+SearchPopup.tsx:518 Result 1: isSelected=false, searchQuery.length=1, selectedIndex=0
+SearchPopup.tsx:518 Result 2: isSelected=false, searchQuery.length=1, selectedIndex=0
+SearchPopup.tsx:518 Result 3: isSelected=false, searchQuery.length=1, selectedIndex=0
+SearchPopup.tsx:301 ArrowDown pressed, navigableItems: 4 selectedIndex: 0
+SearchPopup.tsx:304 Setting selectedIndex to: 1
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(10), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:518 Result 0: isSelected=false, searchQuery.length=1, selectedIndex=1
+SearchPopup.tsx:518 Result 1: isSelected=true, searchQuery.length=1, selectedIndex=1
+SearchPopup.tsx:518 Result 2: isSelected=false, searchQuery.length=1, selectedIndex=1
+SearchPopup.tsx:518 Result 3: isSelected=false, searchQuery.length=1, selectedIndex=1
+SearchPopup.tsx:301 ArrowDown pressed, navigableItems: 4 selectedIndex: 1
+SearchPopup.tsx:304 Setting selectedIndex to: 2
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(10), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:518 Result 0: isSelected=false, searchQuery.length=1, selectedIndex=2
+SearchPopup.tsx:518 Result 1: isSelected=false, searchQuery.length=1, selectedIndex=2
+SearchPopup.tsx:518 Result 2: isSelected=true, searchQuery.length=1, selectedIndex=2
+SearchPopup.tsx:518 Result 3: isSelected=false, searchQuery.length=1, selectedIndex=2
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(10), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(10), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:518 Result 0: isSelected=false, searchQuery.length=1, selectedIndex=2
+SearchPopup.tsx:518 Result 1: isSelected=false, searchQuery.length=1, selectedIndex=2
+SearchPopup.tsx:518 Result 2: isSelected=true, searchQuery.length=1, selectedIndex=2
+SearchPopup.tsx:518 Result 3: isSelected=false, searchQuery.length=1, selectedIndex=2
+SearchPopup.tsx:301 ArrowDown pressed, navigableItems: 4 selectedIndex: 2
+SearchPopup.tsx:304 Setting selectedIndex to: 3
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(10), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:518 Result 0: isSelected=false, searchQuery.length=1, selectedIndex=3
+SearchPopup.tsx:518 Result 1: isSelected=false, searchQuery.length=1, selectedIndex=3
+SearchPopup.tsx:518 Result 2: isSelected=false, searchQuery.length=1, selectedIndex=3
+SearchPopup.tsx:518 Result 3: isSelected=true, searchQuery.length=1, selectedIndex=3
+SearchPopup.tsx:301 ArrowDown pressed, navigableItems: 4 selectedIndex: 3
+SearchPopup.tsx:304 Setting selectedIndex to: 0
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(10), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:518 Result 0: isSelected=true, searchQuery.length=1, selectedIndex=0
+SearchPopup.tsx:518 Result 1: isSelected=false, searchQuery.length=1, selectedIndex=0
+SearchPopup.tsx:518 Result 2: isSelected=false, searchQuery.length=1, selectedIndex=0
+SearchPopup.tsx:518 Result 3: isSelected=false, searchQuery.length=1, selectedIndex=0
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(10), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:518 Result 0: isSelected=false, searchQuery.length=1, selectedIndex=3
+SearchPopup.tsx:518 Result 1: isSelected=false, searchQuery.length=1, selectedIndex=3
+SearchPopup.tsx:518 Result 2: isSelected=false, searchQuery.length=1, selectedIndex=3
+SearchPopup.tsx:518 Result 3: isSelected=true, searchQuery.length=1, selectedIndex=3
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(10), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:518 Result 0: isSelected=false, searchQuery.length=1, selectedIndex=2
+SearchPopup.tsx:518 Result 1: isSelected=false, searchQuery.length=1, selectedIndex=2
+SearchPopup.tsx:518 Result 2: isSelected=true, searchQuery.length=1, selectedIndex=2
+SearchPopup.tsx:518 Result 3: isSelected=false, searchQuery.length=1, selectedIndex=2
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(10), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:518 Result 0: isSelected=false, searchQuery.length=1, selectedIndex=1
+SearchPopup.tsx:518 Result 1: isSelected=true, searchQuery.length=1, selectedIndex=1
+SearchPopup.tsx:518 Result 2: isSelected=false, searchQuery.length=1, selectedIndex=1
+SearchPopup.tsx:518 Result 3: isSelected=false, searchQuery.length=1, selectedIndex=1
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(10), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(10), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:518 Result 0: isSelected=false, searchQuery.length=1, selectedIndex=1
+SearchPopup.tsx:518 Result 1: isSelected=true, searchQuery.length=1, selectedIndex=1
+SearchPopup.tsx:518 Result 2: isSelected=false, searchQuery.length=1, selectedIndex=1
+SearchPopup.tsx:518 Result 3: isSelected=false, searchQuery.length=1, selectedIndex=1
+SearchPopup.tsx:301 ArrowDown pressed, navigableItems: 4 selectedIndex: 1
+SearchPopup.tsx:304 Setting selectedIndex to: 2
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(10), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:518 Result 0: isSelected=false, searchQuery.length=1, selectedIndex=2
+SearchPopup.tsx:518 Result 1: isSelected=false, searchQuery.length=1, selectedIndex=2
+SearchPopup.tsx:518 Result 2: isSelected=true, searchQuery.length=1, selectedIndex=2
+SearchPopup.tsx:518 Result 3: isSelected=false, searchQuery.length=1, selectedIndex=2
+SearchPopup.tsx:301 ArrowDown pressed, navigableItems: 4 selectedIndex: 2
+SearchPopup.tsx:304 Setting selectedIndex to: 3
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(10), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:518 Result 0: isSelected=false, searchQuery.length=1, selectedIndex=3
+SearchPopup.tsx:518 Result 1: isSelected=false, searchQuery.length=1, selectedIndex=3
+SearchPopup.tsx:518 Result 2: isSelected=false, searchQuery.length=1, selectedIndex=3
+SearchPopup.tsx:518 Result 3: isSelected=true, searchQuery.length=1, selectedIndex=3
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(10), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:518 Result 0: isSelected=false, searchQuery.length=1, selectedIndex=2
+SearchPopup.tsx:518 Result 1: isSelected=false, searchQuery.length=1, selectedIndex=2
+SearchPopup.tsx:518 Result 2: isSelected=true, searchQuery.length=1, selectedIndex=2
+SearchPopup.tsx:518 Result 3: isSelected=false, searchQuery.length=1, selectedIndex=2
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(10), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:518 Result 0: isSelected=false, searchQuery.length=1, selectedIndex=1
+SearchPopup.tsx:518 Result 1: isSelected=true, searchQuery.length=1, selectedIndex=1
+SearchPopup.tsx:518 Result 2: isSelected=false, searchQuery.length=1, selectedIndex=1
+SearchPopup.tsx:518 Result 3: isSelected=false, searchQuery.length=1, selectedIndex=1
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(10), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:518 Result 0: isSelected=true, searchQuery.length=1, selectedIndex=0
+SearchPopup.tsx:518 Result 1: isSelected=false, searchQuery.length=1, selectedIndex=0
+SearchPopup.tsx:518 Result 2: isSelected=false, searchQuery.length=1, selectedIndex=0
+SearchPopup.tsx:518 Result 3: isSelected=false, searchQuery.length=1, selectedIndex=0
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(10), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:518 Result 0: isSelected=false, searchQuery.length=1, selectedIndex=3
+SearchPopup.tsx:518 Result 1: isSelected=false, searchQuery.length=1, selectedIndex=3
+SearchPopup.tsx:518 Result 2: isSelected=false, searchQuery.length=1, selectedIndex=3
+SearchPopup.tsx:518 Result 3: isSelected=true, searchQuery.length=1, selectedIndex=3
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(10), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:518 Result 0: isSelected=false, searchQuery.length=1, selectedIndex=2
+SearchPopup.tsx:518 Result 1: isSelected=false, searchQuery.length=1, selectedIndex=2
+SearchPopup.tsx:518 Result 2: isSelected=true, searchQuery.length=1, selectedIndex=2
+SearchPopup.tsx:518 Result 3: isSelected=false, searchQuery.length=1, selectedIndex=2
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(10), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:518 Result 0: isSelected=false, searchQuery.length=1, selectedIndex=1
+SearchPopup.tsx:518 Result 1: isSelected=true, searchQuery.length=1, selectedIndex=1
+SearchPopup.tsx:518 Result 2: isSelected=false, searchQuery.length=1, selectedIndex=1
+SearchPopup.tsx:518 Result 3: isSelected=false, searchQuery.length=1, selectedIndex=1
+PageHeader.tsx:54 Searching for:  with filter: all
+PageHeader.tsx:54 Searching for: p with filter: all
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(10), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:518 Result 0: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:518 Result 1: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:518 Result 2: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:518 Result 3: isSelected=false, searchQuery.length=1, selectedIndex=-1
+PageHeader.tsx:54 Searching for: pe with filter: all
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(10), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:518 Result 0: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:518 Result 1: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:518 Result 2: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:518 Result 3: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(10), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:518 Result 0: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:518 Result 1: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:518 Result 2: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:518 Result 3: isSelected=false, searchQuery.length=2, selectedIndex=-1
+PageHeader.tsx:54 Searching for: pet with filter: all
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: [{…}]
+SearchPopup.tsx:518 Result 0: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:301 ArrowDown pressed, navigableItems: 0 selectedIndex: -1
+SearchPopup.tsx:307 No navigable items available
+SearchPopup.tsx:301 ArrowDown pressed, navigableItems: 0 selectedIndex: -1
+SearchPopup.tsx:307 No navigable items available

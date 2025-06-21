@@ -243,19 +243,20 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     return results;
   };
 
-  // Store the current filtered results for consistent keyboard navigation
-  const currentFilteredResults = searchQuery.length > 0 && searchResults ? getFilteredResults() : [];
-  
-  // Get all navigable items (search results or recent searches)
+  // Get all navigable items (search results or recent searches) - calculated dynamically
   const getNavigableItems = () => {
     if (searchQuery.length > 0) {
-      console.log('getNavigableItems for search:', currentFilteredResults.length, 'items');
-      return currentFilteredResults;
+      const currentResults = searchResults ? getFilteredResults() : [];
+      console.log('getNavigableItems for search:', currentResults.length, 'items, searchResults available:', !!searchResults);
+      return currentResults;
     } else {
       console.log('getNavigableItems for recent searches:', recentSearches.length, 'items');
       return recentSearches;
     }
   };
+
+  // Store the current filtered results for consistent rendering
+  const currentFilteredResults = searchQuery.length > 0 && searchResults ? getFilteredResults() : [];
 
   // Handle click outside to close popup
   useEffect(() => {
@@ -294,7 +295,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
       }
 
       // Handle navigation for both search results and recent searches
-      const navigableItems = searchQuery.length > 0 ? currentFilteredResults : recentSearches;
+      const navigableItems = getNavigableItems();
       
       if (event.key === 'ArrowDown') {
         event.preventDefault();
