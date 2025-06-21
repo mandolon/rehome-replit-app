@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, UserCheck, FolderOpen, File, Calendar, BookOpen, X } from 'lucide-react';
+import { Search, UserCheck, FolderOpen, File, Calendar, BookOpen, X, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -20,6 +20,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [searchCache, setSearchCache] = useState<Map<string, any>>(new Map());
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [isClearing, setIsClearing] = useState(false);
   const [recentSearches, setRecentSearches] = useState<any[]>(() => {
     // Load recent searches from localStorage
     try {
@@ -398,6 +399,23 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     }
   };
 
+  const clearAllRecentSearches = () => {
+    setIsClearing(true);
+    
+    // Wait for fade-out animation to complete, then clear the data
+    setTimeout(() => {
+      setRecentSearches([]);
+      setIsClearing(false);
+      
+      // Clear from localStorage
+      try {
+        localStorage.removeItem('recentSearches');
+      } catch (error) {
+        console.warn('Failed to clear recent searches from localStorage:', error);
+      }
+    }, 300); // 300ms matches the animation duration
+  };
+
   const handleResultClick = (result: SearchResult, type: string) => {
     // Save clicked item to recent searches
     saveToRecentSearches(result.title, type);
@@ -578,9 +596,28 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
               <div>
                 {/* Recent Searches Section */}
                 <div className="px-3 py-2">
-                  <h3 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1 pl-3">RECENT SEARCH</h3>
-                  <div>
-                    {recentSearches.map((search) => renderRecentSearchRow(search))}
+                  <div className="flex items-center justify-between mb-1 pl-3 pr-1">
+                    <h3 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">RECENT SEARCH</h3>
+                    {recentSearches.length > 0 && (
+                      <button
+                        onClick={clearAllRecentSearches}
+                        disabled={isClearing}
+                        className="flex items-center gap-1 px-2 py-1 text-[10px] text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded transition-colors disabled:opacity-50"
+                        title="Clear all recent searches"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                        <span>Clear All</span>
+                      </button>
+                    )}
+                  </div>
+                  <div className={`transition-opacity duration-300 ${isClearing ? 'opacity-0' : 'opacity-100'}`}>
+                    {recentSearches.length === 0 ? (
+                      <div className="text-center py-4">
+                        <p className="text-xs text-muted-foreground/70">No recent searches</p>
+                      </div>
+                    ) : (
+                      recentSearches.map((search) => renderRecentSearchRow(search))
+                    )}
                   </div>
                 </div>
 
