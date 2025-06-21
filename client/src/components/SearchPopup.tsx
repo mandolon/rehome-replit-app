@@ -153,7 +153,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           <Icon className="w-3 h-3 text-muted-foreground" />
         )}
         <div className="flex-1 min-w-0">
-          <span className="text-xs font-normal text-foreground">{result.title}</span>
+          <span className="text-xs font-light text-foreground">{result.title}</span>
           <span className="text-xs text-muted-foreground ml-2">{result.subtitle}</span>
         </div>
       </div>
@@ -185,7 +185,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
       >
         <Icon className="w-3 h-3 text-muted-foreground" />
         <div className="flex-1 min-w-0">
-          <span className="text-xs font-normal text-foreground">{search.query}</span>
+          <span className="text-xs font-light text-foreground">{search.query}</span>
           <span className="text-xs text-muted-foreground ml-2">{search.timestamp}</span>
         </div>
       </div>
@@ -257,7 +257,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
               <div>
                 {/* Recent Searches Section */}
                 <div className="px-3 py-2 border-b border-border">
-                  <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">RECENT SEARCHES</h3>
+                  <h3 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1">RECENT SEARCH</h3>
                   <div>
                     {recentSearches.map((search) => renderRecentSearchRow(search))}
                   </div>
