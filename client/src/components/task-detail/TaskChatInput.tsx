@@ -46,8 +46,8 @@ const TaskChatInput: React.FC<TaskChatInputProps> = ({ onSendMessage, disabled }
       <div className="relative w-full mx-auto max-w-2xl">
         <div className="flex flex-col">
           <div
-            className="relative flex items-end w-full rounded-2xl shadow-sm border border-border px-3 py-2 focus-within:ring-2 focus-within:ring-primary transition"
-            style={{ backgroundColor: 'white' }}
+            className="relative flex items-end w-full rounded-2xl shadow-sm px-3 py-2 focus-within:ring-2 focus-within:ring-primary transition"
+            style={{ backgroundColor: 'white', border: '1px solid #bbbbbb' }}
           >
             <textarea
               ref={textareaRef}

@@ -41,7 +41,7 @@ const TaskDetail = ({ isOpen, onClose, onProjectClick, task, onDeleted }: TaskDe
         </ScrollArea>
 
         {/* Activity Sidebar */}
-        <div className="w-[25vw] min-w-[280px] max-w-[600px] border-l border-border flex-shrink-0 overflow-hidden">
+        <div className="w-[25vw] min-w-[280px] max-w-[600px] flex-shrink-0 overflow-hidden" style={{ borderLeft: '1px solid #bbbbbb' }}>
           <TaskDetailActivity taskId={task.taskId} />
         </div>
       </div>
