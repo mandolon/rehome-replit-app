@@ -7,6 +7,7 @@ import { Calendar as ShadcnCalendar } from "@/components/ui/calendar";
 import AssigneeFilterPopover from './AssigneeFilterPopover';
 import CreatedByFilterPopover from './CreatedByFilterPopover';
 import NotePopup from './NotePopup';
+import TodoPopup from './TodoPopup';
 
 interface TaskBoardFiltersProps {
   onAddTask: () => void;
@@ -31,6 +32,7 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed, onFiltersChan
   const [selectedEndDate, setSelectedEndDate] = useState<Date | undefined>();
   const [selectedProject, setSelectedProject] = useState<string>('');
   const [notePopupOpen, setNotePopupOpen] = useState(false);
+  const [todoPopupOpen, setTodoPopupOpen] = useState(false);
 
   // Notify parent component when filters change
   useEffect(() => {
@@ -46,7 +48,7 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed, onFiltersChan
 
   return (
     <div className="px-4 py-2 border-b border-border">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1">
         <span className="text-xs font-bold text-gray-700 dark:text-gray-300 pr-2">Group by:</span>
         
         {/* Status Dropdown */}
@@ -199,6 +201,15 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed, onFiltersChan
             Add Note
           </button>
 
+          {/* Add ToDo button */}
+          <button 
+            onClick={() => setTodoPopupOpen(true)}
+            className="flex items-center gap-1 px-2 py-1 text-xs rounded border text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-transparent hover:border-gray-200 dark:hover:border-gray-700"
+          >
+            <Plus className="w-3 h-3" />
+            ToDo
+          </button>
+
           {/* Completed button moved here */}
           <button 
             onClick={() => {
@@ -230,6 +241,12 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed, onFiltersChan
       <NotePopup 
         isOpen={notePopupOpen} 
         onClose={() => setNotePopupOpen(false)} 
+      />
+
+      {/* Todo Popup */}
+      <TodoPopup 
+        isOpen={todoPopupOpen} 
+        onClose={() => setTodoPopupOpen(false)} 
       />
     </div>
   );
