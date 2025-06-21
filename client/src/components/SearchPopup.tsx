@@ -117,6 +117,13 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     ] as SearchResult[]
   };
 
+  // Helper function to assign roles to people
+  const getPersonRole = (username: string): string => {
+    const roles = ['Architect', 'Consultant', 'Designer', 'Client', 'Developer', 'Project Manager', 'Team Lead'];
+    const hash = username.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
+    return roles[hash % roles.length];
+  };
+
   // Format results from API to match component interface
   const formatResults = (data: any, type: string) => {
     if (!data) return [];
@@ -129,28 +136,28 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
       switch (type) {
         case 'people':
           title = item.username;
-          subtitle = 'User';
-          description = item.email || '';
+          subtitle = getPersonRole(item.username);
+          description = `${item.username} • ${getPersonRole(item.username)}`;
           break;
         case 'projects':
           title = item.title;
-          subtitle = item.status || 'Project';
-          description = item.description || item.clientName || '';
+          subtitle = 'Project';
+          description = `${item.title} • Project`;
           break;
         case 'tasks':
           title = item.title;
-          subtitle = item.status || 'Task';
-          description = item.description || '';
+          subtitle = 'Task';
+          description = `${item.title} • Task`;
           break;
         case 'files':
           title = item.name || item.title;
           subtitle = 'File';
-          description = item.description || '';
+          description = `${item.name || item.title} • File`;
           break;
         case 'notes':
           title = item.title;
           subtitle = 'Note';
-          description = item.content || '';
+          description = `${item.title} • Note`;
           break;
       }
       
