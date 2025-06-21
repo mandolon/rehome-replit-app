@@ -268,7 +268,33 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
                   }
                   break;
                 case 'tasks':
-                  navigate('/');
+                  if (selectedItem.taskId) {
+                    // Force navigation even if already on a task page
+                    const currentPath = window.location.pathname;
+                    const targetPath = `/task/${selectedItem.taskId}`;
+                    
+                    if (currentPath === targetPath) {
+                      // If we're already on this task page, force a refresh by going to home first
+                      navigate('/', { replace: true });
+                      setTimeout(() => {
+                        navigate(targetPath, {
+                          state: {
+                            returnTo: window.location.pathname,
+                            returnToName: 'Search'
+                          }
+                        });
+                      }, 10);
+                    } else {
+                      navigate(targetPath, {
+                        state: {
+                          returnTo: window.location.pathname,
+                          returnToName: 'Search'
+                        }
+                      });
+                    }
+                  } else {
+                    navigate('/');
+                  }
                   break;
                 case 'files':
                   console.log('File navigation:', selectedItem.query);
@@ -360,6 +386,17 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
       const updatedSearches = [projectSearch, ...recentSearches.filter(s => s.query !== result.title)].slice(0, 10);
       setRecentSearches(updatedSearches);
       localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
+    } else if (type === 'tasks') {
+      const taskSearch = {
+        query: result.title,
+        type: 'tasks',
+        taskId: result.taskId || result.id,
+        projectName: result.subtitle,
+        timestamp: new Date().toISOString()
+      };
+      const updatedSearches = [taskSearch, ...recentSearches.filter(s => s.query !== result.title)].slice(0, 10);
+      setRecentSearches(updatedSearches);
+      localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
     } else {
       saveToRecentSearches(result.title, type);
     }
@@ -368,12 +405,29 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     switch (type) {
       case 'tasks':
         const taskId = result.taskId || result.id;
-        navigate(`/task/${taskId}`, {
-          state: {
-            returnTo: window.location.pathname,
-            returnToName: 'Search'
-          }
-        });
+        // Force navigation even if already on a task page
+        const currentPath = window.location.pathname;
+        const targetPath = `/task/${taskId}`;
+        
+        if (currentPath === targetPath) {
+          // If we're already on this task page, force a refresh by going to home first
+          navigate('/', { replace: true });
+          setTimeout(() => {
+            navigate(targetPath, {
+              state: {
+                returnTo: window.location.pathname,
+                returnToName: 'Search'
+              }
+            });
+          }, 10);
+        } else {
+          navigate(targetPath, {
+            state: {
+              returnTo: window.location.pathname,
+              returnToName: 'Search'
+            }
+          });
+        }
         break;
       case 'projects':
         const projectId = result.projectId || result.id;
@@ -496,7 +550,33 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           }
           break;
         case 'tasks':
-          navigate('/');
+          if (search.taskId) {
+            // Force navigation even if already on a task page
+            const currentPath = window.location.pathname;
+            const targetPath = `/task/${search.taskId}`;
+            
+            if (currentPath === targetPath) {
+              // If we're already on this task page, force a refresh by going to home first
+              navigate('/', { replace: true });
+              setTimeout(() => {
+                navigate(targetPath, {
+                  state: {
+                    returnTo: window.location.pathname,
+                    returnToName: 'Search'
+                  }
+                });
+              }, 10);
+            } else {
+              navigate(targetPath, {
+                state: {
+                  returnTo: window.location.pathname,
+                  returnToName: 'Search'
+                }
+              });
+            }
+          } else {
+            navigate('/');
+          }
           break;
         case 'files':
           console.log('File navigation:', search.query);
