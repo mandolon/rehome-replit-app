@@ -133,40 +133,42 @@ const TaskDetailFields: React.FC<TaskDetailFieldsProps> = ({
         <label className="text-xs text-muted-foreground">
           Due Date
         </label>
-        <Popover>
-          <PopoverTrigger asChild>
-            <button
-              className={cn(
-                "text-left text-xs cursor-pointer hover:text-foreground transition-colors inline-block border-b border-transparent hover:border-muted-foreground",
-                !selectedDueDate && "text-muted-foreground"
-              )}
-            >
-              {selectedDueDate && !isNaN(selectedDueDate.getTime()) ? format(selectedDueDate, "MMM d, yyyy") : "Set date"}
-            </button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <div className="p-3">
-              <Calendar
-                mode="single"
-                selected={selectedDueDate}
-                onSelect={handleDueDateSelect}
-                initialFocus
-              />
-              {selectedDueDate && (
-                <div className="pt-2 border-t mt-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleDueDateSelect(undefined)}
-                    className="w-full text-xs"
-                  >
-                    Clear Date
-                  </Button>
-                </div>
-              )}
-            </div>
-          </PopoverContent>
-        </Popover>
+        <div className="text-xs">
+          <Popover>
+            <PopoverTrigger asChild>
+              <button
+                className={cn(
+                  "text-left cursor-pointer hover:text-foreground transition-colors inline-block border-b border-transparent hover:border-muted-foreground px-1",
+                  !selectedDueDate && "text-muted-foreground"
+                )}
+              >
+                {selectedDueDate && !isNaN(selectedDueDate.getTime()) ? format(selectedDueDate, "MMM d, yyyy") : "Set date"}
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <div className="p-3">
+                <Calendar
+                  mode="single"
+                  selected={selectedDueDate}
+                  onSelect={handleDueDateSelect}
+                  initialFocus
+                />
+                {selectedDueDate && (
+                  <div className="pt-2 border-t mt-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDueDateSelect(undefined)}
+                      className="w-full text-xs"
+                    >
+                      Clear Date
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
       </div>
     </div>
   );
