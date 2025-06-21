@@ -151,7 +151,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           <Icon className="w-3 h-3 text-muted-foreground" />
         )}
         <div className="flex-1 min-w-0">
-          <span style={{ fontSize: '0.75rem' }} className="font-medium text-foreground">{result.title}</span>
+          <span style={{ fontSize: '0.75rem' }} className="font-normal text-foreground">{result.title}</span>
           <span style={{ fontSize: '0.75rem' }} className="text-muted-foreground ml-2">{result.subtitle}</span>
         </div>
       </div>
@@ -183,7 +183,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
       >
         <Icon className="w-3 h-3 text-muted-foreground" />
         <div className="flex-1 min-w-0">
-          <span style={{ fontSize: '0.75rem' }} className="font-medium text-foreground">{search.query}</span>
+          <span style={{ fontSize: '0.75rem' }} className="font-normal text-foreground">{search.query}</span>
           <span style={{ fontSize: '0.75rem' }} className="text-muted-foreground ml-2">{search.timestamp}</span>
         </div>
       </div>
