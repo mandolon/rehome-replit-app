@@ -92,7 +92,7 @@ const TaskDetailDescription: React.FC<TaskDetailDescriptionProps> = ({
   }, []);
 
   return (
-    <div className="space-y-2 relative">
+    <div className="space-y-2 relative mt-4">
       <Textarea
         placeholder="Add description..."
         className="h-[235px] text-sm"

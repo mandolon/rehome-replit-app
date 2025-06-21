@@ -113,15 +113,17 @@ const TaskDetailForm = ({ task: originalTask, onTimeUpdated }: TaskDetailFormPro
         onSave={handleSaveDescription}
         disabled={descLoading}
       />
-      <TaskDetailFields
-        task={task}
-        currentUser={currentUser}
-        assignPerson={handleAssignPerson}
-        removeAssignee={handleRemoveAssignee}
-        addCollaborator={handleAddCollaborator}
-        removeCollaborator={handleRemoveCollaborator}
-        onTimeUpdated={onTimeUpdated}
-      />
+      <div className="mt-1">
+        <TaskDetailFields
+          task={task}
+          currentUser={currentUser}
+          assignPerson={handleAssignPerson}
+          removeAssignee={handleRemoveAssignee}
+          addCollaborator={handleAddCollaborator}
+          removeCollaborator={handleRemoveCollaborator}
+          onTimeUpdated={onTimeUpdated}
+        />
+      </div>
       {/* Attachments and Trash sections are outside this form */}
     </div>
   );
