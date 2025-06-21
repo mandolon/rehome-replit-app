@@ -106,9 +106,6 @@ const TodoPopup = ({ isOpen, onClose }: TodoPopupProps) => {
             />
           </div>
 
-          {/* Separator line */}
-          <div className="border-t border-gray-200 dark:border-gray-700"></div>
-
           {/* Todo List */}
           <div className="px-6 pb-4 overflow-y-auto flex-1">
             <div className="pt-4">
@@ -121,29 +118,23 @@ const TodoPopup = ({ isOpen, onClose }: TodoPopupProps) => {
                 </div>
               ) : (
                 <div className="space-y-1">
-                  {todos.map((todo) => (
+                  {todos.map((todo, index) => (
                     <div
                       key={todo.id}
                       className="group py-1 transition-all hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded"
                     >
                       <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => toggleTodo(todo.id)}
-                          className={`flex-shrink-0 w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
-                            todo.completed
-                              ? 'bg-green-500 border-green-500 text-white'
-                              : 'border-gray-300 hover:border-green-400'
-                          }`}
-                        >
-                          {todo.completed && <Check className="w-3 h-3" />}
-                        </button>
+                        <span className="flex-shrink-0 w-6 text-sm text-gray-500 dark:text-gray-400 text-center">
+                          {index + 1}.
+                        </span>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between">
                             <span
-                              className={`text-sm ${
+                              onClick={() => toggleTodo(todo.id)}
+                              className={`text-sm cursor-pointer ${
                                 todo.completed
                                   ? 'line-through text-gray-500 dark:text-gray-400'
-                                  : 'text-gray-900 dark:text-white'
+                                  : 'text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400'
                               }`}
                             >
                               {todo.text}
