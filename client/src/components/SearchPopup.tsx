@@ -553,7 +553,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
         key={`${type}-${result.id}`}
         data-index={index}
         className={cn(
-          "flex items-center gap-2 py-1 cursor-pointer rounded px-2",
+          "flex items-center gap-2 py-1 cursor-pointer rounded pl-3 pr-2",
           isSelected 
             ? "bg-accent/70 text-accent-foreground" 
             : "hover:bg-muted/30"
@@ -634,7 +634,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
         key={search.query}
         data-index={index}
         className={cn(
-          "flex items-center gap-2 py-1 cursor-pointer rounded",
+          "flex items-center gap-2 py-1 cursor-pointer rounded pl-3 pr-2",
           isSelected 
             ? "bg-accent/70 text-accent-foreground" 
             : "hover:bg-muted/30"
@@ -719,8 +719,8 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
             {searchQuery.length === 0 ? (
               <div>
                 {/* Recent Searches Section */}
-                <div className="pl-6 pr-3 py-2">
-                  <div className="flex items-center justify-between mb-1">
+                <div className="px-3 py-2">
+                  <div className="flex items-center justify-between mb-1 pl-3 pr-1">
                     <h3 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">RECENT SEARCH</h3>
                     {recentSearches.length > 0 && (
                       <button
@@ -758,7 +758,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
                     <p className="text-xs text-muted-foreground/70 mt-1">Try a different search term</p>
                   </div>
                 ) : (
-                  <div className="pl-6 pr-3 py-2">
+                  <div className="px-3 py-2">
                     {currentFilteredResults.map((result: SearchResult, index: number) => {
                       // Use the stored resultType from the formatted result
                       const resultType = activeFilter === 'all' ? result.resultType : activeFilter;
