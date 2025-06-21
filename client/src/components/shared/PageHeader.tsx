@@ -78,7 +78,7 @@ const PageHeader = ({
               <input 
                 type="text" 
                 placeholder="Search for people, projects, files, tasks, notes..." 
-                className="pl-7 pr-3 py-1 border border-border rounded text-xs w-96 cursor-pointer focus:cursor-text bg-white dark:bg-gray-950"
+                className="pl-7 pr-3 py-1 border border-border rounded text-xs w-96 cursor-pointer focus:cursor-text bg-card"
                 onClick={() => setIsSearchOpen(true)}
                 readOnly
               />

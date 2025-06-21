@@ -327,7 +327,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
       <div className="fixed inset-0 z-50 flex items-start justify-center pt-20">
         <div
           ref={popupRef}
-          className="w-full max-w-2xl mx-4 bg-white dark:bg-gray-950 border border-border rounded-lg shadow-2xl h-[500px] flex flex-col"
+          className="w-full max-w-2xl mx-4 bg-card border border-border rounded-lg shadow-2xl h-[500px] flex flex-col"
         >
           {/* Header */}
           <div className="flex items-center gap-3 pl-6 pr-3 py-2 border-b border-border group">
@@ -339,7 +339,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
                 placeholder="Search for people, projects, files, tasks, notes..."
                 value={searchQuery}
                 onChange={(e) => handleSearch(e.target.value)}
-                className="pl-7 pr-3 py-1 border border-border rounded text-xs w-full bg-white dark:bg-gray-950"
+                className="pl-7 pr-3 py-1 border border-border rounded text-xs w-full bg-card"
               />
             </div>
             <button

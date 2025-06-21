@@ -36,7 +36,7 @@ const InboxTopBar = ({ onToggleSidebar, searchQuery, onSearchChange }: InboxTopB
             placeholder="Search mail"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-950 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="w-full pl-10 pr-4 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
         </div>
       </div>
