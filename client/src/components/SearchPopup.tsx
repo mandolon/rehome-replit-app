@@ -292,8 +292,8 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
         <Icon className="w-3 h-3 text-muted-foreground" />
         <div className="flex-1 min-w-0">
           <span className="text-xs font-medium text-foreground">{search.query}</span>
-          <span className="text-xs text-muted-foreground ml-2">{search.timestamp}</span>
         </div>
+        <span className="text-xs text-muted-foreground">{search.timestamp}</span>
       </div>
     );
   };
