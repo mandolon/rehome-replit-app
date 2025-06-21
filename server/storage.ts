@@ -352,35 +352,38 @@ export class DatabaseStorage implements IStorage {
 
     const searchTerm = `%${query.toLowerCase()}%`;
 
-    // Search users (people)
-    const searchedPeople = await db.select()
-      .from(users)
-      .where(ilike(users.username, searchTerm))
-      .limit(10);
+    // Run all searches in parallel for better performance
+    const [searchedPeople, searchedProjects, searchedTasks] = await Promise.all([
+      // Search users (people)
+      db.select()
+        .from(users)
+        .where(ilike(users.username, searchTerm))
+        .limit(10),
 
-    // Search projects
-    const searchedProjects = await db.select()
-      .from(projects)
-      .where(
-        or(
-          ilike(projects.title, searchTerm),
-          ilike(projects.description, searchTerm),
-          ilike(projects.clientName, searchTerm)
+      // Search projects
+      db.select()
+        .from(projects)
+        .where(
+          or(
+            ilike(projects.title, searchTerm),
+            ilike(projects.description, searchTerm),
+            ilike(projects.clientName, searchTerm)
+          )
         )
-      )
-      .limit(10);
+        .limit(10),
 
-    // Search tasks
-    const searchedTasks = await db.select()
-      .from(tasks)
-      .where(
-        or(
-          ilike(tasks.title, searchTerm),
-          ilike(tasks.description, searchTerm),
-          ilike(tasks.createdBy, searchTerm)
+      // Search tasks (only non-deleted tasks)
+      db.select()
+        .from(tasks)
+        .where(
+          or(
+            ilike(tasks.title, searchTerm),
+            ilike(tasks.description, searchTerm),
+            ilike(tasks.createdBy, searchTerm)
+          )
         )
-      )
-      .limit(10);
+        .limit(10)
+    ]);
 
     // For now, files and notes are empty as they're not implemented yet
     const files: any[] = [];

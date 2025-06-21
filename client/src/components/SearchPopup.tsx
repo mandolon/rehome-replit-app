@@ -26,7 +26,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedQuery(searchQuery);
-    }, 300);
+    }, 150); // Reduced from 300ms to 150ms for faster search
 
     return () => clearTimeout(timer);
   }, [searchQuery]);

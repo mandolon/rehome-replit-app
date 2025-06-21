@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, jsonb, uuid } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, jsonb, uuid, index } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -6,7 +6,9 @@ export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
-});
+}, (table) => ({
+  usernameSearchIdx: index("users_username_search_idx").on(table.username),
+}));
 
 export const tasks = pgTable("tasks", {
   id: serial("id").primaryKey(),
@@ -32,7 +34,11 @@ export const tasks = pgTable("tasks", {
   markedCompleteBy: text("marked_complete_by"),
   timeLogged: text("time_logged").default("0"),
   workRecord: boolean("work_record").default(false),
-});
+}, (table) => ({
+  titleSearchIdx: index("tasks_title_search_idx").on(table.title),
+  descriptionSearchIdx: index("tasks_description_search_idx").on(table.description),
+  createdBySearchIdx: index("tasks_created_by_search_idx").on(table.createdBy),
+}));
 
 export const taskMessages = pgTable("task_messages", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -61,7 +67,11 @@ export const projects = pgTable("projects", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
   deletedAt: text("deleted_at"),
   deletedBy: text("deleted_by"),
-});
+}, (table) => ({
+  titleSearchIdx: index("projects_title_search_idx").on(table.title),
+  descriptionSearchIdx: index("projects_description_search_idx").on(table.description),
+  clientNameSearchIdx: index("projects_client_name_search_idx").on(table.clientName),
+}));
 
 export const trashItems = pgTable("trash_items", {
   id: uuid("id").primaryKey().defaultRandom(),
