@@ -26,10 +26,12 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
       const saved = localStorage.getItem('recentSearches');
       if (saved) {
         const parsed = JSON.parse(saved);
-        return parsed.map((search: any) => ({
+        const mapped = parsed.map((search: any) => ({
           ...search,
           timestamp: search.timestamp.includes('T') ? search.timestamp : new Date().toISOString()
         }));
+        console.log('Loading recent searches from localStorage:', mapped);
+        return mapped;
       }
       return [];
     } catch {
@@ -362,15 +364,18 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
   const handleResultClick = (result: SearchResult, type: string) => {
     // Save clicked item to recent searches with additional metadata for projects
     if (type === 'projects') {
+      const projectId = result.projectId || result.id;
+      console.log('Saving project to recent searches:', { result, projectId });
       const projectSearch = {
         query: result.title,
         type: 'projects',
-        projectId: result.projectId || result.id,
+        projectId: projectId,
         timestamp: new Date().toISOString()
       };
       const updatedSearches = [projectSearch, ...recentSearches.filter(s => s.query !== result.title)].slice(0, 10);
       setRecentSearches(updatedSearches);
       localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
+      console.log('Updated recent searches:', updatedSearches);
     } else if (type === 'tasks') {
       const taskSearch = {
         query: result.title,

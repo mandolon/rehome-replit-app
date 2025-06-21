@@ -1,0 +1,58 @@
+react-dom.development.js:29895 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+AppLayout.tsx:35 Sidebar resize: 12.7123570021
+App.tsx:52 App component is rendering, current path: /projects
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+AppLayout.tsx:35 Sidebar resize: 12.7123570021
+App.tsx:52 App component is rendering, current path: /
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+SearchPopup.tsx:264 Keyboard project navigation: Object
+SearchPopup.tsx:268  No projectId in keyboard navigation, falling back to projects page
+handleKeydown @ SearchPopup.tsx:268
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+AppLayout.tsx:35 Sidebar resize: 12.7123570021
+App.tsx:52 App component is rendering, current path: /projects
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+[NEW] Explain Console errors by using Copilot in Edge: click
+         
+         to explain an error. 
+        Learn more
+        Don't show again
+SearchPopup.tsx:264 Keyboard project navigation: {selectedItem: {…}}
+SearchPopup.tsx:268  No projectId in keyboard navigation, falling back to projects page
+handleKeydown @ SearchPopup.tsx:268
+SidebarHeader.tsx:20 SidebarHeader - currentUser: {id: 't0', name: 'Armando Lopez', email: 'armando.lopez@example.com', avatar: 'AL', status: 'online', …}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Ogden - Thew - 2709 T Street', projectIdFromName: 'ogden-thew-2709-t-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Peterson - 2015 10th Street', projectIdFromName: 'peterson-2015-10th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Piner - Piner Haus Garage', projectIdFromName: 'piner-piner-haus-garage', urlProjectId: undefined, isActive: false}
+App.tsx:52 App component is rendering, current path: /projects
+PageHeader.tsx:54 Searching for: a with filter: all
+PageHeader.tsx:54 Searching for: ad with filter: all
+SearchPopup.tsx:402 Project clicked: {result: {…}, projectId: 'adams-1063-40th-street'}
+SidebarHeader.tsx:20 SidebarHeader - currentUser: {id: 't0', name: 'Armando Lopez', email: 'armando.lopez@example.com', avatar: 'AL', status: 'online', …}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Ogden - Thew - 2709 T Street', projectIdFromName: 'ogden-thew-2709-t-street', urlProjectId: 'adams-1063-40th-street', isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Peterson - 2015 10th Street', projectIdFromName: 'peterson-2015-10th-street', urlProjectId: 'adams-1063-40th-street', isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Piner - Piner Haus Garage', projectIdFromName: 'piner-piner-haus-garage', urlProjectId: 'adams-1063-40th-street', isActive: false}
+AppLayout.tsx:35 Sidebar resize: 12.7123570021
+App.tsx:52 App component is rendering, current path: /project/adams-1063-40th-street
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Ogden - Thew - 2709 T Street', projectIdFromName: 'ogden-thew-2709-t-street', urlProjectId: 'adams-1063-40th-street', isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Peterson - 2015 10th Street', projectIdFromName: 'peterson-2015-10th-street', urlProjectId: 'adams-1063-40th-street', isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Piner - Piner Haus Garage', projectIdFromName: 'piner-piner-haus-garage', urlProjectId: 'adams-1063-40th-street', isActive: false}
