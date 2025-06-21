@@ -789,6 +789,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
                     {currentFilteredResults.map((result: SearchResult, index: number) => {
                       // Use the stored resultType from the formatted result
                       const resultType = activeFilter === 'all' ? result.resultType : activeFilter;
+                      console.log('Rendering result:', result.title, 'with type:', resultType, 'result object:', result);
                       
                       return renderResultRow(result, resultType, index);
                     })}
