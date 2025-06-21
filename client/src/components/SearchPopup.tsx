@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, UserCheck, FolderOpen, File, Calendar, BookOpen, X, Trash2 } from 'lucide-react';
+import { Search, UserCheck, FolderOpen, File, Calendar, BookOpen, X, Trash2, Circle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -505,7 +505,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
         case 'people': return UserCheck;
         case 'projects': return FolderOpen;
         case 'files': return File;
-        case 'tasks': return Calendar;
+        case 'tasks': return Circle;
         case 'notes': return BookOpen;
         default: return Search;
       }
@@ -554,7 +554,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
         case 'people': return UserCheck;
         case 'projects': return FolderOpen;
         case 'files': return File;
-        case 'tasks': return Calendar;
+        case 'tasks': return Circle;
         case 'notes': return BookOpen;
         default: return Search;
       }
