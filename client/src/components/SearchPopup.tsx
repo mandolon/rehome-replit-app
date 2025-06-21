@@ -628,7 +628,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           className="w-full max-w-2xl mx-4 bg-card border border-border rounded-lg shadow-2xl h-[500px] flex flex-col"
         >
           {/* Header */}
-          <div className="flex items-center gap-3 pl-6 pr-3 py-2 border-b border-border group">
+          <div className="flex items-center gap-3 pl-6 pr-3 py-2 group">
             <div className="relative flex-1">
               <Search className="w-3 h-3 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
@@ -649,7 +649,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           </div>
 
           {/* Filter Tabs */}
-          <div className="flex items-center gap-2 pl-6 pr-3 py-2">
+          <div className="flex items-center gap-2 pl-6 pr-3 py-2 border-b border-border">
             {filters.map((filter) => {
               return (
                 <button
@@ -683,11 +683,10 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
                       <button
                         onClick={clearAllRecentSearches}
                         disabled={isClearing}
-                        className="flex items-center gap-1 px-2 py-1 text-[10px] text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded transition-colors disabled:opacity-50"
+                        className="px-2 py-1 text-[10px] text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded transition-colors disabled:opacity-50"
                         title="Clear all recent searches"
                       >
-                        <Trash2 className="w-3 h-3" />
-                        <span>Clear All</span>
+                        Clear All
                       </button>
                     )}
                   </div>
