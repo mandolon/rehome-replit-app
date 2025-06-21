@@ -285,8 +285,11 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
       
       if (event.key === 'ArrowDown') {
         event.preventDefault();
+        console.log('ArrowDown pressed, navigableItems:', navigableItems.length, 'selectedIndex:', selectedIndex);
         if (navigableItems.length > 0) {
-          setSelectedIndex(prev => prev < 0 ? 0 : (prev + 1) % navigableItems.length);
+          const newIndex = selectedIndex < 0 ? 0 : (selectedIndex + 1) % navigableItems.length;
+          console.log('Setting selectedIndex to:', newIndex);
+          setSelectedIndex(newIndex);
         }
         return;
       }
@@ -494,6 +497,11 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
 
     const Icon = getResultIcon();
     const isSelected = searchQuery.length > 0 && index !== undefined && index === selectedIndex;
+    
+    // Debug logging for selection state
+    if (index !== undefined) {
+      console.log(`Result ${index}: isSelected=${isSelected}, searchQuery.length=${searchQuery.length}, selectedIndex=${selectedIndex}`);
+    }
 
     return (
       <div
