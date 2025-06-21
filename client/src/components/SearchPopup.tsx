@@ -86,6 +86,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
   });
   const popupRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   // Debounce search query to avoid too many API calls
@@ -301,27 +302,32 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
         return;
       }
 
-      // Only handle navigation if there are search results
-      const results = getFilteredResults();
-      if (searchQuery && results.length > 0) {
+      // Handle navigation for both search results and recent searches
+      const navigableItems = getNavigableItems();
+      if (navigableItems.length > 0) {
         if (event.key === 'ArrowDown') {
           event.preventDefault();
-          setSelectedIndex(prev => (prev + 1) % results.length);
+          setSelectedIndex(prev => (prev + 1) % navigableItems.length);
         } else if (event.key === 'ArrowUp') {
           event.preventDefault();
-          setSelectedIndex(prev => prev <= 0 ? results.length - 1 : prev - 1);
+          setSelectedIndex(prev => prev <= 0 ? navigableItems.length - 1 : prev - 1);
         } else if (event.key === 'Enter' && selectedIndex >= 0) {
           event.preventDefault();
-          const selectedResult = results[selectedIndex];
-          if (selectedResult) {
-            // Trigger the same action as clicking the result
+          const selectedItem = navigableItems[selectedIndex];
+          
+          if (searchQuery.length > 0) {
+            // Handle search result selection
             let resultType = activeFilter === 'all' ? 'mixed' : activeFilter;
             if (activeFilter === 'all') {
-              if (selectedResult.avatar) resultType = 'people';
-              else if (selectedResult.subtitle?.includes('Project')) resultType = 'projects';
+              if (selectedItem.avatar) resultType = 'people';
+              else if (selectedItem.subtitle?.includes('Project')) resultType = 'projects';
               else resultType = 'tasks';
             }
-            handleResultClick(selectedResult, resultType);
+            handleResultClick(selectedItem, resultType);
+          } else {
+            // Handle recent search selection
+            setSearchQuery(selectedItem.query);
+            saveToRecentSearches(selectedItem.query, selectedItem.type);
           }
         }
       }
@@ -338,6 +344,28 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
   useEffect(() => {
     setSelectedIndex(-1);
   }, [searchQuery, activeFilter]);
+
+  // Scroll selected item into view
+  useEffect(() => {
+    if (selectedIndex >= 0 && resultsRef.current) {
+      const selectedElement = resultsRef.current.querySelector(`[data-index="${selectedIndex}"]`);
+      if (selectedElement) {
+        selectedElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest'
+        });
+      }
+    }
+  }, [selectedIndex]);
+
+  // Get all navigable items (search results or recent searches)
+  const getNavigableItems = () => {
+    if (searchQuery.length > 0) {
+      return getFilteredResults();
+    } else {
+      return recentSearches;
+    }
+  };
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -469,6 +497,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     return (
       <div
         key={`${type}-${result.id}`}
+        data-index={index}
         className={cn(
           "flex items-center gap-2 py-1 cursor-pointer rounded px-2 mx-1",
           isSelected 
@@ -494,7 +523,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     );
   };
 
-  const renderRecentSearchRow = (search: any) => {
+  const renderRecentSearchRow = (search: any, index?: number) => {
     const getTypeIcon = () => {
       switch (search.type) {
         case 'people': return UserCheck;
@@ -507,6 +536,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     };
 
     const Icon = getTypeIcon();
+    const isSelected = searchQuery.length === 0 && index !== undefined && index === selectedIndex;
 
     const handleRecentSearchClick = () => {
       // Update the search query to show results
@@ -519,7 +549,13 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     return (
       <div
         key={search.query}
-        className="flex items-center gap-2 px-3 py-1 hover:bg-muted/30 cursor-pointer"
+        data-index={index}
+        className={cn(
+          "flex items-center gap-2 px-3 py-1 cursor-pointer rounded mx-1",
+          isSelected 
+            ? "bg-accent/70 text-accent-foreground" 
+            : "hover:bg-muted/30"
+        )}
         onClick={handleRecentSearchClick}
       >
         <Icon className="w-3 h-3 text-muted-foreground" />
@@ -591,7 +627,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           </div>
 
           {/* Results */}
-          <div className="flex-1 overflow-y-auto">
+          <div ref={resultsRef} className="flex-1 overflow-y-auto">
             {searchQuery.length === 0 ? (
               <div>
                 {/* Recent Searches Section */}
@@ -616,7 +652,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
                         <p className="text-xs text-muted-foreground/70">No recent searches</p>
                       </div>
                     ) : (
-                      recentSearches.map((search) => renderRecentSearchRow(search))
+                      recentSearches.map((search, index) => renderRecentSearchRow(search, index))
                     )}
                   </div>
                 </div>
