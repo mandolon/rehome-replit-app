@@ -542,10 +542,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           {type === 'tasks' ? (
             <div className="flex flex-col">
               <span className="text-xs text-foreground font-medium leading-tight">
-                {result.title}
-              </span>
-              <span className="text-[10px] text-muted-foreground/70 leading-tight">
-                {result.subtitle}
+                {result.title} {result.subtitle && <span className="text-muted-foreground/70">• {result.subtitle}</span>}
               </span>
             </div>
           ) : (
@@ -553,11 +550,6 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
               <span className="text-xs text-foreground font-medium leading-tight">
                 {result.title}
               </span>
-              {result.subtitle && (
-                <span className="text-[10px] text-muted-foreground/70 leading-tight">
-                  {result.subtitle}
-                </span>
-              )}
             </div>
           )}
         </div>
