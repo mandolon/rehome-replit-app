@@ -16,8 +16,30 @@ interface SearchPopupProps {
 const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
   const popupRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Debounce search query to avoid too many API calls
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Fetch search results from API
+  const { data: searchResults, isLoading } = useQuery({
+    queryKey: ['/api/search', debouncedQuery],
+    queryFn: async () => {
+      if (!debouncedQuery.trim()) return null;
+      const response = await fetch(`/api/search?q=${encodeURIComponent(debouncedQuery)}`);
+      if (!response.ok) throw new Error('Search failed');
+      return response.json();
+    },
+    enabled: debouncedQuery.trim().length > 0
+  });
 
   // Recent searches data
   const recentSearches = [
@@ -27,13 +49,34 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     { query: 'Sprint Planning', type: 'notes', timestamp: '1 week ago' }
   ];
 
+  // Calculate filter counts from real search results
+  const getFilterCounts = () => {
+    if (!searchResults) {
+      return { all: 0, people: 0, projects: 0, files: 0, tasks: 0, notes: 0 };
+    }
+    
+    const counts = {
+      people: searchResults.people?.length || 0,
+      projects: searchResults.projects?.length || 0,
+      files: searchResults.files?.length || 0,
+      tasks: searchResults.tasks?.length || 0,
+      notes: searchResults.notes?.length || 0,
+    };
+    
+    const all = counts.people + counts.projects + counts.files + counts.tasks + counts.notes;
+    
+    return { all, ...counts };
+  };
+
+  const filterCounts = getFilterCounts();
+  
   const filters = [
-    { id: 'all', label: 'All', icon: Search, count: 156 },
-    { id: 'people', label: 'People', icon: UserCheck, count: 24 },
-    { id: 'projects', label: 'Projects', icon: FolderOpen, count: 18 },
-    { id: 'files', label: 'Files', icon: File, count: 89 },
-    { id: 'tasks', label: 'Tasks', icon: Calendar, count: 47 },
-    { id: 'notes', label: 'Notes', icon: BookOpen, count: 12 }
+    { id: 'all', label: 'All', icon: Search, count: filterCounts.all },
+    { id: 'people', label: 'People', icon: UserCheck, count: filterCounts.people },
+    { id: 'projects', label: 'Projects', icon: FolderOpen, count: filterCounts.projects },
+    { id: 'files', label: 'Files', icon: File, count: filterCounts.files },
+    { id: 'tasks', label: 'Tasks', icon: Calendar, count: filterCounts.tasks },
+    { id: 'notes', label: 'Notes', icon: BookOpen, count: filterCounts.notes }
   ];
 
   // Type definitions for search results
@@ -74,16 +117,67 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     ] as SearchResult[]
   };
 
+  // Format results from API to match component interface
+  const formatResults = (data: any, type: string) => {
+    if (!data) return [];
+    
+    return data.map((item: any) => {
+      let title = '';
+      let subtitle = '';
+      let description = '';
+      
+      switch (type) {
+        case 'people':
+          title = item.username;
+          subtitle = 'User';
+          description = item.email || '';
+          break;
+        case 'projects':
+          title = item.title;
+          subtitle = item.status || 'Project';
+          description = item.description || item.clientName || '';
+          break;
+        case 'tasks':
+          title = item.title;
+          subtitle = item.status || 'Task';
+          description = item.description || '';
+          break;
+        case 'files':
+          title = item.name || item.title;
+          subtitle = 'File';
+          description = item.description || '';
+          break;
+        case 'notes':
+          title = item.title;
+          subtitle = 'Note';
+          description = item.content || '';
+          break;
+      }
+      
+      return {
+        id: item.id,
+        title,
+        subtitle,
+        description,
+        avatar: type === 'people' ? item.username.charAt(0).toUpperCase() : undefined
+      };
+    });
+  };
+
   // Filter results based on active filter and search query
   const getFilteredResults = () => {
+    if (!searchResults) return [];
+    
     if (activeFilter === 'all') {
       return [
-        ...mockResults.people.slice(0, 2),
-        ...mockResults.projects.slice(0, 2),
-        ...mockResults.tasks.slice(0, 2)
+        ...formatResults(searchResults.people?.slice(0, 2), 'people'),
+        ...formatResults(searchResults.projects?.slice(0, 2), 'projects'),
+        ...formatResults(searchResults.tasks?.slice(0, 2), 'tasks')
       ];
     }
-    return mockResults[activeFilter as keyof typeof mockResults] || [];
+    
+    const data = searchResults[activeFilter as keyof typeof searchResults];
+    return formatResults(data, activeFilter);
   };
 
   // Handle click outside to close popup
@@ -127,8 +221,9 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     onSearch(query, activeFilter);
   };
 
-  const renderResultRow = (result: any, type: string) => {
+  const renderResultRow = (result: SearchResult, type: string) => {
     const getResultIcon = () => {
+      if (result.avatar && type === 'people') return null;
       switch (type) {
         case 'people': return UserCheck;
         case 'projects': return FolderOpen;
@@ -145,14 +240,17 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
       <div
         key={`${type}-${result.id}`}
         className="flex items-center gap-2 px-3 py-1 hover:bg-muted/30 cursor-pointer"
+        onClick={() => {
+          handleSearch(result.title);
+        }}
       >
         {result.avatar && type === 'people' ? (
           <div className="w-3 h-3 bg-primary/10 rounded-full flex items-center justify-center text-primary text-xs font-medium">
             {result.avatar}
           </div>
-        ) : (
+        ) : Icon ? (
           <Icon className="w-3 h-3 text-muted-foreground" />
-        )}
+        ) : null}
         <div className="flex-1 min-w-0">
           <span className="text-xs font-light text-foreground">{result.title}</span>
           <span className="text-xs text-muted-foreground ml-2">{result.subtitle}</span>
@@ -272,20 +370,25 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
               </div>
             ) : (
               <div>
-                {getFilteredResults().length === 0 ? (
+                {isLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="text-sm text-muted-foreground">Searching...</div>
+                  </div>
+                ) : getFilteredResults().length === 0 ? (
                   <div className="text-center py-8">
                     <Search className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
                     <p className="text-sm text-muted-foreground">No results found for "{searchQuery}"</p>
                   </div>
                 ) : (
                   <div>
-                    {getFilteredResults().map((result) => {
-                      // Determine result type based on properties
-                      let type = 'tasks';
-                      if ('avatar' in result && result.avatar) type = 'people';
-                      else if (result.subtitle?.includes('Progress') || result.subtitle?.includes('Planning') || result.subtitle?.includes('Completed')) type = 'projects';
-                      else if (result.subtitle?.includes('Document') || result.subtitle?.includes('Design File') || result.subtitle?.includes('Markdown')) type = 'files';
-                      else if (result.subtitle?.includes('Meeting') || result.subtitle?.includes('Communication') || result.subtitle?.includes('Development')) type = 'notes';
+                    {getFilteredResults().map((result: SearchResult) => {
+                      // Determine result type based on active filter or properties
+                      let type = activeFilter === 'all' ? 'mixed' : activeFilter;
+                      if (activeFilter === 'all') {
+                        if (result.avatar) type = 'people';
+                        else if (result.subtitle?.includes('Project') || result.subtitle?.includes('In Progress') || result.subtitle?.includes('Completed')) type = 'projects';
+                        else type = 'tasks';
+                      }
                       
                       return renderResultRow(result, type);
                     })}
