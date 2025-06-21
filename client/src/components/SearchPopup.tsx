@@ -368,18 +368,11 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
                     {recentSearches.map((search) => renderRecentSearchRow(search))}
                   </div>
                 </div>
-                <div className="text-center py-8">
-                  <Search className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
-                  <p className="text-sm text-muted-foreground">Start typing to search...</p>
-                </div>
+
               </div>
             ) : (
               <div>
-                {isLoading ? (
-                  <div className="flex items-center justify-center py-8">
-                    <div className="text-sm text-muted-foreground">Searching...</div>
-                  </div>
-                ) : getFilteredResults().length === 0 ? (
+                {getFilteredResults().length === 0 ? (
                   <div className="text-center py-8">
                     <Search className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
                     <p className="text-sm text-muted-foreground">No results found for "{searchQuery}"</p>
