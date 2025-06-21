@@ -34,7 +34,11 @@ const TaskDetailFields: React.FC<TaskDetailFieldsProps> = ({
   const [timeLogged, setTimeLogged] = useState(task?.timeLogged || '0');
   const [selectedDueDate, setSelectedDueDate] = useState<Date | undefined>(() => {
     try {
-      return task?.dueDate ? new Date(task.dueDate) : undefined;
+      if (!task?.dueDate || task.dueDate === "—" || task.dueDate === "" || task.dueDate === null) {
+        return undefined;
+      }
+      const date = new Date(task.dueDate);
+      return isNaN(date.getTime()) ? undefined : date;
     } catch {
       return undefined;
     }
@@ -139,7 +143,7 @@ const TaskDetailFields: React.FC<TaskDetailFieldsProps> = ({
               )}
             >
               <CalendarIcon className="mr-1 h-3 w-3" />
-              {selectedDueDate ? format(selectedDueDate, "MMM d, yyyy") : "Set date"}
+              {selectedDueDate && !isNaN(selectedDueDate.getTime()) ? format(selectedDueDate, "MMM d, yyyy") : "Set date"}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">

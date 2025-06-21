@@ -82,8 +82,7 @@ const PLACEHOLDER_TASKS: Task[] = [
     description: "A test task for development purposes",
     markedComplete: null,
     markedCompleteBy: null,
-    timeLogged: "0",
-    workRecord: false
+    timeLogged: "0"
   }
 ];
 
