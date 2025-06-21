@@ -49,7 +49,7 @@ export interface IStorage {
 }
 
 import { db } from "./db";
-import { eq, desc, isNull, sql, like, or, ilike } from "drizzle-orm";
+import { eq, desc, isNull, sql, like, or, ilike, and } from "drizzle-orm";
 
 export class DatabaseStorage implements IStorage {
   // User methods
@@ -372,15 +372,37 @@ export class DatabaseStorage implements IStorage {
         )
         .limit(10),
 
-      // Search tasks (only non-deleted tasks)
-      db.select()
+      // Search tasks (only non-deleted, non-completed tasks with specific statuses)
+      db.select({
+        id: tasks.id,
+        taskId: tasks.taskId,
+        title: tasks.title,
+        projectId: tasks.projectId,
+        project: tasks.project,
+        estimatedCompletion: tasks.estimatedCompletion,
+        dateCreated: tasks.dateCreated,
+        dueDate: tasks.dueDate,
+        assignee: tasks.assignee,
+        hasAttachment: tasks.hasAttachment,
+        collaborators: tasks.collaborators,
+        status: tasks.status,
+        archived: tasks.archived,
+        createdBy: tasks.createdBy,
+        createdAt: tasks.createdAt,
+        updatedAt: tasks.updatedAt,
+        deletedAt: tasks.deletedAt,
+        deletedBy: tasks.deletedBy,
+        description: tasks.description,
+        markedComplete: tasks.markedComplete,
+        markedCompleteBy: tasks.markedCompleteBy,
+        timeLogged: tasks.timeLogged,
+        workRecord: tasks.workRecord,
+        projectTitle: projects.title
+      })
         .from(tasks)
+        .leftJoin(projects, eq(tasks.projectId, projects.projectId))
         .where(
-          or(
-            ilike(tasks.title, searchTerm),
-            ilike(tasks.description, searchTerm),
-            ilike(tasks.createdBy, searchTerm)
-          )
+          sql`${tasks.deletedAt} IS NULL AND ${tasks.markedComplete} IS NULL AND (${tasks.status} = 'task/redline' OR ${tasks.status} = 'progress/update') AND (${tasks.title} ILIKE ${searchTerm} OR ${tasks.description} ILIKE ${searchTerm} OR ${tasks.createdBy} ILIKE ${searchTerm} OR ${projects.title} ILIKE ${searchTerm})`
         )
         .limit(10)
     ]);
@@ -753,13 +775,29 @@ export class MemStorage implements IStorage {
       )
       .slice(0, 10);
 
-    // Search tasks
+    // Search tasks (only non-deleted, non-completed tasks with specific statuses)
     const tasks = Array.from(this.tasks.values())
-      .filter(task =>
-        task.title.toLowerCase().includes(searchTerm) ||
-        (task.description && task.description.toLowerCase().includes(searchTerm)) ||
-        task.createdBy.toLowerCase().includes(searchTerm)
-      )
+      .filter(task => {
+        // Filter out deleted and completed tasks
+        if (task.deletedAt || task.markedComplete) {
+          return false;
+        }
+        
+        // Only include tasks with specific statuses
+        if (task.status !== 'task/redline' && task.status !== 'progress/update') {
+          return false;
+        }
+        
+        // Get the project for this task to search by project name
+        const project = Array.from(this.projects.values()).find(p => p.projectId === task.projectId);
+        const projectTitle = project ? project.title.toLowerCase() : '';
+        
+        // Search in task title, description, created by, or project name
+        return task.title.toLowerCase().includes(searchTerm) ||
+               (task.description && task.description.toLowerCase().includes(searchTerm)) ||
+               task.createdBy.toLowerCase().includes(searchTerm) ||
+               projectTitle.includes(searchTerm);
+      })
       .slice(0, 10);
 
     // For now, files and notes are empty as they're not implemented yet
