@@ -239,7 +239,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     return (
       <div
         key={`${type}-${result.id}`}
-        className="flex items-center gap-2 px-3 py-1 hover:bg-muted/30 cursor-pointer"
+        className="flex items-center gap-2 pl-6 pr-3 py-1 hover:bg-muted/30 cursor-pointer"
         onClick={() => {
           handleSearch(result.title);
         }}
@@ -252,7 +252,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           <Icon className="w-3 h-3 text-muted-foreground" />
         ) : null}
         <div className="flex-1 min-w-0">
-          <span className="text-xs font-light text-foreground">{result.title}</span>
+          <span className="text-xs font-medium text-foreground">{result.title}</span>
           <span className="text-xs text-muted-foreground ml-2">{result.subtitle}</span>
         </div>
       </div>
@@ -276,7 +276,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     return (
       <div
         key={search.query}
-        className="flex items-center gap-2 px-3 py-1 hover:bg-muted/30 cursor-pointer"
+        className="flex items-center gap-2 pl-6 pr-3 py-1 hover:bg-muted/30 cursor-pointer"
         onClick={() => {
           setSearchQuery(search.query);
           handleSearch(search.query);
@@ -284,7 +284,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
       >
         <Icon className="w-3 h-3 text-muted-foreground" />
         <div className="flex-1 min-w-0">
-          <span className="text-xs font-light text-foreground">{search.query}</span>
+          <span className="text-xs font-medium text-foreground">{search.query}</span>
           <span className="text-xs text-muted-foreground ml-2">{search.timestamp}</span>
         </div>
       </div>
@@ -305,7 +305,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           className="w-full max-w-2xl mx-4 bg-background border border-border rounded-lg shadow-2xl h-[500px] flex flex-col"
         >
           {/* Header */}
-          <div className="flex items-center gap-3 pl-6 pr-3 py-4 border-b border-border group">
+          <div className="flex items-center gap-3 pl-6 pr-3 py-2 border-b border-border group">
             <div className="relative flex-1">
               <Search className="w-3 h-3 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
