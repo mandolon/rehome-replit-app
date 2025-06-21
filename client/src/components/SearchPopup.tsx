@@ -258,7 +258,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
         case 'Enter':
           event.preventDefault();
           const selectedItem = navigableItems[selectedIndex];
-          console.log('Enter key pressed - selectedItem:', selectedItem);
+
           if (selectedItem && selectedIndex >= 0) {
             if (searchQuery.length > 0) {
               // Handle search result selection
