@@ -50,35 +50,44 @@ const PageHeader = ({
     navigate('/login', { replace: true });
   };
 
+  const handleSearch = (query: string, filter: string) => {
+    console.log('Searching for:', query, 'with filter:', filter);
+    // Here you would implement actual search logic
+    // For now, we'll just log the search parameters
+  };
+
   return (
-    <div className="border-b border-border px-4 py-2">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          {onToggleSidebar && (
-            <button
-              onClick={onToggleSidebar}
-              className="p-2 hover:bg-accent rounded-md transition-colors"
-            >
-              <Menu className="w-4 h-4" />
-            </button>
-          )}
-        </div>
-        
-        {/* Centered Search Bar */}
-        <div className="flex-1 flex justify-center">
-          <div className="relative">
-            <Search className="w-3 h-3 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input 
-              type="text" 
-              placeholder="Search for people, projects, files, tasks, notes..." 
-              className="pl-7 pr-3 py-1 border border-border rounded text-xs w-96"
-            />
+    <>
+      <div className="border-b border-border px-4 py-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            {onToggleSidebar && (
+              <button
+                onClick={onToggleSidebar}
+                className="p-2 hover:bg-accent rounded-md transition-colors"
+              >
+                <Menu className="w-4 h-4" />
+              </button>
+            )}
           </div>
-        </div>
+          
+          {/* Centered Search Bar */}
+          <div className="flex-1 flex justify-center">
+            <div className="relative">
+              <Search className="w-3 h-3 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input 
+                type="text" 
+                placeholder="Search for people, projects, files, tasks, notes..." 
+                className="pl-7 pr-3 py-1 border border-border rounded text-xs w-96 cursor-pointer focus:cursor-text"
+                onClick={() => setIsSearchOpen(true)}
+                readOnly
+              />
+            </div>
+          </div>
         
-        {/* User Info and Dropdown */}
-        <div className="flex items-center gap-3">
-          <ThemeToggle /> {/* Added ThemeToggle here */}
+          {/* User Info and Dropdown */}
+          <div className="flex items-center gap-3">
+            <ThemeToggle /> {/* Added ThemeToggle here */}
           <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center gap-2 hover:bg-accent px-2 py-1 rounded-md transition-colors">
               <div className="flex items-center gap-2">
@@ -207,9 +216,17 @@ const PageHeader = ({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          </div>
         </div>
       </div>
-    </div>
+      
+      {/* Search Popup */}
+      <SearchPopup
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        onSearch={handleSearch}
+      />
+    </>
   );
 };
 
