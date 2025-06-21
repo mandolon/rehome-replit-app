@@ -258,7 +258,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
             {searchQuery.length === 0 ? (
               <div>
                 {/* Recent Searches Section */}
-                <div className="px-3 py-2 border-b border-border">
+                <div className="pl-6 pr-3 py-2 border-b border-border">
                   <h3 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1">RECENT SEARCH</h3>
                   <div>
                     {recentSearches.map((search) => renderRecentSearchRow(search))}
