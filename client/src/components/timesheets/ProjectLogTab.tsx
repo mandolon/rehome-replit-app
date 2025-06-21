@@ -214,160 +214,92 @@ const ProjectLogTab = ({ selectedWeek, refreshTrigger, onTaskClick }: ProjectLog
         </Card>
       </div>
 
-      {/* Work Log Entries Table - ClickUp Style */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-        {/* Table Header */}
-        <div className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
-              Tasks <span className="text-gray-500">({filteredTasks.length})</span>
-            </h3>
-          </div>
-        </div>
-
-        {/* Table Content */}
-        {filteredTasks.length === 0 ? (
-          <div className="text-center text-gray-500 py-12">
-            No tasks found for the selected project
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-800">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-8">
-                    <input type="checkbox" className="rounded border-gray-300" />
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    Name
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-32">
-                    Date created
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-32">
-                    Time tracked
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-24">
-                    Created by
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-32">
-                    Status
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+      {/* Work Log Entries Table */}
+      <Card className="border-0 shadow-none bg-muted/30">
+        <CardHeader className="pb-2 pt-3 px-3">
+          <CardTitle className="text-sm font-semibold">Project Time Entries</CardTitle>
+        </CardHeader>
+        <CardContent className="px-3 pb-3">
+          {filteredTasks.length === 0 ? (
+            <div className="text-center text-muted-foreground py-8">
+              No tasks found for the selected project
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow className="border-0 hover:bg-transparent">
+                  <TableHead className="w-[100px] text-xs font-medium text-muted-foreground h-8">Task ID</TableHead>
+                  <TableHead className="text-xs font-medium text-muted-foreground h-8">Title</TableHead>
+                  <TableHead className="w-[100px] text-xs font-medium text-muted-foreground h-8">Status</TableHead>
+                  <TableHead className="w-[120px] text-xs font-medium text-muted-foreground h-8">Assignee</TableHead>
+                  <TableHead className="w-[100px] text-xs font-medium text-muted-foreground h-8">Time Logged</TableHead>
+                  <TableHead className="w-[120px] text-xs font-medium text-muted-foreground h-8">Created</TableHead>
+                  <TableHead className="w-[120px] text-xs font-medium text-muted-foreground h-8">Last Update</TableHead>
+                  <TableHead className="w-[120px] text-xs font-medium text-muted-foreground h-8">Estimated</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {filteredTasks.map((task) => (
-                  <tr key={task.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
-                    {/* Checkbox */}
-                    <td className="px-4 py-3">
-                      <input type="checkbox" className="rounded border-gray-300" />
-                    </td>
-                    
-                    {/* Task Name with Status Icon */}
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        {/* Status Circle */}
-                        <div className="flex items-center gap-1">
-                          {task.status?.toLowerCase() === 'completed' ? (
-                            <>
-                              <div className="w-4 h-4 rounded-full bg-green-500 flex items-center justify-center">
-                                <CheckCircle2 className="w-3 h-3 text-white" />
-                              </div>
-                              <span className="text-xs text-green-600 font-medium">COMPLETE</span>
-                            </>
-                          ) : (
-                            <>
-                              <div className="w-4 h-4 rounded-full border-2 border-gray-300"></div>
-                              <span className="text-xs text-gray-500 font-medium">TODO</span>
-                            </>
-                          )}
-                        </div>
-                        
-                        {/* Task Title */}
+                  <TableRow key={task.id} className="border-0 hover:bg-muted/50">
+                    <TableCell className="font-medium text-xs">
+                      <div className="flex items-center gap-2">
+                        {getStatusIcon(task.status)}
                         <span 
-                          className="text-sm text-blue-600 hover:text-blue-800 cursor-pointer hover:underline"
+                          className="text-blue-600 hover:underline cursor-pointer"
                           onClick={() => onTaskClick?.(task)}
                         >
-                          {task.title}
+                          {task.taskId}
                         </span>
                       </div>
-                      
-                      {/* Subtitle/Description if available */}
-                      {task.status?.toLowerCase() === 'completed' && (
-                        <div className="text-xs text-gray-500 mt-1 ml-8">
-                          Current status: complete
-                        </div>
-                      )}
-                    </td>
-                    
-                    {/* Date Created */}
-                    <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
-                      {task.createdAt ? format(new Date(task.createdAt), 'M/d/yy') : '-'}
-                    </td>
-                    
-                    {/* Time Tracked */}
-                    <td className="px-4 py-3">
-                      {task.timeLogged && parseFloat(task.timeLogged) > 0 ? (
-                        <span className="text-sm text-gray-900 dark:text-gray-100">
-                          {formatTime(task.timeLogged)}
-                        </span>
-                      ) : (
-                        <button className="text-sm text-blue-600 hover:text-blue-800 hover:underline">
-                          Add time
-                        </button>
-                      )}
-                    </td>
-                    
-                    {/* Created By */}
-                    <td className="px-4 py-3">
+                    </TableCell>
+                    <TableCell className="text-xs">
+                      <div 
+                        className="max-w-[200px] truncate text-blue-600 hover:underline cursor-pointer" 
+                        title={task.title}
+                        onClick={() => onTaskClick?.(task)}
+                      >
+                        {task.title}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-xs">
+                      <Badge className={`text-xs px-2 py-0.5 ${getStatusColor(task.status)}`}>
+                        {task.status || 'Todo'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-xs">
                       {task.assignee ? (
-                        <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                            <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
-                              {task.assignee.name?.charAt(0)?.toUpperCase() || 'A'}
-                            </span>
-                          </div>
-                          <span className="text-sm text-gray-900 dark:text-gray-100">
-                            {task.assignee.name || 'AL'}
+                        <div className="flex items-center gap-1">
+                          <User className="w-3 h-3 text-muted-foreground" />
+                          <span className="truncate max-w-[80px]" title={task.assignee.name}>
+                            {task.assignee.name}
                           </span>
                         </div>
                       ) : (
-                        <button className="text-sm text-blue-600 hover:text-blue-800 hover:underline">
-                          Add time
-                        </button>
+                        <span className="text-muted-foreground">Unassigned</span>
                       )}
-                    </td>
-                    
-                    {/* Status */}
-                    <td className="px-4 py-3">
-                      <div className="flex flex-col gap-1">
-                        {task.status?.toLowerCase() === 'completed' ? (
-                          <>
-                            <div className="flex items-center gap-1">
-                              <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                              <span className="text-xs font-medium text-gray-900 dark:text-gray-100">COMPLETE</span>
-                            </div>
-                            <span className="text-xs text-gray-500">Complete</span>
-                          </>
-                        ) : (
-                          <>
-                            <div className="flex items-center gap-1">
-                              <div className="w-3 h-3 rounded-full border-2 border-gray-300"></div>
-                              <span className="text-xs font-medium text-gray-900 dark:text-gray-100">TODO</span>
-                            </div>
-                            <span className="text-xs text-gray-500">To do</span>
-                          </>
-                        )}
-                        <span className="text-xs text-gray-400">Current status: {task.status?.toLowerCase() || 'todo'}</span>
+                    </TableCell>
+                    <TableCell className="text-xs font-medium">
+                      <div className="flex items-center gap-1">
+                        <Clock className="w-3 h-3 text-muted-foreground" />
+                        {formatTime(task.timeLogged || '0')}
                       </div>
-                    </td>
-                  </tr>
+                    </TableCell>
+                    <TableCell className="text-xs text-muted-foreground">
+                      {task.createdAt ? format(new Date(task.createdAt), 'MMM d, yy') : '-'}
+                    </TableCell>
+                    <TableCell className="text-xs text-muted-foreground">
+                      {task.updatedAt ? format(new Date(task.updatedAt), 'MMM d, yy') : '-'}
+                    </TableCell>
+                    <TableCell className="text-xs text-muted-foreground">
+                      {task.estimatedCompletion || '-'}
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 };
