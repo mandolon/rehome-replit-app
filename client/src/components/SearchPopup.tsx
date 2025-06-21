@@ -188,23 +188,23 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           break;
         case 'projects':
           title = item.title;
-          subtitle = 'Project';
-          description = `${item.title} — Project`;
+          subtitle = item.description || item.clientName || '';
+          description = `${item.title}`;
           break;
         case 'tasks':
           title = item.title;
-          subtitle = item.projectTitle || 'Task';
-          description = `${item.title} — ${item.projectTitle || 'Task'}`;
+          subtitle = item.projectTitle || '';
+          description = `${item.title} — ${item.projectTitle || ''}`;
           break;
         case 'files':
           title = item.name || item.title;
-          subtitle = 'File';
-          description = `${item.name || item.title} — File`;
+          subtitle = '';
+          description = `${item.name || item.title}`;
           break;
         case 'notes':
           title = item.title;
-          subtitle = 'Note';
-          description = `${item.title} — Note`;
+          subtitle = '';
+          description = `${item.title}`;
           break;
       }
       
@@ -549,10 +549,16 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
               </span>
             </div>
           ) : (
-            <span className="text-xs text-foreground">
-              {result.title}
-              <span className="text-muted-foreground ml-2">— {result.subtitle}</span>
-            </span>
+            <div className="flex flex-col">
+              <span className="text-xs text-foreground font-medium leading-tight">
+                {result.title}
+              </span>
+              {result.subtitle && (
+                <span className="text-[10px] text-muted-foreground/70 leading-tight">
+                  {result.subtitle}
+                </span>
+              )}
+            </div>
           )}
         </div>
       </div>
