@@ -103,7 +103,7 @@ const TaskDetailActivity = ({ taskId }: TaskDetailActivityProps) => {
   return (
     <div className="h-full flex flex-col bg-muted/30 dark:bg-gray-900/30">
       {/* Activity Header */}
-      <div className="p-3 bg-white dark:bg-gray-800" style={{ borderBottom: '1px solid #bbbbbb' }}>
+      <div className="p-3 bg-white dark:bg-gray-800 border-b border-[#bbbbbb] dark:border-border">
         <h3 className="text-sm font-semibold text-foreground">Activity</h3>
       </div>
 
