@@ -11,11 +11,11 @@ interface TaskDetailHeaderProps {
 
 const TaskDetailHeader = ({ task, onClose, onProjectClick }: TaskDetailHeaderProps) => {
   return (
-    <div className="border-b border-border px-6 py-1 flex-shrink-0 bg-background/80 backdrop-blur-sm">
-      <div className="flex items-center gap-2">
+    <div className="border-b border-border py-1 flex-shrink-0 bg-background/80 backdrop-blur-sm">
+      <div className="flex items-center gap-2 px-6">
         <button 
           onClick={onClose} 
-          className="p-1 hover:bg-accent rounded-lg transition-colors group"
+          className="hover:bg-accent rounded-lg transition-colors group -ml-1"
           title="Go back"
         >
           <ArrowLeft className="w-4 h-4 group-hover:text-foreground transition-colors" />
