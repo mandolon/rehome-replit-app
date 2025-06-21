@@ -1,0 +1,318 @@
+[NEW] Explain Console errors by using Copilot in Edge: click
+         
+         to explain an error. 
+        Learn more
+        Don't show again
+react-dom.development.js:29895 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+SidebarHeader.tsx:20 SidebarHeader - currentUser: {id: 't0', name: 'Armando Lopez', email: 'armando.lopez@example.com', avatar: 'AL', status: 'online', …}
+AppLayout.tsx:35 Sidebar resize: 12.7123570021
+App.tsx:52 App component is rendering, current path: /task/6
+useRealtimeTasks.tsx:37 Attempting WebSocket connection to: wss://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev:443/ws
+useTaskBoard.tsx:26 Making direct API call for tasks
+useTaskBoard.tsx:45 Query state - Loading: true Error: null Tasks count: 0
+SidebarHeader.tsx:20 SidebarHeader - currentUser: {id: 't0', name: 'Armando Lopez', email: 'armando.lopez@example.com', avatar: 'AL', status: 'online', …}
+useRealtimeTasks.tsx:41 WebSocket connected for real-time updates
+SidebarHeader.tsx:20 SidebarHeader - currentUser: {id: 't0', name: 'Armando Lopez', email: 'armando.lopez@example.com', avatar: 'AL', status: 'online', …}
+useTaskBoard.tsx:32 Tasks loaded: 7
+SidebarHeader.tsx:20 SidebarHeader - currentUser: {id: 't0', name: 'Armando Lopez', email: 'armando.lopez@example.com', avatar: 'AL', status: 'online', …}
+useTaskBoard.tsx:45 Query state - Loading: false Error: null Tasks count: 7
+useTaskBoard.tsx:47 First task: {id: 42, taskId: 'T41376', title: 'Update for Client, GC and Plan Check', projectId: 'mcvarish-salmina-6251-el-dorado-street', project: 'McVarish - Salmina - 6251 El Dorado Street', …}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Ogden - Thew - 2709 T Street', projectIdFromName: 'ogden-thew-2709-t-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Peterson - 2015 10th Street', projectIdFromName: 'peterson-2015-10th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Piner - Piner Haus Garage', projectIdFromName: 'piner-piner-haus-garage', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Ogden - Thew - 2709 T Street', projectIdFromName: 'ogden-thew-2709-t-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Peterson - 2015 10th Street', projectIdFromName: 'peterson-2015-10th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Piner - Piner Haus Garage', projectIdFromName: 'piner-piner-haus-garage', urlProjectId: undefined, isActive: false}
+SidebarHeader.tsx:20 SidebarHeader - currentUser: {id: 't0', name: 'Armando Lopez', email: 'armando.lopez@example.com', avatar: 'AL', status: 'online', …}
+SidebarHeader.tsx:20 SidebarHeader - currentUser: {id: 't0', name: 'Armando Lopez', email: 'armando.lopez@example.com', avatar: 'AL', status: 'online', …}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Ogden - Thew - 2709 T Street', projectIdFromName: 'ogden-thew-2709-t-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Peterson - 2015 10th Street', projectIdFromName: 'peterson-2015-10th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Piner - Piner Haus Garage', projectIdFromName: 'piner-piner-haus-garage', urlProjectId: undefined, isActive: false}
+AppLayout.tsx:35 Sidebar resize: 12.7123570021
+App.tsx:52 App component is rendering, current path: /
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Ogden - Thew - 2709 T Street', projectIdFromName: 'ogden-thew-2709-t-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Peterson - 2015 10th Street', projectIdFromName: 'peterson-2015-10th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Piner - Piner Haus Garage', projectIdFromName: 'piner-piner-haus-garage', urlProjectId: undefined, isActive: false}
+useRealtimeTasks.tsx:47 WebSocket disconnected
+SearchPopup.tsx:281 getNavigableItems for recent searches: 10 items
+PageHeader.tsx:54 Searching for: a with filter: all
+SearchPopup.tsx:278 getNavigableItems for search: 0 items, searchResults available: false
+PageHeader.tsx:54 Searching for: ad with filter: all
+SearchPopup.tsx:278 getNavigableItems for search: 0 items, searchResults available: false
+PageHeader.tsx:54 Searching for: ada with filter: all
+SearchPopup.tsx:278 getNavigableItems for search: 0 items, searchResults available: false
+PageHeader.tsx:54 Searching for: adam with filter: all
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(2), tasks: Array(2), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:569 Result 0: isSelected=false, searchQuery.length=4, selectedIndex=-1
+SearchPopup.tsx:569 Result 1: isSelected=false, searchQuery.length=4, selectedIndex=-1
+SearchPopup.tsx:569 Result 2: isSelected=false, searchQuery.length=4, selectedIndex=-1
+SearchPopup.tsx:569 Result 3: isSelected=false, searchQuery.length=4, selectedIndex=-1
+SearchPopup.tsx:278 getNavigableItems for search: 0 items, searchResults available: false
+PageHeader.tsx:54 Searching for: adams with filter: all
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(2), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (3) [{…}, {…}, {…}]
+SearchPopup.tsx:569 Result 0: isSelected=false, searchQuery.length=5, selectedIndex=-1
+SearchPopup.tsx:569 Result 1: isSelected=false, searchQuery.length=5, selectedIndex=-1
+SearchPopup.tsx:569 Result 2: isSelected=false, searchQuery.length=5, selectedIndex=-1
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(2), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (3) [{…}, {…}, {…}]
+SearchPopup.tsx:278 getNavigableItems for search: 3 items, searchResults available: true
+SearchPopup.tsx:333 ArrowDown pressed, navigableItems: 3 selectedIndex: -1
+SearchPopup.tsx:336 Setting selectedIndex to: 0
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(2), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (3) [{…}, {…}, {…}]
+SearchPopup.tsx:569 Result 0: isSelected=true, searchQuery.length=5, selectedIndex=0
+SearchPopup.tsx:569 Result 1: isSelected=false, searchQuery.length=5, selectedIndex=0
+SearchPopup.tsx:569 Result 2: isSelected=false, searchQuery.length=5, selectedIndex=0
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(2), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (3) [{…}, {…}, {…}]
+SearchPopup.tsx:278 getNavigableItems for search: 3 items, searchResults available: true
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(2), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (3) [{…}, {…}, {…}]
+SidebarHeader.tsx:20 SidebarHeader - currentUser: {id: 't0', name: 'Armando Lopez', email: 'armando.lopez@example.com', avatar: 'AL', status: 'online', …}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Ogden - Thew - 2709 T Street', projectIdFromName: 'ogden-thew-2709-t-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Peterson - 2015 10th Street', projectIdFromName: 'peterson-2015-10th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Piner - Piner Haus Garage', projectIdFromName: 'piner-piner-haus-garage', urlProjectId: undefined, isActive: false}
+AppLayout.tsx:35 Sidebar resize: 12.7123570021
+App.tsx:52 App component is rendering, current path: /task/6
+useRealtimeTasks.tsx:37 Attempting WebSocket connection to: wss://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev:443/ws
+useTaskBoard.tsx:26 Making direct API call for tasks
+useTaskBoard.tsx:45 Query state - Loading: false Error: null Tasks count: 7
+useTaskBoard.tsx:47 First task: {id: 42, taskId: 'T41376', title: 'Update for Client, GC and Plan Check', projectId: 'mcvarish-salmina-6251-el-dorado-street', project: 'McVarish - Salmina - 6251 El Dorado Street', …}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Ogden - Thew - 2709 T Street', projectIdFromName: 'ogden-thew-2709-t-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Peterson - 2015 10th Street', projectIdFromName: 'peterson-2015-10th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Piner - Piner Haus Garage', projectIdFromName: 'piner-piner-haus-garage', urlProjectId: undefined, isActive: false}
+useTaskBoard.tsx:32 Tasks loaded: 7
+useRealtimeTasks.tsx:41 WebSocket connected for real-time updates
+useRealtimeTasks.tsx:47 WebSocket disconnected
+SidebarHeader.tsx:20 SidebarHeader - currentUser: {id: 't0', name: 'Armando Lopez', email: 'armando.lopez@example.com', avatar: 'AL', status: 'online', …}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Ogden - Thew - 2709 T Street', projectIdFromName: 'ogden-thew-2709-t-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Peterson - 2015 10th Street', projectIdFromName: 'peterson-2015-10th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Piner - Piner Haus Garage', projectIdFromName: 'piner-piner-haus-garage', urlProjectId: undefined, isActive: false}
+AppLayout.tsx:35 Sidebar resize: 12.7123570021
+App.tsx:52 App component is rendering, current path: /
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Ogden - Thew - 2709 T Street', projectIdFromName: 'ogden-thew-2709-t-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Peterson - 2015 10th Street', projectIdFromName: 'peterson-2015-10th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Piner - Piner Haus Garage', projectIdFromName: 'piner-piner-haus-garage', urlProjectId: undefined, isActive: false}
+SearchPopup.tsx:281 getNavigableItems for recent searches: 10 items
+PageHeader.tsx:54 Searching for: s with filter: all
+SearchPopup.tsx:278 getNavigableItems for search: 0 items, searchResults available: false
+PageHeader.tsx:54 Searching for: sf with filter: all
+SearchPopup.tsx:278 getNavigableItems for search: 0 items, searchResults available: false
+PageHeader.tsx:54 Searching for: sfs with filter: all
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(1), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (2) [{…}, {…}]
+SearchPopup.tsx:569 Result 0: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:569 Result 1: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(1), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (2) [{…}, {…}]
+SearchPopup.tsx:278 getNavigableItems for search: 2 items, searchResults available: true
+PageHeader.tsx:54 Searching for: sf with filter: all
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(1), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (2) [{…}, {…}]
+SearchPopup.tsx:569 Result 0: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:569 Result 1: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(1), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (2) [{…}, {…}]
+SearchPopup.tsx:569 Result 0: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:569 Result 1: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(1), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (2) [{…}, {…}]
+SearchPopup.tsx:569 Result 0: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:569 Result 1: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(1), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (2) [{…}, {…}]
+SearchPopup.tsx:278 getNavigableItems for search: 2 items, searchResults available: true
+PageHeader.tsx:54 Searching for: s with filter: all
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(1), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (2) [{…}, {…}]
+SearchPopup.tsx:569 Result 0: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:569 Result 1: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(1), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (2) [{…}, {…}]
+SearchPopup.tsx:569 Result 0: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:569 Result 1: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(1), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (2) [{…}, {…}]
+SearchPopup.tsx:278 getNavigableItems for search: 2 items, searchResults available: true
+PageHeader.tsx:54 Searching for: sg with filter: all
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(1), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (2) [{…}, {…}]
+SearchPopup.tsx:569 Result 0: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:569 Result 1: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(1), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (2) [{…}, {…}]
+SearchPopup.tsx:569 Result 0: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:569 Result 1: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:278 getNavigableItems for search: 0 items, searchResults available: false
+PageHeader.tsx:54 Searching for: sgs with filter: all
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(0), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: []
+SearchPopup.tsx:278 getNavigableItems for search: 0 items, searchResults available: false
+PageHeader.tsx:54 Searching for: sg with filter: all
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(0), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: []
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(0), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: []
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(0), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: []
+SearchPopup.tsx:278 getNavigableItems for search: 0 items, searchResults available: true
+PageHeader.tsx:54 Searching for: s with filter: all
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(0), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: []
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(0), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: []
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(5), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:569 Result 0: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:569 Result 1: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:569 Result 2: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:569 Result 3: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(5), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:278 getNavigableItems for search: 4 items, searchResults available: true
+PageHeader.tsx:54 Searching for:  with filter: all
+SearchPopup.tsx:281 getNavigableItems for recent searches: 10 items
+SearchPopup.tsx:281 getNavigableItems for recent searches: 10 items
+PageHeader.tsx:54 Searching for: a with filter: all
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(5), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:569 Result 0: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:569 Result 1: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:569 Result 2: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:569 Result 3: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(5), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:569 Result 0: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:569 Result 1: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:569 Result 2: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:569 Result 3: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(5), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:278 getNavigableItems for search: 4 items, searchResults available: true
+PageHeader.tsx:54 Searching for: af with filter: all
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(5), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:569 Result 0: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:569 Result 1: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:569 Result 2: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:569 Result 3: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(10), tasks: Array(5), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:569 Result 0: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:569 Result 1: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:569 Result 2: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:569 Result 3: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:278 getNavigableItems for search: 0 items, searchResults available: false
+PageHeader.tsx:54 Searching for: afa with filter: all
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(0), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: []
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(0), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: []
+SearchPopup.tsx:278 getNavigableItems for search: 0 items, searchResults available: true
+PageHeader.tsx:54 Searching for: af with filter: all
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(0), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: []
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(0), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: []
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(0), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: []
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(0), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: []
+SearchPopup.tsx:278 getNavigableItems for search: 0 items, searchResults available: true
+PageHeader.tsx:54 Searching for: a with filter: all
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(0), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: []
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(0), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: []
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(0), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: []
+SearchPopup.tsx:278 getNavigableItems for search: 0 items, searchResults available: true
+PageHeader.tsx:54 Searching for: ad with filter: all
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(0), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: []
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(0), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: []
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(3), tasks: Array(5), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:569 Result 0: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:569 Result 1: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:569 Result 2: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:569 Result 3: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(3), tasks: Array(5), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:278 getNavigableItems for search: 4 items, searchResults available: true
+PageHeader.tsx:54 Searching for: ada with filter: all
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(3), tasks: Array(5), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:569 Result 0: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:569 Result 1: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:569 Result 2: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:569 Result 3: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(3), tasks: Array(5), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:569 Result 0: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:569 Result 1: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:569 Result 2: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:569 Result 3: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(2), tasks: Array(2), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:569 Result 0: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:569 Result 1: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:569 Result 2: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:569 Result 3: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(2), tasks: Array(2), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:569 Result 0: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:569 Result 1: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:569 Result 2: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:569 Result 3: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(2), tasks: Array(2), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:569 Result 0: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:569 Result 1: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:569 Result 2: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:569 Result 3: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(2), tasks: Array(2), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:278 getNavigableItems for search: 4 items, searchResults available: true
+SearchPopup.tsx:333 ArrowDown pressed, navigableItems: 4 selectedIndex: -1
+SearchPopup.tsx:336 Setting selectedIndex to: 0
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(2), tasks: Array(2), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:569 Result 0: isSelected=true, searchQuery.length=3, selectedIndex=0
+SearchPopup.tsx:569 Result 1: isSelected=false, searchQuery.length=3, selectedIndex=0
+SearchPopup.tsx:569 Result 2: isSelected=false, searchQuery.length=3, selectedIndex=0
+SearchPopup.tsx:569 Result 3: isSelected=false, searchQuery.length=3, selectedIndex=0
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(2), tasks: Array(2), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:278 getNavigableItems for search: 4 items, searchResults available: true
+SearchPopup.tsx:333 ArrowDown pressed, navigableItems: 4 selectedIndex: 0
+SearchPopup.tsx:336 Setting selectedIndex to: 1
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(2), tasks: Array(2), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:569 Result 0: isSelected=false, searchQuery.length=3, selectedIndex=1
+SearchPopup.tsx:569 Result 1: isSelected=true, searchQuery.length=3, selectedIndex=1
+SearchPopup.tsx:569 Result 2: isSelected=false, searchQuery.length=3, selectedIndex=1
+SearchPopup.tsx:569 Result 3: isSelected=false, searchQuery.length=3, selectedIndex=1
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(2), tasks: Array(2), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (4) [{…}, {…}, {…}, {…}]
+SearchPopup.tsx:278 getNavigableItems for search: 4 items, searchResults available: true
+SearchPopup.tsx:252 getFilteredResults called - searchResults: {people: Array(0), projects: Array(2), tasks: Array(2), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:264 All filter results: (4) [{…}, {…}, {…}, {…}]
+SidebarHeader.tsx:20 SidebarHeader - currentUser: {id: 't0', name: 'Armando Lopez', email: 'armando.lopez@example.com', avatar: 'AL', status: 'online', …}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Ogden - Thew - 2709 T Street', projectIdFromName: 'ogden-thew-2709-t-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Peterson - 2015 10th Street', projectIdFromName: 'peterson-2015-10th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Piner - Piner Haus Garage', projectIdFromName: 'piner-piner-haus-garage', urlProjectId: undefined, isActive: false}
+AppLayout.tsx:35 Sidebar resize: 12.7123570021
+App.tsx:52 App component is rendering, current path: /task/11
+useRealtimeTasks.tsx:37 Attempting WebSocket connection to: wss://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev:443/ws
+useTaskBoard.tsx:26 Making direct API call for tasks
+useTaskBoard.tsx:45 Query state - Loading: false Error: null Tasks count: 7
+useTaskBoard.tsx:47 First task: {id: 42, taskId: 'T41376', title: 'Update for Client, GC and Plan Check', projectId: 'mcvarish-salmina-6251-el-dorado-street', project: 'McVarish - Salmina - 6251 El Dorado Street', …}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Ogden - Thew - 2709 T Street', projectIdFromName: 'ogden-thew-2709-t-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Peterson - 2015 10th Street', projectIdFromName: 'peterson-2015-10th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Piner - Piner Haus Garage', projectIdFromName: 'piner-piner-haus-garage', urlProjectId: undefined, isActive: false}
+useTaskBoard.tsx:32 Tasks loaded: 7
+useRealtimeTasks.tsx:41 WebSocket connected for real-time updates

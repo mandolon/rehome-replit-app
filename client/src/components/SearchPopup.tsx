@@ -34,78 +34,10 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
         }));
       }
       
-      // Default recent searches with proper ISO timestamps
-      const now = new Date();
-      return [
-        { 
-          query: 'Sarah Johnson', 
-          type: 'people', 
-          timestamp: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString() // 2 hours ago
-        },
-        { 
-          query: 'Update for Compliance', 
-          type: 'tasks',
-          projectName: 'Ogden Thew 2709 T Street',
-          timestamp: new Date(now.getTime() - 4 * 60 * 60 * 1000).toISOString() // 4 hours ago
-        },
-        { 
-          query: 'API Documentation', 
-          type: 'files', 
-          timestamp: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString() // Yesterday
-        },
-        { 
-          query: 'Mobile App Development', 
-          type: 'projects', 
-          timestamp: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000).toISOString() // 3 days ago
-        },
-        { 
-          query: 'Database Migration', 
-          type: 'tasks',
-          projectName: 'Admin Dashboard',
-          timestamp: new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000).toISOString() // 5 days ago
-        },
-        { 
-          query: 'Sprint Planning', 
-          type: 'notes', 
-          timestamp: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString() // 1 week ago
-        }
-      ];
+      // Return empty array for fresh start - recent searches will be populated as user searches
+      return [];
     } catch {
-      const now = new Date();
-      return [
-        { 
-          query: 'Sarah Johnson', 
-          type: 'people', 
-          timestamp: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString()
-        },
-        { 
-          query: 'Update for Compliance', 
-          type: 'tasks',
-          projectName: 'Ogden Thew 2709 T Street',
-          timestamp: new Date(now.getTime() - 4 * 60 * 60 * 1000).toISOString()
-        },
-        { 
-          query: 'API Documentation', 
-          type: 'files', 
-          timestamp: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString()
-        },
-        { 
-          query: 'Mobile App Development', 
-          type: 'projects', 
-          timestamp: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000).toISOString()
-        },
-        { 
-          query: 'Database Migration', 
-          type: 'tasks',
-          projectName: 'Admin Dashboard',
-          timestamp: new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000).toISOString()
-        },
-        { 
-          query: 'Sprint Planning', 
-          type: 'notes', 
-          timestamp: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()
-        }
-      ];
+      return [];
     }
   });
   const popupRef = useRef<HTMLDivElement>(null);
