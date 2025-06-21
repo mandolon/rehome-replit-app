@@ -386,7 +386,7 @@ export class DatabaseStorage implements IStorage {
     const files: any[] = [];
     const notes: any[] = [];
 
-    return { people, projects, tasks, files, notes };
+    return { people: searchedPeople, projects: searchedProjects, tasks: searchedTasks, files, notes };
   }
 }
 
@@ -737,8 +737,7 @@ export class MemStorage implements IStorage {
     // Search users (people)
     const people = Array.from(this.users.values())
       .filter(user => 
-        user.username.toLowerCase().includes(searchTerm) ||
-        user.email.toLowerCase().includes(searchTerm)
+        user.username.toLowerCase().includes(searchTerm)
       )
       .slice(0, 10);
 
@@ -747,7 +746,7 @@ export class MemStorage implements IStorage {
       .filter(project =>
         project.title.toLowerCase().includes(searchTerm) ||
         (project.description && project.description.toLowerCase().includes(searchTerm)) ||
-        project.clientName.toLowerCase().includes(searchTerm)
+        (project.clientName && project.clientName.toLowerCase().includes(searchTerm))
       )
       .slice(0, 10);
 
@@ -756,7 +755,6 @@ export class MemStorage implements IStorage {
       .filter(task =>
         task.title.toLowerCase().includes(searchTerm) ||
         (task.description && task.description.toLowerCase().includes(searchTerm)) ||
-        task.assignedTo.toLowerCase().includes(searchTerm) ||
         task.createdBy.toLowerCase().includes(searchTerm)
       )
       .slice(0, 10);

@@ -248,6 +248,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Search route
+  app.get("/api/search", async (req, res) => {
+    try {
+      const { q } = req.query;
+      if (!q || typeof q !== 'string') {
+        return res.status(400).json({ error: "Search query is required" });
+      }
+      
+      const results = await storage.searchAll(q);
+      res.json(results);
+    } catch (error: any) {
+      console.error("Error performing search:", error);
+      res.status(500).json({ 
+        error: "Failed to perform search", 
+        details: error?.message || String(error) 
+      });
+    }
+  });
+
   // Project routes
   app.get("/api/projects", async (req, res) => {
     try {
