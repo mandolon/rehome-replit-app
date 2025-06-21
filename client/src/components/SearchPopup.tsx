@@ -239,7 +239,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     return (
       <div
         key={`${type}-${result.id}`}
-        className="flex items-center gap-2 pl-6 pr-3 py-1 hover:bg-muted/30 cursor-pointer"
+        className="flex items-center gap-2 py-1 hover:bg-muted/30 cursor-pointer"
         onClick={() => {
           handleSearch(result.title);
         }}
@@ -378,7 +378,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
                     <p className="text-sm text-muted-foreground">No results found for "{searchQuery}"</p>
                   </div>
                 ) : (
-                  <div>
+                  <div className="pl-6 pr-3 py-2">
                     {getFilteredResults().map((result: SearchResult) => {
                       // Determine result type based on active filter or properties
                       let type = activeFilter === 'all' ? 'mixed' : activeFilter;
