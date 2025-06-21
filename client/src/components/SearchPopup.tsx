@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Users, Folder, FileText, CheckSquare, StickyNote, X } from 'lucide-react';
+import { Search, UserCheck, FolderOpen, File, Calendar, BookOpen, X } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -28,11 +28,11 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
 
   const filters = [
     { id: 'all', label: 'All', icon: Search, count: 156 },
-    { id: 'people', label: 'People', icon: Users, count: 24 },
-    { id: 'projects', label: 'Projects', icon: Folder, count: 18 },
-    { id: 'files', label: 'Files', icon: FileText, count: 89 },
-    { id: 'tasks', label: 'Tasks', icon: CheckSquare, count: 47 },
-    { id: 'notes', label: 'Notes', icon: StickyNote, count: 12 }
+    { id: 'people', label: 'People', icon: UserCheck, count: 24 },
+    { id: 'projects', label: 'Projects', icon: FolderOpen, count: 18 },
+    { id: 'files', label: 'Files', icon: File, count: 89 },
+    { id: 'tasks', label: 'Tasks', icon: Calendar, count: 47 },
+    { id: 'notes', label: 'Notes', icon: BookOpen, count: 12 }
   ];
 
   // Type definitions for search results
@@ -129,11 +129,11 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
   const renderResultRow = (result: any, type: string) => {
     const getResultIcon = () => {
       switch (type) {
-        case 'people': return Users;
-        case 'projects': return Folder;
-        case 'files': return FileText;
-        case 'tasks': return CheckSquare;
-        case 'notes': return StickyNote;
+        case 'people': return UserCheck;
+        case 'projects': return FolderOpen;
+        case 'files': return File;
+        case 'tasks': return Calendar;
+        case 'notes': return BookOpen;
         default: return Search;
       }
     };
@@ -163,11 +163,11 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
   const renderRecentSearchRow = (search: any) => {
     const getTypeIcon = () => {
       switch (search.type) {
-        case 'people': return Users;
-        case 'projects': return Folder;
-        case 'files': return FileText;
-        case 'tasks': return CheckSquare;
-        case 'notes': return StickyNote;
+        case 'people': return UserCheck;
+        case 'projects': return FolderOpen;
+        case 'files': return File;
+        case 'tasks': return Calendar;
+        case 'notes': return BookOpen;
         default: return Search;
       }
     };
