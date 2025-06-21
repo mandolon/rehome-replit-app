@@ -188,8 +188,8 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           break;
         case 'projects':
           title = item.title;
-          subtitle = 'Project';
-          description = `${item.title} — Project`;
+          subtitle = '';
+          description = `${item.title}`;
           break;
         case 'tasks':
           title = item.title;
@@ -198,13 +198,13 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           break;
         case 'files':
           title = item.name || item.title;
-          subtitle = 'File';
-          description = `${item.name || item.title} — File`;
+          subtitle = '';
+          description = `${item.name || item.title}`;
           break;
         case 'notes':
           title = item.title;
-          subtitle = 'Note';
-          description = `${item.title} — Note`;
+          subtitle = '';
+          description = `${item.title}`;
           break;
       }
       
@@ -551,7 +551,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           ) : (
             <span className="text-xs text-foreground">
               {result.title}
-              <span className="text-muted-foreground ml-2">— {result.subtitle}</span>
+              {result.subtitle && <span className="text-muted-foreground ml-2">— {result.subtitle}</span>}
             </span>
           )}
         </div>
