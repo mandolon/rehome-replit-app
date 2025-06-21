@@ -143,7 +143,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     return (
       <div
         key={`${type}-${result.id}`}
-        className="flex items-center gap-2 px-3 py-1 hover:bg-muted/30 cursor-pointer transition-colors"
+        className="flex items-center gap-2 px-3 py-1 hover:bg-muted/30 cursor-pointer"
       >
         {result.avatar && type === 'people' ? (
           <div className="w-3 h-3 bg-primary/10 rounded-full flex items-center justify-center text-primary text-xs font-medium">
@@ -177,7 +177,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     return (
       <div
         key={search.query}
-        className="flex items-center gap-2 px-3 py-1 hover:bg-muted/30 cursor-pointer transition-colors"
+        className="flex items-center gap-2 px-3 py-1 hover:bg-muted/30 cursor-pointer"
         onClick={() => {
           setSearchQuery(search.query);
           handleSearch(search.query);
@@ -237,7 +237,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
                   key={filter.id}
                   onClick={() => setActiveFilter(filter.id)}
                   className={cn(
-                    "flex items-center gap-2 px-2 py-1 text-xs border border-border rounded transition-colors",
+                    "flex items-center gap-2 px-2 py-1 text-xs border border-border rounded",
                     activeFilter === filter.id
                       ? "text-foreground bg-accent/50"
                       : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
