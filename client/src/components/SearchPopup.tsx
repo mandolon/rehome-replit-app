@@ -208,49 +208,45 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
             <div className="relative flex-1 flex justify-center">
               <div className="relative">
                 <Search className="w-3 h-3 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <Input
+                <input
                   ref={inputRef}
                   type="text"
                   placeholder="Search for people, projects, files, tasks, notes..."
                   value={searchQuery}
                   onChange={(e) => handleSearch(e.target.value)}
-                  className="pl-7 pr-3 py-1 text-xs w-96 h-auto border border-border rounded focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  className="pl-7 pr-3 py-1 border border-border rounded text-xs w-96"
                 />
               </div>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
+            <button
               onClick={onClose}
-              className="h-8 w-8 p-0"
+              className="p-2 hover:bg-accent rounded-md transition-colors"
             >
               <X className="w-4 h-4" />
-            </Button>
+            </button>
           </div>
 
           {/* Filter Tabs */}
-          <div className="flex items-center gap-1 p-2 border-b border-border bg-muted/20">
+          <div className="flex items-center gap-2 p-2 border-b border-border bg-muted/20">
             {filters.map((filter) => {
               const Icon = filter.icon;
               return (
-                <Button
+                <button
                   key={filter.id}
-                  variant="ghost"
-                  size="sm"
                   onClick={() => setActiveFilter(filter.id)}
                   className={cn(
-                    "h-auto px-2 py-1 text-xs border border-border rounded transition-colors",
+                    "flex items-center gap-2 px-2 py-1 text-xs border border-border rounded transition-colors",
                     activeFilter === filter.id
                       ? "text-foreground bg-accent/50"
                       : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                   )}
                 >
-                  <Icon className="w-3 h-3 mr-2" strokeWidth="2" />
-                  {filter.label}
-                  <span className="ml-2 text-xs text-muted-foreground">
+                  <Icon className="w-3 h-3" strokeWidth="2" />
+                  <span>{filter.label}</span>
+                  <span className="text-xs text-muted-foreground">
                     {filter.count}
                   </span>
-                </Button>
+                </button>
               );
             })}
           </div>
