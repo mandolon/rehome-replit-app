@@ -24,18 +24,62 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     // Load recent searches from localStorage
     try {
       const saved = localStorage.getItem('recentSearches');
-      return saved ? JSON.parse(saved) : [
-        { query: 'Sarah Johnson', type: 'people', timestamp: '2 hours ago' },
-        { query: 'API Documentation', type: 'files', timestamp: 'Yesterday' },
-        { query: 'Mobile App Development', type: 'projects', timestamp: '3 days ago' },
-        { query: 'Sprint Planning', type: 'notes', timestamp: '1 week ago' }
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Migrate old timestamp format to ISO format if needed
+        return parsed.map((search: any) => ({
+          ...search,
+          timestamp: search.timestamp.includes('T') ? search.timestamp : new Date().toISOString()
+        }));
+      }
+      
+      // Default recent searches with proper ISO timestamps
+      const now = new Date();
+      return [
+        { 
+          query: 'Sarah Johnson', 
+          type: 'people', 
+          timestamp: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString() // 2 hours ago
+        },
+        { 
+          query: 'API Documentation', 
+          type: 'files', 
+          timestamp: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString() // Yesterday
+        },
+        { 
+          query: 'Mobile App Development', 
+          type: 'projects', 
+          timestamp: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000).toISOString() // 3 days ago
+        },
+        { 
+          query: 'Sprint Planning', 
+          type: 'notes', 
+          timestamp: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString() // 1 week ago
+        }
       ];
     } catch {
+      const now = new Date();
       return [
-        { query: 'Sarah Johnson', type: 'people', timestamp: '2 hours ago' },
-        { query: 'API Documentation', type: 'files', timestamp: 'Yesterday' },
-        { query: 'Mobile App Development', type: 'projects', timestamp: '3 days ago' },
-        { query: 'Sprint Planning', type: 'notes', timestamp: '1 week ago' }
+        { 
+          query: 'Sarah Johnson', 
+          type: 'people', 
+          timestamp: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString()
+        },
+        { 
+          query: 'API Documentation', 
+          type: 'files', 
+          timestamp: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString()
+        },
+        { 
+          query: 'Mobile App Development', 
+          type: 'projects', 
+          timestamp: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000).toISOString()
+        },
+        { 
+          query: 'Sprint Planning', 
+          type: 'notes', 
+          timestamp: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()
+        }
       ];
     }
   });
@@ -303,15 +347,10 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
   };
 
   const saveToRecentSearches = (title: string, type: string) => {
-    const formatTimestamp = () => {
-      const now = new Date();
-      return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    };
-
     const newSearch = {
       query: title,
       type: type,
-      timestamp: formatTimestamp()
+      timestamp: new Date().toISOString() // Store as ISO string for proper date calculations
     };
     
     const updatedSearches = [newSearch, ...recentSearches.filter(s => s.query !== title)].slice(0, 10);
@@ -322,6 +361,40 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
       localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
     } catch (error) {
       console.warn('Failed to save recent searches:', error);
+    }
+  };
+
+  const formatFriendlyTimestamp = (timestamp: string | Date) => {
+    const now = new Date();
+    const searchDate = new Date(timestamp);
+    
+    // Normalize dates to start of day for accurate day comparison
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const searchDay = new Date(searchDate.getFullYear(), searchDate.getMonth(), searchDate.getDate());
+    
+    const diffTime = today.getTime() - searchDay.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) {
+      return 'Today';
+    } else if (diffDays === 1) {
+      return 'Yesterday';
+    } else if (diffDays <= 6) {
+      // Show weekday name for items within the past week
+      return searchDate.toLocaleDateString('en-US', { weekday: 'long' });
+    } else if (diffDays <= 13) {
+      return 'Last week';
+    } else if (diffDays <= 30) {
+      // Show week grouping for items within the past month
+      const weeksAgo = Math.ceil(diffDays / 7);
+      return `${weeksAgo} weeks ago`;
+    } else {
+      // Show full date for older items
+      return searchDate.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric',
+        year: now.getFullYear() !== searchDate.getFullYear() ? 'numeric' : undefined
+      });
     }
   };
 
@@ -435,7 +508,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
         <div className="flex-1 min-w-0">
           <span className="text-xs font-medium text-foreground">{search.query}</span>
         </div>
-        <span className="text-xs text-muted-foreground">{search.timestamp}</span>
+        <span className="text-xs text-muted-foreground">{formatFriendlyTimestamp(search.timestamp)}</span>
       </div>
     );
   };
