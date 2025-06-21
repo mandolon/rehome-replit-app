@@ -309,7 +309,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
       <div className="fixed inset-0 z-50 flex items-start justify-center pt-20">
         <div
           ref={popupRef}
-          className="w-full max-w-2xl mx-4 bg-background border border-border rounded-lg shadow-2xl h-[500px] flex flex-col"
+          className="w-full max-w-xl mx-4 bg-background border border-border rounded-lg shadow-2xl h-[500px] flex flex-col"
         >
           {/* Header */}
           <div className="flex items-center gap-3 pl-6 pr-3 py-2 border-b border-border group">
@@ -333,7 +333,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           </div>
 
           {/* Filter Tabs */}
-          <div className="flex items-center gap-2 pl-6 pr-3 py-2 border-b border-border bg-muted/20">
+          <div className="flex items-center gap-2 pl-6 pr-3 py-2">
             {filters.map((filter) => {
               const Icon = filter.icon;
               return (
