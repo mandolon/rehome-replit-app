@@ -30,7 +30,12 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           ...search,
           timestamp: search.timestamp.includes('T') ? search.timestamp : new Date().toISOString()
         }));
-        console.log('Loading recent searches from localStorage:', mapped);
+        console.log('Loading recent searches from localStorage:', mapped.map(s => ({ 
+          query: s.query, 
+          type: s.type, 
+          projectId: s.projectId, 
+          taskId: s.taskId 
+        })));
         return mapped;
       }
       return [];
@@ -263,7 +268,11 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
                   navigate('/teams');
                   break;
                 case 'projects':
-                  console.log('Keyboard project navigation:', { selectedItem });
+                  console.log('Keyboard project navigation:', { 
+                    selectedItemQuery: selectedItem.query, 
+                    selectedItemType: selectedItem.type, 
+                    selectedItemProjectId: selectedItem.projectId 
+                  });
                   if (selectedItem.projectId) {
                     navigate(`/project/${selectedItem.projectId}`);
                   } else {
@@ -365,7 +374,12 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     // Save clicked item to recent searches with additional metadata for projects
     if (type === 'projects') {
       const projectId = result.projectId || result.id;
-      console.log('Saving project to recent searches:', { result, projectId });
+      console.log('Saving project to recent searches:', { 
+        resultTitle: result.title, 
+        resultProjectId: result.projectId, 
+        resultId: result.id, 
+        finalProjectId: projectId 
+      });
       const projectSearch = {
         query: result.title,
         type: 'projects',
@@ -375,7 +389,12 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
       const updatedSearches = [projectSearch, ...recentSearches.filter(s => s.query !== result.title)].slice(0, 10);
       setRecentSearches(updatedSearches);
       localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
-      console.log('Updated recent searches:', updatedSearches);
+      console.log('Updated recent searches:', updatedSearches.map(s => ({ 
+        query: s.query, 
+        type: s.type, 
+        projectId: s.projectId, 
+        taskId: s.taskId 
+      })));
     } else if (type === 'tasks') {
       const taskSearch = {
         query: result.title,
@@ -522,7 +541,11 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           navigate('/teams');
           break;
         case 'projects':
-          console.log('Recent project clicked:', { search });
+          console.log('Recent project clicked:', { 
+            searchQuery: search.query, 
+            searchType: search.type, 
+            searchProjectId: search.projectId 
+          });
           if (search.projectId) {
             navigate(`/project/${search.projectId}`);
           } else {

@@ -1,0 +1,39 @@
+react-dom.development.js:29895 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+SearchPopup.tsx:33 Loading recent searches from localStorage: Array(6)
+AppLayout.tsx:35 Sidebar resize: 12.7123570021
+App.tsx:52 App component is rendering, current path: /
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+PageHeader.tsx:54 Searching for: a with filter: all
+PageHeader.tsx:54 Searching for: ad with filter: all
+PageHeader.tsx:54 Searching for: ada with filter: all
+SearchPopup.tsx:368 Saving project to recent searches: Object
+SearchPopup.tsx:378 Updated recent searches: Array(6)
+SearchPopup.tsx:407 Project clicked: Object
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+SearchPopup.tsx:33 Loading recent searches from localStorage: Array(6)
+AppLayout.tsx:35 Sidebar resize: 12.7123570021
+App.tsx:52 App component is rendering, current path: /project/adams-1063-40th-street
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+SearchPopup.tsx:525 Recent project clicked: Object
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+App.tsx:52 App component is rendering, current path: /project/adams-1063-40th-street
+[NEW] Explain Console errors by using Copilot in Edge: click
+         
+         to explain an error. 
+        Learn more
+        Don't show again
