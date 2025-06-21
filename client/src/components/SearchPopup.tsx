@@ -117,16 +117,16 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     ] as SearchResult[]
   };
 
-  // Helper function to assign roles to people
-  const getPersonRole = (username: string): string => {
-    const roles = ['Architect', 'Consultant', 'Designer', 'Client', 'Developer', 'Project Manager', 'Team Lead'];
-    const hash = username.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
-    return roles[hash % roles.length];
-  };
-
   // Format results from API to match component interface
   const formatResults = (data: any, type: string) => {
     if (!data) return [];
+    
+    // Helper function to assign roles to people
+    const getPersonRole = (username: string): string => {
+      const roles = ['Architect', 'Consultant', 'Designer', 'Client', 'Developer', 'Project Manager', 'Team Lead'];
+      const hash = username.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
+      return roles[hash % roles.length];
+    };
     
     return data.map((item: any) => {
       let title = '';
