@@ -339,7 +339,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
                 placeholder="Search for people, projects, files, tasks, notes..."
                 value={searchQuery}
                 onChange={(e) => handleSearch(e.target.value)}
-                className="pl-7 pr-3 py-1 border border-border rounded text-xs w-full"
+                className="pl-7 pr-3 py-1 border border-border rounded text-xs w-full bg-white dark:bg-gray-950"
               />
             </div>
             <button
