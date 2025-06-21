@@ -137,7 +137,7 @@ const TaskDetailFields: React.FC<TaskDetailFieldsProps> = ({
           <PopoverTrigger asChild>
             <button
               className={cn(
-                "w-full text-left text-xs cursor-pointer hover:text-foreground transition-colors border-b border-transparent hover:border-muted-foreground",
+                "text-left text-xs cursor-pointer hover:text-foreground transition-colors inline-block border-b border-transparent hover:border-muted-foreground",
                 !selectedDueDate && "text-muted-foreground"
               )}
             >
