@@ -19,7 +19,7 @@ interface TaskContextType {
   
   // Edit operations
   startEditingTask: (task: Task) => void;
-  saveTaskEdit: (taskId: number) => void;
+  saveTaskEdit: (taskId: number | string) => void;
   cancelTaskEdit: () => void;
   setEditingValue: (value: string) => void;
   

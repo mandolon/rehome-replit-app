@@ -32,9 +32,13 @@ const TaskDetailFields: React.FC<TaskDetailFieldsProps> = ({
   onDueDateUpdated
 }) => {
   const [timeLogged, setTimeLogged] = useState(task?.timeLogged || '0');
-  const [selectedDueDate, setSelectedDueDate] = useState<Date | undefined>(
-    task?.dueDate ? new Date(task.dueDate) : undefined
-  );
+  const [selectedDueDate, setSelectedDueDate] = useState<Date | undefined>(() => {
+    try {
+      return task?.dueDate ? new Date(task.dueDate) : undefined;
+    } catch {
+      return undefined;
+    }
+  });
   const formatCreatedDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
