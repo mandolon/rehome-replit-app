@@ -13,7 +13,8 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ThemeToggle } from '@/components/ThemeToggle'; // Added ThemeToggle import
+import { ThemeToggle } from '@/components/ThemeToggle';
+import SearchPopup from '@/components/SearchPopup';
 
 interface PageHeaderProps {
   onToggleSidebar?: () => void;
@@ -24,6 +25,7 @@ const PageHeader = ({
 }: PageHeaderProps) => {
   const navigate = useNavigate();
   const { currentUser, updateUserStatus, toggleNotifications, logout } = useUser();
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const getStatusColor = (status: string) => {
     switch (status) {
