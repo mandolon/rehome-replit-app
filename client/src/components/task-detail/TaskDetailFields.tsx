@@ -137,7 +137,7 @@ const TaskDetailFields: React.FC<TaskDetailFieldsProps> = ({
           <PopoverTrigger asChild>
             <button
               className={cn(
-                "w-full text-left text-xs cursor-pointer hover:text-foreground transition-colors",
+                "w-full text-left text-xs cursor-pointer hover:text-foreground transition-colors border-b border-transparent hover:border-muted-foreground",
                 !selectedDueDate && "text-muted-foreground"
               )}
             >
@@ -145,12 +145,26 @@ const TaskDetailFields: React.FC<TaskDetailFieldsProps> = ({
             </button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="single"
-              selected={selectedDueDate}
-              onSelect={handleDueDateSelect}
-              initialFocus
-            />
+            <div className="p-3">
+              <Calendar
+                mode="single"
+                selected={selectedDueDate}
+                onSelect={handleDueDateSelect}
+                initialFocus
+              />
+              {selectedDueDate && (
+                <div className="pt-2 border-t mt-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDueDateSelect(undefined)}
+                    className="w-full text-xs"
+                  >
+                    Clear Date
+                  </Button>
+                </div>
+              )}
+            </div>
           </PopoverContent>
         </Popover>
       </div>
