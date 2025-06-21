@@ -92,10 +92,10 @@ const TaskDetailDescription: React.FC<TaskDetailDescriptionProps> = ({
   }, []);
 
   return (
-    <div className="space-y-2 relative mt-4">
+    <div className="space-y-2 relative mt-6">
       <Textarea
         placeholder="Add description..."
-        className="h-[235px] text-sm"
+        className="h-[200px] text-sm"
         value={desc}
         onChange={e => {
           setDesc(e.target.value);
