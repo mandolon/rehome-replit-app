@@ -189,7 +189,7 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed, onFiltersChan
           onChange={setSelectedCreatedBy}
         />
 
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-1">
           {/* Add Note button */}
           <button 
             onClick={() => setNotePopupOpen(true)}
