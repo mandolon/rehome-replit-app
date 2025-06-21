@@ -273,17 +273,18 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
                     const currentPath = window.location.pathname;
                     const targetPath = `/task/${selectedItem.taskId}`;
                     
-                    if (currentPath === targetPath) {
-                      // If we're already on this task page, force a refresh by going to home first
+                    // Always force a clean navigation to ensure task component updates
+                    if (currentPath.startsWith('/task/')) {
+                      // If we're currently on any task page, go to home first to force re-mount
                       navigate('/', { replace: true });
                       setTimeout(() => {
                         navigate(targetPath, {
                           state: {
-                            returnTo: window.location.pathname,
+                            returnTo: '/',
                             returnToName: 'Search'
                           }
                         });
-                      }, 10);
+                      }, 50);
                     } else {
                       navigate(targetPath, {
                         state: {
@@ -409,17 +410,18 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
         const currentPath = window.location.pathname;
         const targetPath = `/task/${taskId}`;
         
-        if (currentPath === targetPath) {
-          // If we're already on this task page, force a refresh by going to home first
+        // Always force a clean navigation to ensure task component updates
+        if (currentPath.startsWith('/task/')) {
+          // If we're currently on any task page, go to home first to force re-mount
           navigate('/', { replace: true });
           setTimeout(() => {
             navigate(targetPath, {
               state: {
-                returnTo: window.location.pathname,
+                returnTo: '/',
                 returnToName: 'Search'
               }
             });
-          }, 10);
+          }, 50);
         } else {
           navigate(targetPath, {
             state: {
@@ -555,17 +557,18 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
             const currentPath = window.location.pathname;
             const targetPath = `/task/${search.taskId}`;
             
-            if (currentPath === targetPath) {
-              // If we're already on this task page, force a refresh by going to home first
+            // Always force a clean navigation to ensure task component updates
+            if (currentPath.startsWith('/task/')) {
+              // If we're currently on any task page, go to home first to force re-mount
               navigate('/', { replace: true });
               setTimeout(() => {
                 navigate(targetPath, {
                   state: {
-                    returnTo: window.location.pathname,
+                    returnTo: '/',
                     returnToName: 'Search'
                   }
                 });
-              }, 10);
+              }, 50);
             } else {
               navigate(targetPath, {
                 state: {

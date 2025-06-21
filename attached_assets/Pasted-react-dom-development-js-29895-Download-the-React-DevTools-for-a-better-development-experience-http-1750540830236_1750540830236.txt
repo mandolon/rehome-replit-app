@@ -1,0 +1,71 @@
+react-dom.development.js:29895 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+AppLayout.tsx:35 Sidebar resize: 12.7123570021
+App.tsx:52 App component is rendering, current path: /
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+App.tsx:52 App component is rendering, current path: /
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+AppLayout.tsx:35 Sidebar resize: 12.7123570021
+App.tsx:52 App component is rendering, current path: /project/ogden-thew-2709-t-street
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+AppLayout.tsx:35 Sidebar resize: 12.7123570021
+App.tsx:52 App component is rendering, current path: /
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+PageHeader.tsx:54 Searching for: a with filter: all
+PageHeader.tsx:54 Searching for: ad with filter: all
+PageHeader.tsx:54 Searching for: ada with filter: all
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+AppLayout.tsx:35 Sidebar resize: 12.7123570021
+App.tsx:52 App component is rendering, current path: /task/T1714
+useRealtimeTasks.tsx:37 Attempting WebSocket connection to: wss://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev:443/ws
+useTaskBoard.tsx:26 Making direct API call for tasks
+useTaskBoard.tsx:45 Query state - Loading: true Error: null Tasks count: 0
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+useTaskBoard.tsx:32 Tasks loaded: 7
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+useTaskBoard.tsx:45 Query state - Loading: false Error: null Tasks count: 7
+useTaskBoard.tsx:47 First task: Object
+TaskDetailPage.tsx:90 Access allowed: Admin
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+useRealtimeTasks.tsx:41 WebSocket connected for real-time updates
+PageHeader.tsx:54 Searching for: a with filter: all
+PageHeader.tsx:54 Searching for: ad with filter: all
+PageHeader.tsx:54 Searching for: ada with filter: all
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+App.tsx:52 App component is rendering, current path: /task/T10834
+TaskDetailPage.tsx:90 Access allowed: Admin
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+[NEW] Explain Console errors by using Copilot in Edge: click
+         
+         to explain an error. 
+        Learn more
+        Don't show again
