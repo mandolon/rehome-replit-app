@@ -25,6 +25,9 @@ const TaskDetailPage = () => {
   const { supabaseTasks, supabaseTasksLoading } = useTaskBoard();
 
   useEffect(() => {
+    // Clear current task immediately when taskId changes to prevent stale data
+    setCurrentTask(null);
+    
     let fetchedTask: Task | null = null;
     if (taskId) {
       // 1. First look in Supabase-powered realtime tasks (if present)
@@ -45,7 +48,11 @@ const TaskDetailPage = () => {
       // 3. (Optional: fallback to direct backend fetch)
       // (removed getTaskByTaskId/getTaskById which are static/legacy)
     }
-    setCurrentTask(fetchedTask);
+    
+    // Set the task in the next tick to ensure state update
+    setTimeout(() => {
+      setCurrentTask(fetchedTask);
+    }, 0);
   }, [taskId, refreshTrigger, customTasks, supabaseTasks]);
 
   const handleBack = () => {

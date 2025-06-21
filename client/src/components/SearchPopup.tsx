@@ -269,22 +269,12 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
                   break;
                 case 'tasks':
                   if (selectedItem.taskId) {
-                    // Force navigation even if already on a task page
-                    const currentPath = window.location.pathname;
-                    const targetPath = `/task/${selectedItem.taskId}`;
-                    
-                    // Force a complete page reload for reliable task switching
-                    if (currentPath.startsWith('/task/')) {
-                      // If we're on any task page, use a full page reload to ensure clean state
-                      window.location.href = targetPath;
-                    } else {
-                      navigate(targetPath, {
-                        state: {
-                          returnTo: window.location.pathname,
-                          returnToName: 'Search'
-                        }
-                      });
-                    }
+                    navigate(`/task/${selectedItem.taskId}`, {
+                      state: {
+                        returnTo: window.location.pathname,
+                        returnToName: 'Search'
+                      }
+                    });
                   } else {
                     navigate('/');
                   }
@@ -398,22 +388,12 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     switch (type) {
       case 'tasks':
         const taskId = result.taskId || result.id;
-        // Force navigation even if already on a task page
-        const currentPath = window.location.pathname;
-        const targetPath = `/task/${taskId}`;
-        
-        // Force a complete page reload for reliable task switching
-        if (currentPath.startsWith('/task/')) {
-          // If we're on any task page, use a full page reload to ensure clean state
-          window.location.href = targetPath;
-        } else {
-          navigate(targetPath, {
-            state: {
-              returnTo: window.location.pathname,
-              returnToName: 'Search'
-            }
-          });
-        }
+        navigate(`/task/${taskId}`, {
+          state: {
+            returnTo: window.location.pathname,
+            returnToName: 'Search'
+          }
+        });
         break;
       case 'projects':
         const projectId = result.projectId || result.id;
@@ -537,22 +517,12 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           break;
         case 'tasks':
           if (search.taskId) {
-            // Force navigation even if already on a task page
-            const currentPath = window.location.pathname;
-            const targetPath = `/task/${search.taskId}`;
-            
-            // Force a complete page reload for reliable task switching
-            if (currentPath.startsWith('/task/')) {
-              // If we're on any task page, use a full page reload to ensure clean state
-              window.location.href = targetPath;
-            } else {
-              navigate(targetPath, {
-                state: {
-                  returnTo: window.location.pathname,
-                  returnToName: 'Search'
-                }
-              });
-            }
+            navigate(`/task/${search.taskId}`, {
+              state: {
+                returnTo: window.location.pathname,
+                returnToName: 'Search'
+              }
+            });
           } else {
             navigate('/');
           }
