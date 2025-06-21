@@ -141,7 +141,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     return (
       <div
         key={`${type}-${result.id}`}
-        className="flex items-center gap-3 px-4 py-2 hover:bg-muted/30 cursor-pointer transition-colors"
+        className="flex items-center gap-2 px-3 py-1 hover:bg-muted/30 cursor-pointer transition-colors"
       >
         {result.avatar && type === 'people' ? (
           <div className="w-3 h-3 bg-primary/10 rounded-full flex items-center justify-center text-primary text-xs font-medium">
@@ -175,7 +175,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     return (
       <div
         key={search.query}
-        className="flex items-center gap-3 px-4 py-2 hover:bg-muted/30 cursor-pointer transition-colors"
+        className="flex items-center gap-2 px-3 py-1 hover:bg-muted/30 cursor-pointer transition-colors"
         onClick={() => {
           setSearchQuery(search.query);
           handleSearch(search.query);
@@ -261,8 +261,8 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
             {searchQuery.length === 0 ? (
               <div>
                 {/* Recent Searches Section */}
-                <div className="px-4 py-3 border-b border-border">
-                  <h3 style={{ fontSize: '0.75rem' }} className="font-semibold text-muted-foreground uppercase tracking-wide mb-2">RECENT SEARCHES</h3>
+                <div className="px-3 py-2 border-b border-border">
+                  <h3 style={{ fontSize: '0.75rem' }} className="font-semibold text-muted-foreground uppercase tracking-wide mb-1">RECENT SEARCHES</h3>
                   <div>
                     {recentSearches.map((search) => renderRecentSearchRow(search))}
                   </div>
