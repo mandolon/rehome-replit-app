@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { X, Plus, Check, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 
 interface TodoItem {
   id: string;
@@ -17,7 +16,7 @@ interface TodoPopupProps {
 const TodoPopup = ({ isOpen, onClose }: TodoPopupProps) => {
   const [todos, setTodos] = useState<TodoItem[]>([]);
   const [newTodoText, setNewTodoText] = useState('');
-  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -66,7 +65,7 @@ const TodoPopup = ({ isOpen, onClose }: TodoPopupProps) => {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+    if (e.key === 'Enter') {
       addTodo();
     }
   };
@@ -96,13 +95,14 @@ const TodoPopup = ({ isOpen, onClose }: TodoPopupProps) => {
         <div className="flex-1 overflow-hidden flex flex-col">
           {/* New Todo Input */}
           <div className="px-6 py-4">
-            <Textarea
+            <input
               ref={inputRef}
+              type="text"
               value={newTodoText}
               onChange={(e) => setNewTodoText(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Add a new todo item..."
-              className="min-h-[60px] border-0 shadow-none resize-none text-xs text-gray-700 dark:text-gray-300 placeholder-gray-400 focus-visible:ring-0"
+              className="text-xl font-semibold text-gray-900 dark:text-white bg-transparent border-none outline-none focus:ring-0 w-full pl-3 px-1 py-0.5"
             />
           </div>
 
