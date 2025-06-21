@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Plus, Check } from 'lucide-react';
+import { X, Plus, Check, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
 interface TodoItem {
   id: string;
@@ -17,13 +17,31 @@ interface TodoPopupProps {
 const TodoPopup = ({ isOpen, onClose }: TodoPopupProps) => {
   const [todos, setTodos] = useState<TodoItem[]>([]);
   const [newTodoText, setNewTodoText] = useState('');
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isOpen && inputRef.current) {
       inputRef.current.focus();
     }
   }, [isOpen]);
+
+  // Handle click outside to close popup
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, onClose]);
 
   const addTodo = () => {
     if (newTodoText.trim()) {
@@ -48,7 +66,7 @@ const TodoPopup = ({ isOpen, onClose }: TodoPopupProps) => {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
       addTodo();
     }
   };
@@ -56,75 +74,114 @@ const TodoPopup = ({ isOpen, onClose }: TodoPopupProps) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-96 max-h-[80vh] overflow-hidden">
-        <div className="flex items-center justify-between p-4 border-b border-border">
-          <h3 className="text-lg font-semibold text-foreground">Todo List</h3>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div ref={popupRef} className="bg-white dark:bg-gray-900 rounded-lg shadow-xl w-[400px] max-h-[60vh] flex flex-col">
+        {/* Header */}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center gap-2">
+            <FileText className="w-4 h-4 text-gray-500" />
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Todo
+            </span>
+          </div>
           <button
             onClick={onClose}
-            className="text-muted-foreground hover:text-foreground p-1 rounded hover:bg-accent"
+            className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
           >
-            <X className="w-4 h-4" />
+            <X className="w-4 h-4 text-gray-500" />
           </button>
         </div>
-        
-        <div className="p-4">
-          <div className="flex gap-2 mb-4">
-            <Input
+
+        {/* Content */}
+        <div className="flex-1 overflow-hidden flex flex-col">
+          {/* New Todo Input */}
+          <div className="px-6 py-4">
+            <Textarea
               ref={inputRef}
               value={newTodoText}
               onChange={(e) => setNewTodoText(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Add a new todo..."
-              className="flex-1"
+              placeholder="Add a new todo item..."
+              className="min-h-[60px] border-0 shadow-none resize-none text-xs text-gray-700 dark:text-gray-300 placeholder-gray-400 focus-visible:ring-0"
             />
-            <Button
-              onClick={addTodo}
-              size="sm"
-              className="px-3"
-            >
-              <Plus className="w-4 h-4" />
-            </Button>
           </div>
 
-          <div className="space-y-2 max-h-64 overflow-y-auto">
-            {todos.map((todo) => (
-              <div
-                key={todo.id}
-                className="flex items-center gap-2 p-2 rounded border border-border hover:bg-accent/50 group"
+          {/* Separator line */}
+          <div className="border-t border-gray-200 dark:border-gray-700"></div>
+
+          {/* Todo List */}
+          <div className="px-6 pb-4 overflow-y-auto flex-1">
+            <div className="pt-4">
+              {todos.length === 0 ? (
+                <div className="flex items-center justify-center h-32">
+                  <div className="text-center text-gray-500 text-sm">
+                    <div className="mb-2"><Check className="w-6 h-6 mx-auto" /></div>
+                    <div>No todos yet. Add one above!</div>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {todos.map((todo) => (
+                    <div
+                      key={todo.id}
+                      className="group py-2 transition-all hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded"
+                    >
+                      <div className="flex items-start gap-3">
+                        <button
+                          onClick={() => toggleTodo(todo.id)}
+                          className={`flex-shrink-0 w-4 h-4 rounded border-2 flex items-center justify-center mt-0.5 transition-colors ${
+                            todo.completed
+                              ? 'bg-green-500 border-green-500 text-white'
+                              : 'border-gray-300 hover:border-green-400'
+                          }`}
+                        >
+                          {todo.completed && <Check className="w-3 h-3" />}
+                        </button>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between">
+                            <span
+                              className={`text-sm ${
+                                todo.completed
+                                  ? 'line-through text-gray-500 dark:text-gray-400'
+                                  : 'text-gray-900 dark:text-white'
+                              }`}
+                            >
+                              {todo.text}
+                            </span>
+                            <button
+                              onClick={() => deleteTodo(todo.id)}
+                              className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 p-1 rounded transition-all ml-2"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="px-6 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-gray-500">
+              {todos.filter(t => !t.completed).length} remaining, {todos.filter(t => t.completed).length} completed
+            </span>
+            <div className="flex gap-2">
+              <Button
+                onClick={addTodo}
+                size="sm"
+                className="h-7 px-3 text-xs"
+                disabled={!newTodoText.trim()}
               >
-                <button
-                  onClick={() => toggleTodo(todo.id)}
-                  className={`flex-shrink-0 w-4 h-4 rounded border-2 flex items-center justify-center ${
-                    todo.completed
-                      ? 'bg-green-500 border-green-500 text-white'
-                      : 'border-gray-300 hover:border-green-400'
-                  }`}
-                >
-                  {todo.completed && <Check className="w-3 h-3" />}
-                </button>
-                <span
-                  className={`flex-1 text-sm ${
-                    todo.completed
-                      ? 'line-through text-muted-foreground'
-                      : 'text-foreground'
-                  }`}
-                >
-                  {todo.text}
-                </span>
-                <button
-                  onClick={() => deleteTodo(todo.id)}
-                  className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-red-500 p-1 rounded"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              </div>
-            ))}
-            {todos.length === 0 && (
-              <div className="text-center text-muted-foreground text-sm py-8">
-                No todos yet. Add one above!
-              </div>
-            )}
+                <Plus className="w-3 h-3 mr-1" />
+                Add
+              </Button>
+            </div>
           </div>
         </div>
       </div>
