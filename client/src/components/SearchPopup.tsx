@@ -18,6 +18,26 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
   const [debouncedQuery, setDebouncedQuery] = useState('');
+  const [searchCache, setSearchCache] = useState<Map<string, any>>(new Map());
+  const [recentSearches, setRecentSearches] = useState<any[]>(() => {
+    // Load recent searches from localStorage
+    try {
+      const saved = localStorage.getItem('recentSearches');
+      return saved ? JSON.parse(saved) : [
+        { query: 'Sarah Johnson', type: 'people', timestamp: '2 hours ago' },
+        { query: 'API Documentation', type: 'files', timestamp: 'Yesterday' },
+        { query: 'Mobile App Development', type: 'projects', timestamp: '3 days ago' },
+        { query: 'Sprint Planning', type: 'notes', timestamp: '1 week ago' }
+      ];
+    } catch {
+      return [
+        { query: 'Sarah Johnson', type: 'people', timestamp: '2 hours ago' },
+        { query: 'API Documentation', type: 'files', timestamp: 'Yesterday' },
+        { query: 'Mobile App Development', type: 'projects', timestamp: '3 days ago' },
+        { query: 'Sprint Planning', type: 'notes', timestamp: '1 week ago' }
+      ];
+    }
+  });
   const popupRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
@@ -31,25 +51,33 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Fetch search results from API
+  // Fetch search results from API with caching
   const { data: searchResults, isLoading } = useQuery({
     queryKey: ['/api/search', debouncedQuery],
     queryFn: async () => {
       if (!debouncedQuery.trim()) return null;
+      
+      // Check cache first
+      const cacheKey = debouncedQuery.toLowerCase();
+      if (searchCache.has(cacheKey)) {
+        return searchCache.get(cacheKey);
+      }
+      
       const response = await fetch(`/api/search?q=${encodeURIComponent(debouncedQuery)}`);
       if (!response.ok) throw new Error('Search failed');
-      return response.json();
+      const data = await response.json();
+      
+      // Cache the result
+      setSearchCache(prev => new Map(prev).set(cacheKey, data));
+      
+      return data;
     },
-    enabled: debouncedQuery.trim().length > 0
+    enabled: debouncedQuery.trim().length > 0,
+    staleTime: 60000, // Cache for 1 minute
+    gcTime: 300000,   // Keep in cache for 5 minutes
   });
 
-  // Recent searches data
-  const recentSearches = [
-    { query: 'Sarah Johnson', type: 'people', timestamp: '2 hours ago' },
-    { query: 'API Documentation', type: 'files', timestamp: 'Yesterday' },
-    { query: 'Mobile App Development', type: 'projects', timestamp: '3 days ago' },
-    { query: 'Sprint Planning', type: 'notes', timestamp: '1 week ago' }
-  ];
+
 
   // Calculate filter counts from real search results
   const getFilterCounts = () => {
@@ -210,26 +238,49 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     };
   }, [isOpen, onClose]);
 
-  // Handle escape key
+  // Handle keyboard shortcuts
   useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
+    const handleKeydown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         onClose();
       }
+      // Global Ctrl+K shortcut to open search (when not already open)
+      if (!isOpen && (event.ctrlKey || event.metaKey) && event.key === 'k') {
+        event.preventDefault();
+        // We can't directly open from here, but we can dispatch a custom event
+        window.dispatchEvent(new CustomEvent('openSearch'));
+      }
     };
 
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-    }
+    document.addEventListener('keydown', handleKeydown);
 
     return () => {
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('keydown', handleKeydown);
     };
   }, [isOpen, onClose]);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     onSearch(query, activeFilter);
+    
+    // Add to recent searches if not empty
+    if (query.trim()) {
+      const newSearch = {
+        query: query.trim(),
+        type: 'mixed',
+        timestamp: 'now'
+      };
+      
+      const updatedSearches = [newSearch, ...recentSearches.filter(s => s.query !== query.trim())].slice(0, 10);
+      setRecentSearches(updatedSearches);
+      
+      // Save to localStorage
+      try {
+        localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
+      } catch (error) {
+        console.warn('Failed to save recent searches:', error);
+      }
+    }
   };
 
   const renderResultRow = (result: SearchResult, type: string) => {
