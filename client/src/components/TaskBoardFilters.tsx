@@ -215,14 +215,7 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed, onFiltersChan
             Completed
           </button>
 
-          <div className="relative">
-            <Search className="w-3 h-3 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input 
-              type="text" 
-              placeholder="Search..." 
-              className="pl-7 pr-3 py-1 border border-border rounded text-xs w-48"
-            />
-          </div>
+
           <button 
             onClick={onAddTask}
             className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-xs font-medium flex items-center gap-1"
