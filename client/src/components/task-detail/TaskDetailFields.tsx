@@ -135,16 +135,14 @@ const TaskDetailFields: React.FC<TaskDetailFieldsProps> = ({
         </label>
         <Popover>
           <PopoverTrigger asChild>
-            <Button
-              variant="outline"
+            <button
               className={cn(
-                "w-full justify-start text-left font-normal text-xs h-7 px-2",
+                "w-full text-left text-xs cursor-pointer hover:text-foreground transition-colors",
                 !selectedDueDate && "text-muted-foreground"
               )}
             >
-              <CalendarIcon className="mr-1 h-3 w-3" />
               {selectedDueDate && !isNaN(selectedDueDate.getTime()) ? format(selectedDueDate, "MMM d, yyyy") : "Set date"}
-            </Button>
+            </button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">
             <Calendar
