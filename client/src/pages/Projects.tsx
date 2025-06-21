@@ -223,167 +223,167 @@ const Projects = () => {
     <AppLayout>
       <div className="h-full flex flex-col">
         {/* Header Section */}
-      <div className="border-b border-border px-4 py-3">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-lg font-medium text-foreground">Projects</h2>
-            <p className="text-sm text-muted-foreground mt-1">Manage project statuses and workflow</p>
-          </div>
-          <div className="flex gap-2">
-            {projects.length === 0 && (
-              <Button
-                onClick={() => createSampleProjectsMutation.mutate()}
-                disabled={createSampleProjectsMutation.isPending}
-                size="sm"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Sample Projects
-              </Button>
-            )}
-          </div>
-        </div>
-        
-        {/* Search and Filter Controls */}
-        <div className="flex flex-col gap-4">
-          <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              placeholder="Search projects..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
+        <div className="border-b border-border px-4 py-3">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-lg font-medium text-foreground">Projects</h2>
+              <p className="text-sm text-muted-foreground mt-1">Manage project statuses and workflow</p>
+            </div>
+            <div className="flex gap-2">
+              {projects.length === 0 && (
+                <Button
+                  onClick={() => createSampleProjectsMutation.mutate()}
+                  disabled={createSampleProjectsMutation.isPending}
+                  size="sm"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Sample Projects
+                </Button>
+              )}
+            </div>
           </div>
           
-          <div className="flex gap-1">
-            {[
-              { key: 'all', label: 'All Projects', count: statusCounts.all },
-              { key: 'in_progress', label: 'In Progress', count: statusCounts.in_progress },
-              { key: 'on_hold', label: 'On Hold', count: statusCounts.on_hold },
-              { key: 'completed', label: 'Completed', count: statusCounts.completed }
-            ].map((filter) => (
-              <Button
-                key={filter.key}
-                variant={selectedStatus === filter.key ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setSelectedStatus(filter.key)}
-                className="h-8 px-3 text-xs"
-              >
-                {filter.label} ({filter.count})
-              </Button>
-            ))}
+          {/* Search and Filter Controls */}
+          <div className="flex flex-col gap-4">
+            <div className="relative max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                placeholder="Search projects..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            
+            <div className="flex gap-1">
+              {[
+                { key: 'all', label: 'All Projects', count: statusCounts.all },
+                { key: 'in_progress', label: 'In Progress', count: statusCounts.in_progress },
+                { key: 'on_hold', label: 'On Hold', count: statusCounts.on_hold },
+                { key: 'completed', label: 'Completed', count: statusCounts.completed }
+              ].map((filter) => (
+                <Button
+                  key={filter.key}
+                  variant={selectedStatus === filter.key ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setSelectedStatus(filter.key)}
+                  className="h-8 px-3 text-xs"
+                >
+                  {filter.label} ({filter.count})
+                </Button>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Content Section */}
-      <div className="flex-1 overflow-auto">
-        {filteredProjects.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-center">
-            <FolderOpen className="w-12 h-12 text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium text-foreground mb-2">
-              {projects.length === 0 ? 'No projects yet' : 'No projects found'}
-            </h3>
-            <p className="text-sm text-muted-foreground max-w-md">
-              {projects.length === 0 
-                ? 'Create your first project to get started with project management.'
-                : 'Try adjusting your search criteria or filters.'}
-            </p>
-            {projects.length === 0 && (
-              <Button
-                onClick={() => createSampleProjectsMutation.mutate()}
-                disabled={createSampleProjectsMutation.isPending}
-                className="mt-4"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Sample Projects
-              </Button>
-            )}
-          </div>
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRow className="border-border">
-                <TableHead className="py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</TableHead>
-                <TableHead className="py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Project</TableHead>
-                <TableHead className="py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Client</TableHead>
-                <TableHead className="py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Priority</TableHead>
-                <TableHead className="py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Due Date</TableHead>
-                <TableHead className="py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredProjects.map((project: Project) => (
-                <TableRow
-                  key={project.id}
-                  className="border-b border-border transition-colors hover:bg-accent/50 group"
+        {/* Content Section */}
+        <div className="flex-1 overflow-auto">
+          {filteredProjects.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full text-center">
+              <FolderOpen className="w-12 h-12 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-medium text-foreground mb-2">
+                {projects.length === 0 ? 'No projects yet' : 'No projects found'}
+              </h3>
+              <p className="text-sm text-muted-foreground max-w-md">
+                {projects.length === 0 
+                  ? 'Create your first project to get started with project management.'
+                  : 'Try adjusting your search criteria or filters.'}
+              </p>
+              {projects.length === 0 && (
+                <Button
+                  onClick={() => createSampleProjectsMutation.mutate()}
+                  disabled={createSampleProjectsMutation.isPending}
+                  className="mt-4"
                 >
-                  <TableCell className="py-3">
-                    <ProjectStatusDropdown
-                      projectId={project.projectId}
-                      currentStatus={project.status}
-                    />
-                  </TableCell>
-                  <TableCell className="py-3">
-                    <div className="flex flex-col">
-                      <div className="font-medium text-sm text-foreground">{project.title}</div>
-                      <div className="text-xs text-muted-foreground">{project.projectId}</div>
-                      {project.description && (
-                        <div className="text-xs text-muted-foreground mt-1 truncate max-w-xs">
-                          {project.description}
-                        </div>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell className="py-3">
-                    <div className="flex flex-col">
-                      <div className="text-sm text-foreground">{project.clientName}</div>
-                      {project.projectAddress && (
-                        <div className="text-xs text-muted-foreground truncate max-w-xs">
-                          {project.projectAddress}
-                        </div>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell className="py-3">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(project.priority)}`}>
-                      {project.priority.charAt(0).toUpperCase() + project.priority.slice(1)}
-                    </span>
-                  </TableCell>
-                  <TableCell className="py-3">
-                    <div className="text-sm text-foreground">
-                      {project.dueDate ? formatDate(project.dueDate) : '—'}
-                    </div>
-                  </TableCell>
-                  <TableCell className="py-3">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <MoreHorizontal className="w-4 h-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          onClick={() => deleteProjectMutation.mutate(project.projectId)}
-                          disabled={deleteProjectMutation.isPending}
-                          className="text-destructive"
-                        >
-                          <Trash2 className="w-4 h-4 mr-2" />
-                          Delete Project
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Sample Projects
+                </Button>
+              )}
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow className="border-border">
+                  <TableHead className="py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</TableHead>
+                  <TableHead className="py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Project</TableHead>
+                  <TableHead className="py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Client</TableHead>
+                  <TableHead className="py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Priority</TableHead>
+                  <TableHead className="py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Due Date</TableHead>
+                  <TableHead className="py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
-      </div>
+              </TableHeader>
+              <TableBody>
+                {filteredProjects.map((project: Project) => (
+                  <TableRow
+                    key={project.id}
+                    className="border-b border-border transition-colors hover:bg-accent/50 group"
+                  >
+                    <TableCell className="py-3">
+                      <ProjectStatusDropdown
+                        projectId={project.projectId}
+                        currentStatus={project.status}
+                      />
+                    </TableCell>
+                    <TableCell className="py-3">
+                      <div className="flex flex-col">
+                        <div className="font-medium text-sm text-foreground">{project.title}</div>
+                        <div className="text-xs text-muted-foreground">{project.projectId}</div>
+                        {project.description && (
+                          <div className="text-xs text-muted-foreground mt-1 truncate max-w-xs">
+                            {project.description}
+                          </div>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-3">
+                      <div className="flex flex-col">
+                        <div className="text-sm text-foreground">{project.clientName}</div>
+                        {project.projectAddress && (
+                          <div className="text-xs text-muted-foreground truncate max-w-xs">
+                            {project.projectAddress}
+                          </div>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-3">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(project.priority)}`}>
+                        {project.priority.charAt(0).toUpperCase() + project.priority.slice(1)}
+                      </span>
+                    </TableCell>
+                    <TableCell className="py-3">
+                      <div className="text-sm text-foreground">
+                        {project.dueDate ? formatDate(project.dueDate) : '—'}
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-3">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <MoreHorizontal className="w-4 h-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            onClick={() => deleteProjectMutation.mutate(project.projectId)}
+                            disabled={deleteProjectMutation.isPending}
+                            className="text-destructive"
+                          >
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            Delete Project
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </div>
       </div>
     </AppLayout>
   );
