@@ -16,6 +16,14 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
   const popupRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Recent searches data
+  const recentSearches = [
+    { query: 'Sarah Johnson', type: 'people', timestamp: '2 hours ago' },
+    { query: 'API Documentation', type: 'files', timestamp: 'Yesterday' },
+    { query: 'Mobile App Development', type: 'projects', timestamp: '3 days ago' },
+    { query: 'Sprint Planning', type: 'notes', timestamp: '1 week ago' }
+  ];
+
   const filters = [
     { id: 'all', label: 'All', icon: Search, count: 156 },
     { id: 'people', label: 'People', icon: Users, count: 24 },
@@ -116,7 +124,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     onSearch(query, activeFilter);
   };
 
-  const renderResultCard = (result: any, type: string) => {
+  const renderResultRow = (result: any, type: string) => {
     const getResultIcon = () => {
       switch (type) {
         case 'people': return Users;
@@ -131,39 +139,54 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     const Icon = getResultIcon();
 
     return (
-      <Card
+      <div
         key={`${type}-${result.id}`}
-        className="border-0 shadow-none bg-muted/30 cursor-pointer transition-all duration-300 hover:shadow-lg hover:bg-muted/50 group"
+        className="flex items-center gap-3 px-4 py-2 hover:bg-muted/30 cursor-pointer transition-colors"
       >
-        <CardHeader className="pb-2 space-y-1">
-          <div className="flex items-start gap-3">
-            {result.avatar && type === 'people' ? (
-              <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center text-primary text-xs font-medium">
-                {result.avatar}
-              </div>
-            ) : (
-              <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                <Icon className="w-4 h-4 text-primary" />
-              </div>
-            )}
-            <div className="flex-1 min-w-0">
-              <CardTitle className="text-sm font-semibold group-hover:text-foreground/80 transition-colors line-clamp-1">
-                {result.title}
-              </CardTitle>
-              <CardDescription className="text-xs text-muted-foreground line-clamp-1">
-                {result.subtitle}
-              </CardDescription>
-            </div>
+        {result.avatar && type === 'people' ? (
+          <div className="w-3 h-3 bg-primary/10 rounded-full flex items-center justify-center text-primary text-xs font-medium">
+            {result.avatar}
           </div>
-        </CardHeader>
-        {result.description && (
-          <CardContent className="pt-0 pb-4">
-            <p className="text-muted-foreground text-xs line-clamp-2 ml-11">
-              {result.description}
-            </p>
-          </CardContent>
+        ) : (
+          <Icon className="w-3 h-3 text-muted-foreground" />
         )}
-      </Card>
+        <div className="flex-1 min-w-0">
+          <span style={{ fontSize: '0.75rem' }} className="font-medium text-foreground">{result.title}</span>
+          <span style={{ fontSize: '0.75rem' }} className="text-muted-foreground ml-2">{result.subtitle}</span>
+        </div>
+      </div>
+    );
+  };
+
+  const renderRecentSearchRow = (search: any) => {
+    const getTypeIcon = () => {
+      switch (search.type) {
+        case 'people': return Users;
+        case 'projects': return Folder;
+        case 'files': return FileText;
+        case 'tasks': return CheckSquare;
+        case 'notes': return StickyNote;
+        default: return Search;
+      }
+    };
+
+    const Icon = getTypeIcon();
+
+    return (
+      <div
+        key={search.query}
+        className="flex items-center gap-3 px-4 py-2 hover:bg-muted/30 cursor-pointer transition-colors"
+        onClick={() => {
+          setSearchQuery(search.query);
+          handleSearch(search.query);
+        }}
+      >
+        <Icon className="w-3 h-3 text-muted-foreground" />
+        <div className="flex-1 min-w-0">
+          <span style={{ fontSize: '0.75rem' }} className="font-medium text-foreground">{search.query}</span>
+          <span style={{ fontSize: '0.75rem' }} className="text-muted-foreground ml-2">{search.timestamp}</span>
+        </div>
+      </div>
     );
   };
 
@@ -172,7 +195,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
   return (
     <>
       {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/10 backdrop-blur-[2px] z-40" />
+      <div className="fixed inset-0 bg-black/5 backdrop-blur-[1px] z-40" />
       
       {/* Search Popup */}
       <div className="fixed inset-0 z-50 flex items-start justify-center pt-20">
@@ -234,30 +257,41 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           </div>
 
           {/* Results */}
-          <div className="flex-1 overflow-y-auto p-4">
+          <div className="flex-1 overflow-y-auto">
             {searchQuery.length === 0 ? (
-              <div className="text-center py-8">
-                <Search className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
-                <p className="text-sm text-muted-foreground">Start typing to search...</p>
+              <div>
+                {/* Recent Searches Section */}
+                <div className="px-4 py-3 border-b border-border">
+                  <h3 style={{ fontSize: '0.75rem' }} className="font-semibold text-muted-foreground uppercase tracking-wide mb-2">RECENT SEARCHES</h3>
+                  <div>
+                    {recentSearches.map((search) => renderRecentSearchRow(search))}
+                  </div>
+                </div>
+                <div className="text-center py-8">
+                  <Search className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
+                  <p className="text-sm text-muted-foreground">Start typing to search...</p>
+                </div>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div>
                 {getFilteredResults().length === 0 ? (
                   <div className="text-center py-8">
                     <Search className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
                     <p className="text-sm text-muted-foreground">No results found for "{searchQuery}"</p>
                   </div>
                 ) : (
-                  getFilteredResults().map((result) => {
-                    // Determine result type based on properties
-                    let type = 'tasks';
-                    if ('avatar' in result && result.avatar) type = 'people';
-                    else if (result.subtitle?.includes('Progress') || result.subtitle?.includes('Planning') || result.subtitle?.includes('Completed')) type = 'projects';
-                    else if (result.subtitle?.includes('Document') || result.subtitle?.includes('Design File') || result.subtitle?.includes('Markdown')) type = 'files';
-                    else if (result.subtitle?.includes('Meeting') || result.subtitle?.includes('Communication') || result.subtitle?.includes('Development')) type = 'notes';
-                    
-                    return renderResultCard(result, type);
-                  })
+                  <div>
+                    {getFilteredResults().map((result) => {
+                      // Determine result type based on properties
+                      let type = 'tasks';
+                      if ('avatar' in result && result.avatar) type = 'people';
+                      else if (result.subtitle?.includes('Progress') || result.subtitle?.includes('Planning') || result.subtitle?.includes('Completed')) type = 'projects';
+                      else if (result.subtitle?.includes('Document') || result.subtitle?.includes('Design File') || result.subtitle?.includes('Markdown')) type = 'files';
+                      else if (result.subtitle?.includes('Meeting') || result.subtitle?.includes('Communication') || result.subtitle?.includes('Development')) type = 'notes';
+                      
+                      return renderResultRow(result, type);
+                    })}
+                  </div>
                 )}
               </div>
             )}
