@@ -75,13 +75,13 @@ const TaskDetailTitleSection: React.FC<TaskDetailTitleSectionProps> = ({
             onChange={(e) => setEditingValue(e.target.value)}
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
-            className="text-3xl font-bold bg-transparent border-none outline-none focus:ring-0 w-full placeholder:text-muted-foreground/50"
+            className="text-xl font-semibold bg-transparent border-none outline-none focus:ring-0 w-full placeholder:text-muted-foreground/50"
             autoFocus
             placeholder="Task title..."
           />
         ) : (
           <h1
-            className="text-3xl font-bold cursor-pointer hover:bg-accent/30 rounded-lg p-2 -mx-2 -my-2 transition-all duration-200 group"
+            className="text-xl font-semibold cursor-pointer hover:bg-accent/30 rounded-lg p-2 -mx-2 -my-2 transition-all duration-200 group"
             onClick={() => startEditingTask(task)}
             title="Click to edit title"
           >
