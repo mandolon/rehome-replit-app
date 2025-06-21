@@ -325,9 +325,31 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
             }
             handleResultClick(selectedItem, resultType);
           } else {
-            // Handle recent search selection
-            setSearchQuery(selectedItem.query);
+            // Handle recent search selection - navigate directly
             saveToRecentSearches(selectedItem.query, selectedItem.type);
+            
+            switch (selectedItem.type) {
+              case 'people':
+                navigate('/teams');
+                break;
+              case 'projects':
+                navigate('/projects');
+                break;
+              case 'tasks':
+                navigate('/');
+                break;
+              case 'files':
+                console.log('File navigation:', selectedItem.query);
+                break;
+              case 'notes':
+                console.log('Notes navigation:', selectedItem.query);
+                break;
+              default:
+                setSearchQuery(selectedItem.query);
+                return;
+            }
+            
+            onClose(); // Close search popup after navigation
           }
         }
       }
@@ -539,11 +561,36 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     const isSelected = searchQuery.length === 0 && index !== undefined && index === selectedIndex;
 
     const handleRecentSearchClick = () => {
-      // Update the search query to show results
-      setSearchQuery(search.query);
-      
       // Move this item to the top of recent searches
       saveToRecentSearches(search.query, search.type);
+      
+      // Navigate directly to the item's page based on type
+      switch (search.type) {
+        case 'people':
+          navigate('/teams');
+          break;
+        case 'projects':
+          navigate('/projects');
+          break;
+        case 'tasks':
+          // For tasks, we need to find the specific task - for now navigate to main tasks view
+          navigate('/');
+          break;
+        case 'files':
+          // Navigate to files section when available
+          console.log('File navigation:', search.query);
+          break;
+        case 'notes':
+          // Navigate to notes section when available
+          console.log('Notes navigation:', search.query);
+          break;
+        default:
+          // Fallback to searching if type is unknown
+          setSearchQuery(search.query);
+          return;
+      }
+      
+      onClose(); // Close search popup after navigation
     };
 
     return (
