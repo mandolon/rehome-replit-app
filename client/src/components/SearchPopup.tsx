@@ -19,6 +19,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
   const [activeFilter, setActiveFilter] = useState('all');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [searchCache, setSearchCache] = useState<Map<string, any>>(new Map());
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   const [recentSearches, setRecentSearches] = useState<any[]>(() => {
     // Load recent searches from localStorage
     try {
@@ -46,7 +47,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedQuery(searchQuery);
-    }, 150); // Reduced from 300ms to 150ms for faster search
+    }, 100); // Reduced to 100ms for near-instant search experience
 
     return () => clearTimeout(timer);
   }, [searchQuery]);
@@ -263,23 +264,30 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     setSearchQuery(query);
     onSearch(query, activeFilter);
     
-    // Add to recent searches if not empty
-    if (query.trim()) {
-      const newSearch = {
-        query: query.trim(),
-        type: 'mixed',
-        timestamp: 'now'
-      };
-      
-      const updatedSearches = [newSearch, ...recentSearches.filter(s => s.query !== query.trim())].slice(0, 10);
-      setRecentSearches(updatedSearches);
-      
-      // Save to localStorage
-      try {
-        localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
-      } catch (error) {
-        console.warn('Failed to save recent searches:', error);
-      }
+    // Note: We don't save the typed query to recent searches anymore
+    // Only save when user clicks on a specific result item
+  };
+
+  const saveToRecentSearches = (title: string, type: string) => {
+    const formatTimestamp = () => {
+      const now = new Date();
+      return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };
+
+    const newSearch = {
+      query: title,
+      type: type,
+      timestamp: formatTimestamp()
+    };
+    
+    const updatedSearches = [newSearch, ...recentSearches.filter(s => s.query !== title)].slice(0, 10);
+    setRecentSearches(updatedSearches);
+    
+    // Save to localStorage
+    try {
+      localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
+    } catch (error) {
+      console.warn('Failed to save recent searches:', error);
     }
   };
 
@@ -298,25 +306,47 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
 
     const Icon = getResultIcon();
 
+    const handleResultClick = () => {
+      // Save clicked item to recent searches
+      saveToRecentSearches(result.title, type);
+      
+      // Handle navigation based on type
+      switch (type) {
+        case 'tasks':
+          const taskId = result.taskId || result.id;
+          navigate(`/task/${taskId}`, {
+            state: {
+              returnTo: window.location.pathname,
+              returnToName: 'Search'
+            }
+          });
+          break;
+        case 'projects':
+          navigate(`/projects`);
+          break;
+        case 'people':
+          navigate(`/teams`);
+          break;
+        case 'files':
+          // Handle file navigation - could open file or navigate to files section
+          console.log('File clicked:', result.title);
+          break;
+        case 'notes':
+          // Handle notes navigation
+          console.log('Note clicked:', result.title);
+          break;
+        default:
+          console.log('Unknown type clicked:', type, result.title);
+      }
+      
+      onClose(); // Close search popup
+    };
+
     return (
       <div
         key={`${type}-${result.id}`}
         className="flex items-center gap-2 py-1 hover:bg-muted/30 cursor-pointer"
-        onClick={() => {
-          if (type === 'tasks') {
-            // Navigate to task detail page using taskId field
-            const taskId = result.taskId || result.id;
-            navigate(`/task/${taskId}`, {
-              state: {
-                returnTo: window.location.pathname,
-                returnToName: 'Search'
-              }
-            });
-            onClose(); // Close search popup
-          } else {
-            handleSearch(result.title);
-          }
-        }}
+        onClick={handleResultClick}
       >
         {result.avatar && type === 'people' ? (
           <div className="w-3 h-3 bg-primary/10 rounded-full flex items-center justify-center text-primary text-xs font-medium">
@@ -349,14 +379,19 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
 
     const Icon = getTypeIcon();
 
+    const handleRecentSearchClick = () => {
+      // Update the search query to show results
+      setSearchQuery(search.query);
+      
+      // Move this item to the top of recent searches
+      saveToRecentSearches(search.query, search.type);
+    };
+
     return (
       <div
         key={search.query}
         className="flex items-center gap-2 px-3 py-1 hover:bg-muted/30 cursor-pointer"
-        onClick={() => {
-          setSearchQuery(search.query);
-          handleSearch(search.query);
-        }}
+        onClick={handleRecentSearchClick}
       >
         <Icon className="w-3 h-3 text-muted-foreground" />
         <div className="flex-1 min-w-0">
@@ -441,10 +476,16 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
               </div>
             ) : (
               <div>
-                {getFilteredResults().length === 0 ? (
+                {isLoading ? (
+                  <div className="text-center py-8">
+                    <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+                    <p className="text-sm text-muted-foreground">Searching...</p>
+                  </div>
+                ) : getFilteredResults().length === 0 ? (
                   <div className="text-center py-8">
                     <Search className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
                     <p className="text-sm text-muted-foreground">No results found for "{searchQuery}"</p>
+                    <p className="text-xs text-muted-foreground/70 mt-1">Try a different search term</p>
                   </div>
                 ) : (
                   <div className="pl-6 pr-3 py-2">
