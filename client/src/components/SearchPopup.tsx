@@ -43,6 +43,12 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           timestamp: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString() // 2 hours ago
         },
         { 
+          query: 'Update for Compliance', 
+          type: 'tasks',
+          projectName: 'Ogden Thew 2709 T Street',
+          timestamp: new Date(now.getTime() - 4 * 60 * 60 * 1000).toISOString() // 4 hours ago
+        },
+        { 
           query: 'API Documentation', 
           type: 'files', 
           timestamp: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString() // Yesterday
@@ -51,6 +57,12 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           query: 'Mobile App Development', 
           type: 'projects', 
           timestamp: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000).toISOString() // 3 days ago
+        },
+        { 
+          query: 'Database Migration', 
+          type: 'tasks',
+          projectName: 'Admin Dashboard',
+          timestamp: new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000).toISOString() // 5 days ago
         },
         { 
           query: 'Sprint Planning', 
@@ -67,6 +79,12 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           timestamp: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString()
         },
         { 
+          query: 'Update for Compliance', 
+          type: 'tasks',
+          projectName: 'Ogden Thew 2709 T Street',
+          timestamp: new Date(now.getTime() - 4 * 60 * 60 * 1000).toISOString()
+        },
+        { 
           query: 'API Documentation', 
           type: 'files', 
           timestamp: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString()
@@ -75,6 +93,12 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           query: 'Mobile App Development', 
           type: 'projects', 
           timestamp: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000).toISOString()
+        },
+        { 
+          query: 'Database Migration', 
+          type: 'tasks',
+          projectName: 'Admin Dashboard',
+          timestamp: new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000).toISOString()
         },
         { 
           query: 'Sprint Planning', 
@@ -619,7 +643,14 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
       >
         <Icon className="w-3 h-3 text-muted-foreground" />
         <div className="flex-1 min-w-0">
-          <span className="text-xs font-medium text-foreground">{search.query}</span>
+          <span className="text-xs font-medium text-foreground">
+            {search.query}
+            {search.type === 'tasks' && search.projectName && (
+              <span className="text-[10px] font-normal text-muted-foreground/60 ml-1">
+                · {search.projectName}
+              </span>
+            )}
+          </span>
         </div>
         <span className="text-xs text-muted-foreground">{formatFriendlyTimestamp(search.timestamp)}</span>
       </div>
