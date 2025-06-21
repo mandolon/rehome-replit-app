@@ -501,8 +501,20 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
   };
 
   const handleResultClick = (result: SearchResult, type: string) => {
-    // Save clicked item to recent searches
-    saveToRecentSearches(result.title, type);
+    // Save clicked item to recent searches with additional metadata for projects
+    if (type === 'projects') {
+      const projectSearch = {
+        query: result.title,
+        type: 'projects',
+        projectId: result.projectId || result.id,
+        timestamp: new Date().toISOString()
+      };
+      const updatedSearches = [projectSearch, ...recentSearches.filter(s => s.query !== result.title)].slice(0, 10);
+      setRecentSearches(updatedSearches);
+      localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
+    } else {
+      saveToRecentSearches(result.title, type);
+    }
     
     // Handle navigation based on type
     switch (type) {
@@ -592,7 +604,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
 
   const renderRecentSearchRow = (search: any, index?: number) => {
     const getTypeIcon = () => {
-      console.log('Recent search type:', search.type, 'for query:', search.query);
+
       switch (search.type) {
         case 'people': return UserCheck;
         case 'projects': return FolderOpen;
