@@ -26,16 +26,23 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
       const saved = localStorage.getItem('recentSearches');
       if (saved) {
         const parsed = JSON.parse(saved);
-        const mapped = parsed.map((search: any) => ({
-          ...search,
-          timestamp: search.timestamp.includes('T') ? search.timestamp : new Date().toISOString()
-        }));
-        console.log('Loading recent searches from localStorage:', mapped.map(s => ({ 
-          query: s.query, 
-          type: s.type, 
-          projectId: s.projectId, 
-          taskId: s.taskId 
-        })));
+        const mapped = parsed
+          .map((search: any) => ({
+            ...search,
+            timestamp: search.timestamp.includes('T') ? search.timestamp : new Date().toISOString()
+          }))
+          .filter((search: any) => {
+            // Filter out project searches without projectId - they're from old format
+            if (search.type === 'projects' && !search.projectId) {
+              return false;
+            }
+            // Filter out task searches without taskId
+            if (search.type === 'tasks' && !search.taskId) {
+              return false;
+            }
+            return true;
+          });
+
         return mapped;
       }
       return [];
@@ -206,12 +213,6 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
       const currentResults = searchResults ? getFilteredResults() : [];
       return currentResults;
     } else {
-      console.log('getNavigableItems returning recent searches:', recentSearches.map(s => ({ 
-        query: s.query, 
-        type: s.type, 
-        projectId: s.projectId, 
-        taskId: s.taskId 
-      })));
       return recentSearches;
     }
   };
@@ -275,11 +276,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
                   navigate('/teams');
                   break;
                 case 'projects':
-                  console.log('Keyboard project navigation:', { 
-                    selectedItemQuery: selectedItem.query, 
-                    selectedItemType: selectedItem.type, 
-                    selectedItemProjectId: selectedItem.projectId 
-                  });
+
                   if (selectedItem.projectId) {
                     navigate(`/project/${selectedItem.projectId}`);
                   } else {
@@ -381,12 +378,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     // Save clicked item to recent searches with additional metadata for projects
     if (type === 'projects') {
       const projectId = result.projectId || result.id;
-      console.log('Saving project to recent searches:', { 
-        resultTitle: result.title, 
-        resultProjectId: result.projectId, 
-        resultId: result.id, 
-        finalProjectId: projectId 
-      });
+
       const projectSearch = {
         query: result.title,
         type: 'projects',
@@ -396,12 +388,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
       const updatedSearches = [projectSearch, ...recentSearches.filter(s => s.query !== result.title)].slice(0, 10);
       setRecentSearches(updatedSearches);
       localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
-      console.log('Updated recent searches:', updatedSearches.map(s => ({ 
-        query: s.query, 
-        type: s.type, 
-        projectId: s.projectId, 
-        taskId: s.taskId 
-      })));
+
     } else if (type === 'tasks') {
       const taskSearch = {
         query: result.title,
@@ -430,7 +417,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
         break;
       case 'projects':
         const projectId = result.projectId || result.id;
-        console.log('Project clicked:', { result, projectId });
+
         if (projectId) {
           navigate(`/project/${projectId}`);
         } else {
@@ -548,11 +535,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           navigate('/teams');
           break;
         case 'projects':
-          console.log('Recent project clicked:', { 
-            searchQuery: search.query, 
-            searchType: search.type, 
-            searchProjectId: search.projectId 
-          });
+
           if (search.projectId) {
             navigate(`/project/${search.projectId}`);
           } else {
