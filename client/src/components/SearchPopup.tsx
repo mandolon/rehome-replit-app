@@ -193,8 +193,8 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           description = `${item.title}`;
           break;
         case 'tasks':
-          title = item.projectTitle ? `${item.title} • ${item.projectTitle}` : item.title;
-          subtitle = '';
+          title = item.title;
+          subtitle = item.projectTitle || '';
           description = `${item.title} — ${item.projectTitle || ''}`;
           break;
         case 'files':
@@ -541,7 +541,14 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           <Icon className="w-3 h-3 text-muted-foreground" />
         ) : null}
         <div className="flex-1 min-w-0">
-          <span className="text-xs font-medium text-foreground">{result.title}</span>
+          <span className="text-xs font-medium text-foreground">
+            {result.title}
+            {type === 'tasks' && result.subtitle && (
+              <span className="text-[10px] font-normal text-muted-foreground/60 ml-1">
+                · {result.subtitle}
+              </span>
+            )}
+          </span>
         </div>
       </div>
     );
