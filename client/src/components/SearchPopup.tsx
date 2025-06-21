@@ -651,7 +651,6 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           {/* Filter Tabs */}
           <div className="flex items-center gap-2 pl-6 pr-3 py-2">
             {filters.map((filter) => {
-              const Icon = filter.icon;
               return (
                 <button
                   key={filter.id}
@@ -663,7 +662,6 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
                       : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                   )}
                 >
-                  <Icon className="w-3 h-3" strokeWidth="2" />
                   <span>{filter.label}</span>
                   <span className="text-muted-foreground">
                     {filter.count}
