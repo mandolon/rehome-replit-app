@@ -229,7 +229,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           </div>
 
           {/* Filter Tabs */}
-          <div className="flex items-center gap-2 px-3 py-2 border-b border-border bg-muted/20">
+          <div className="flex items-center gap-2 pl-6 pr-3 py-2 border-b border-border bg-muted/20">
             {filters.map((filter) => {
               const Icon = filter.icon;
               return (
