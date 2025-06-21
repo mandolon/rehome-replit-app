@@ -239,17 +239,46 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     };
   }, [isOpen, onClose]);
 
-  // Handle keyboard shortcuts
+  // Handle keyboard shortcuts and navigation
   useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {
+      if (!isOpen) {
+        // Global Ctrl+K shortcut to open search (when not already open)
+        if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
+          event.preventDefault();
+          window.dispatchEvent(new CustomEvent('openSearch'));
+        }
+        return;
+      }
+
       if (event.key === 'Escape') {
         onClose();
+        return;
       }
-      // Global Ctrl+K shortcut to open search (when not already open)
-      if (!isOpen && (event.ctrlKey || event.metaKey) && event.key === 'k') {
-        event.preventDefault();
-        // We can't directly open from here, but we can dispatch a custom event
-        window.dispatchEvent(new CustomEvent('openSearch'));
+
+      // Only handle navigation if there are search results
+      const results = getFilteredResults();
+      if (searchQuery && results.length > 0) {
+        if (event.key === 'ArrowDown') {
+          event.preventDefault();
+          setSelectedIndex(prev => (prev + 1) % results.length);
+        } else if (event.key === 'ArrowUp') {
+          event.preventDefault();
+          setSelectedIndex(prev => prev <= 0 ? results.length - 1 : prev - 1);
+        } else if (event.key === 'Enter' && selectedIndex >= 0) {
+          event.preventDefault();
+          const selectedResult = results[selectedIndex];
+          if (selectedResult) {
+            // Trigger the same action as clicking the result
+            let resultType = activeFilter === 'all' ? 'mixed' : activeFilter;
+            if (activeFilter === 'all') {
+              if (selectedResult.avatar) resultType = 'people';
+              else if (selectedResult.subtitle?.includes('Project')) resultType = 'projects';
+              else resultType = 'tasks';
+            }
+            handleResultClick(selectedResult, resultType);
+          }
+        }
       }
     };
 
@@ -258,7 +287,12 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     return () => {
       document.removeEventListener('keydown', handleKeydown);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, searchQuery, selectedIndex, activeFilter]);
+
+  // Reset selected index when search query or filter changes
+  useEffect(() => {
+    setSelectedIndex(-1);
+  }, [searchQuery, activeFilter]);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -291,7 +325,41 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     }
   };
 
-  const renderResultRow = (result: SearchResult, type: string) => {
+  const handleResultClick = (result: SearchResult, type: string) => {
+    // Save clicked item to recent searches
+    saveToRecentSearches(result.title, type);
+    
+    // Handle navigation based on type
+    switch (type) {
+      case 'tasks':
+        const taskId = result.taskId || result.id;
+        navigate(`/task/${taskId}`, {
+          state: {
+            returnTo: window.location.pathname,
+            returnToName: 'Search'
+          }
+        });
+        break;
+      case 'projects':
+        navigate(`/projects`);
+        break;
+      case 'people':
+        navigate(`/teams`);
+        break;
+      case 'files':
+        console.log('File clicked:', result.title);
+        break;
+      case 'notes':
+        console.log('Note clicked:', result.title);
+        break;
+      default:
+        console.log('Unknown type clicked:', type, result.title);
+    }
+    
+    onClose(); // Close search popup
+  };
+
+  const renderResultRow = (result: SearchResult, type: string, index?: number) => {
     const getResultIcon = () => {
       if (result.avatar && type === 'people') return null;
       switch (type) {
@@ -305,48 +373,18 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     };
 
     const Icon = getResultIcon();
-
-    const handleResultClick = () => {
-      // Save clicked item to recent searches
-      saveToRecentSearches(result.title, type);
-      
-      // Handle navigation based on type
-      switch (type) {
-        case 'tasks':
-          const taskId = result.taskId || result.id;
-          navigate(`/task/${taskId}`, {
-            state: {
-              returnTo: window.location.pathname,
-              returnToName: 'Search'
-            }
-          });
-          break;
-        case 'projects':
-          navigate(`/projects`);
-          break;
-        case 'people':
-          navigate(`/teams`);
-          break;
-        case 'files':
-          // Handle file navigation - could open file or navigate to files section
-          console.log('File clicked:', result.title);
-          break;
-        case 'notes':
-          // Handle notes navigation
-          console.log('Note clicked:', result.title);
-          break;
-        default:
-          console.log('Unknown type clicked:', type, result.title);
-      }
-      
-      onClose(); // Close search popup
-    };
+    const isSelected = index !== undefined && index === selectedIndex;
 
     return (
       <div
         key={`${type}-${result.id}`}
-        className="flex items-center gap-2 py-1 hover:bg-muted/30 cursor-pointer"
-        onClick={handleResultClick}
+        className={cn(
+          "flex items-center gap-2 py-1 cursor-pointer rounded px-2 mx-1",
+          isSelected 
+            ? "bg-accent/70 text-accent-foreground" 
+            : "hover:bg-muted/30"
+        )}
+        onClick={() => handleResultClick(result, type)}
       >
         {result.avatar && type === 'people' ? (
           <div className="w-3 h-3 bg-primary/10 rounded-full flex items-center justify-center text-primary text-xs font-medium">
@@ -489,16 +527,16 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
                   </div>
                 ) : (
                   <div className="pl-6 pr-3 py-2">
-                    {getFilteredResults().map((result: SearchResult) => {
+                    {getFilteredResults().map((result: SearchResult, index: number) => {
                       // Determine result type based on active filter or properties
-                      let type = activeFilter === 'all' ? 'mixed' : activeFilter;
+                      let resultType = activeFilter === 'all' ? 'mixed' : activeFilter;
                       if (activeFilter === 'all') {
-                        if (result.avatar) type = 'people';
-                        else if (result.subtitle?.includes('Project') || result.subtitle?.includes('In Progress') || result.subtitle?.includes('Completed')) type = 'projects';
-                        else type = 'tasks';
+                        if (result.avatar) resultType = 'people';
+                        else if (result.subtitle?.includes('Project') || result.subtitle?.includes('In Progress') || result.subtitle?.includes('Completed')) resultType = 'projects';
+                        else resultType = 'tasks';
                       }
                       
-                      return renderResultRow(result, type);
+                      return renderResultRow(result, resultType, index);
                     })}
                   </div>
                 )}
