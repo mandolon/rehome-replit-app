@@ -2,6 +2,11 @@ import React, { useMemo, useCallback, useState } from 'react';
 import { TEAM_USERS } from "@/utils/teamUsers";
 import { getCRMUser } from '@/utils/taskUserCRM';
 import { format } from 'date-fns';
+import { Calendar as CalendarIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
 import TaskRowAssignees from '../task-group/TaskRowAssignees';
 import InlineTimeField from './InlineTimeField';
 
@@ -13,6 +18,7 @@ interface TaskDetailFieldsProps {
   addCollaborator?: (taskId: string, person: any) => void;
   removeCollaborator?: (taskId: string, collaboratorIndex: number) => void;
   onTimeUpdated?: (newTime: string) => void;
+  onDueDateUpdated?: (taskId: string, dueDate: string | null) => void;
 }
 
 const TaskDetailFields: React.FC<TaskDetailFieldsProps> = ({
@@ -22,9 +28,13 @@ const TaskDetailFields: React.FC<TaskDetailFieldsProps> = ({
   removeAssignee,
   addCollaborator,
   removeCollaborator,
-  onTimeUpdated
+  onTimeUpdated,
+  onDueDateUpdated
 }) => {
   const [timeLogged, setTimeLogged] = useState(task?.timeLogged || '0');
+  const [selectedDueDate, setSelectedDueDate] = useState<Date | undefined>(
+    task?.dueDate ? new Date(task.dueDate) : undefined
+  );
   const formatCreatedDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
@@ -65,8 +75,15 @@ const TaskDetailFields: React.FC<TaskDetailFieldsProps> = ({
     if (onTimeUpdated) onTimeUpdated(newTime);
   };
 
+  const handleDueDateSelect = (date: Date | undefined) => {
+    setSelectedDueDate(date);
+    if (onDueDateUpdated) {
+      onDueDateUpdated(task.taskId, date ? date.toISOString().split('T')[0] : null);
+    }
+  };
+
   return (
-    <div className="grid grid-cols-4 gap-3">
+    <div className="grid grid-cols-5 gap-3">
       <div className="space-y-1">
         <label className="text-xs text-muted-foreground">
           Created by
@@ -103,6 +120,33 @@ const TaskDetailFields: React.FC<TaskDetailFieldsProps> = ({
           currentTime={timeLogged}
           onTimeUpdated={handleTimeUpdated}
         />
+      </div>
+      <div className="space-y-1">
+        <label className="text-xs text-muted-foreground">
+          Due Date
+        </label>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className={cn(
+                "w-full justify-start text-left font-normal text-xs h-7 px-2",
+                !selectedDueDate && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="mr-1 h-3 w-3" />
+              {selectedDueDate ? format(selectedDueDate, "MMM d, yyyy") : "Set date"}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={selectedDueDate}
+              onSelect={handleDueDateSelect}
+              initialFocus
+            />
+          </PopoverContent>
+        </Popover>
       </div>
     </div>
   );

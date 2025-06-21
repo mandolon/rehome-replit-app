@@ -88,6 +88,30 @@ const TaskDetailForm = ({ task: originalTask, onTimeUpdated }: TaskDetailFormPro
     }
   };
 
+  // Due date update handler
+  const handleDueDateUpdated = async (taskId: string, dueDate: string | null) => {
+    const updates: Partial<Task> = { dueDate };
+    
+    setTask(prev => ({ ...prev, dueDate, updatedAt: new Date().toISOString() }));
+    
+    try {
+      const updated = await updateTaskAPI(taskId, updates);
+      setTask(updated);
+      toast({
+        title: "Due Date Updated",
+        description: dueDate ? `Due date set to ${new Date(dueDate).toLocaleDateString()}` : "Due date removed"
+      });
+    } catch (e) {
+      // Revert on error
+      setTask(prev => ({ ...prev, dueDate: task.dueDate }));
+      toast({
+        title: "Error updating due date",
+        description: (e as any)?.message || "Failed to update due date.",
+        variant: "destructive"
+      });
+    }
+  };
+
   // Description save/dirty state logic (refactored out)
   // Pass setTask as a React state setter (accepts both Task and updater function)
   const {
@@ -122,6 +146,7 @@ const TaskDetailForm = ({ task: originalTask, onTimeUpdated }: TaskDetailFormPro
           addCollaborator={handleAddCollaborator}
           removeCollaborator={handleRemoveCollaborator}
           onTimeUpdated={onTimeUpdated}
+          onDueDateUpdated={handleDueDateUpdated}
         />
       </div>
       {/* Attachments and Trash sections are outside this form */}
