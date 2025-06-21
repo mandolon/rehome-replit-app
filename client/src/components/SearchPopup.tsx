@@ -235,20 +235,15 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
                   key={filter.id}
                   onClick={() => setActiveFilter(filter.id)}
                   className={cn(
-                    "flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200",
+                    "flex items-center gap-2 px-2 py-1 text-xs border border-border rounded transition-colors",
                     activeFilter === filter.id
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "hover:bg-accent text-muted-foreground hover:text-foreground"
+                      ? "text-foreground bg-accent/50"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
                   )}
                 >
-                  <Icon className="w-3 h-3" />
+                  <Icon className="w-3 h-3" strokeWidth="2" />
                   {filter.label}
-                  <span className={cn(
-                    "px-1.5 py-0.5 rounded text-xs",
-                    activeFilter === filter.id
-                      ? "bg-primary-foreground/20 text-primary-foreground"
-                      : "bg-muted text-muted-foreground"
-                  )}>
+                  <span className="text-xs text-muted-foreground">
                     {filter.count}
                   </span>
                 </button>
