@@ -68,8 +68,8 @@ const PageHeader = ({
             <Search className="w-3 h-3 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input 
               type="text" 
-              placeholder="Search..." 
-              className="pl-7 pr-3 py-1 border border-border rounded text-xs w-48"
+              placeholder="Search for people, projects, files, tasks, notes..." 
+              className="pl-7 pr-3 py-1 border border-border rounded text-xs w-96"
             />
           </div>
         </div>
