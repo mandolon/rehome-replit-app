@@ -22,24 +22,21 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [isClearing, setIsClearing] = useState(false);
   const [recentSearches, setRecentSearches] = useState<any[]>(() => {
-    // Load recent searches from localStorage
     try {
       const saved = localStorage.getItem('recentSearches');
       if (saved) {
         const parsed = JSON.parse(saved);
-        // Migrate old timestamp format to ISO format if needed
         return parsed.map((search: any) => ({
           ...search,
           timestamp: search.timestamp.includes('T') ? search.timestamp : new Date().toISOString()
         }));
       }
-      
-      // Return empty array for fresh start - recent searches will be populated as user searches
       return [];
     } catch {
       return [];
     }
   });
+  
   const popupRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
@@ -49,7 +46,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedQuery(searchQuery);
-    }, 100); // Reduced to 100ms for near-instant search experience
+    }, 100);
 
     return () => clearTimeout(timer);
   }, [searchQuery]);
@@ -60,7 +57,6 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     queryFn: async () => {
       if (!debouncedQuery.trim()) return null;
       
-      // Check cache first
       const cacheKey = debouncedQuery.toLowerCase();
       if (searchCache.has(cacheKey)) {
         return searchCache.get(cacheKey);
@@ -70,14 +66,13 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
       if (!response.ok) throw new Error('Search failed');
       const data = await response.json();
       
-      // Cache the result
       setSearchCache(prev => new Map(prev).set(cacheKey, data));
       
       return data;
     },
     enabled: debouncedQuery.trim().length > 0,
-    staleTime: 60000, // Cache for 1 minute
-    gcTime: 300000,   // Keep in cache for 5 minutes
+    staleTime: 60000,
+    gcTime: 300000,
   });
 
   // Calculate filter counts from real search results
@@ -126,7 +121,6 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
   const formatResults = (data: any, type: string) => {
     if (!data) return [];
     
-    // Helper function to assign roles to people
     const getPersonRole = (username: string): string => {
       const roles = ['Architect', 'Consultant', 'Designer', 'Client', 'Developer', 'Project Manager', 'Team Lead'];
       const hash = username.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
@@ -191,17 +185,15 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
         ...formatResults(searchResults.people?.slice(0, 2), 'people'),
         ...formatResults(searchResults.tasks?.slice(0, 2), 'tasks')
       ];
-
       return results;
     }
     
     const data = searchResults[activeFilter as keyof typeof searchResults];
     const results = formatResults(data, activeFilter);
-
     return results;
   };
 
-  // Get all navigable items (search results or recent searches) - calculated dynamically
+  // Get all navigable items (search results or recent searches)
   const getNavigableItems = () => {
     if (searchQuery.length > 0) {
       const currentResults = searchResults ? getFilteredResults() : [];
@@ -211,221 +203,149 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     }
   };
 
-  // Store the current filtered results for consistent rendering
-  const currentFilteredResults = searchQuery.length > 0 && searchResults ? getFilteredResults() : [];
-
-  // Handle click outside to close popup
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
-        onClose();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      // Focus input when popup opens
-      setTimeout(() => inputRef.current?.focus(), 100);
-    } else {
-      // Clear search input when popup is closed
-      setSearchQuery('');
+  // Handle search input
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    setSelectedIndex(-1);
+    onSearch(query, activeFilter);
+    
+    // Clear search query when popup closes
+    if (query === '') {
+      onClose();
     }
+  };
 
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isOpen, onClose]);
-
-  // Handle keyboard shortcuts and navigation
+  // Handle keyboard navigation
   useEffect(() => {
+    if (!isOpen) return;
+
     const handleKeydown = (event: KeyboardEvent) => {
-      if (!isOpen) {
-        // Global Ctrl+K shortcut to open search (when not already open)
-        if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
-          event.preventDefault();
-          window.dispatchEvent(new CustomEvent('openSearch'));
-        }
-        return;
-      }
-
-      if (event.key === 'Escape') {
-        onClose();
-        return;
-      }
-
-      // Handle navigation for both search results and recent searches
       const navigableItems = getNavigableItems();
       
-      if (event.key === 'ArrowDown') {
-        event.preventDefault();
-        console.log('ArrowDown pressed, navigableItems:', navigableItems.length, 'selectedIndex:', selectedIndex);
-        if (navigableItems.length > 0) {
-          const newIndex = selectedIndex < 0 ? 0 : (selectedIndex + 1) % navigableItems.length;
-          console.log('Setting selectedIndex to:', newIndex);
-          setSelectedIndex(newIndex);
-        } else {
-          console.log('No navigable items available');
-        }
-        return;
-      }
-      
-      if (event.key === 'ArrowUp') {
-        event.preventDefault();
-        if (navigableItems.length > 0) {
-          setSelectedIndex(prev => prev <= 0 ? navigableItems.length - 1 : prev - 1);
-        }
-        return;
-      }
-      
-      if (event.key === 'Enter' && selectedIndex >= 0 && navigableItems.length > 0) {
-        event.preventDefault();
-        const selectedItem = navigableItems[selectedIndex];
-        
-        if (searchQuery.length > 0) {
-          // Handle search result selection
-          let resultType = activeFilter === 'all' ? 'mixed' : activeFilter;
-          if (activeFilter === 'all') {
-            if (selectedItem.avatar) resultType = 'people';
-            else if (selectedItem.subtitle?.includes('Project')) resultType = 'projects';
-            else resultType = 'tasks';
-          }
-          handleResultClick(selectedItem, resultType);
-        } else {
-          // Handle recent search selection - navigate directly
-          saveToRecentSearches(selectedItem.query, selectedItem.type);
-          
-          switch (selectedItem.type) {
-            case 'people':
-              navigate('/teams');
-              break;
-            case 'projects':
-              // For recent searches, try to navigate to specific project if we have projectId
-              if (selectedItem.projectId) {
-                navigate(`/project/${selectedItem.projectId}`);
-              } else {
-                navigate('/projects');
+      switch (event.key) {
+        case 'Escape':
+          setSearchQuery('');
+          onClose();
+          break;
+        case 'ArrowDown':
+          event.preventDefault();
+          setSelectedIndex(prev => {
+            const next = prev < navigableItems.length - 1 ? prev + 1 : 0;
+            return next;
+          });
+          break;
+        case 'ArrowUp':
+          event.preventDefault();
+          setSelectedIndex(prev => {
+            const next = prev > 0 ? prev - 1 : navigableItems.length - 1;
+            return next;
+          });
+          break;
+        case 'Enter':
+          event.preventDefault();
+          const selectedItem = navigableItems[selectedIndex];
+          if (selectedItem && selectedIndex >= 0) {
+            if (searchQuery.length > 0) {
+              // Handle search result selection
+              let resultType = activeFilter;
+              if (activeFilter === 'all') {
+                resultType = selectedItem.resultType || 'tasks';
               }
-              break;
-            case 'tasks':
-              navigate('/');
-              break;
-            case 'files':
-              console.log('File navigation:', selectedItem.query);
-              break;
-            case 'notes':
-              console.log('Notes navigation:', selectedItem.query);
-              break;
-            default:
-              setSearchQuery(selectedItem.query);
-              return;
+              handleResultClick(selectedItem, resultType);
+            } else {
+              // Handle recent search selection
+              saveToRecentSearches(selectedItem.query, selectedItem.type);
+              
+              switch (selectedItem.type) {
+                case 'people':
+                  navigate('/teams');
+                  break;
+                case 'projects':
+                  if (selectedItem.projectId) {
+                    navigate(`/project/${selectedItem.projectId}`);
+                  } else {
+                    navigate('/projects');
+                  }
+                  break;
+                case 'tasks':
+                  navigate('/');
+                  break;
+                case 'files':
+                  console.log('File navigation:', selectedItem.query);
+                  break;
+                case 'notes':
+                  console.log('Notes navigation:', selectedItem.query);
+                  break;
+                default:
+                  setSearchQuery(selectedItem.query);
+                  return;
+              }
+              
+              onClose();
+            }
           }
-          
-          onClose(); // Close search popup after navigation
-        }
-        return;
+          break;
       }
     };
 
     document.addEventListener('keydown', handleKeydown);
+    return () => document.removeEventListener('keydown', handleKeydown);
+  }, [isOpen, onClose, onSearch, searchQuery, selectedIndex, activeFilter, recentSearches]);
 
-    return () => {
-      document.removeEventListener('keydown', handleKeydown);
-    };
-  }, [isOpen, onClose, searchQuery, selectedIndex, activeFilter, searchResults, recentSearches]);
-
-  // Reset selected index when search query or filter changes
+  // Handle clicking outside to close
   useEffect(() => {
-    setSelectedIndex(-1);
-  }, [searchQuery, activeFilter]);
+    if (!isOpen) return;
 
-  // Scroll selected item into view
-  useEffect(() => {
-    if (selectedIndex >= 0 && resultsRef.current) {
-      const selectedElement = resultsRef.current.querySelector(`[data-index="${selectedIndex}"]`);
-      if (selectedElement) {
-        selectedElement.scrollIntoView({
-          behavior: 'smooth',
-          block: 'nearest'
-        });
+    const handleClickOutside = (event: MouseEvent) => {
+      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
+        setSearchQuery('');
+        onClose();
       }
-    }
-  }, [selectedIndex]);
+    };
 
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    onSearch(query, activeFilter);
-    
-    // Note: We don't save the typed query to recent searches anymore
-    // Only save when user clicks on a specific result item
-  };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isOpen, onClose]);
+
+  // Focus input when popup opens
+  useEffect(() => {
+    if (isOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isOpen]);
 
   const saveToRecentSearches = (title: string, type: string) => {
     const newSearch = {
       query: title,
       type: type,
-      timestamp: new Date().toISOString() // Store as ISO string for proper date calculations
+      timestamp: new Date().toISOString()
     };
     
     const updatedSearches = [newSearch, ...recentSearches.filter(s => s.query !== title)].slice(0, 10);
     setRecentSearches(updatedSearches);
-    
-    // Save to localStorage
-    try {
-      localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
-    } catch (error) {
-      console.warn('Failed to save recent searches:', error);
-    }
+    localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
   };
 
-  const formatFriendlyTimestamp = (timestamp: string | Date) => {
-    const now = new Date();
-    const searchDate = new Date(timestamp);
-    
-    // Normalize dates to start of day for accurate day comparison
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const searchDay = new Date(searchDate.getFullYear(), searchDate.getMonth(), searchDate.getDate());
-    
-    const diffTime = today.getTime() - searchDay.getTime();
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 0) {
-      return 'Today';
-    } else if (diffDays === 1) {
-      return 'Yesterday';
-    } else if (diffDays <= 6) {
-      // Show weekday name for items within the past week
-      return searchDate.toLocaleDateString('en-US', { weekday: 'long' });
-    } else if (diffDays <= 13) {
-      return 'Last week';
-    } else if (diffDays <= 30) {
-      // Show week grouping for items within the past month
-      const weeksAgo = Math.ceil(diffDays / 7);
-      return `${weeksAgo} weeks ago`;
-    } else {
-      // Show full date for older items
-      return searchDate.toLocaleDateString('en-US', { 
-        month: 'short', 
-        day: 'numeric',
-        year: now.getFullYear() !== searchDate.getFullYear() ? 'numeric' : undefined
-      });
-    }
-  };
-
-  const clearAllRecentSearches = () => {
+  const clearAllRecentSearches = async () => {
     setIsClearing(true);
     
-    // Wait for fade-out animation to complete, then clear the data
     setTimeout(() => {
       setRecentSearches([]);
+      localStorage.removeItem('recentSearches');
       setIsClearing(false);
-      
-      // Clear from localStorage
-      try {
-        localStorage.removeItem('recentSearches');
-      } catch (error) {
-        console.warn('Failed to clear recent searches from localStorage:', error);
-      }
-    }, 300); // 300ms matches the animation duration
+    }, 300);
+  };
+
+  const formatFriendlyTimestamp = (timestamp: string): string => {
+    const now = new Date();
+    const time = new Date(timestamp);
+    const diffInSeconds = Math.floor((now.getTime() - time.getTime()) / 1000);
+    
+    if (diffInSeconds < 60) return 'Just now';
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+    return `${Math.floor(diffInSeconds / 604800)}w ago`;
   };
 
   const handleResultClick = (result: SearchResult, type: string) => {
@@ -456,7 +376,6 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
         });
         break;
       case 'projects':
-        // Navigate to individual project page using projectId
         const projectId = result.projectId || result.id;
         navigate(`/project/${projectId}`);
         break;
@@ -471,9 +390,10 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
         break;
       default:
         console.log('Unknown type clicked:', type, result.title);
+        break;
     }
     
-    onClose(); // Close search popup
+    onClose();
   };
 
   const renderResultRow = (result: SearchResult, type: string, index?: number) => {
@@ -491,8 +411,6 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
 
     const Icon = getResultIcon();
     const isSelected = searchQuery.length > 0 && index !== undefined && index === selectedIndex;
-    
-
 
     return (
       <div
@@ -527,8 +445,6 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              // Navigate to project based on the project title
-              // We need to find the project by title and navigate to its page
               fetch('/api/projects')
                 .then(res => res.json())
                 .then(projects => {
@@ -552,7 +468,6 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
 
   const renderRecentSearchRow = (search: any, index?: number) => {
     const getTypeIcon = () => {
-
       switch (search.type) {
         case 'people': return UserCheck;
         case 'projects': return FolderOpen;
@@ -567,16 +482,13 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     const isSelected = searchQuery.length === 0 && index !== undefined && index === selectedIndex;
 
     const handleRecentSearchClick = () => {
-      // Move this item to the top of recent searches
       saveToRecentSearches(search.query, search.type);
       
-      // Navigate directly to the item's page based on type
       switch (search.type) {
         case 'people':
           navigate('/teams');
           break;
         case 'projects':
-          // For recent searches, try to navigate to specific project if we have projectId
           if (search.projectId) {
             navigate(`/project/${search.projectId}`);
           } else {
@@ -584,24 +496,20 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           }
           break;
         case 'tasks':
-          // For tasks, we need to find the specific task - for now navigate to main tasks view
           navigate('/');
           break;
         case 'files':
-          // Navigate to files section when available
           console.log('File navigation:', search.query);
           break;
         case 'notes':
-          // Navigate to notes section when available
           console.log('Notes navigation:', search.query);
           break;
         default:
-          // Fallback to searching if type is unknown
           setSearchQuery(search.query);
           return;
       }
       
-      onClose(); // Close search popup after navigation
+      onClose();
     };
 
     return (
@@ -634,6 +542,8 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
 
   if (!isOpen) return null;
 
+  const currentFilteredResults = getFilteredResults();
+
   return (
     <>
       {/* Backdrop */}
@@ -658,26 +568,32 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
                 className="pl-7 pr-3 py-1 border border-border rounded text-xs w-full bg-card"
               />
             </div>
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-accent rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setSearchQuery('');
+                onClose();
+              }}
+              className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
             >
-              <X className="w-4 h-4" />
-            </button>
+              <X className="w-3 h-3" />
+            </Button>
           </div>
 
-          {/* Filter Tabs */}
-          <div className="flex items-center gap-2 pl-6 pr-3 py-2 border-b border-border">
+          {/* Filters */}
+          <div className="flex gap-1 px-6 pb-2 pt-1 overflow-x-auto">
             {filters.map((filter) => {
+              const Icon = filter.icon;
               return (
                 <button
                   key={filter.id}
                   onClick={() => setActiveFilter(filter.id)}
                   className={cn(
-                    "flex items-center gap-2 px-2 py-1 text-xs border border-border rounded",
+                    "flex items-center gap-1 px-2 py-1 rounded text-xs whitespace-nowrap transition-colors",
                     activeFilter === filter.id
-                      ? "text-foreground bg-accent/50"
-                      : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
                   )}
                 >
                   <span>{filter.label}</span>
@@ -718,7 +634,6 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
                     )}
                   </div>
                 </div>
-
               </div>
             ) : (
               <div>
@@ -735,10 +650,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
                 ) : (
                   <div className="px-3 py-2">
                     {currentFilteredResults.map((result: SearchResult, index: number) => {
-                      // Use the stored resultType from the formatted result
                       const resultType = activeFilter === 'all' ? result.resultType : activeFilter;
-
-                      
                       return renderResultRow(result, resultType, index);
                     })}
                   </div>
