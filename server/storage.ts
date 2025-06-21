@@ -402,7 +402,7 @@ export class DatabaseStorage implements IStorage {
         .from(tasks)
         .leftJoin(projects, eq(tasks.projectId, projects.projectId))
         .where(
-          sql`${tasks.deletedAt} IS NULL AND ${tasks.markedComplete} IS NULL AND (${tasks.status} = 'task/redline' OR ${tasks.status} = 'progress/update') AND (${tasks.title} ILIKE ${searchTerm} OR ${tasks.description} ILIKE ${searchTerm} OR ${tasks.createdBy} ILIKE ${searchTerm} OR ${projects.title} ILIKE ${searchTerm})`
+          sql`${tasks.deletedAt} IS NULL AND ${tasks.markedComplete} IS NULL AND (${tasks.status} = 'redline' OR ${tasks.status} = 'progress') AND (${tasks.title} ILIKE ${searchTerm} OR ${tasks.description} ILIKE ${searchTerm} OR ${tasks.createdBy} ILIKE ${searchTerm} OR ${projects.title} ILIKE ${searchTerm})`
         )
         .limit(10)
     ]);
@@ -784,7 +784,7 @@ export class MemStorage implements IStorage {
         }
         
         // Only include tasks with specific statuses
-        if (task.status !== 'task/redline' && task.status !== 'progress/update') {
+        if (task.status !== 'redline' && task.status !== 'progress') {
           return false;
         }
         

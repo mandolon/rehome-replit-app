@@ -1,0 +1,146 @@
+ Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+ SidebarHeader - currentUser: Object
+ Sidebar resize: 12.7123570021
+ App component is rendering, current path: /tasks
+ Attempting WebSocket connection to: wss://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev:443/ws
+ Making direct API call for tasks
+ Query state - Loading: true Error: null Tasks count: 0
+ SidebarHeader - currentUser: Object
+ Query state - Loading: true Error: null Tasks count: 0
+ ProjectItem - Checking if active: Object
+ ProjectItem - Checking if active: Object
+ ProjectItem - Checking if active: Object
+ ProjectItem - Checking if active: Object
+ ProjectItem - Checking if active: Object
+ ProjectItem - Checking if active: Object
+ Tasks loaded: 7
+ Query state - Loading: false Error: null Tasks count: 7
+ First task: Object
+ WebSocket connected for real-time updates
+ getNavigableItems for recent searches: 6 items
+ Searching for: r with filter: all
+ getNavigableItems for search: 0 items, searchResults available: false
+ Searching for: ra with filter: all
+ getNavigableItems for search: 0 items, searchResults available: false
+ Searching for: rat with filter: all
+ getNavigableItems for search: 0 items, searchResults available: false
+ Searching for: rath with filter: all
+ getFilteredResults called - searchResults: Object activeFilter: all
+SearchPopup.tsx:236 All filter results: Array(1)
+SearchPopup.tsx:519 Result 0: isSelected=false, searchQuery.length=4, selectedIndex=-1
+SearchPopup.tsx:224 getFilteredResults called - searchResults: Object activeFilter: all
+SearchPopup.tsx:236 All filter results: Array(1)
+SearchPopup.tsx:250 getNavigableItems for search: 1 items, searchResults available: true
+PageHeader.tsx:54 Searching for: rat with filter: all
+SearchPopup.tsx:224 getFilteredResults called - searchResults: Object activeFilter: all
+SearchPopup.tsx:236 All filter results: Array(1)
+SearchPopup.tsx:519 Result 0: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:224 getFilteredResults called - searchResults: Object activeFilter: all
+SearchPopup.tsx:236 All filter results: Array(1)
+SearchPopup.tsx:519 Result 0: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:224 getFilteredResults called - searchResults: Object activeFilter: all
+SearchPopup.tsx:236 All filter results: Array(1)
+SearchPopup.tsx:519 Result 0: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:224 getFilteredResults called - searchResults: Object activeFilter: all
+SearchPopup.tsx:236 All filter results: Array(1)
+SearchPopup.tsx:250 getNavigableItems for search: 1 items, searchResults available: true
+PageHeader.tsx:54 Searching for: ra with filter: all
+SearchPopup.tsx:224 getFilteredResults called - searchResults: Object activeFilter: all
+SearchPopup.tsx:236 All filter results: Array(1)
+SearchPopup.tsx:519 Result 0: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:224 getFilteredResults called - searchResults: Object activeFilter: all
+SearchPopup.tsx:236 All filter results: Array(1)
+SearchPopup.tsx:519 Result 0: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:224 getFilteredResults called - searchResults: Object activeFilter: all
+SearchPopup.tsx:236 All filter results: Array(1)
+SearchPopup.tsx:250 getNavigableItems for search: 1 items, searchResults available: true
+PageHeader.tsx:54 Searching for: r with filter: all
+SearchPopup.tsx:224 getFilteredResults called - searchResults: Object activeFilter: all
+SearchPopup.tsx:236 All filter results: Array(1)
+SearchPopup.tsx:519 Result 0: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:224 getFilteredResults called - searchResults: Object activeFilter: all
+SearchPopup.tsx:236 All filter results: Array(1)
+SearchPopup.tsx:519 Result 0: isSelected=false, searchQuery.length=1, selectedIndex=-1
+SearchPopup.tsx:224 getFilteredResults called - searchResults: Object activeFilter: all
+SearchPopup.tsx:236 All filter results: Array(1)
+SearchPopup.tsx:250 getNavigableItems for search: 1 items, searchResults available: true
+PageHeader.tsx:54 Searching for:  with filter: all
+SearchPopup.tsx:253 getNavigableItems for recent searches: 6 items
+[NEW] Explain Console errors by using Copilot in Edge: click
+         
+         to explain an error. 
+        Learn more
+        Don't show again
+SearchPopup.tsx:253 getNavigableItems for recent searches: 6 items
+PageHeader.tsx:54 Searching for: r with filter: all
+SearchPopup.tsx:250 getNavigableItems for search: 0 items, searchResults available: false
+PageHeader.tsx:54 Searching for: ra with filter: all
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(3), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: (2) [{…}, {…}]
+SearchPopup.tsx:519 Result 0: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:519 Result 1: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(3), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: (2) [{…}, {…}]
+SearchPopup.tsx:250 getNavigableItems for search: 2 items, searchResults available: true
+PageHeader.tsx:54 Searching for: rat with filter: all
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(3), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: (2) [{…}, {…}]
+SearchPopup.tsx:519 Result 0: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:519 Result 1: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(3), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: (2) [{…}, {…}]
+SearchPopup.tsx:519 Result 0: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:519 Result 1: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: [{…}]
+SearchPopup.tsx:519 Result 0: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: [{…}]
+SearchPopup.tsx:519 Result 0: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: [{…}]
+SearchPopup.tsx:250 getNavigableItems for search: 1 items, searchResults available: true
+PageHeader.tsx:54 Searching for: rath with filter: all
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: [{…}]
+SearchPopup.tsx:519 Result 0: isSelected=false, searchQuery.length=4, selectedIndex=-1
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: [{…}]
+SearchPopup.tsx:519 Result 0: isSelected=false, searchQuery.length=4, selectedIndex=-1
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: [{…}]
+SearchPopup.tsx:519 Result 0: isSelected=false, searchQuery.length=4, selectedIndex=-1
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: [{…}]
+SearchPopup.tsx:250 getNavigableItems for search: 1 items, searchResults available: true
+SearchPopup.tsx:302 ArrowDown pressed, navigableItems: 1 selectedIndex: -1
+SearchPopup.tsx:305 Setting selectedIndex to: 0
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: [{…}]
+SearchPopup.tsx:519 Result 0: isSelected=true, searchQuery.length=4, selectedIndex=0
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: [{…}]
+SearchPopup.tsx:250 getNavigableItems for search: 1 items, searchResults available: true
+PageHeader.tsx:54 Searching for: rat with filter: all
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: [{…}]
+SearchPopup.tsx:519 Result 0: isSelected=true, searchQuery.length=3, selectedIndex=0
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: [{…}]
+SearchPopup.tsx:519 Result 0: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: [{…}]
+SearchPopup.tsx:519 Result 0: isSelected=false, searchQuery.length=3, selectedIndex=-1
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: [{…}]
+SearchPopup.tsx:250 getNavigableItems for search: 1 items, searchResults available: true
+PageHeader.tsx:54 Searching for: rath with filter: all
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: [{…}]
+SearchPopup.tsx:519 Result 0: isSelected=false, searchQuery.length=4, selectedIndex=-1
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: [{…}]
+SearchPopup.tsx:519 Result 0: isSelected=false, searchQuery.length=4, selectedIndex=-1
+SearchPopup.tsx:224 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(0), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:236 All filter results: [{…}]
+SearchPopup.tsx:519 Result 0: isSelected=false, searchQuery.length=4, selectedIndex=-1
