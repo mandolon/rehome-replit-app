@@ -10,6 +10,7 @@ import { ProjectStatusBadge } from '@/components/project/ProjectStatusBadge';
 import { useProjectToast } from '@/components/ui/unified-toast';
 import { useToast } from '@/hooks/use-toast';
 import { formatDate } from '@/utils/taskUtils';
+import AppLayout from '@/components/layout/AppLayout';
 
 interface Project {
   id: number;
@@ -204,21 +205,24 @@ const Projects = () => {
 
   if (isLoading) {
     return (
-      <div className="h-full flex flex-col">
-        <div className="border-b border-border px-4 py-3">
-          <h2 className="text-lg font-medium text-foreground">Projects</h2>
-          <p className="text-sm text-muted-foreground mt-1">Manage project statuses and workflow</p>
+      <AppLayout>
+        <div className="h-full flex flex-col">
+          <div className="border-b border-border px-4 py-3">
+            <h2 className="text-lg font-medium text-foreground">Projects</h2>
+            <p className="text-sm text-muted-foreground mt-1">Manage project statuses and workflow</p>
+          </div>
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-muted-foreground">Loading projects...</div>
+          </div>
         </div>
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-muted-foreground">Loading projects...</div>
-        </div>
-      </div>
+      </AppLayout>
     );
   }
 
   return (
-    <div className="h-full flex flex-col">
-      {/* Header Section */}
+    <AppLayout>
+      <div className="h-full flex flex-col">
+        {/* Header Section */}
       <div className="border-b border-border px-4 py-3">
         <div className="flex items-center justify-between mb-4">
           <div>
@@ -380,7 +384,8 @@ const Projects = () => {
           </Table>
         )}
       </div>
-    </div>
+      </div>
+    </AppLayout>
   );
 };
 
