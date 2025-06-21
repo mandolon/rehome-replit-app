@@ -74,7 +74,7 @@ const TodoPopup = ({ isOpen, onClose }: TodoPopupProps) => {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div ref={popupRef} className="bg-white dark:bg-gray-900 rounded-lg shadow-xl w-[400px] max-h-[60vh] flex flex-col">
+      <div ref={popupRef} className="bg-white dark:bg-gray-900 rounded-lg shadow-xl w-[480px] max-h-[60vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-2">
@@ -120,16 +120,16 @@ const TodoPopup = ({ isOpen, onClose }: TodoPopupProps) => {
                   </div>
                 </div>
               ) : (
-                <div className="space-y-2">
+                <div className="space-y-1">
                   {todos.map((todo) => (
                     <div
                       key={todo.id}
-                      className="group py-2 transition-all hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded"
+                      className="group py-1 transition-all hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded"
                     >
-                      <div className="flex items-start gap-3">
+                      <div className="flex items-center gap-2">
                         <button
                           onClick={() => toggleTodo(todo.id)}
-                          className={`flex-shrink-0 w-4 h-4 rounded border-2 flex items-center justify-center mt-0.5 transition-colors ${
+                          className={`flex-shrink-0 w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
                             todo.completed
                               ? 'bg-green-500 border-green-500 text-white'
                               : 'border-gray-300 hover:border-green-400'
@@ -138,7 +138,7 @@ const TodoPopup = ({ isOpen, onClose }: TodoPopupProps) => {
                           {todo.completed && <Check className="w-3 h-3" />}
                         </button>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between">
+                          <div className="flex items-center justify-between">
                             <span
                               className={`text-sm ${
                                 todo.completed
@@ -150,7 +150,7 @@ const TodoPopup = ({ isOpen, onClose }: TodoPopupProps) => {
                             </span>
                             <button
                               onClick={() => deleteTodo(todo.id)}
-                              className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 p-1 rounded transition-all ml-2"
+                              className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 p-0.5 rounded transition-all ml-2"
                             >
                               <X className="w-3 h-3" />
                             </button>
