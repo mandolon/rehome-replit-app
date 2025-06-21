@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 
 import { cn } from '@/lib/utils';
 
@@ -19,6 +20,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const popupRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
 
   // Debounce search query to avoid too many API calls
   useEffect(() => {
@@ -86,6 +88,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     subtitle: string;
     description: string;
     avatar?: string;
+    taskId?: string;
   }
 
   // Mock search results for demonstration
@@ -166,7 +169,8 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
         title,
         subtitle,
         description,
-        avatar: type === 'people' ? item.username.charAt(0).toUpperCase() : undefined
+        avatar: type === 'people' ? item.username.charAt(0).toUpperCase() : undefined,
+        taskId: type === 'tasks' ? item.taskId : undefined
       };
     });
   };
@@ -248,7 +252,19 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
         key={`${type}-${result.id}`}
         className="flex items-center gap-2 py-1 hover:bg-muted/30 cursor-pointer"
         onClick={() => {
-          handleSearch(result.title);
+          if (type === 'tasks') {
+            // Navigate to task detail page using taskId field
+            const taskId = result.taskId || result.id;
+            navigate(`/task/${taskId}`, {
+              state: {
+                returnTo: window.location.pathname,
+                returnToName: 'Search'
+              }
+            });
+            onClose(); // Close search popup
+          } else {
+            handleSearch(result.title);
+          }
         }}
       >
         {result.avatar && type === 'people' ? (
