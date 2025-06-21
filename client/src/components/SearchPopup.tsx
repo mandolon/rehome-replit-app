@@ -137,27 +137,27 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
         case 'people':
           title = item.username;
           subtitle = getPersonRole(item.username);
-          description = `${item.username} • ${getPersonRole(item.username)}`;
+          description = `${item.username} — ${getPersonRole(item.username)}`;
           break;
         case 'projects':
           title = item.title;
           subtitle = 'Project';
-          description = `${item.title} • Project`;
+          description = `${item.title} — Project`;
           break;
         case 'tasks':
           title = item.title;
           subtitle = 'Task';
-          description = `${item.title} • Task`;
+          description = `${item.title} — Task`;
           break;
         case 'files':
           title = item.name || item.title;
           subtitle = 'File';
-          description = `${item.name || item.title} • File`;
+          description = `${item.name || item.title} — File`;
           break;
         case 'notes':
           title = item.title;
           subtitle = 'Note';
-          description = `${item.title} • Note`;
+          description = `${item.title} — Note`;
           break;
       }
       
