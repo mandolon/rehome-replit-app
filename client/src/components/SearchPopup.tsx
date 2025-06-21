@@ -276,7 +276,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     return (
       <div
         key={search.query}
-        className="flex items-center gap-2 pl-6 pr-3 py-1 hover:bg-muted/30 cursor-pointer"
+        className="flex items-center gap-2 px-3 py-1 hover:bg-muted/30 cursor-pointer"
         onClick={() => {
           setSearchQuery(search.query);
           handleSearch(search.query);
@@ -355,8 +355,8 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
             {searchQuery.length === 0 ? (
               <div>
                 {/* Recent Searches Section */}
-                <div className="pl-6 pr-3 py-2 border-b border-border">
-                  <h3 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1">RECENT SEARCH</h3>
+                <div className="px-3 py-2 border-b border-border">
+                  <h3 className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1 pl-3">RECENT SEARCH</h3>
                   <div>
                     {recentSearches.map((search) => renderRecentSearchRow(search))}
                   </div>
