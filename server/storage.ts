@@ -37,10 +37,19 @@ export interface IStorage {
   restoreFromTrash(trashItemId: string): Promise<void>;
   permanentDeleteFromTrash(trashItemId: string): Promise<void>;
   emptyTrash(): Promise<void>;
+  
+  // Search methods
+  searchAll(query: string): Promise<{
+    people: User[];
+    projects: Project[];
+    tasks: Task[];
+    files: any[];
+    notes: any[];
+  }>;
 }
 
 import { db } from "./db";
-import { eq, desc, isNull, sql } from "drizzle-orm";
+import { eq, desc, isNull, sql, like, or, ilike } from "drizzle-orm";
 
 export class DatabaseStorage implements IStorage {
   // User methods
@@ -328,6 +337,56 @@ export class DatabaseStorage implements IStorage {
     
     // Clear the trash
     await db.delete(trashItems);
+  }
+
+  async searchAll(query: string): Promise<{
+    people: User[];
+    projects: Project[];
+    tasks: Task[];
+    files: any[];
+    notes: any[];
+  }> {
+    if (!query.trim()) {
+      return { people: [], projects: [], tasks: [], files: [], notes: [] };
+    }
+
+    const searchTerm = `%${query.toLowerCase()}%`;
+
+    // Search users (people)
+    const searchedPeople = await db.select()
+      .from(users)
+      .where(ilike(users.username, searchTerm))
+      .limit(10);
+
+    // Search projects
+    const searchedProjects = await db.select()
+      .from(projects)
+      .where(
+        or(
+          ilike(projects.title, searchTerm),
+          ilike(projects.description, searchTerm),
+          ilike(projects.clientName, searchTerm)
+        )
+      )
+      .limit(10);
+
+    // Search tasks
+    const searchedTasks = await db.select()
+      .from(tasks)
+      .where(
+        or(
+          ilike(tasks.title, searchTerm),
+          ilike(tasks.description, searchTerm),
+          ilike(tasks.createdBy, searchTerm)
+        )
+      )
+      .limit(10);
+
+    // For now, files and notes are empty as they're not implemented yet
+    const files: any[] = [];
+    const notes: any[] = [];
+
+    return { people, projects, tasks, files, notes };
   }
 }
 
@@ -660,6 +719,53 @@ export class MemStorage implements IStorage {
     
     // Clear the trash
     this.trashItems.clear();
+  }
+
+  async searchAll(query: string): Promise<{
+    people: User[];
+    projects: Project[];
+    tasks: Task[];
+    files: any[];
+    notes: any[];
+  }> {
+    if (!query.trim()) {
+      return { people: [], projects: [], tasks: [], files: [], notes: [] };
+    }
+
+    const searchTerm = query.toLowerCase();
+
+    // Search users (people)
+    const people = Array.from(this.users.values())
+      .filter(user => 
+        user.username.toLowerCase().includes(searchTerm) ||
+        user.email.toLowerCase().includes(searchTerm)
+      )
+      .slice(0, 10);
+
+    // Search projects
+    const projects = Array.from(this.projects.values())
+      .filter(project =>
+        project.title.toLowerCase().includes(searchTerm) ||
+        (project.description && project.description.toLowerCase().includes(searchTerm)) ||
+        project.clientName.toLowerCase().includes(searchTerm)
+      )
+      .slice(0, 10);
+
+    // Search tasks
+    const tasks = Array.from(this.tasks.values())
+      .filter(task =>
+        task.title.toLowerCase().includes(searchTerm) ||
+        (task.description && task.description.toLowerCase().includes(searchTerm)) ||
+        task.assignedTo.toLowerCase().includes(searchTerm) ||
+        task.createdBy.toLowerCase().includes(searchTerm)
+      )
+      .slice(0, 10);
+
+    // For now, files and notes are empty as they're not implemented yet
+    const files: any[] = [];
+    const notes: any[] = [];
+
+    return { people, projects, tasks, files, notes };
   }
 }
 
