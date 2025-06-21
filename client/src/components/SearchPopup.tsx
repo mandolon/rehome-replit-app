@@ -261,7 +261,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
         <div className="flex-1 min-w-0">
           <span className="text-xs text-foreground">
             {result.title}
-            <span className="text-muted-foreground"> — {result.subtitle}</span>
+            <span className="text-muted-foreground ml-2">— {result.subtitle}</span>
           </span>
         </div>
       </div>
