@@ -710,8 +710,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
                     <p className="text-sm text-muted-foreground">Searching...</p>
                   </div>
                 ) : getFilteredResults().length === 0 ? (
-                  <div className="text-center py-8">
-                    <Search className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
+                  <div className="flex flex-col items-center justify-center h-full py-8">
                     <p className="text-sm text-muted-foreground">No results found for "{searchQuery}"</p>
                     <p className="text-xs text-muted-foreground/70 mt-1">Try a different search term</p>
                   </div>
