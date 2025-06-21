@@ -327,7 +327,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
       <div className="fixed inset-0 z-50 flex items-start justify-center pt-20">
         <div
           ref={popupRef}
-          className="w-full max-w-2xl mx-4 bg-background border border-border rounded-lg shadow-2xl h-[500px] flex flex-col"
+          className="w-full max-w-2xl mx-4 bg-white dark:bg-gray-950 border border-border rounded-lg shadow-2xl h-[500px] flex flex-col"
         >
           {/* Header */}
           <div className="flex items-center gap-3 pl-6 pr-3 py-2 border-b border-border group">
