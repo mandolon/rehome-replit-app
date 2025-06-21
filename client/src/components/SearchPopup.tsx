@@ -249,25 +249,23 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
 
   // Filter results based on active filter and search query
   const getFilteredResults = () => {
-    console.log('getFilteredResults called - searchResults:', searchResults, 'activeFilter:', activeFilter);
     if (!searchResults) {
-      console.log('No search results, returning empty array');
       return [];
     }
     
     if (activeFilter === 'all') {
       const results = [
+        ...formatResults(searchResults.projects?.slice(0, 3), 'projects'), // Show projects first
         ...formatResults(searchResults.people?.slice(0, 2), 'people'),
-        ...formatResults(searchResults.projects?.slice(0, 2), 'projects'),
         ...formatResults(searchResults.tasks?.slice(0, 2), 'tasks')
       ];
-      console.log('All filter results:', results);
+
       return results;
     }
     
     const data = searchResults[activeFilter as keyof typeof searchResults];
     const results = formatResults(data, activeFilter);
-    console.log('Filtered results for', activeFilter, ':', results);
+
     return results;
   };
 
@@ -275,10 +273,8 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
   const getNavigableItems = () => {
     if (searchQuery.length > 0) {
       const currentResults = searchResults ? getFilteredResults() : [];
-      console.log('getNavigableItems for search:', currentResults.length, 'items, searchResults available:', !!searchResults);
       return currentResults;
     } else {
-      console.log('getNavigableItems for recent searches:', recentSearches.length, 'items');
       return recentSearches;
     }
   };
@@ -564,10 +560,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     const Icon = getResultIcon();
     const isSelected = searchQuery.length > 0 && index !== undefined && index === selectedIndex;
     
-    // Debug logging for selection state
-    if (index !== undefined) {
-      console.log(`Result ${index}: isSelected=${isSelected}, searchQuery.length=${searchQuery.length}, selectedIndex=${selectedIndex}`);
-    }
+
 
     return (
       <div
