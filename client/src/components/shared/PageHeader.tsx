@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, ChevronDown, Circle, Bell, BellOff, Settings, Keyboard, Download, HelpCircle, Trash2, LogOut } from 'lucide-react';
+import { Menu, ChevronDown, Circle, Bell, BellOff, Settings, Keyboard, Download, HelpCircle, Trash2, LogOut, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/contexts/UserContext';
 import {
@@ -60,6 +60,18 @@ const PageHeader = ({
               <Menu className="w-4 h-4" />
             </button>
           )}
+        </div>
+        
+        {/* Centered Search Bar */}
+        <div className="flex-1 flex justify-center">
+          <div className="relative">
+            <Search className="w-3 h-3 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <input 
+              type="text" 
+              placeholder="Search..." 
+              className="pl-7 pr-3 py-1 border border-border rounded text-xs w-48"
+            />
+          </div>
         </div>
         
         {/* User Info and Dropdown */}
