@@ -285,11 +285,8 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
       
       if (event.key === 'ArrowDown') {
         event.preventDefault();
-        console.log('ArrowDown pressed, navigableItems:', navigableItems.length, 'selectedIndex:', selectedIndex);
         if (navigableItems.length > 0) {
-          const newIndex = selectedIndex < 0 ? 0 : (selectedIndex + 1) % navigableItems.length;
-          console.log('Setting selectedIndex to:', newIndex);
-          setSelectedIndex(newIndex);
+          setSelectedIndex(prev => prev < 0 ? 0 : (prev + 1) % navigableItems.length);
         }
         return;
       }
@@ -353,10 +350,26 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     };
   }, [isOpen, onClose, searchQuery, selectedIndex, activeFilter]);
 
-  // Reset selected index when search query or filter changes
+  // Auto-select first result when search results appear, reset on filter change
   useEffect(() => {
-    setSelectedIndex(-1);
-  }, [searchQuery, activeFilter]);
+    if (activeFilter) {
+      setSelectedIndex(-1);
+    }
+  }, [activeFilter]);
+
+  // Auto-highlight first result when search results become available
+  useEffect(() => {
+    if (searchQuery.length > 0 && !isLoading) {
+      const results = getFilteredResults();
+      if (results.length > 0 && selectedIndex < 0) {
+        setSelectedIndex(0);
+      } else if (results.length === 0) {
+        setSelectedIndex(-1);
+      }
+    } else if (searchQuery.length === 0) {
+      setSelectedIndex(-1);
+    }
+  }, [searchResults, searchQuery, activeFilter, isLoading]);
 
   // Scroll selected item into view
   useEffect(() => {
@@ -497,20 +510,15 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
 
     const Icon = getResultIcon();
     const isSelected = searchQuery.length > 0 && index !== undefined && index === selectedIndex;
-    
-    // Debug logging for selection state
-    if (index !== undefined) {
-      console.log(`Result ${index}: isSelected=${isSelected}, searchQuery.length=${searchQuery.length}, selectedIndex=${selectedIndex}`);
-    }
 
     return (
       <div
         key={`${type}-${result.id}`}
         data-index={index}
         className={cn(
-          "flex items-center gap-2 py-1 cursor-pointer rounded px-2 mx-1",
+          "flex items-center gap-2 py-1 cursor-pointer rounded px-2 mx-1 transition-colors",
           isSelected 
-            ? "bg-accent/70 text-accent-foreground" 
+            ? "bg-primary/10 border border-primary/20 text-foreground shadow-sm" 
             : "hover:bg-muted/30"
         )}
         onClick={() => handleResultClick(result, type)}
