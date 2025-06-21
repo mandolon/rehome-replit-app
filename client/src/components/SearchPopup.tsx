@@ -273,18 +273,10 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
                     const currentPath = window.location.pathname;
                     const targetPath = `/task/${selectedItem.taskId}`;
                     
-                    // Always force a clean navigation to ensure task component updates
+                    // Force a complete page reload for reliable task switching
                     if (currentPath.startsWith('/task/')) {
-                      // If we're currently on any task page, go to home first to force re-mount
-                      navigate('/', { replace: true });
-                      setTimeout(() => {
-                        navigate(targetPath, {
-                          state: {
-                            returnTo: '/',
-                            returnToName: 'Search'
-                          }
-                        });
-                      }, 50);
+                      // If we're on any task page, use a full page reload to ensure clean state
+                      window.location.href = targetPath;
                     } else {
                       navigate(targetPath, {
                         state: {
@@ -410,18 +402,10 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
         const currentPath = window.location.pathname;
         const targetPath = `/task/${taskId}`;
         
-        // Always force a clean navigation to ensure task component updates
+        // Force a complete page reload for reliable task switching
         if (currentPath.startsWith('/task/')) {
-          // If we're currently on any task page, go to home first to force re-mount
-          navigate('/', { replace: true });
-          setTimeout(() => {
-            navigate(targetPath, {
-              state: {
-                returnTo: '/',
-                returnToName: 'Search'
-              }
-            });
-          }, 50);
+          // If we're on any task page, use a full page reload to ensure clean state
+          window.location.href = targetPath;
         } else {
           navigate(targetPath, {
             state: {
@@ -557,18 +541,10 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
             const currentPath = window.location.pathname;
             const targetPath = `/task/${search.taskId}`;
             
-            // Always force a clean navigation to ensure task component updates
+            // Force a complete page reload for reliable task switching
             if (currentPath.startsWith('/task/')) {
-              // If we're currently on any task page, go to home first to force re-mount
-              navigate('/', { replace: true });
-              setTimeout(() => {
-                navigate(targetPath, {
-                  state: {
-                    returnTo: '/',
-                    returnToName: 'Search'
-                  }
-                });
-              }, 50);
+              // If we're on any task page, use a full page reload to ensure clean state
+              window.location.href = targetPath;
             } else {
               navigate(targetPath, {
                 state: {
