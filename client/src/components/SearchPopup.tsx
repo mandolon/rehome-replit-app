@@ -272,6 +272,9 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
       document.addEventListener('mousedown', handleClickOutside);
       // Focus input when popup opens
       setTimeout(() => inputRef.current?.focus(), 100);
+    } else {
+      // Clear search input when popup is closed
+      setSearchQuery('');
     }
 
     return () => {
