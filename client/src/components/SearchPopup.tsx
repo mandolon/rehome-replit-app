@@ -371,7 +371,12 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
               navigate('/teams');
               break;
             case 'projects':
-              navigate('/projects');
+              // For recent searches, try to navigate to specific project if we have projectId
+              if (selectedItem.projectId) {
+                navigate(`/project/${selectedItem.projectId}`);
+              } else {
+                navigate('/projects');
+              }
               break;
             case 'tasks':
               navigate('/');
@@ -587,6 +592,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
 
   const renderRecentSearchRow = (search: any, index?: number) => {
     const getTypeIcon = () => {
+      console.log('Recent search type:', search.type, 'for query:', search.query);
       switch (search.type) {
         case 'people': return UserCheck;
         case 'projects': return FolderOpen;
@@ -610,7 +616,12 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           navigate('/teams');
           break;
         case 'projects':
-          navigate('/projects');
+          // For recent searches, try to navigate to specific project if we have projectId
+          if (search.projectId) {
+            navigate(`/project/${search.projectId}`);
+          } else {
+            navigate('/projects');
+          }
           break;
         case 'tasks':
           // For tasks, we need to find the specific task - for now navigate to main tasks view
