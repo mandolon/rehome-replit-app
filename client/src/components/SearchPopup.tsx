@@ -162,6 +162,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     description: string;
     avatar?: string;
     taskId?: string;
+    resultType: string;
   }
 
   // Format results from API to match component interface
@@ -214,7 +215,8 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
         subtitle,
         description,
         avatar: type === 'people' ? item.username.charAt(0).toUpperCase() : undefined,
-        taskId: type === 'tasks' ? item.taskId : undefined
+        taskId: type === 'tasks' ? item.taskId : undefined,
+        resultType: type
       };
     });
   };
@@ -717,13 +719,8 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
                 ) : (
                   <div className="pl-6 pr-3 py-2">
                     {currentFilteredResults.map((result: SearchResult, index: number) => {
-                      // Determine result type based on active filter or properties
-                      let resultType = activeFilter === 'all' ? 'mixed' : activeFilter;
-                      if (activeFilter === 'all') {
-                        if (result.avatar) resultType = 'people';
-                        else if (result.subtitle?.includes('Project') || result.subtitle?.includes('In Progress') || result.subtitle?.includes('Completed')) resultType = 'projects';
-                        else resultType = 'tasks';
-                      }
+                      // Use the stored resultType from the formatted result
+                      const resultType = activeFilter === 'all' ? result.resultType : activeFilter;
                       
                       return renderResultRow(result, resultType, index);
                     })}
