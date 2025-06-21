@@ -302,26 +302,24 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
       <div className="fixed inset-0 z-50 flex items-start justify-center pt-20">
         <div
           ref={popupRef}
-          className="w-full max-w-2xl mx-4 bg-background border border-border rounded-lg shadow-2xl max-h-[80vh] flex flex-col"
+          className="w-full max-w-2xl mx-4 bg-background border border-border rounded-lg shadow-2xl h-[500px] flex flex-col"
         >
           {/* Header */}
-          <div className="flex items-center gap-3 p-4 border-b border-border">
-            <div className="relative flex-1 flex justify-center">
-              <div className="relative">
-                <Search className="w-3 h-3 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input
-                  ref={inputRef}
-                  type="text"
-                  placeholder="Search for people, projects, files, tasks, notes..."
-                  value={searchQuery}
-                  onChange={(e) => handleSearch(e.target.value)}
-                  className="pl-7 pr-3 py-1 border border-border rounded text-xs w-96"
-                />
-              </div>
+          <div className="flex items-center gap-3 pl-6 pr-3 py-4 border-b border-border group">
+            <div className="relative flex-1">
+              <Search className="w-3 h-3 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                ref={inputRef}
+                type="text"
+                placeholder="Search for people, projects, files, tasks, notes..."
+                value={searchQuery}
+                onChange={(e) => handleSearch(e.target.value)}
+                className="pl-7 pr-3 py-1 border border-border rounded text-xs w-full"
+              />
             </div>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-accent rounded-md transition-colors"
+              className="p-2 hover:bg-accent rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
             >
               <X className="w-4 h-4" />
             </button>
