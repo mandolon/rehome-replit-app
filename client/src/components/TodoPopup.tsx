@@ -74,7 +74,7 @@ const TodoPopup = ({ isOpen, onClose }: TodoPopupProps) => {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div ref={popupRef} className="bg-white dark:bg-gray-900 rounded-lg shadow-xl w-[480px] max-h-[60vh] flex flex-col">
+      <div ref={popupRef} className="bg-white dark:bg-gray-900 rounded-lg shadow-xl w-[480px] h-[450px] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-2">
@@ -107,16 +107,17 @@ const TodoPopup = ({ isOpen, onClose }: TodoPopupProps) => {
           </div>
 
           {/* Todo List */}
-          <div className="px-6 pb-4 overflow-y-auto flex-1">
-            <div className="pt-4">
-              {todos.length === 0 ? (
-                <div className="flex items-center justify-center h-32">
-                  <div className="text-center text-gray-500 text-sm">
-                    <div className="mb-2"><Check className="w-6 h-6 mx-auto" /></div>
-                    <div>No todos yet. Add one above!</div>
+          <div className="flex-1 overflow-hidden">
+            <div className="px-6 pb-4 h-full overflow-y-auto">
+              <div className="pt-4">
+                {todos.length === 0 ? (
+                  <div className="flex items-center justify-center h-32">
+                    <div className="text-center text-gray-500 text-sm">
+                      <div className="mb-2"><Check className="w-6 h-6 mx-auto" /></div>
+                      <div>No todos yet. Add one above!</div>
+                    </div>
                   </div>
-                </div>
-              ) : (
+                ) : (
                 <div className="space-y-1">
                   {todos.map((todo, index) => (
                     <div
@@ -151,7 +152,8 @@ const TodoPopup = ({ isOpen, onClose }: TodoPopupProps) => {
                     </div>
                   ))}
                 </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
         </div>
