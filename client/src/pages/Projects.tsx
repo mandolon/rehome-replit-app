@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { Plus, Search, FolderOpen, Trash2, MoreHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -33,8 +34,13 @@ const Projects = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const { projectDeleted, projectCreated } = useProjectToast();
   const { toast } = useToast();
+
+  const handleProjectClick = (projectId: string) => {
+    navigate(`/project/${projectId}`);
+  };
   
   const handleUndoProjectDelete = useCallback(async (projectId: string) => {
     try {
@@ -316,9 +322,10 @@ const Projects = () => {
                 {filteredProjects.map((project: Project) => (
                   <TableRow
                     key={project.id}
-                    className="border-b border-border transition-colors hover:bg-accent/50 group"
+                    className="border-b border-border transition-colors hover:bg-accent/50 group cursor-pointer"
+                    onClick={() => handleProjectClick(project.projectId)}
                   >
-                    <TableCell className="py-3">
+                    <TableCell className="py-3" onClick={(e) => e.stopPropagation()}>
                       <ProjectStatusDropdown
                         projectId={project.projectId}
                         currentStatus={project.status}
@@ -355,7 +362,7 @@ const Projects = () => {
                         {project.dueDate ? formatDate(project.dueDate) : '—'}
                       </div>
                     </TableCell>
-                    <TableCell className="py-3">
+                    <TableCell className="py-3" onClick={(e) => e.stopPropagation()}>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button
