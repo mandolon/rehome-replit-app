@@ -186,6 +186,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     description: string;
     avatar?: string;
     taskId?: string;
+    projectId?: string;
     resultType: string;
   }
 
@@ -240,6 +241,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
         description,
         avatar: type === 'people' ? item.username.charAt(0).toUpperCase() : undefined,
         taskId: type === 'tasks' ? item.taskId : undefined,
+        projectId: type === 'projects' ? item.projectId : undefined,
         resultType: type
       };
     });
@@ -509,7 +511,9 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
         });
         break;
       case 'projects':
-        navigate(`/projects`);
+        // Navigate to individual project page using projectId
+        const projectId = result.projectId || result.id;
+        navigate(`/project/${projectId}`);
         break;
       case 'people':
         navigate(`/teams`);
