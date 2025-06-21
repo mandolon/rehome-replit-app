@@ -124,7 +124,14 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     gcTime: 300000,   // Keep in cache for 5 minutes
   });
 
-
+  // Get all navigable items (search results or recent searches)
+  const getNavigableItems = () => {
+    if (searchQuery.length > 0) {
+      return getFilteredResults();
+    } else {
+      return recentSearches;
+    }
+  };
 
   // Calculate filter counts from real search results
   const getFilterCounts = () => {
@@ -165,35 +172,6 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     avatar?: string;
     taskId?: string;
   }
-
-  // Mock search results for demonstration
-  const mockResults = {
-    people: [
-      { id: 1, title: 'Sarah Johnson', subtitle: 'Project Manager', description: 'Lead on client dashboard project', avatar: 'SJ' },
-      { id: 2, title: 'Mike Chen', subtitle: 'Senior Developer', description: 'Full-stack engineer specializing in React', avatar: 'MC' },
-      { id: 3, title: 'Emily Rodriguez', subtitle: 'UI/UX Designer', description: 'Design system and user experience lead', avatar: 'ER' }
-    ] as SearchResult[],
-    projects: [
-      { id: 1, title: 'Client Dashboard Redesign', subtitle: 'In Progress', description: 'Modern dashboard interface for client portal' },
-      { id: 2, title: 'Mobile App Development', subtitle: 'Planning', description: 'Cross-platform mobile application' },
-      { id: 3, title: 'API Integration', subtitle: 'Completed', description: 'Third-party service integrations' }
-    ] as SearchResult[],
-    files: [
-      { id: 1, title: 'Project Requirements.pdf', subtitle: 'Document', description: 'Updated 2 hours ago by Sarah Johnson' },
-      { id: 2, title: 'Design System Guide.figma', subtitle: 'Design File', description: 'Last modified yesterday' },
-      { id: 3, title: 'API Documentation.md', subtitle: 'Markdown', description: 'Technical documentation for API endpoints' }
-    ] as SearchResult[],
-    tasks: [
-      { id: 1, title: 'Implement search functionality', subtitle: 'High Priority', description: 'Create global search with filters' },
-      { id: 2, title: 'Review design mockups', subtitle: 'Medium Priority', description: 'Validate UI/UX designs with stakeholders' },
-      { id: 3, title: 'Database optimization', subtitle: 'Low Priority', description: 'Improve query performance' }
-    ] as SearchResult[],
-    notes: [
-      { id: 1, title: 'Meeting Notes - Sprint Planning', subtitle: 'Team Meeting', description: 'Sprint goals and task assignments' },
-      { id: 2, title: 'Client Feedback Summary', subtitle: 'Client Communication', description: 'Consolidated feedback from client review' },
-      { id: 3, title: 'Technical Architecture Notes', subtitle: 'Development', description: 'System design and implementation notes' }
-    ] as SearchResult[]
-  };
 
   // Format results from API to match component interface
   const formatResults = (data: any, type: string) => {
@@ -304,54 +282,64 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
 
       // Handle navigation for both search results and recent searches
       const navigableItems = getNavigableItems();
-      if (navigableItems.length > 0) {
-        if (event.key === 'ArrowDown') {
-          event.preventDefault();
+      
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        if (navigableItems.length > 0) {
           setSelectedIndex(prev => prev < 0 ? 0 : (prev + 1) % navigableItems.length);
-        } else if (event.key === 'ArrowUp') {
-          event.preventDefault();
-          setSelectedIndex(prev => prev <= 0 ? navigableItems.length - 1 : prev - 1);
-        } else if (event.key === 'Enter' && selectedIndex >= 0) {
-          event.preventDefault();
-          const selectedItem = navigableItems[selectedIndex];
-          
-          if (searchQuery.length > 0) {
-            // Handle search result selection
-            let resultType = activeFilter === 'all' ? 'mixed' : activeFilter;
-            if (activeFilter === 'all') {
-              if (selectedItem.avatar) resultType = 'people';
-              else if (selectedItem.subtitle?.includes('Project')) resultType = 'projects';
-              else resultType = 'tasks';
-            }
-            handleResultClick(selectedItem, resultType);
-          } else {
-            // Handle recent search selection - navigate directly
-            saveToRecentSearches(selectedItem.query, selectedItem.type);
-            
-            switch (selectedItem.type) {
-              case 'people':
-                navigate('/teams');
-                break;
-              case 'projects':
-                navigate('/projects');
-                break;
-              case 'tasks':
-                navigate('/');
-                break;
-              case 'files':
-                console.log('File navigation:', selectedItem.query);
-                break;
-              case 'notes':
-                console.log('Notes navigation:', selectedItem.query);
-                break;
-              default:
-                setSearchQuery(selectedItem.query);
-                return;
-            }
-            
-            onClose(); // Close search popup after navigation
-          }
         }
+        return;
+      }
+      
+      if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        if (navigableItems.length > 0) {
+          setSelectedIndex(prev => prev <= 0 ? navigableItems.length - 1 : prev - 1);
+        }
+        return;
+      }
+      
+      if (event.key === 'Enter' && selectedIndex >= 0 && navigableItems.length > 0) {
+        event.preventDefault();
+        const selectedItem = navigableItems[selectedIndex];
+        
+        if (searchQuery.length > 0) {
+          // Handle search result selection
+          let resultType = activeFilter === 'all' ? 'mixed' : activeFilter;
+          if (activeFilter === 'all') {
+            if (selectedItem.avatar) resultType = 'people';
+            else if (selectedItem.subtitle?.includes('Project')) resultType = 'projects';
+            else resultType = 'tasks';
+          }
+          handleResultClick(selectedItem, resultType);
+        } else {
+          // Handle recent search selection - navigate directly
+          saveToRecentSearches(selectedItem.query, selectedItem.type);
+          
+          switch (selectedItem.type) {
+            case 'people':
+              navigate('/teams');
+              break;
+            case 'projects':
+              navigate('/projects');
+              break;
+            case 'tasks':
+              navigate('/');
+              break;
+            case 'files':
+              console.log('File navigation:', selectedItem.query);
+              break;
+            case 'notes':
+              console.log('Notes navigation:', selectedItem.query);
+              break;
+            default:
+              setSearchQuery(selectedItem.query);
+              return;
+          }
+          
+          onClose(); // Close search popup after navigation
+        }
+        return;
       }
     };
 
@@ -379,15 +367,6 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
       }
     }
   }, [selectedIndex]);
-
-  // Get all navigable items (search results or recent searches)
-  const getNavigableItems = () => {
-    if (searchQuery.length > 0) {
-      return getFilteredResults();
-    } else {
-      return recentSearches;
-    }
-  };
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -729,20 +708,6 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
                     })}
                   </div>
                 )}
-              </div>
-            )}
-          </div>
-
-          {/* Footer */}
-          <div className="flex items-center justify-between px-4 py-3 border-t border-border bg-muted/10">
-            <div className="flex items-center gap-4 text-xs text-muted-foreground">
-              <span>↑↓ to navigate</span>
-              <span>↵ to select</span>
-              <span>esc to close</span>
-            </div>
-            {searchQuery && (
-              <div className="text-xs text-muted-foreground">
-                {getFilteredResults().length} results
               </div>
             )}
           </div>
