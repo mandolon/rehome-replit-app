@@ -1,0 +1,57 @@
+[NEW] Explain Console errors by using Copilot in Edge: click
+         
+         to explain an error. 
+        Learn more
+        Don't show again
+react-dom.development.js:29895 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+SidebarHeader.tsx:20 SidebarHeader - currentUser: {id: 't0', name: 'Armando Lopez', email: 'armando.lopez@example.com', avatar: 'AL', status: 'online', …}
+AppLayout.tsx:35 Sidebar resize: 12.7123570021
+App.tsx:52 App component is rendering, current path: /tasks
+useRealtimeTasks.tsx:37 Attempting WebSocket connection to: wss://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev:443/ws
+useTaskBoard.tsx:26 Making direct API call for tasks
+useTaskBoard.tsx:45 Query state - Loading: true Error: null Tasks count: 0
+SidebarHeader.tsx:20 SidebarHeader - currentUser: {id: 't0', name: 'Armando Lopez', email: 'armando.lopez@example.com', avatar: 'AL', status: 'online', …}
+useTaskBoard.tsx:45 Query state - Loading: true Error: null Tasks count: 0
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Ogden - Thew - 2709 T Street', projectIdFromName: 'ogden-thew-2709-t-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Peterson - 2015 10th Street', projectIdFromName: 'peterson-2015-10th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Piner - Piner Haus Garage', projectIdFromName: 'piner-piner-haus-garage', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Ogden - Thew - 2709 T Street', projectIdFromName: 'ogden-thew-2709-t-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Peterson - 2015 10th Street', projectIdFromName: 'peterson-2015-10th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Piner - Piner Haus Garage', projectIdFromName: 'piner-piner-haus-garage', urlProjectId: undefined, isActive: false}
+useTaskBoard.tsx:32 Tasks loaded: 7
+useTaskBoard.tsx:45 Query state - Loading: false Error: null Tasks count: 7
+useTaskBoard.tsx:47 First task: {id: 42, taskId: 'T41376', title: 'Update for Client, GC and Plan Check', projectId: 'mcvarish-salmina-6251-el-dorado-street', project: 'McVarish - Salmina - 6251 El Dorado Street', …}
+useRealtimeTasks.tsx:41 WebSocket connected for real-time updates
+SearchPopup.tsx:134 getNavigableItems for recent searches: 4 items
+PageHeader.tsx:54 Searching for: p with filter: all
+SearchPopup.tsx:236 getFilteredResults called - searchResults: undefined activeFilter: all
+SearchPopup.tsx:238 No search results, returning empty array
+SearchPopup.tsx:236 getFilteredResults called - searchResults: undefined activeFilter: all
+SearchPopup.tsx:238 No search results, returning empty array
+SearchPopup.tsx:236 getFilteredResults called - searchResults: undefined activeFilter: all
+SearchPopup.tsx:238 No search results, returning empty array
+SearchPopup.tsx:131 getNavigableItems for search: 0 items
+PageHeader.tsx:54 Searching for: pe with filter: all
+SearchPopup.tsx:236 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(10), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:248 All filter results: (3) [{…}, {…}, {…}]
+SearchPopup.tsx:236 getFilteredResults called - searchResults: {people: Array(0), projects: Array(1), tasks: Array(10), files: Array(0), notes: Array(0)} activeFilter: all
+SearchPopup.tsx:248 All filter results: (3) [{…}, {…}, {…}]
+SearchPopup.tsx:514 Result 0: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:514 Result 1: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:514 Result 2: isSelected=false, searchQuery.length=2, selectedIndex=-1
+SearchPopup.tsx:236 getFilteredResults called - searchResults: undefined activeFilter: all
+SearchPopup.tsx:238 No search results, returning empty array
+SearchPopup.tsx:131 getNavigableItems for search: 0 items
+SearchPopup.tsx:299 ArrowDown pressed, navigableItems: 0 selectedIndex: -1
+SearchPopup.tsx:236 getFilteredResults called - searchResults: undefined activeFilter: all
+SearchPopup.tsx:238 No search results, returning empty array
+SearchPopup.tsx:131 getNavigableItems for search: 0 items
+SearchPopup.tsx:299 ArrowDown pressed, navigableItems: 0 selectedIndex: -1
+SearchPopup.tsx:236 getFilteredResults called - searchResults: undefined activeFilter: all
+SearchPopup.tsx:238 No search results, returning empty array
+SearchPopup.tsx:131 getNavigableItems for search: 0 items
+SearchPopup.tsx:299 ArrowDown pressed, navigableItems: 0 selectedIndex: -1
+SearchPopup.tsx:236 getFilteredResults called - searchResults: undefined activeFilter: all
+SearchPopup.tsx:238 No search results, returning empty array
+SearchPopup.tsx:131 getNavigableItems for search: 0 items
+SearchPopup.tsx:299 ArrowDown pressed, navigableItems: 0 selectedIndex: -1

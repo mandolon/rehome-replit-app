@@ -124,18 +124,6 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     gcTime: 300000,   // Keep in cache for 5 minutes
   });
 
-  // Get all navigable items (search results or recent searches)
-  const getNavigableItems = () => {
-    if (searchQuery.length > 0) {
-      const results = getFilteredResults();
-      console.log('getNavigableItems for search:', results.length, 'items');
-      return results;
-    } else {
-      console.log('getNavigableItems for recent searches:', recentSearches.length, 'items');
-      return recentSearches;
-    }
-  };
-
   // Calculate filter counts from real search results
   const getFilterCounts = () => {
     if (!searchResults) {
@@ -255,6 +243,20 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     return results;
   };
 
+  // Store the current filtered results for consistent keyboard navigation
+  const currentFilteredResults = searchQuery.length > 0 && searchResults ? getFilteredResults() : [];
+  
+  // Get all navigable items (search results or recent searches)
+  const getNavigableItems = () => {
+    if (searchQuery.length > 0) {
+      console.log('getNavigableItems for search:', currentFilteredResults.length, 'items');
+      return currentFilteredResults;
+    } else {
+      console.log('getNavigableItems for recent searches:', recentSearches.length, 'items');
+      return recentSearches;
+    }
+  };
+
   // Handle click outside to close popup
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -292,7 +294,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
       }
 
       // Handle navigation for both search results and recent searches
-      const navigableItems = getNavigableItems();
+      const navigableItems = searchQuery.length > 0 ? currentFilteredResults : recentSearches;
       
       if (event.key === 'ArrowDown') {
         event.preventDefault();
@@ -301,6 +303,8 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
           const newIndex = selectedIndex < 0 ? 0 : (selectedIndex + 1) % navigableItems.length;
           console.log('Setting selectedIndex to:', newIndex);
           setSelectedIndex(newIndex);
+        } else {
+          console.log('No navigable items available');
         }
         return;
       }
@@ -707,14 +711,14 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
                     <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
                     <p className="text-sm text-muted-foreground">Searching...</p>
                   </div>
-                ) : getFilteredResults().length === 0 ? (
+                ) : currentFilteredResults.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full py-8">
                     <p className="text-sm text-muted-foreground">No results found for "{searchQuery}"</p>
                     <p className="text-xs text-muted-foreground/70 mt-1">Try a different search term</p>
                   </div>
                 ) : (
                   <div className="pl-6 pr-3 py-2">
-                    {getFilteredResults().map((result: SearchResult, index: number) => {
+                    {currentFilteredResults.map((result: SearchResult, index: number) => {
                       // Determine result type based on active filter or properties
                       let resultType = activeFilter === 'all' ? 'mixed' : activeFilter;
                       if (activeFilter === 'all') {
