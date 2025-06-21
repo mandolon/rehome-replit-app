@@ -307,7 +307,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
       if (navigableItems.length > 0) {
         if (event.key === 'ArrowDown') {
           event.preventDefault();
-          setSelectedIndex(prev => (prev + 1) % navigableItems.length);
+          setSelectedIndex(prev => prev < 0 ? 0 : (prev + 1) % navigableItems.length);
         } else if (event.key === 'ArrowUp') {
           event.preventDefault();
           setSelectedIndex(prev => prev <= 0 ? navigableItems.length - 1 : prev - 1);
@@ -514,7 +514,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     };
 
     const Icon = getResultIcon();
-    const isSelected = index !== undefined && index === selectedIndex;
+    const isSelected = searchQuery.length > 0 && index !== undefined && index === selectedIndex;
 
     return (
       <div
