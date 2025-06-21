@@ -3,9 +3,7 @@ import { Search, Users, Folder, FileText, CheckSquare, StickyNote, X } from 'luc
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+
 import { cn } from '@/lib/utils';
 
 interface SearchPopupProps {
@@ -195,10 +193,18 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[80vh] p-0 gap-0">
-        <DialogHeader className="p-4 pb-0">
-          <div className="flex items-center gap-3">
+    <>
+      {/* Backdrop */}
+      <div className="fixed inset-0 bg-black/5 backdrop-blur-[1px] z-40" />
+      
+      {/* Search Popup */}
+      <div className="fixed inset-0 z-50 flex items-start justify-center pt-20">
+        <div
+          ref={popupRef}
+          className="w-full max-w-2xl mx-4 bg-background border border-border rounded-lg shadow-2xl max-h-[80vh] flex flex-col"
+        >
+          {/* Header */}
+          <div className="flex items-center gap-3 p-4 border-b border-border">
             <div className="relative flex-1 flex justify-center">
               <div className="relative">
                 <Search className="w-3 h-3 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -208,7 +214,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
                   placeholder="Search for people, projects, files, tasks, notes..."
                   value={searchQuery}
                   onChange={(e) => handleSearch(e.target.value)}
-                  className="pl-7 pr-3 py-1 text-xs w-96 h-auto"
+                  className="pl-7 pr-3 py-1 text-xs w-96 h-auto border border-border rounded focus:outline-none focus:ring-2 focus:ring-primary/20"
                 />
               </div>
             </div>
@@ -221,98 +227,91 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
               <X className="w-4 h-4" />
             </Button>
           </div>
-        </DialogHeader>
 
-        <Separator />
+          {/* Filter Tabs */}
+          <div className="flex items-center gap-1 p-2 border-b border-border bg-muted/20">
+            {filters.map((filter) => {
+              const Icon = filter.icon;
+              return (
+                <Button
+                  key={filter.id}
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setActiveFilter(filter.id)}
+                  className={cn(
+                    "h-auto px-2 py-1 text-xs border border-border rounded transition-colors",
+                    activeFilter === filter.id
+                      ? "text-foreground bg-accent/50"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                  )}
+                >
+                  <Icon className="w-3 h-3 mr-2" strokeWidth="2" />
+                  {filter.label}
+                  <span className="ml-2 text-xs text-muted-foreground">
+                    {filter.count}
+                  </span>
+                </Button>
+              );
+            })}
+          </div>
 
-        {/* Filter Tabs */}
-        <div className="flex items-center gap-1 p-2 bg-muted/20">
-          {filters.map((filter) => {
-            const Icon = filter.icon;
-            return (
-              <Button
-                key={filter.id}
-                variant={activeFilter === filter.id ? "secondary" : "ghost"}
-                size="sm"
-                onClick={() => setActiveFilter(filter.id)}
-                className={cn(
-                  "h-auto px-2 py-1 text-xs border border-border",
-                  activeFilter === filter.id
-                    ? "bg-accent/50"
-                    : "hover:bg-accent/50"
-                )}
-              >
-                <Icon className="w-3 h-3 mr-2" strokeWidth="2" />
-                {filter.label}
-                <Badge variant="secondary" className="ml-2 text-xs h-auto px-1 py-0">
-                  {filter.count}
-                </Badge>
-              </Button>
-            );
-          })}
-        </div>
-
-        <Separator />
-
-        {/* Results */}
-        <div className="flex-1 overflow-y-auto">
-          {searchQuery.length === 0 ? (
-            <div>
-              {/* Recent Searches Section */}
-              <div className="px-3 py-2">
-                <h3 style={{ fontSize: '0.75rem' }} className="font-semibold text-muted-foreground uppercase tracking-wide mb-1">RECENT SEARCHES</h3>
-                <div>
-                  {recentSearches.map((search) => renderRecentSearchRow(search))}
+          {/* Results */}
+          <div className="flex-1 overflow-y-auto">
+            {searchQuery.length === 0 ? (
+              <div>
+                {/* Recent Searches Section */}
+                <div className="px-3 py-2 border-b border-border">
+                  <h3 style={{ fontSize: '0.75rem' }} className="font-semibold text-muted-foreground uppercase tracking-wide mb-1">RECENT SEARCHES</h3>
+                  <div>
+                    {recentSearches.map((search) => renderRecentSearchRow(search))}
+                  </div>
                 </div>
-              </div>
-              <Separator />
-              <div className="text-center py-8">
-                <Search className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
-                <p className="text-sm text-muted-foreground">Start typing to search...</p>
-              </div>
-            </div>
-          ) : (
-            <div>
-              {getFilteredResults().length === 0 ? (
                 <div className="text-center py-8">
                   <Search className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
-                  <p className="text-sm text-muted-foreground">No results found for "{searchQuery}"</p>
+                  <p className="text-sm text-muted-foreground">Start typing to search...</p>
                 </div>
-              ) : (
-                <div>
-                  {getFilteredResults().map((result) => {
-                    // Determine result type based on properties
-                    let type = 'tasks';
-                    if ('avatar' in result && result.avatar) type = 'people';
-                    else if (result.subtitle?.includes('Progress') || result.subtitle?.includes('Planning') || result.subtitle?.includes('Completed')) type = 'projects';
-                    else if (result.subtitle?.includes('Document') || result.subtitle?.includes('Design File') || result.subtitle?.includes('Markdown')) type = 'files';
-                    else if (result.subtitle?.includes('Meeting') || result.subtitle?.includes('Communication') || result.subtitle?.includes('Development')) type = 'notes';
-                    
-                    return renderResultRow(result, type);
-                  })}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
-        <Separator />
-
-        {/* Footer */}
-        <div className="flex items-center justify-between px-4 py-3 bg-muted/10">
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <span>↑↓ to navigate</span>
-            <span>↵ to select</span>
-            <span>esc to close</span>
+              </div>
+            ) : (
+              <div>
+                {getFilteredResults().length === 0 ? (
+                  <div className="text-center py-8">
+                    <Search className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
+                    <p className="text-sm text-muted-foreground">No results found for "{searchQuery}"</p>
+                  </div>
+                ) : (
+                  <div>
+                    {getFilteredResults().map((result) => {
+                      // Determine result type based on properties
+                      let type = 'tasks';
+                      if ('avatar' in result && result.avatar) type = 'people';
+                      else if (result.subtitle?.includes('Progress') || result.subtitle?.includes('Planning') || result.subtitle?.includes('Completed')) type = 'projects';
+                      else if (result.subtitle?.includes('Document') || result.subtitle?.includes('Design File') || result.subtitle?.includes('Markdown')) type = 'files';
+                      else if (result.subtitle?.includes('Meeting') || result.subtitle?.includes('Communication') || result.subtitle?.includes('Development')) type = 'notes';
+                      
+                      return renderResultRow(result, type);
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
-          {searchQuery && (
-            <Badge variant="outline" className="text-xs">
-              {getFilteredResults().length} results
-            </Badge>
-          )}
+
+          {/* Footer */}
+          <div className="flex items-center justify-between px-4 py-3 border-t border-border bg-muted/10">
+            <div className="flex items-center gap-4 text-xs text-muted-foreground">
+              <span>↑↓ to navigate</span>
+              <span>↵ to select</span>
+              <span>esc to close</span>
+            </div>
+            {searchQuery && (
+              <div className="text-xs text-muted-foreground">
+                {getFilteredResults().length} results
+              </div>
+            )}
+          </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </>
   );
 };
 
