@@ -598,6 +598,29 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
             )}
           </span>
         </div>
+        {type === 'tasks' && result.subtitle && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              // Navigate to project based on the project title
+              // We need to find the project by title and navigate to its page
+              fetch('/api/projects')
+                .then(res => res.json())
+                .then(projects => {
+                  const project = projects.find((p: any) => p.title === result.subtitle);
+                  if (project) {
+                    navigate(`/project/${project.projectId}`);
+                    onClose();
+                  }
+                })
+                .catch(console.error);
+            }}
+            className="text-[10px] text-muted-foreground/60 hover:text-muted-foreground px-1 py-0.5 rounded hover:bg-muted/30 transition-colors"
+            title={`Go to ${result.subtitle} project`}
+          >
+            <FolderOpen className="w-2 h-2" />
+          </button>
+        )}
       </div>
     );
   };
@@ -789,7 +812,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
                     {currentFilteredResults.map((result: SearchResult, index: number) => {
                       // Use the stored resultType from the formatted result
                       const resultType = activeFilter === 'all' ? result.resultType : activeFilter;
-                      console.log('Rendering result:', result.title, 'with type:', resultType, 'result object:', result);
+
                       
                       return renderResultRow(result, resultType, index);
                     })}
