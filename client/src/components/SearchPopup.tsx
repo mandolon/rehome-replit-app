@@ -206,6 +206,12 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
       const currentResults = searchResults ? getFilteredResults() : [];
       return currentResults;
     } else {
+      console.log('getNavigableItems returning recent searches:', recentSearches.map(s => ({ 
+        query: s.query, 
+        type: s.type, 
+        projectId: s.projectId, 
+        taskId: s.taskId 
+      })));
       return recentSearches;
     }
   };
@@ -251,6 +257,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
         case 'Enter':
           event.preventDefault();
           const selectedItem = navigableItems[selectedIndex];
+          console.log('Enter key pressed - selectedItem:', selectedItem);
           if (selectedItem && selectedIndex >= 0) {
             if (searchQuery.length > 0) {
               // Handle search result selection

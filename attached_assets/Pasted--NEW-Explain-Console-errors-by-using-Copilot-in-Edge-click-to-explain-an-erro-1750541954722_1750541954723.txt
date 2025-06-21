@@ -1,0 +1,59 @@
+[NEW] Explain Console errors by using Copilot in Edge: click
+         
+         to explain an error. 
+        Learn more
+        Don't show again
+react-dom.development.js:29895 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+SidebarHeader.tsx:20 SidebarHeader - currentUser: {id: 't0', name: 'Armando Lopez', email: 'armando.lopez@example.com', avatar: 'AL', status: 'online', …}
+SearchPopup.tsx:33 Loading recent searches from localStorage: (6) [{…}, {…}, {…}, {…}, {…}, {…}]
+AppLayout.tsx:35 Sidebar resize: 20.8756223082
+App.tsx:52 App component is rendering, current path: /
+SidebarHeader.tsx:20 SidebarHeader - currentUser: {id: 't0', name: 'Armando Lopez', email: 'armando.lopez@example.com', avatar: 'AL', status: 'online', …}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Ogden - Thew - 2709 T Street', projectIdFromName: 'ogden-thew-2709-t-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Peterson - 2015 10th Street', projectIdFromName: 'peterson-2015-10th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Piner - Piner Haus Garage', projectIdFromName: 'piner-piner-haus-garage', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Ogden - Thew - 2709 T Street', projectIdFromName: 'ogden-thew-2709-t-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Peterson - 2015 10th Street', projectIdFromName: 'peterson-2015-10th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Piner - Piner Haus Garage', projectIdFromName: 'piner-piner-haus-garage', urlProjectId: undefined, isActive: false}
+PageHeader.tsx:54 Searching for: s with filter: all
+PageHeader.tsx:54 Searching for: sf with filter: all
+PageHeader.tsx:54 Searching for: s with filter: all
+PageHeader.tsx:54 Searching for:  with filter: all
+PageHeader.tsx:54 Searching for: a with filter: all
+PageHeader.tsx:54 Searching for: ad with filter: all
+PageHeader.tsx:54 Searching for: ada with filter: all
+PageHeader.tsx:54 Searching for: ada, with filter: all
+PageHeader.tsx:54 Searching for: ada with filter: all
+PageHeader.tsx:54 Searching for: adam with filter: all
+SearchPopup.tsx:377 Saving project to recent searches: {resultTitle: 'Adams - 1063 40th Street', resultProjectId: 'adams-1063-40th-street', resultId: 6, finalProjectId: 'adams-1063-40th-street'}
+SearchPopup.tsx:392 Updated recent searches: (6) [{…}, {…}, {…}, {…}, {…}, {…}]
+SearchPopup.tsx:426 Project clicked: {result: {…}, projectId: 'adams-1063-40th-street'}
+SidebarHeader.tsx:20 SidebarHeader - currentUser: {id: 't0', name: 'Armando Lopez', email: 'armando.lopez@example.com', avatar: 'AL', status: 'online', …}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Ogden - Thew - 2709 T Street', projectIdFromName: 'ogden-thew-2709-t-street', urlProjectId: 'adams-1063-40th-street', isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Peterson - 2015 10th Street', projectIdFromName: 'peterson-2015-10th-street', urlProjectId: 'adams-1063-40th-street', isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Piner - Piner Haus Garage', projectIdFromName: 'piner-piner-haus-garage', urlProjectId: 'adams-1063-40th-street', isActive: false}
+SearchPopup.tsx:33 Loading recent searches from localStorage: (6) [{…}, {…}, {…}, {…}, {…}, {…}]
+AppLayout.tsx:35 Sidebar resize: 20.8756223082
+App.tsx:52 App component is rendering, current path: /project/adams-1063-40th-street
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Ogden - Thew - 2709 T Street', projectIdFromName: 'ogden-thew-2709-t-street', urlProjectId: 'adams-1063-40th-street', isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Peterson - 2015 10th Street', projectIdFromName: 'peterson-2015-10th-street', urlProjectId: 'adams-1063-40th-street', isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Piner - Piner Haus Garage', projectIdFromName: 'piner-piner-haus-garage', urlProjectId: 'adams-1063-40th-street', isActive: false}
+SearchPopup.tsx:544 Recent project clicked: {searchQuery: 'Adams - 1063 40th Street', searchType: 'projects', searchProjectId: 'adams-1063-40th-street'}
+SidebarHeader.tsx:20 SidebarHeader - currentUser: {id: 't0', name: 'Armando Lopez', email: 'armando.lopez@example.com', avatar: 'AL', status: 'online', …}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Ogden - Thew - 2709 T Street', projectIdFromName: 'ogden-thew-2709-t-street', urlProjectId: 'adams-1063-40th-street', isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Peterson - 2015 10th Street', projectIdFromName: 'peterson-2015-10th-street', urlProjectId: 'adams-1063-40th-street', isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Piner - Piner Haus Garage', projectIdFromName: 'piner-piner-haus-garage', urlProjectId: 'adams-1063-40th-street', isActive: false}
+App.tsx:52 App component is rendering, current path: /project/adams-1063-40th-street
+SearchPopup.tsx:271 Keyboard project navigation: {selectedItemQuery: 'Adams - 1063 40th Street', selectedItemType: 'projects', selectedItemProjectId: undefined}
+SearchPopup.tsx:279  No projectId in keyboard navigation, falling back to projects page
+handleKeydown @ SearchPopup.tsx:279
+SidebarHeader.tsx:20 SidebarHeader - currentUser: {id: 't0', name: 'Armando Lopez', email: 'armando.lopez@example.com', avatar: 'AL', status: 'online', …}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Ogden - Thew - 2709 T Street', projectIdFromName: 'ogden-thew-2709-t-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Peterson - 2015 10th Street', projectIdFromName: 'peterson-2015-10th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Piner - Piner Haus Garage', projectIdFromName: 'piner-piner-haus-garage', urlProjectId: undefined, isActive: false}
+SearchPopup.tsx:33 Loading recent searches from localStorage: (6) [{…}, {…}, {…}, {…}, {…}, {…}]
+AppLayout.tsx:35 Sidebar resize: 20.8756223082
+App.tsx:52 App component is rendering, current path: /projects
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Ogden - Thew - 2709 T Street', projectIdFromName: 'ogden-thew-2709-t-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Peterson - 2015 10th Street', projectIdFromName: 'peterson-2015-10th-street', urlProjectId: undefined, isActive: false}
+ProjectItem.tsx:36 ProjectItem - Checking if active: {projectName: 'Piner - Piner Haus Garage', projectIdFromName: 'piner-piner-haus-garage', urlProjectId: undefined, isActive: false}
