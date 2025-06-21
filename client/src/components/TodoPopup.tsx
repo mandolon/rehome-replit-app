@@ -149,7 +149,7 @@ const TodoPopup = ({ isOpen, onClose }: TodoPopupProps) => {
               type="text"
               value={newTodoText}
               onChange={(e) => setNewTodoText(e.target.value)}
-              onKeyDown={handleKeyDown}
+              onKeyDown={handleInputKeyDown}
               placeholder="Add a new todo item..."
               className="text-xl font-semibold text-gray-900 dark:text-white bg-transparent border-none outline-none focus:ring-0 w-full pl-3 px-1 py-0.5"
             />
