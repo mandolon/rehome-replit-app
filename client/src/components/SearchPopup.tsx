@@ -367,7 +367,7 @@ const SearchPopup = ({ isOpen, onClose, onSearch }: SearchPopupProps) => {
     return () => {
       document.removeEventListener('keydown', handleKeydown);
     };
-  }, [isOpen, onClose, searchQuery, selectedIndex, activeFilter]);
+  }, [isOpen, onClose, searchQuery, selectedIndex, activeFilter, searchResults, recentSearches]);
 
   // Reset selected index when search query or filter changes
   useEffect(() => {
