@@ -314,8 +314,7 @@ const SchedulesContent = () => {
                 {roomItems.length > 0 && (
                   <>
                     {/* Table Header */}
-                    <div className="grid grid-cols-8 gap-4 py-3 px-4 text-xs font-medium text-muted-foreground border-b border-border/20 sticky top-0 z-10 bg-background">
-                      <div className="w-8">#</div>
+                    <div className="grid grid-cols-7 gap-4 py-3 px-3 text-xs font-medium text-muted-foreground border-b border-border/30 sticky top-0 z-10 bg-background">
                       <div>Type</div>
                       <div>Item</div>
                       <div>Manufacturer</div>
@@ -333,9 +332,9 @@ const SchedulesContent = () => {
                       return (
                         <div key={category}>
                           {/* Category Label with Add Button */}
-                          <div className="grid grid-cols-8 gap-4 py-2 px-4 bg-gray-50 dark:bg-gray-800/30 border-b border-border/10">
-                            <div className="col-span-8 flex items-center justify-between">
-                              <div className="text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                          <div className="grid grid-cols-7 gap-4 py-2 px-3 bg-muted/20 border-b border-border/20">
+                            <div className="col-span-7 flex items-center justify-between">
+                              <div className="text-xs font-medium text-foreground">
                                 {categoryLabels[category]}
                               </div>
                               <Button
@@ -352,11 +351,7 @@ const SchedulesContent = () => {
 
                           {/* Category Items */}
                           {categoryItems.map((item, itemIndex) => (
-                            <div key={item.id} className="grid grid-cols-8 gap-4 py-2.5 px-4 hover:bg-gray-50/70 dark:hover:bg-gray-800/30 transition-colors group border-b border-gray-100 dark:border-gray-800">
-                              {/* Row Number */}
-                              <div className="flex items-center text-xs text-gray-400 font-mono">
-                                {itemIndex + 1}
-                              </div>
+                            <div key={item.id} className="grid grid-cols-7 gap-4 py-3 px-3 hover:bg-muted/30 transition-colors group border-b border-border/10">
                               <div>
                                 <Select 
                                   value={item.type} 
@@ -364,7 +359,7 @@ const SchedulesContent = () => {
                                     updateItem(item.id, 'type', value)
                                   }
                                 >
-                                  <SelectTrigger className="h-7 text-xs border-0 shadow-none bg-transparent focus:bg-gray-50 dark:focus:bg-gray-800 px-0" style={{ fontSize: '0.75rem' }}>
+                                  <SelectTrigger className="h-8 text-sm border-0 shadow-none bg-transparent focus:bg-muted/30 px-0">
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
@@ -378,8 +373,7 @@ const SchedulesContent = () => {
                                 <Input 
                                   value={item.item} 
                                   onChange={(e) => updateItem(item.id, 'item', e.target.value)}
-                                  className="h-7 border-0 shadow-none bg-transparent focus:bg-gray-50 dark:focus:bg-gray-800 px-0"
-                                  style={{ fontSize: '0.75rem' }}
+                                  className="h-8 text-sm border-0 shadow-none bg-transparent focus:bg-muted/30 px-0"
                                   placeholder="Item name"
                                 />
                               </div>
@@ -387,8 +381,7 @@ const SchedulesContent = () => {
                                 <Input 
                                   value={item.manufacturer} 
                                   onChange={(e) => updateItem(item.id, 'manufacturer', e.target.value)}
-                                  className="h-7 border-0 shadow-none bg-transparent focus:bg-gray-50 dark:focus:bg-gray-800 px-0"
-                                  style={{ fontSize: '0.75rem' }}
+                                  className="h-8 text-sm border-0 shadow-none bg-transparent focus:bg-muted/30 px-0"
                                   placeholder="Manufacturer"
                                 />
                               </div>
@@ -396,8 +389,7 @@ const SchedulesContent = () => {
                                 <Input 
                                   value={item.model} 
                                   onChange={(e) => updateItem(item.id, 'model', e.target.value)}
-                                  className="h-7 border-0 shadow-none bg-transparent focus:bg-gray-50 dark:focus:bg-gray-800 px-0"
-                                  style={{ fontSize: '0.75rem' }}
+                                  className="h-8 text-sm border-0 shadow-none bg-transparent focus:bg-muted/30 px-0"
                                   placeholder="Model"
                                 />
                               </div>
@@ -405,8 +397,7 @@ const SchedulesContent = () => {
                                 <Input 
                                   value={item.finish} 
                                   onChange={(e) => updateItem(item.id, 'finish', e.target.value)}
-                                  className="h-7 border-0 shadow-none bg-transparent focus:bg-gray-50 dark:focus:bg-gray-800 px-0"
-                                  style={{ fontSize: '0.75rem' }}
+                                  className="h-8 text-sm border-0 shadow-none bg-transparent focus:bg-muted/30 px-0"
                                   placeholder="Finish"
                                 />
                               </div>
@@ -414,8 +405,7 @@ const SchedulesContent = () => {
                                 <Input 
                                   value={item.comments} 
                                   onChange={(e) => updateItem(item.id, 'comments', e.target.value)}
-                                  className="h-7 border-0 shadow-none bg-transparent focus:bg-gray-50 dark:focus:bg-gray-800 px-0"
-                                  style={{ fontSize: '0.75rem' }}
+                                  className="h-8 text-sm border-0 shadow-none bg-transparent focus:bg-muted/30 px-0"
                                   placeholder="Comments"
                                 />
                               </div>
@@ -424,7 +414,7 @@ const SchedulesContent = () => {
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => deleteItem(item.id)}
-                                  className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20"
+                                  className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/10 hover:text-destructive"
                                 >
                                   <X className="w-3 h-3" />
                                 </Button>
