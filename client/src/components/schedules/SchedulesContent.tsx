@@ -11,7 +11,7 @@ import { Plus, Download, Upload, X, Camera, Home, ArrowLeft, Grid, ChefHat, Show
 interface ScheduleItem {
   id: string;
   room: string;
-  type: 'fixture' | 'appliance' | 'lighting';
+  type: 'fixture' | 'appliance' | 'lighting' | 'window' | 'door';
   item: string;
   manufacturer: string;
   model: string;
@@ -81,6 +81,7 @@ const SchedulesContent = () => {
   const [newRoomName, setNewRoomName] = useState('');
   const [isAddingRoom, setIsAddingRoom] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'fixture' | 'appliance' | 'lighting'>('all');
+  const [activeTab, setActiveTab] = useState<'appliances-fixtures-lighting' | 'windows-doors'>('appliances-fixtures-lighting');
   const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([
     {
       id: '1',
@@ -134,6 +135,26 @@ const SchedulesContent = () => {
     },
     {
       id: '6',
+      room: 'Living Room',
+      type: 'window',
+      item: 'Picture Window',
+      manufacturer: 'Pella',
+      model: 'Architect Series',
+      finish: 'White',
+      comments: '6x4 fixed window with low-E glass'
+    },
+    {
+      id: '7',
+      room: 'Kitchen',
+      type: 'door',
+      item: 'Patio Door',
+      manufacturer: 'Marvin',
+      model: 'Ultimate Sliding',
+      finish: 'Mahogany',
+      comments: '8ft sliding door to deck'
+    },
+    {
+      id: '8',
       room: 'Kitchen',
       type: 'lighting',
       item: 'Under Cabinet LED',
@@ -210,6 +231,10 @@ const SchedulesContent = () => {
               return ['Refrigerator', 'Dishwasher', 'Range', 'Cooktop', 'Oven', 'Microwave', 'Range Hood', 'Garbage Disposal', 'Wine Cooler', 'Ice Maker'];
             case 'lighting':
               return ['Pendant Light', 'Chandelier', 'Recessed Light', 'Under Cabinet LED', 'Vanity Light', 'Ceiling Fan', 'Wall Sconce', 'Track Light', 'Floor Lamp', 'Table Lamp'];
+            case 'window':
+              return ['Picture Window', 'Double Hung Window', 'Casement Window', 'Sliding Window', 'Bay Window', 'Bow Window', 'Awning Window', 'Single Hung Window', 'Fixed Window', 'Garden Window'];
+            case 'door':
+              return ['Entry Door', 'Patio Door', 'French Door', 'Sliding Door', 'Bi-fold Door', 'Pocket Door', 'Storm Door', 'Screen Door', 'Interior Door', 'Garage Door'];
             default:
               return [];
           }
@@ -257,13 +282,13 @@ const SchedulesContent = () => {
     }
   ];
 
-  const addNewItem = () => {
+  const addNewItem = (itemType: ScheduleItem['type'] = 'fixture') => {
     if (!selectedRoom) return;
     
     const newItem: ScheduleItem = {
       id: Date.now().toString(),
       room: selectedRoom,
-      type: 'fixture',
+      type: itemType,
       item: '',
       manufacturer: '',
       model: '',
@@ -462,8 +487,25 @@ const SchedulesContent = () => {
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-6">
-              <button className="text-sm pb-2 border-b-2 border-primary text-foreground font-medium">
-                All Rooms
+              <button 
+                className={`text-sm pb-2 border-b-2 font-medium transition-colors ${
+                  activeTab === 'appliances-fixtures-lighting' 
+                    ? 'border-primary text-foreground' 
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                }`}
+                onClick={() => setActiveTab('appliances-fixtures-lighting')}
+              >
+                Appliances, Fixtures & Lighting
+              </button>
+              <button 
+                className={`text-sm pb-2 border-b-2 font-medium transition-colors ${
+                  activeTab === 'windows-doors' 
+                    ? 'border-primary text-foreground' 
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                }`}
+                onClick={() => setActiveTab('windows-doors')}
+              >
+                Windows & Doors
               </button>
             </div>
             
