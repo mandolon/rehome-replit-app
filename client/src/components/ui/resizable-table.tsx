@@ -276,11 +276,11 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
                 {index + 1}
               </div>
               {columns.slice(0, -1).map((column) => (
-                <div key={column.key} className="flex-shrink-0 px-2 hover:bg-muted/20 transition-colors" style={{ width: `${column.width}px` }}>
+                <div key={column.key} className="flex-shrink-0 px-2 hover:bg-muted/50 dark:hover:bg-muted/70 transition-colors" style={{ width: `${column.width}px` }}>
                   {renderCell(row, column, index)}
                 </div>
               ))}
-              <div className="flex-1 min-w-0 px-2 hover:bg-muted/20 transition-colors">
+              <div className="flex-1 min-w-0 px-2 hover:bg-muted/50 dark:hover:bg-muted/70 transition-colors">
                 {renderCell(row, columns[columns.length - 1], index)}
               </div>
               <div className="w-8 flex-shrink-0 pr-3 flex justify-center">
