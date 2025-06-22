@@ -92,20 +92,20 @@ const TaskDetailFields: React.FC<TaskDetailFieldsProps> = ({
 
   return (
     <div className="grid grid-cols-5 gap-2 py-1">
-      <div className="space-y-0.5">
+      <div>
         <label className="text-xs text-muted-foreground">
           Created by
         </label>
         <div className="text-xs">{getCreatedByName(task.createdBy)}</div>
       </div>
-      <div className="space-y-0.5">
+      <div>
         <label className="text-xs text-muted-foreground">
           Date Created
         </label>
         <div className="text-xs">{formatCreatedDate(task.createdAt)}</div>
       </div>
       {/* ASSIGNED TO - uses TaskRowAssignees for perfect consistency with table */}
-      <div className="space-y-0.5">
+      <div>
         <label className="text-xs text-muted-foreground">
           Assigned to
         </label>
@@ -119,7 +119,7 @@ const TaskDetailFields: React.FC<TaskDetailFieldsProps> = ({
           />
         </div>
       </div>
-      <div className="space-y-0.5">
+      <div>
         <label className="text-xs text-muted-foreground">
           Track Time
         </label>
@@ -129,7 +129,7 @@ const TaskDetailFields: React.FC<TaskDetailFieldsProps> = ({
           onTimeUpdated={handleTimeUpdated}
         />
       </div>
-      <div className="space-y-0.5">
+      <div>
         <label className="text-xs text-muted-foreground">
           Due Date
         </label>
