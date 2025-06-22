@@ -23,6 +23,7 @@ interface ScheduleItem {
   style?: string;
   location?: string;
   orientation?: string;
+  windowType?: string;
   width?: string;
   height?: string;
   openingArea?: string;
@@ -32,6 +33,7 @@ interface ScheduleItem {
   glassType?: string;
   egress?: string;
   // Door-specific fields
+  doorType?: string;
   function?: string;
   swing?: string;
   panel?: string;
@@ -281,7 +283,7 @@ const SchedulesContent = () => {
           placeholder: 'E'
         },
         {
-          key: 'type',
+          key: 'windowType',
           title: 'Type',
           width: 120,
           minWidth: 100,
@@ -431,7 +433,7 @@ const SchedulesContent = () => {
           placeholder: 'Swing'
         },
         {
-          key: 'type',
+          key: 'doorType',
           title: 'Type',
           width: 100,
           minWidth: 80,
