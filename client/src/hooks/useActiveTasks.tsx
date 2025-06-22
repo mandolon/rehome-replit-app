@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Task } from '@shared/schema';
+import type { Task } from '@shared/schema';
 
 export const useActiveTasks = () => {
   const { data: tasks = [], isLoading, error } = useQuery({

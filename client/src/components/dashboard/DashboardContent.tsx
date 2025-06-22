@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useActiveTasks } from '@/hooks/useActiveTasks';
 import { format } from 'date-fns';
+import type { Task } from '@shared/schema';
 
 const DashboardContent = () => {
   // Get active tasks data
@@ -208,15 +209,15 @@ const DashboardContent = () => {
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-xs text-muted-foreground">Urgent Tasks</span>
-                          <span className="text-xs font-medium text-red-600 dark:text-red-400">
-                            {activeTasks.filter(task => task.priority === 'urgent' || task.priority === 'high').length}
+                          <span className="text-xs text-muted-foreground">With Due Dates</span>
+                          <span className="text-xs font-medium text-orange-600 dark:text-orange-400">
+                            {activeTasks.filter((task: any) => task.dueDate).length}
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-xs text-muted-foreground">Due This Week</span>
-                          <span className="text-xs font-medium text-orange-600 dark:text-orange-400">
-                            {activeTasks.filter(task => {
+                          <span className="text-xs font-medium text-red-600 dark:text-red-400">
+                            {activeTasks.filter((task: any) => {
                               if (!task.dueDate) return false;
                               const dueDate = new Date(task.dueDate);
                               const now = new Date();
@@ -225,15 +226,13 @@ const DashboardContent = () => {
                             }).length}
                           </span>
                         </div>
-                        {activeTasks.slice(0, 2).map((task, index) => (
+                        {activeTasks.slice(0, 2).map((task: any, index: number) => (
                           <div key={task.taskId} className="bg-muted/50 rounded-lg p-2 space-y-1">
                             <div className="flex items-start justify-between">
                               <span className="text-xs font-medium text-foreground line-clamp-1 flex-1 mr-2">
                                 {task.title}
                               </span>
-                              {task.priority === 'urgent' || task.priority === 'high' ? (
-                                <AlertCircle className="w-3 h-3 text-red-500 flex-shrink-0" />
-                              ) : task.dueDate && (
+                              {task.dueDate && (
                                 <Clock className="w-3 h-3 text-muted-foreground flex-shrink-0" />
                               )}
                             </div>
