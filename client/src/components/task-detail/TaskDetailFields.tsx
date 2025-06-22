@@ -91,25 +91,25 @@ const TaskDetailFields: React.FC<TaskDetailFieldsProps> = ({
   };
 
   return (
-    <div className="grid grid-cols-5 gap-2" style={{ padding: '4px 0', marginTop: '-8px' }}>
-      <div style={{ lineHeight: '1.2' }}>
-        <label className="text-xs text-muted-foreground" style={{ display: 'block', marginBottom: '1px' }}>
+    <div className="grid grid-cols-5 gap-1" style={{ padding: '2px 0', marginTop: '-12px', fontSize: '11px' }}>
+      <div style={{ lineHeight: '1.1 !important', margin: '0 !important', padding: '0 !important' }}>
+        <label className="text-xs text-muted-foreground" style={{ display: 'block !important', marginBottom: '0px !important', paddingBottom: '0px !important' }}>
           Created by
         </label>
-        <div className="text-xs">{getCreatedByName(task.createdBy)}</div>
+        <div className="text-xs" style={{ marginTop: '0px !important', paddingTop: '0px !important' }}>{getCreatedByName(task.createdBy)}</div>
       </div>
-      <div style={{ lineHeight: '1.2' }}>
-        <label className="text-xs text-muted-foreground" style={{ display: 'block', marginBottom: '1px' }}>
+      <div style={{ lineHeight: '1.1 !important', margin: '0 !important', padding: '0 !important' }}>
+        <label className="text-xs text-muted-foreground" style={{ display: 'block !important', marginBottom: '0px !important', paddingBottom: '0px !important' }}>
           Date Created
         </label>
-        <div className="text-xs">{formatCreatedDate(task.createdAt)}</div>
+        <div className="text-xs" style={{ marginTop: '0px !important', paddingTop: '0px !important' }}>{formatCreatedDate(task.createdAt)}</div>
       </div>
       {/* ASSIGNED TO - uses TaskRowAssignees for perfect consistency with table */}
-      <div style={{ lineHeight: '1.2' }}>
-        <label className="text-xs text-muted-foreground" style={{ display: 'block', marginBottom: '1px' }}>
+      <div style={{ lineHeight: '1.1 !important', margin: '0 !important', padding: '0 !important' }}>
+        <label className="text-xs text-muted-foreground" style={{ display: 'block !important', marginBottom: '0px !important', paddingBottom: '0px !important' }}>
           Assigned to
         </label>
-        <div className="text-xs">
+        <div className="text-xs" style={{ marginTop: '0px !important', paddingTop: '0px !important' }}>
           <TaskRowAssignees
             task={task}
             onRemoveAssignee={handleRemoveAssignee}
@@ -119,17 +119,19 @@ const TaskDetailFields: React.FC<TaskDetailFieldsProps> = ({
           />
         </div>
       </div>
-      <div style={{ lineHeight: '1.2' }}>
-        <label className="text-xs text-muted-foreground" style={{ display: 'block', marginBottom: '1px' }}>
+      <div style={{ lineHeight: '1.1 !important', margin: '0 !important', padding: '0 !important' }}>
+        <label className="text-xs text-muted-foreground" style={{ display: 'block !important', marginBottom: '0px !important', paddingBottom: '0px !important' }}>
           Track Time
         </label>
-        <InlineTimeField
-          taskId={task.taskId}
-          currentTime={timeLogged}
-          onTimeUpdated={handleTimeUpdated}
-        />
+        <div style={{ marginTop: '0px !important', paddingTop: '0px !important' }}>
+          <InlineTimeField
+            taskId={task.taskId}
+            currentTime={timeLogged}
+            onTimeUpdated={handleTimeUpdated}
+          />
+        </div>
       </div>
-      <div style={{ lineHeight: '1.2' }}>
+      <div style={{ lineHeight: '1.1 !important', margin: '0 !important', padding: '0 !important' }}>
         <label className="text-xs text-muted-foreground">
           Due Date
         </label>
