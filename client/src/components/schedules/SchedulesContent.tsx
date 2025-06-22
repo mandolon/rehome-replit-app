@@ -308,20 +308,20 @@ const SchedulesContent = () => {
           </div>
 
           <ScrollArea className="flex-1 min-h-0">
-            <div className="px-6 py-2">
-              {/* Single Table with Category Sections */}
-              <div className="space-y-1">
+            <div className="px-6 py-4">
+              {/* Modern Clean Table */}
+              <div className="space-y-0">
                 {roomItems.length > 0 && (
                   <>
-                    {/* Single Table Header */}
-                    <div className="grid grid-cols-7 gap-3 py-3 px-1 text-xs font-medium text-muted-foreground sticky top-0 z-10 bg-background">
+                    {/* Table Header */}
+                    <div className="grid grid-cols-7 gap-4 py-3 px-3 text-xs font-medium text-muted-foreground border-b border-border/30 sticky top-0 z-10 bg-background">
                       <div>Type</div>
                       <div>Item</div>
                       <div>Manufacturer</div>
                       <div>Model</div>
                       <div>Finish</div>
                       <div>Comments</div>
-                      <div className="w-8"></div>
+                      <div className="w-6"></div>
                     </div>
 
                     {/* Category Sections */}
@@ -331,24 +331,17 @@ const SchedulesContent = () => {
 
                       return (
                         <div key={category}>
-                          {/* Category Divider */}
-                          {categoryIndex > 0 && (
-                            <div className="py-3">
-                              <div className="border-t border-border/30"></div>
-                            </div>
-                          )}
-                          
                           {/* Category Label with Add Button */}
-                          <div className="grid grid-cols-7 gap-3 py-2 px-1">
+                          <div className="grid grid-cols-7 gap-4 py-2 px-3 bg-muted/20 border-b border-border/20">
                             <div className="col-span-7 flex items-center justify-between">
-                              <div className="text-xs font-medium text-muted-foreground">
+                              <div className="text-xs font-medium text-foreground">
                                 {categoryLabels[category]}
                               </div>
                               <Button
                                 variant="ghost"
                                 size="sm"
                                 onClick={addNewItemForCategory(category)}
-                                className="h-5 px-2 text-xs text-muted-foreground hover:text-foreground"
+                                className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground hover:bg-background/50"
                               >
                                 <Plus className="w-3 h-3 mr-1" />
                                 Add
@@ -358,7 +351,7 @@ const SchedulesContent = () => {
 
                           {/* Category Items */}
                           {categoryItems.map((item, itemIndex) => (
-                            <div key={item.id} className="grid grid-cols-7 gap-3 py-2 px-1 hover:bg-muted/20 transition-colors group">
+                            <div key={item.id} className="grid grid-cols-7 gap-4 py-3 px-3 hover:bg-muted/30 transition-colors group border-b border-border/10">
                               <div>
                                 <Select 
                                   value={item.type} 
@@ -366,7 +359,7 @@ const SchedulesContent = () => {
                                     updateItem(item.id, 'type', value)
                                   }
                                 >
-                                  <SelectTrigger className="h-7 text-xs border-0 shadow-none bg-transparent hover:bg-muted/50">
+                                  <SelectTrigger className="h-8 text-sm border-0 shadow-none bg-transparent focus:bg-muted/30 px-0">
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
@@ -380,7 +373,7 @@ const SchedulesContent = () => {
                                 <Input 
                                   value={item.item} 
                                   onChange={(e) => updateItem(item.id, 'item', e.target.value)}
-                                  className="h-7 text-xs border-0 shadow-none bg-transparent hover:bg-muted/50 focus:bg-background"
+                                  className="h-8 text-sm border-0 shadow-none bg-transparent focus:bg-muted/30 px-0"
                                   placeholder="Item name"
                                 />
                               </div>
@@ -388,7 +381,7 @@ const SchedulesContent = () => {
                                 <Input 
                                   value={item.manufacturer} 
                                   onChange={(e) => updateItem(item.id, 'manufacturer', e.target.value)}
-                                  className="h-7 text-xs border-0 shadow-none bg-transparent hover:bg-muted/50 focus:bg-background"
+                                  className="h-8 text-sm border-0 shadow-none bg-transparent focus:bg-muted/30 px-0"
                                   placeholder="Manufacturer"
                                 />
                               </div>
@@ -396,7 +389,7 @@ const SchedulesContent = () => {
                                 <Input 
                                   value={item.model} 
                                   onChange={(e) => updateItem(item.id, 'model', e.target.value)}
-                                  className="h-7 text-xs border-0 shadow-none bg-transparent hover:bg-muted/50 focus:bg-background"
+                                  className="h-8 text-sm border-0 shadow-none bg-transparent focus:bg-muted/30 px-0"
                                   placeholder="Model"
                                 />
                               </div>
@@ -404,7 +397,7 @@ const SchedulesContent = () => {
                                 <Input 
                                   value={item.finish} 
                                   onChange={(e) => updateItem(item.id, 'finish', e.target.value)}
-                                  className="h-7 text-xs border-0 shadow-none bg-transparent hover:bg-muted/50 focus:bg-background"
+                                  className="h-8 text-sm border-0 shadow-none bg-transparent focus:bg-muted/30 px-0"
                                   placeholder="Finish"
                                 />
                               </div>
@@ -412,24 +405,20 @@ const SchedulesContent = () => {
                                 <Input 
                                   value={item.comments} 
                                   onChange={(e) => updateItem(item.id, 'comments', e.target.value)}
-                                  className="h-7 text-xs border-0 shadow-none bg-transparent hover:bg-muted/50 focus:bg-background"
+                                  className="h-8 text-sm border-0 shadow-none bg-transparent focus:bg-muted/30 px-0"
                                   placeholder="Comments"
                                 />
                               </div>
-                              <div>
+                              <div className="flex justify-center">
                                 <Button
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => deleteItem(item.id)}
-                                  className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                  className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/10 hover:text-destructive"
                                 >
                                   <X className="w-3 h-3" />
                                 </Button>
                               </div>
-                              {/* Subtle row divider */}
-                              {itemIndex < categoryItems.length - 1 && (
-                                <div className="col-span-7 border-b border-border/20 -mx-1 mt-1"></div>
-                              )}
                             </div>
                           ))}
                         </div>
