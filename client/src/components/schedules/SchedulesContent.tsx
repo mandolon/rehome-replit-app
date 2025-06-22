@@ -80,6 +80,8 @@ const SchedulesContent = () => {
   const [newRoomName, setNewRoomName] = useState('');
   const [isAddingRoom, setIsAddingRoom] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'fixture' | 'appliance' | 'lighting'>('all');
+  const [focusedRowIndex, setFocusedRowIndex] = useState<number>(-1);
+  const [customItems, setCustomItems] = useState<Record<string, string>>({});
   const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([
     {
       id: '1',
@@ -183,16 +185,19 @@ const SchedulesContent = () => {
 
   // Item options based on category
   const getItemOptions = (type: 'fixture' | 'appliance' | 'lighting') => {
-    switch (type) {
-      case 'fixture':
-        return ['Kitchen Sink', 'Bathroom Sink', 'Vanity Faucet', 'Shower Head', 'Bathtub', 'Toilet', 'Kitchen Faucet', 'Shower Valve', 'Towel Bar', 'Grab Bar'];
-      case 'appliance':
-        return ['Refrigerator', 'Dishwasher', 'Range', 'Cooktop', 'Oven', 'Microwave', 'Range Hood', 'Garbage Disposal', 'Wine Cooler', 'Ice Maker'];
-      case 'lighting':
-        return ['Pendant Light', 'Chandelier', 'Recessed Light', 'Under Cabinet LED', 'Vanity Light', 'Ceiling Fan', 'Wall Sconce', 'Track Light', 'Floor Lamp', 'Table Lamp'];
-      default:
-        return [];
-    }
+    const baseOptions = (() => {
+      switch (type) {
+        case 'fixture':
+          return ['Kitchen Sink', 'Bathroom Sink', 'Vanity Faucet', 'Shower Head', 'Bathtub', 'Toilet', 'Kitchen Faucet', 'Shower Valve', 'Towel Bar', 'Grab Bar'];
+        case 'appliance':
+          return ['Refrigerator', 'Dishwasher', 'Range', 'Cooktop', 'Oven', 'Microwave', 'Range Hood', 'Garbage Disposal', 'Wine Cooler', 'Ice Maker'];
+        case 'lighting':
+          return ['Pendant Light', 'Chandelier', 'Recessed Light', 'Under Cabinet LED', 'Vanity Light', 'Ceiling Fan', 'Wall Sconce', 'Track Light', 'Floor Lamp', 'Table Lamp'];
+        default:
+          return [];
+      }
+    })();
+    return [...baseOptions, 'Other'];
   };
 
   const addNewItem = () => {
@@ -210,6 +215,38 @@ const SchedulesContent = () => {
     };
     
     setScheduleItems([...scheduleItems, newItem]);
+    setFocusedRowIndex(scheduleItems.filter(item => item.room === selectedRoom).length);
+  };
+
+  // Handle keyboard navigation
+  const handleKeyDown = (e: React.KeyboardEvent, itemId: string, currentIndex: number, filteredItems: ScheduleItem[]) => {
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      const newIndex = Math.max(0, currentIndex - 1);
+      setFocusedRowIndex(newIndex);
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      const newIndex = Math.min(filteredItems.length - 1, currentIndex + 1);
+      setFocusedRowIndex(newIndex);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      addNewItem();
+    }
+  };
+
+  // Handle item selection including "Other" option
+  const handleItemSelection = (itemId: string, value: string) => {
+    if (value === 'Other') {
+      // Set a placeholder for custom input
+      updateItem(itemId, 'item', '');
+      setCustomItems({ ...customItems, [itemId]: 'custom' });
+    } else {
+      updateItem(itemId, 'item', value);
+      // Remove from custom items if it was previously custom
+      const newCustomItems = { ...customItems };
+      delete newCustomItems[itemId];
+      setCustomItems(newCustomItems);
+    }
   };
 
 
@@ -365,7 +402,15 @@ const SchedulesContent = () => {
 
                       {/* Table Rows */}
                       {filteredItems.map((item, index) => (
-                        <div key={item.id} className="flex py-1 px-0 hover:bg-muted/30 transition-colors group" style={{ borderBottom: '1px solid #bbbbbb' }}>
+                        <div 
+                          key={item.id} 
+                          className={`flex py-1 px-0 hover:bg-muted/30 transition-colors group ${
+                            focusedRowIndex === index ? 'bg-muted/50' : ''
+                          }`}
+                          style={{ borderBottom: '1px solid #bbbbbb' }}
+                          tabIndex={0}
+                          onKeyDown={(e) => handleKeyDown(e, item.id, index, filteredItems)}
+                        >
                           <div className="w-12 flex-shrink-0 pl-3 pr-2 text-xs text-muted-foreground flex items-center">
                             {index + 1}
                           </div>
@@ -387,19 +432,30 @@ const SchedulesContent = () => {
                             </Select>
                           </div>
                           <div className="flex-1 min-w-0 px-2">
-                            <Select 
-                              value={item.item} 
-                              onValueChange={(value) => updateItem(item.id, 'item', value)}
-                            >
-                              <SelectTrigger className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full" style={{ fontSize: '0.75rem' }}>
-                                <SelectValue placeholder="Select item..." />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {getItemOptions(item.type).map((option) => (
-                                  <SelectItem key={option} value={option}>{option}</SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                            {customItems[item.id] === 'custom' ? (
+                              <Input 
+                                value={item.item} 
+                                onChange={(e) => updateItem(item.id, 'item', e.target.value)}
+                                className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
+                                style={{ fontSize: '0.75rem' }}
+                                placeholder="Enter custom item name..."
+                                autoFocus
+                              />
+                            ) : (
+                              <Select 
+                                value={item.item} 
+                                onValueChange={(value) => handleItemSelection(item.id, value)}
+                              >
+                                <SelectTrigger className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full" style={{ fontSize: '0.75rem' }}>
+                                  <SelectValue placeholder="Select item..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {getItemOptions(item.type).map((option) => (
+                                    <SelectItem key={option} value={option}>{option}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            )}
                           </div>
                           <div className="flex-1 min-w-0 px-2">
                             <Input 
@@ -408,6 +464,7 @@ const SchedulesContent = () => {
                               className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
                               style={{ fontSize: '0.75rem' }}
                               placeholder="Manufacturer"
+                              onKeyDown={(e) => handleKeyDown(e, item.id, index, filteredItems)}
                             />
                           </div>
                           <div className="flex-1 min-w-0 px-2">
@@ -417,6 +474,7 @@ const SchedulesContent = () => {
                               className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
                               style={{ fontSize: '0.75rem' }}
                               placeholder="Model"
+                              onKeyDown={(e) => handleKeyDown(e, item.id, index, filteredItems)}
                             />
                           </div>
                           <div className="flex-1 min-w-0 px-2">
@@ -426,6 +484,7 @@ const SchedulesContent = () => {
                               className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
                               style={{ fontSize: '0.75rem' }}
                               placeholder="Finish"
+                              onKeyDown={(e) => handleKeyDown(e, item.id, index, filteredItems)}
                             />
                           </div>
                           <div className="flex-1 min-w-0 px-2">
@@ -435,6 +494,7 @@ const SchedulesContent = () => {
                               className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
                               style={{ fontSize: '0.75rem' }}
                               placeholder="Comments"
+                              onKeyDown={(e) => handleKeyDown(e, item.id, index, filteredItems)}
                             />
                           </div>
                           <div className="w-8 flex-shrink-0 pr-3 flex justify-center">
