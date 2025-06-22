@@ -204,87 +204,344 @@ const SchedulesContent = () => {
   };
 
   // Define table columns for the resizable table
-  const getTableColumns = (tableType?: 'window' | 'door'): TableColumn[] => [
-    {
-      key: 'type',
-      title: tableType === 'window' ? 'Window Type' : tableType === 'door' ? 'Door Type' : 'Type',
-      width: 96,
-      minWidth: 80,
-      maxWidth: 120,
-      type: 'select',
-      options: tableType === 'window' 
-        ? ['Picture Window', 'Double Hung', 'Casement', 'Sliding', 'Bay Window', 'Bow Window', 'Awning', 'Single Hung', 'Fixed', 'Garden Window']
-        : tableType === 'door'
-        ? ['Entry Door', 'Interior Door', 'Patio Door', 'French Door', 'Sliding Door', 'Bi-fold Door', 'Pocket Door', 'Storm Door', 'Screen Door', 'Garage Door']
-        : ['fixture', 'appliance', 'lighting'],
-      placeholder: tableType === 'window' ? 'Select window type...' : tableType === 'door' ? 'Select door type...' : 'Select type...'
-    },
-    {
-      key: 'item',
-      title: 'Item',
-      width: 160,
-      minWidth: 120,
-      maxWidth: 250,
-      type: 'select',
-      options: (rowData: any) => {
-        const baseOptions = (() => {
-          switch (rowData.type) {
-            case 'fixture':
-              return ['Kitchen Sink', 'Bathroom Sink', 'Vanity Faucet', 'Shower Head', 'Bathtub', 'Toilet', 'Kitchen Faucet', 'Shower Valve', 'Towel Bar', 'Grab Bar'];
-            case 'appliance':
-              return ['Refrigerator', 'Dishwasher', 'Range', 'Cooktop', 'Oven', 'Microwave', 'Range Hood', 'Garbage Disposal', 'Wine Cooler', 'Ice Maker'];
-            case 'lighting':
-              return ['Pendant Light', 'Chandelier', 'Recessed Light', 'Under Cabinet LED', 'Vanity Light', 'Ceiling Fan', 'Wall Sconce', 'Track Light', 'Floor Lamp', 'Table Lamp'];
-            case 'window':
-              return [];
-            case 'door':
-              return [];
-            default:
-              return [];
-          }
-        })();
-        return baseOptions;
-      },
-      allowCustomInput: true,
-      customInputPlaceholder: 'Enter custom item name...',
-      placeholder: 'Select item...'
-    },
-    {
-      key: 'manufacturer',
-      title: 'Manufacturer',
-      width: 128,
-      minWidth: 100,
-      maxWidth: 200,
-      type: 'input',
-      placeholder: 'Manufacturer'
-    },
-    {
-      key: 'model',
-      title: 'Model',
-      width: 128,
-      minWidth: 100,
-      maxWidth: 200,
-      type: 'input',
-      placeholder: 'Model'
-    },
-    {
-      key: 'finish',
-      title: 'Finish',
-      width: 112,
-      minWidth: 80,
-      maxWidth: 150,
-      type: 'input',
-      placeholder: 'Finish'
-    },
-    {
-      key: 'comments',
-      title: 'Comments',
-      width: 200, // This will be flex-1 (full remaining width)
-      minWidth: 150,
-      type: 'input',
-      placeholder: 'Comments'
+  const getTableColumns = (tableType?: 'window' | 'door'): TableColumn[] => {
+    if (tableType === 'window') {
+      return [
+        {
+          key: 'number',
+          title: 'Window Number',
+          width: 120,
+          minWidth: 100,
+          maxWidth: 150,
+          type: 'input',
+          placeholder: 'W-1'
+        },
+        {
+          key: 'style',
+          title: 'Style',
+          width: 100,
+          minWidth: 80,
+          maxWidth: 120,
+          type: 'input',
+          placeholder: 'E'
+        },
+        {
+          key: 'location',
+          title: 'Location',
+          width: 120,
+          minWidth: 100,
+          maxWidth: 150,
+          type: 'input',
+          placeholder: 'LIVING ROOM'
+        },
+        {
+          key: 'orientation',
+          title: 'Orientation (E,S,W,N)',
+          width: 140,
+          minWidth: 120,
+          maxWidth: 180,
+          type: 'select',
+          options: ['E', 'S', 'W', 'N'],
+          placeholder: 'Select...'
+        },
+        {
+          key: 'type',
+          title: 'Type',
+          width: 120,
+          minWidth: 100,
+          maxWidth: 150,
+          type: 'select',
+          options: ['DOUBLE HUNG', 'CASEMENT', 'AWNING', 'PICTURE', 'SLIDING'],
+          placeholder: 'Select type...'
+        },
+        {
+          key: 'dimensions_width',
+          title: 'Width',
+          width: 80,
+          minWidth: 60,
+          maxWidth: 100,
+          type: 'input',
+          placeholder: '3\'-0"'
+        },
+        {
+          key: 'dimensions_height',
+          title: 'Height',
+          width: 80,
+          minWidth: 60,
+          maxWidth: 100,
+          type: 'input',
+          placeholder: '3\'-11 3/4"'
+        },
+        {
+          key: 'opening_area',
+          title: 'Opening Area',
+          width: 100,
+          minWidth: 80,
+          maxWidth: 120,
+          type: 'input',
+          placeholder: '12 SF'
+        },
+        {
+          key: 'head_height',
+          title: 'Head Height',
+          width: 100,
+          minWidth: 80,
+          maxWidth: 120,
+          type: 'input',
+          placeholder: '7\'-7 3/4"'
+        },
+        {
+          key: 'sill_height',
+          title: 'Sill Height',
+          width: 100,
+          minWidth: 80,
+          maxWidth: 120,
+          type: 'input',
+          placeholder: '3\'-8"'
+        },
+        {
+          key: 'manufacturer',
+          title: 'Manufacturer',
+          width: 120,
+          minWidth: 100,
+          maxWidth: 150,
+          type: 'input',
+          placeholder: 'Manufacturer'
+        },
+        {
+          key: 'model',
+          title: 'Model',
+          width: 100,
+          minWidth: 80,
+          maxWidth: 120,
+          type: 'input',
+          placeholder: 'Model'
+        },
+        {
+          key: 'material',
+          title: 'Material',
+          width: 100,
+          minWidth: 80,
+          maxWidth: 120,
+          type: 'input',
+          placeholder: 'Material'
+        },
+        {
+          key: 'glass_type',
+          title: 'Glass Type',
+          width: 100,
+          minWidth: 80,
+          maxWidth: 120,
+          type: 'input',
+          placeholder: 'Glass Type'
+        },
+        {
+          key: 'egress',
+          title: 'Egress',
+          width: 80,
+          minWidth: 60,
+          maxWidth: 100,
+          type: 'input',
+          placeholder: 'Egress'
+        },
+        {
+          key: 'comments',
+          title: 'Comments',
+          width: 200,
+          minWidth: 150,
+          type: 'input',
+          placeholder: 'Comments'
+        }
+      ];
+    } else if (tableType === 'door') {
+      return [
+        {
+          key: 'number',
+          title: 'Door Number',
+          width: 120,
+          minWidth: 100,
+          maxWidth: 150,
+          type: 'input',
+          placeholder: 'D-1'
+        },
+        {
+          key: 'style',
+          title: 'Style',
+          width: 100,
+          minWidth: 80,
+          maxWidth: 120,
+          type: 'select',
+          options: ['Exterior', 'Interior'],
+          placeholder: 'Select...'
+        },
+        {
+          key: 'function',
+          title: 'Function',
+          width: 100,
+          minWidth: 80,
+          maxWidth: 120,
+          type: 'input',
+          placeholder: 'Function'
+        },
+        {
+          key: 'hinge_swing',
+          title: 'Hinge/ Swing',
+          width: 120,
+          minWidth: 100,
+          maxWidth: 150,
+          type: 'input',
+          placeholder: 'Hinge/Swing'
+        },
+        {
+          key: 'type',
+          title: 'Type',
+          width: 100,
+          minWidth: 80,
+          maxWidth: 120,
+          type: 'select',
+          options: ['Single', 'Double', 'French', 'Sliding', 'Bi-fold'],
+          placeholder: 'Select type...'
+        },
+        {
+          key: 'panel',
+          title: 'Panel',
+          width: 80,
+          minWidth: 60,
+          maxWidth: 100,
+          type: 'input',
+          placeholder: 'Panel'
+        },
+        {
+          key: 'dimensions_width',
+          title: 'Width',
+          width: 80,
+          minWidth: 60,
+          maxWidth: 100,
+          type: 'input',
+          placeholder: '3\'-0"'
+        },
+        {
+          key: 'dimensions_height',
+          title: 'Height',
+          width: 80,
+          minWidth: 60,
+          maxWidth: 100,
+          type: 'input',
+          placeholder: '7\'-0"'
+        },
+        {
+          key: 'material',
+          title: 'Material',
+          width: 100,
+          minWidth: 80,
+          maxWidth: 120,
+          type: 'input',
+          placeholder: 'Material'
+        },
+        {
+          key: 'manufacturer',
+          title: 'Manufacturer',
+          width: 120,
+          minWidth: 100,
+          maxWidth: 150,
+          type: 'input',
+          placeholder: 'Manufacturer'
+        },
+        {
+          key: 'finish',
+          title: 'Finish',
+          width: 100,
+          minWidth: 80,
+          maxWidth: 120,
+          type: 'input',
+          placeholder: 'Finish'
+        },
+        {
+          key: 'comments',
+          title: 'Comments',
+          width: 200,
+          minWidth: 150,
+          type: 'input',
+          placeholder: 'Comments'
+        }
+      ];
+    } else {
+      // Appliances, Fixtures & Lighting
+      return [
+        {
+          key: 'type',
+          title: 'Type',
+          width: 96,
+          minWidth: 80,
+          maxWidth: 120,
+          type: 'select',
+          options: ['fixture', 'appliance', 'lighting'],
+          placeholder: 'Select type...'
+        },
+        {
+          key: 'item',
+          title: 'Item',
+          width: 160,
+          minWidth: 120,
+          maxWidth: 250,
+          type: 'select',
+          options: (rowData: any) => {
+            const baseOptions = (() => {
+              switch (rowData.type) {
+                case 'fixture':
+                  return ['Kitchen Sink', 'Bathroom Sink', 'Vanity Faucet', 'Shower Head', 'Bathtub', 'Toilet', 'Kitchen Faucet', 'Shower Valve', 'Towel Bar', 'Grab Bar'];
+                case 'appliance':
+                  return ['Refrigerator', 'Dishwasher', 'Range', 'Cooktop', 'Oven', 'Microwave', 'Range Hood', 'Garbage Disposal', 'Wine Cooler', 'Ice Maker'];
+                case 'lighting':
+                  return ['Pendant Light', 'Chandelier', 'Recessed Light', 'Under Cabinet LED', 'Vanity Light', 'Ceiling Fan', 'Wall Sconce', 'Track Light', 'Floor Lamp', 'Table Lamp'];
+                default:
+                  return [];
+              }
+            })();
+            return baseOptions;
+          },
+          allowCustomInput: true,
+          customInputPlaceholder: 'Enter custom item name...',
+          placeholder: 'Select item...'
+        },
+        {
+          key: 'manufacturer',
+          title: 'Manufacturer',
+          width: 128,
+          minWidth: 100,
+          maxWidth: 200,
+          type: 'input',
+          placeholder: 'Manufacturer'
+        },
+        {
+          key: 'model',
+          title: 'Model',
+          width: 128,
+          minWidth: 100,
+          maxWidth: 200,
+          type: 'input',
+          placeholder: 'Model'
+        },
+        {
+          key: 'finish',
+          title: 'Finish',
+          width: 112,
+          minWidth: 80,
+          maxWidth: 150,
+          type: 'input',
+          placeholder: 'Finish'
+        },
+        {
+          key: 'comments',
+          title: 'Comments',
+          width: 200,
+          minWidth: 150,
+          type: 'input',
+          placeholder: 'Comments'
+        }
+      ];
     }
-  ];
+  };
 
   const addNewItem = (itemType: ScheduleItem['type'] = 'fixture') => {
     if (!selectedRoom) return;
