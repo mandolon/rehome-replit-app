@@ -1,9 +1,13 @@
 import React from 'react';
-import { LayoutGrid, Users, ClipboardList, FileText, Settings, BarChart3, TrendingUp } from 'lucide-react';
+import { LayoutGrid, Users, ClipboardList, FileText, Settings, BarChart3, TrendingUp, Clock, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useActiveTasks } from '@/hooks/useActiveTasks';
+import { format } from 'date-fns';
 
 const DashboardContent = () => {
+  // Get active tasks data
+  const { activeTasks, isLoading: tasksLoading } = useActiveTasks();
 
   // Get current time for greeting
   const currentHour = new Date().getHours();
@@ -51,16 +55,11 @@ const DashboardContent = () => {
   };
 
   const column2CombinedCard = {
-    id: 'business-overview',
-    title: 'Business Overview',
-    subtitle: 'Financial & Security Dashboard',
-    description: 'Track payments, security status, and spending insights all in one place.',
-    metrics: [
-      { label: 'Monthly Revenue', value: '$24.5k', trend: 'up' },
-      { label: 'Security Status', value: 'All Secure', trend: 'stable' },
-      { label: 'Spending Growth', value: '+15%', trend: 'up' }
-    ],
-    href: '/dashboard'
+    id: 'my-tasks',
+    title: 'My Tasks',
+    subtitle: 'Active Task Summary',
+    description: 'Overview of your current open tasks and upcoming deadlines.',
+    href: '/tasks'
   };
 
   // Column 3: Full height card
@@ -173,7 +172,7 @@ const DashboardContent = () => {
                 {/* Small card */}
                 {renderCard(column2FirstCard, 'h-[105px] min-h-[105px]')}
                 
-                {/* Large combined card */}
+                {/* My Tasks card */}
                 <Card 
                   className="flex-1 border-0 shadow-none bg-muted/30 cursor-pointer transition-all duration-300 hover:shadow-lg group"
                   onClick={() => handleCardClick(column2CombinedCard.href)}
@@ -190,18 +189,68 @@ const DashboardContent = () => {
                     </p>
                   </CardHeader>
                   <CardContent className="pt-0 space-y-2">
-                    {column2CombinedCard.metrics.map((metric, index) => (
-                      <div key={index} className="flex items-center justify-between">
-                        <span className="text-xs text-muted-foreground">{metric.label}</span>
-                        <span className={`text-xs font-medium ${
-                          metric.trend === 'up' ? 'text-green-600 dark:text-green-400' : 
-                          metric.trend === 'down' ? 'text-red-600 dark:text-red-400' : 
-                          'text-foreground'
-                        }`}>
-                          {metric.value}
-                        </span>
+                    {tasksLoading ? (
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-muted-foreground">Loading tasks...</span>
+                        </div>
                       </div>
-                    ))}
+                    ) : activeTasks.length === 0 ? (
+                      <div className="flex items-center justify-center py-4">
+                        <span className="text-xs text-muted-foreground">No active tasks</span>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-muted-foreground">Total Active</span>
+                          <span className="text-xs font-medium text-foreground">
+                            {activeTasks.length} task{activeTasks.length !== 1 ? 's' : ''}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-muted-foreground">Urgent Tasks</span>
+                          <span className="text-xs font-medium text-red-600 dark:text-red-400">
+                            {activeTasks.filter(task => task.priority === 'urgent' || task.priority === 'high').length}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-muted-foreground">Due This Week</span>
+                          <span className="text-xs font-medium text-orange-600 dark:text-orange-400">
+                            {activeTasks.filter(task => {
+                              if (!task.dueDate) return false;
+                              const dueDate = new Date(task.dueDate);
+                              const now = new Date();
+                              const weekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+                              return dueDate <= weekFromNow && dueDate >= now;
+                            }).length}
+                          </span>
+                        </div>
+                        {activeTasks.slice(0, 2).map((task, index) => (
+                          <div key={task.taskId} className="bg-muted/50 rounded-lg p-2 space-y-1">
+                            <div className="flex items-start justify-between">
+                              <span className="text-xs font-medium text-foreground line-clamp-1 flex-1 mr-2">
+                                {task.title}
+                              </span>
+                              {task.priority === 'urgent' || task.priority === 'high' ? (
+                                <AlertCircle className="w-3 h-3 text-red-500 flex-shrink-0" />
+                              ) : task.dueDate && (
+                                <Clock className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+                              )}
+                            </div>
+                            {task.dueDate && (
+                              <div className="text-xs text-muted-foreground">
+                                Due: {format(new Date(task.dueDate), 'MMM d')}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                        {activeTasks.length > 2 && (
+                          <div className="text-xs text-muted-foreground text-center pt-1">
+                            +{activeTasks.length - 2} more tasks
+                          </div>
+                        )}
+                      </>
+                    )}
                   </CardContent>
                 </Card>
               </div>
