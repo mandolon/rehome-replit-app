@@ -305,108 +305,119 @@ const SchedulesContent = () => {
 
           <ScrollArea className="flex-1 min-h-0">
             <div className="px-6 py-2">
-              {/* Grouped Inline Editing Tables */}
-              <div className="space-y-4">
-                {categoryOrder.map((category) => {
-                  const categoryItems = groupedItems[category] || [];
-                  if (categoryItems.length === 0) return null;
-
-                  return (
-                    <div key={category} className="space-y-1">
-                      {/* Category Header */}
-                      <div className="flex items-center py-2">
-                        <div className="text-sm font-semibold text-foreground">
-                          {categoryLabels[category]}
-                        </div>
-                        <div className="flex-1 h-px bg-border ml-3"></div>
-                      </div>
-
-                      {/* Table Header */}
-                      <div className="grid grid-cols-7 gap-2 py-2 px-3 bg-muted/50 rounded-md text-xs font-medium text-muted-foreground">
-                        <div>Type</div>
-                        <div>Item</div>
-                        <div>Manufacturer</div>
-                        <div>Model</div>
-                        <div>Finish</div>
-                        <div>Comments</div>
-                        <div className="w-8"></div>
-                      </div>
-
-                      {/* Table Rows */}
-                      {categoryItems.map((item) => (
-                        <div key={item.id} className="grid grid-cols-7 gap-2 py-2 px-3 bg-background border rounded-md hover:bg-muted/30 transition-colors">
-                          <div>
-                            <Select 
-                              value={item.type} 
-                              onValueChange={(value: 'fixture' | 'appliance' | 'lighting') => 
-                                updateItem(item.id, 'type', value)
-                              }
-                            >
-                              <SelectTrigger className="h-7 text-xs">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="fixture">Fixture</SelectItem>
-                                <SelectItem value="appliance">Appliance</SelectItem>
-                                <SelectItem value="lighting">Lighting</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div>
-                            <Input 
-                              value={item.item} 
-                              onChange={(e) => updateItem(item.id, 'item', e.target.value)}
-                              className="h-7 text-xs"
-                              placeholder="Item name"
-                            />
-                          </div>
-                          <div>
-                            <Input 
-                              value={item.manufacturer} 
-                              onChange={(e) => updateItem(item.id, 'manufacturer', e.target.value)}
-                              className="h-7 text-xs"
-                              placeholder="Manufacturer"
-                            />
-                          </div>
-                          <div>
-                            <Input 
-                              value={item.model} 
-                              onChange={(e) => updateItem(item.id, 'model', e.target.value)}
-                              className="h-7 text-xs"
-                              placeholder="Model"
-                            />
-                          </div>
-                          <div>
-                            <Input 
-                              value={item.finish} 
-                              onChange={(e) => updateItem(item.id, 'finish', e.target.value)}
-                              className="h-7 text-xs"
-                              placeholder="Finish"
-                            />
-                          </div>
-                          <div>
-                            <Input 
-                              value={item.comments} 
-                              onChange={(e) => updateItem(item.id, 'comments', e.target.value)}
-                              className="h-7 text-xs"
-                              placeholder="Comments"
-                            />
-                          </div>
-                          <div>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => deleteItem(item.id)}
-                              className="h-7 w-7 p-0"
-                            >
-                              <X className="w-3 h-3" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
+              {/* Single Table with Category Sections */}
+              <div className="space-y-1">
+                {roomItems.length > 0 && (
+                  <>
+                    {/* Single Table Header */}
+                    <div className="grid grid-cols-7 gap-2 py-2 px-3 bg-muted/50 rounded-md text-xs font-medium text-muted-foreground sticky top-0 z-10">
+                      <div>Type</div>
+                      <div>Item</div>
+                      <div>Manufacturer</div>
+                      <div>Model</div>
+                      <div>Finish</div>
+                      <div>Comments</div>
+                      <div className="w-8"></div>
                     </div>
-                  );
-                })}
+
+                    {/* Category Sections */}
+                    {categoryOrder.map((category, categoryIndex) => {
+                      const categoryItems = groupedItems[category] || [];
+                      if (categoryItems.length === 0) return null;
+
+                      return (
+                        <div key={category}>
+                          {/* Category Divider */}
+                          {categoryIndex > 0 && (
+                            <div className="py-1">
+                              <div className="border-t border-border"></div>
+                            </div>
+                          )}
+                          
+                          {/* Category Label */}
+                          <div className="grid grid-cols-7 gap-2 py-1 px-3">
+                            <div className="col-span-7 text-xs font-medium text-muted-foreground">
+                              {categoryLabels[category]}
+                            </div>
+                          </div>
+
+                          {/* Category Items */}
+                          {categoryItems.map((item) => (
+                            <div key={item.id} className="grid grid-cols-7 gap-2 py-2 px-3 bg-background border rounded-md hover:bg-muted/30 transition-colors">
+                              <div>
+                                <Select 
+                                  value={item.type} 
+                                  onValueChange={(value: 'fixture' | 'appliance' | 'lighting') => 
+                                    updateItem(item.id, 'type', value)
+                                  }
+                                >
+                                  <SelectTrigger className="h-7 text-xs">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="fixture">Fixture</SelectItem>
+                                    <SelectItem value="appliance">Appliance</SelectItem>
+                                    <SelectItem value="lighting">Lighting</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              <div>
+                                <Input 
+                                  value={item.item} 
+                                  onChange={(e) => updateItem(item.id, 'item', e.target.value)}
+                                  className="h-7 text-xs"
+                                  placeholder="Item name"
+                                />
+                              </div>
+                              <div>
+                                <Input 
+                                  value={item.manufacturer} 
+                                  onChange={(e) => updateItem(item.id, 'manufacturer', e.target.value)}
+                                  className="h-7 text-xs"
+                                  placeholder="Manufacturer"
+                                />
+                              </div>
+                              <div>
+                                <Input 
+                                  value={item.model} 
+                                  onChange={(e) => updateItem(item.id, 'model', e.target.value)}
+                                  className="h-7 text-xs"
+                                  placeholder="Model"
+                                />
+                              </div>
+                              <div>
+                                <Input 
+                                  value={item.finish} 
+                                  onChange={(e) => updateItem(item.id, 'finish', e.target.value)}
+                                  className="h-7 text-xs"
+                                  placeholder="Finish"
+                                />
+                              </div>
+                              <div>
+                                <Input 
+                                  value={item.comments} 
+                                  onChange={(e) => updateItem(item.id, 'comments', e.target.value)}
+                                  className="h-7 text-xs"
+                                  placeholder="Comments"
+                                />
+                              </div>
+                              <div>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => deleteItem(item.id)}
+                                  className="h-7 w-7 p-0"
+                                >
+                                  <X className="w-3 h-3" />
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    })}
+                  </>
+                )}
 
                 {roomItems.length === 0 && (
                   <div className="text-center text-muted-foreground italic py-8 text-sm">
