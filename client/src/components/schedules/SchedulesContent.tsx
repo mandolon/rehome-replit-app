@@ -79,6 +79,7 @@ const SchedulesContent = () => {
   const [customRooms, setCustomRooms] = useState<string[]>([]);
   const [newRoomName, setNewRoomName] = useState('');
   const [isAddingRoom, setIsAddingRoom] = useState(false);
+  const [categoryFilter, setCategoryFilter] = useState<'all' | 'fixture' | 'appliance' | 'lighting'>('all');
   const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([
     {
       id: '1',
@@ -180,35 +181,35 @@ const SchedulesContent = () => {
     ));
   };
 
-  const addNewItem = (category?: 'fixture' | 'appliance' | 'lighting') => {
+  // Item options based on category
+  const getItemOptions = (type: 'fixture' | 'appliance' | 'lighting') => {
+    switch (type) {
+      case 'fixture':
+        return ['Kitchen Sink', 'Bathroom Sink', 'Vanity Faucet', 'Shower Head', 'Bathtub', 'Toilet', 'Kitchen Faucet', 'Shower Valve', 'Towel Bar', 'Grab Bar'];
+      case 'appliance':
+        return ['Refrigerator', 'Dishwasher', 'Range', 'Cooktop', 'Oven', 'Microwave', 'Range Hood', 'Garbage Disposal', 'Wine Cooler', 'Ice Maker'];
+      case 'lighting':
+        return ['Pendant Light', 'Chandelier', 'Recessed Light', 'Under Cabinet LED', 'Vanity Light', 'Ceiling Fan', 'Wall Sconce', 'Track Light', 'Floor Lamp', 'Table Lamp'];
+      default:
+        return [];
+    }
+  };
+
+  const addNewItem = () => {
+    if (!selectedRoom) return;
+    
     const newItem: ScheduleItem = {
       id: Date.now().toString(),
-      room: selectedRoom || '',
-      type: category || 'fixture',
+      room: selectedRoom,
+      type: 'fixture',
       item: '',
       manufacturer: '',
       model: '',
       finish: '',
       comments: ''
     };
+    
     setScheduleItems([...scheduleItems, newItem]);
-  };
-
-  const addNewItemForCategory = (category: 'fixture' | 'appliance' | 'lighting') => () => {
-    addNewItem(category);
-  };
-
-  // Group items by category for display
-  const groupItemsByCategory = (items: ScheduleItem[]) => {
-    const grouped = items.reduce((acc, item) => {
-      if (!acc[item.type]) {
-        acc[item.type] = [];
-      }
-      acc[item.type].push(item);
-      return acc;
-    }, {} as Record<string, ScheduleItem[]>);
-
-    return grouped;
   };
 
 
@@ -261,13 +262,6 @@ const SchedulesContent = () => {
 
   if (selectedRoom) {
     const roomItems = scheduleItems.filter(item => item.room === selectedRoom);
-    const groupedItems = groupItemsByCategory(roomItems);
-    const categoryOrder: ('fixture' | 'appliance' | 'lighting')[] = ['fixture', 'appliance', 'lighting'];
-    const categoryLabels = {
-      fixture: 'Fixtures',
-      appliance: 'Appliances', 
-      lighting: 'Lighting'
-    };
 
     return (
       <div className="flex-1 bg-background overflow-hidden">
@@ -311,125 +305,176 @@ const SchedulesContent = () => {
 
           <ScrollArea className="flex-1 min-h-0">
             <div className="px-6 py-4">
-              {/* Modern Clean Table */}
+              {/* Category Filter Controls */}
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-sm text-muted-foreground">Filter by:</span>
+                <Button
+                  variant={categoryFilter === 'all' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setCategoryFilter('all')}
+                  className="h-7 px-3 text-xs"
+                >
+                  All
+                </Button>
+                <Button
+                  variant={categoryFilter === 'fixture' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setCategoryFilter('fixture')}
+                  className="h-7 px-3 text-xs"
+                >
+                  Fixtures
+                </Button>
+                <Button
+                  variant={categoryFilter === 'appliance' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setCategoryFilter('appliance')}
+                  className="h-7 px-3 text-xs"
+                >
+                  Appliances
+                </Button>
+                <Button
+                  variant={categoryFilter === 'lighting' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setCategoryFilter('lighting')}
+                  className="h-7 px-3 text-xs"
+                >
+                  Lighting
+                </Button>
+              </div>
+
+              {/* Unified Table */}
               <div className="space-y-0">
-                {roomItems.length > 0 && (
-                  <>
-                    {/* Table Header */}
-                    <div className="flex py-2 px-0 text-xs font-medium text-muted-foreground sticky top-0 z-10 bg-background" style={{ borderBottom: '1px solid #bbbbbb' }}>
-                      <div className="w-12 flex-shrink-0 pl-3 pr-2">#</div>
-                      <div className="flex-1 min-w-0 px-2">Item</div>
-                      <div className="flex-1 min-w-0 px-2">Manufacturer</div>
-                      <div className="flex-1 min-w-0 px-2">Model</div>
-                      <div className="flex-1 min-w-0 px-2">Finish</div>
-                      <div className="flex-1 min-w-0 px-2">Comments</div>
-                      <div className="w-8 flex-shrink-0 pr-3"></div>
-                    </div>
+                {(() => {
+                  const filteredItems = categoryFilter === 'all' 
+                    ? roomItems 
+                    : roomItems.filter(item => item.type === categoryFilter);
+                  
+                  return filteredItems.length > 0 ? (
+                    <>
+                      {/* Table Header */}
+                      <div className="flex py-2 px-0 text-xs font-medium text-muted-foreground sticky top-0 z-10 bg-background" style={{ borderBottom: '1px solid #bbbbbb' }}>
+                        <div className="w-12 flex-shrink-0 pl-3 pr-2">#</div>
+                        <div className="flex-1 min-w-0 px-2">Type</div>
+                        <div className="flex-1 min-w-0 px-2">Item</div>
+                        <div className="flex-1 min-w-0 px-2">Manufacturer</div>
+                        <div className="flex-1 min-w-0 px-2">Model</div>
+                        <div className="flex-1 min-w-0 px-2">Finish</div>
+                        <div className="flex-1 min-w-0 px-2">Comments</div>
+                        <div className="w-8 flex-shrink-0 pr-3"></div>
+                      </div>
 
-                    {/* Category Sections */}
-                    {categoryOrder.map((category, categoryIndex) => {
-                      const categoryItems = groupedItems[category] || [];
-                      if (categoryItems.length === 0) return null;
-
-                      return (
-                        <div key={category}>
-                          {/* Category Label */}
-                          <div className="flex py-1.5 px-0" style={{ borderBottom: '1px solid #bbbbbb' }}>
-                            <div className="pl-3 text-xs font-medium text-foreground">
-                              {categoryLabels[category]}
-                            </div>
+                      {/* Table Rows */}
+                      {filteredItems.map((item, index) => (
+                        <div key={item.id} className="flex py-1 px-0 hover:bg-muted/30 transition-colors group" style={{ borderBottom: '1px solid #bbbbbb' }}>
+                          <div className="w-12 flex-shrink-0 pl-3 pr-2 text-xs text-muted-foreground flex items-center">
+                            {index + 1}
                           </div>
-
-                          {/* Category Items */}
-                          {categoryItems.map((item, itemIndex) => (
-                            <div key={item.id} className="flex py-1 px-0 hover:bg-muted/30 transition-colors group" style={{ borderBottom: '1px solid #bbbbbb' }}>
-                              <div className="w-12 flex-shrink-0 pl-3 pr-2 text-xs text-muted-foreground flex items-center">
-                                {itemIndex + 1}
-                              </div>
-                              <div className="flex-1 min-w-0 px-2">
-                                <Input 
-                                  value={item.item} 
-                                  onChange={(e) => updateItem(item.id, 'item', e.target.value)}
-                                  className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
-                                  style={{ fontSize: '0.75rem' }}
-                                  placeholder="Item name"
-                                />
-                              </div>
-                              <div className="flex-1 min-w-0 px-2">
-                                <Input 
-                                  value={item.manufacturer} 
-                                  onChange={(e) => updateItem(item.id, 'manufacturer', e.target.value)}
-                                  className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
-                                  style={{ fontSize: '0.75rem' }}
-                                  placeholder="Manufacturer"
-                                />
-                              </div>
-                              <div className="flex-1 min-w-0 px-2">
-                                <Input 
-                                  value={item.model} 
-                                  onChange={(e) => updateItem(item.id, 'model', e.target.value)}
-                                  className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
-                                  style={{ fontSize: '0.75rem' }}
-                                  placeholder="Model"
-                                />
-                              </div>
-                              <div className="flex-1 min-w-0 px-2">
-                                <Input 
-                                  value={item.finish} 
-                                  onChange={(e) => updateItem(item.id, 'finish', e.target.value)}
-                                  className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
-                                  style={{ fontSize: '0.75rem' }}
-                                  placeholder="Finish"
-                                />
-                              </div>
-                              <div className="flex-1 min-w-0 px-2">
-                                <Input 
-                                  value={item.comments} 
-                                  onChange={(e) => updateItem(item.id, 'comments', e.target.value)}
-                                  className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
-                                  style={{ fontSize: '0.75rem' }}
-                                  placeholder="Comments"
-                                />
-                              </div>
-                              <div className="w-8 flex-shrink-0 pr-3 flex justify-center">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => deleteItem(item.id)}
-                                  className="h-5 w-5 p-0 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/10 hover:text-destructive"
-                                >
-                                  <X className="w-3 h-3" />
-                                </Button>
-                              </div>
-                            </div>
-                          ))}
-
-                          {/* Add Button Below Category */}
-                          <div className="flex py-1 px-0">
-                            <div className="w-12 flex-shrink-0 pl-3"></div>
-                            <div className="flex-1 px-2">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={addNewItemForCategory(category)}
-                                className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/30"
-                              >
-                                <Plus className="w-3 h-3 mr-1" />
-                                Add {categoryLabels[category].toLowerCase()}
-                              </Button>
-                            </div>
+                          <div className="flex-1 min-w-0 px-2">
+                            <Select 
+                              value={item.type} 
+                              onValueChange={(value: 'fixture' | 'appliance' | 'lighting') => 
+                                updateItem(item.id, 'type', value)
+                              }
+                            >
+                              <SelectTrigger className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full" style={{ fontSize: '0.75rem' }}>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="fixture">Fixture</SelectItem>
+                                <SelectItem value="appliance">Appliance</SelectItem>
+                                <SelectItem value="lighting">Lighting</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="flex-1 min-w-0 px-2">
+                            <Select 
+                              value={item.item} 
+                              onValueChange={(value) => updateItem(item.id, 'item', value)}
+                            >
+                              <SelectTrigger className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full" style={{ fontSize: '0.75rem' }}>
+                                <SelectValue placeholder="Select item..." />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {getItemOptions(item.type).map((option) => (
+                                  <SelectItem key={option} value={option}>{option}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="flex-1 min-w-0 px-2">
+                            <Input 
+                              value={item.manufacturer} 
+                              onChange={(e) => updateItem(item.id, 'manufacturer', e.target.value)}
+                              className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
+                              style={{ fontSize: '0.75rem' }}
+                              placeholder="Manufacturer"
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0 px-2">
+                            <Input 
+                              value={item.model} 
+                              onChange={(e) => updateItem(item.id, 'model', e.target.value)}
+                              className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
+                              style={{ fontSize: '0.75rem' }}
+                              placeholder="Model"
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0 px-2">
+                            <Input 
+                              value={item.finish} 
+                              onChange={(e) => updateItem(item.id, 'finish', e.target.value)}
+                              className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
+                              style={{ fontSize: '0.75rem' }}
+                              placeholder="Finish"
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0 px-2">
+                            <Input 
+                              value={item.comments} 
+                              onChange={(e) => updateItem(item.id, 'comments', e.target.value)}
+                              className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
+                              style={{ fontSize: '0.75rem' }}
+                              placeholder="Comments"
+                            />
+                          </div>
+                          <div className="w-8 flex-shrink-0 pr-3 flex justify-center">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => deleteItem(item.id)}
+                              className="h-5 w-5 p-0 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/10 hover:text-destructive"
+                            >
+                              <X className="w-3 h-3" />
+                            </Button>
                           </div>
                         </div>
-                      );
-                    })}
-                  </>
-                )}
+                      ))}
 
-                {roomItems.length === 0 && (
-                  <div className="text-center text-muted-foreground italic py-8 text-sm">
-                    No items scheduled for this room yet. Click "Add Item" to get started.
-                  </div>
-                )}
+                      {/* Single Add Button */}
+                      <div className="flex py-2 px-0">
+                        <div className="w-12 flex-shrink-0 pl-3"></div>
+                        <div className="flex-1 px-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={addNewItem}
+                            className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                          >
+                            <Plus className="w-3 h-3 mr-1" />
+                            Add Item
+                          </Button>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-center text-muted-foreground italic py-8 text-sm">
+                      {categoryFilter === 'all' 
+                        ? 'No items scheduled for this room yet. Click "Add Item" to get started.'
+                        : `No ${categoryFilter} items found. Add some items or change the filter.`
+                      }
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           </ScrollArea>
@@ -547,11 +592,10 @@ const SchedulesContent = () => {
             <div className="space-y-2">
               {rooms.map((room) => {
                 const roomItems = scheduleItems.filter(item => item.room === room);
-                const groupedItems = groupItemsByCategory(roomItems);
                 const categoryCount = {
-                  fixtures: groupedItems.fixture?.length || 0,
-                  appliances: groupedItems.appliance?.length || 0,
-                  lighting: groupedItems.lighting?.length || 0
+                  fixtures: roomItems.filter(item => item.type === 'fixture').length,
+                  appliances: roomItems.filter(item => item.type === 'appliance').length,
+                  lighting: roomItems.filter(item => item.type === 'lighting').length
                 };
                 const lastUpdated = "Recently"; // Could be calculated from actual data
 
