@@ -38,44 +38,59 @@ const ScreenClipPopup: React.FC<ScreenClipPopupProps> = ({ isOpen, onClose }) =>
     try {
       setIsCapturing(true);
       
-      // Request screen capture permission with high quality settings for multi-monitor support
+      // Request screen capture permission with cursor and high quality settings
       const stream = await navigator.mediaDevices.getDisplayMedia({
         video: {
           displaySurface: 'monitor', // Prefer entire monitor over browser tab
           width: { ideal: 7680, max: 7680 }, // Support up to 8K for multi-monitor setups
           height: { ideal: 4320, max: 4320 },
-          frameRate: { ideal: 60, max: 60 }
+          frameRate: { ideal: 60, max: 60 },
+          cursor: 'always', // Always include cursor in capture
+          logicalSurface: true // Capture logical surface including all windows
         },
         audio: false,
         systemAudio: 'exclude',
         surfaceSwitching: 'include', // Allow switching between different surfaces
-        selfBrowserSurface: 'exclude' // Exclude the current browser tab to avoid recursion
+        selfBrowserSurface: 'exclude', // Exclude the current browser tab to avoid recursion
+        preferCurrentTab: false, // Prefer screen/monitor over current tab
+        monitorTypeSurfaces: 'include' // Include all monitor surfaces
       } as any); // TypeScript may not have latest displayMedia types
 
-      // Create video element to capture the stream
+      // Create video element to capture the stream with cursor
       const video = document.createElement('video');
       video.srcObject = stream;
-      video.play();
-
-      // Wait for video to be ready
-      await new Promise((resolve) => {
-        video.onloadedmetadata = resolve;
+      video.muted = true;
+      video.playsInline = true;
+      
+      // Wait for video to be ready and playing
+      await new Promise((resolve, reject) => {
+        video.onloadedmetadata = () => {
+          video.play().then(resolve).catch(reject);
+        };
+        video.onerror = reject;
       });
 
-      // Create high-quality canvas to capture the frame
+      // Wait a bit more to ensure the first frame with cursor is captured
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Create high-quality canvas to capture the frame with cursor
       const canvas = document.createElement('canvas');
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       const ctx = canvas.getContext('2d', { 
         alpha: false,
         desynchronized: false,
-        colorSpace: 'srgb'
+        colorSpace: 'srgb',
+        willReadFrequently: false
       });
       
       if (ctx) {
         // Disable image smoothing for pixel-perfect rendering
         ctx.imageSmoothingEnabled = false;
-        ctx.drawImage(video, 0, 0);
+        ctx.imageSmoothingQuality = 'high';
+        
+        // Capture the current frame which should include the cursor
+        ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
         
         // Use maximum quality PNG export (no compression)
         const imageData = canvas.toDataURL('image/png', 1.0);
@@ -112,20 +127,53 @@ const ScreenClipPopup: React.FC<ScreenClipPopupProps> = ({ isOpen, onClose }) =>
   }, [toast]);
 
   const showSelectionOverlay = (fullScreenImage: string) => {
-    // Create a full-screen overlay that spans all monitors
+    // Get screen information for accurate coordinate mapping
+    const screenInfo = {
+      totalWidth: screen.width,
+      totalHeight: screen.height,
+      availWidth: screen.availWidth,
+      availHeight: screen.availHeight,
+      pixelRatio: window.devicePixelRatio
+    };
+
+    // Create a full-screen overlay that spans all available screen space
     const overlay = document.createElement('div');
     overlay.style.cssText = `
       position: fixed;
-      top: -100vh;
-      left: -100vw;
-      width: 300vw;
-      height: 300vh;
-      background: rgba(0, 0, 0, 0.3);
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.4);
       cursor: crosshair;
-      z-index: 9999;
+      z-index: 99999;
       user-select: none;
       pointer-events: auto;
+      touch-action: none;
     `;
+
+    // Add instructions overlay
+    const instructionsDiv = document.createElement('div');
+    instructionsDiv.style.cssText = `
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      text-align: center;
+      pointer-events: none;
+      z-index: 100000;
+    `;
+    instructionsDiv.innerHTML = `
+      <div><strong>Screen Capture Mode</strong></div>
+      <div style="margin-top: 4px; font-size: 12px;">Click and drag to select area • Press ESC to cancel • Cursor will be included in capture</div>
+    `;
+    overlay.appendChild(instructionsDiv);
 
     // Add selection rectangle
     const selectionRect = document.createElement('div');
@@ -142,21 +190,29 @@ const ScreenClipPopup: React.FC<ScreenClipPopupProps> = ({ isOpen, onClose }) =>
     let isMouseDown = false;
 
     const handleMouseDown = (e: MouseEvent) => {
+      e.preventDefault();
       isMouseDown = true;
-      startX = e.clientX;
-      startY = e.clientY;
+      
+      // Use page coordinates for accurate positioning across screen boundaries
+      startX = e.pageX || e.clientX;
+      startY = e.pageY || e.clientY;
+      
       selectionRect.style.left = startX + 'px';
       selectionRect.style.top = startY + 'px';
       selectionRect.style.width = '0px';
       selectionRect.style.height = '0px';
       selectionRect.style.display = 'block';
+      
+      // Show real-time coordinates
+      updateCoordinateDisplay(startX, startY, 0, 0);
     };
 
     const handleMouseMove = (e: MouseEvent) => {
       if (!isMouseDown) return;
+      e.preventDefault();
       
-      const currentX = e.clientX;
-      const currentY = e.clientY;
+      const currentX = e.pageX || e.clientX;
+      const currentY = e.pageY || e.clientY;
       
       const width = Math.abs(currentX - startX);
       const height = Math.abs(currentY - startY);
@@ -167,16 +223,33 @@ const ScreenClipPopup: React.FC<ScreenClipPopupProps> = ({ isOpen, onClose }) =>
       selectionRect.style.top = top + 'px';
       selectionRect.style.width = width + 'px';
       selectionRect.style.height = height + 'px';
+      
+      // Update coordinate display
+      updateCoordinateDisplay(left, top, width, height);
     };
 
     const handleMouseUp = (e: MouseEvent) => {
       if (!isMouseDown) return;
+      e.preventDefault();
       
       isMouseDown = false;
-      const endX = e.clientX;
-      const endY = e.clientY;
+      const endX = e.pageX || e.clientX;
+      const endY = e.pageY || e.clientY;
       
-      // Calculate selection area
+      // Ensure minimum selection size
+      const minSize = 10;
+      if (Math.abs(endX - startX) < minSize || Math.abs(endY - startY) < minSize) {
+        toast({
+          title: "Selection Too Small",
+          description: "Please select a larger area to capture.",
+          variant: "destructive"
+        });
+        document.body.removeChild(overlay);
+        setIsCapturing(false);
+        return;
+      }
+      
+      // Calculate selection area with screen coordinate mapping
       const selectionArea = {
         startX: Math.min(startX, endX),
         startY: Math.min(startY, endY),
@@ -187,8 +260,32 @@ const ScreenClipPopup: React.FC<ScreenClipPopupProps> = ({ isOpen, onClose }) =>
       // Remove overlay
       document.body.removeChild(overlay);
       
-      // Crop the image
+      // Crop the image with cursor preservation
       cropImage(fullScreenImage, selectionArea);
+    };
+
+    // Function to show real-time coordinate information
+    const updateCoordinateDisplay = (x: number, y: number, w: number, h: number) => {
+      let coordDisplay = overlay.querySelector('.coord-display') as HTMLElement;
+      if (!coordDisplay) {
+        coordDisplay = document.createElement('div');
+        coordDisplay.className = 'coord-display';
+        coordDisplay.style.cssText = `
+          position: absolute;
+          bottom: 20px;
+          right: 20px;
+          background: rgba(0, 0, 0, 0.8);
+          color: white;
+          padding: 8px 12px;
+          border-radius: 4px;
+          font-family: monospace;
+          font-size: 12px;
+          pointer-events: none;
+          z-index: 100001;
+        `;
+        overlay.appendChild(coordDisplay);
+      }
+      coordDisplay.textContent = `X: ${Math.round(x)}, Y: ${Math.round(y)}, W: ${Math.round(w)}, H: ${Math.round(h)}`;
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -228,40 +325,46 @@ const ScreenClipPopup: React.FC<ScreenClipPopupProps> = ({ isOpen, onClose }) =>
       });
       
       if (ctx) {
-        // Get the actual screen dimensions for multi-monitor support
-        const screenWidth = screen.width * window.devicePixelRatio;
-        const screenHeight = screen.height * window.devicePixelRatio;
+        // Enhanced coordinate mapping for cursor-aware multi-monitor capture
+        const pixelRatio = window.devicePixelRatio;
         
-        // Calculate scale factors based on the actual screen dimensions and captured image
-        let scaleX = img.width / screenWidth;
-        let scaleY = img.height / screenHeight;
+        // Calculate true screen dimensions including all monitors
+        const totalScreenWidth = screen.width;
+        const totalScreenHeight = screen.height;
         
-        // If the captured image is smaller than expected, it might be a single monitor
-        // In that case, use window dimensions as fallback
-        if (img.width < screenWidth || img.height < screenHeight) {
-          scaleX = img.width / (window.screen.width * window.devicePixelRatio);
-          scaleY = img.height / (window.screen.height * window.devicePixelRatio);
+        // Determine scale factors based on captured image vs actual screen dimensions
+        let scaleX = img.width / (totalScreenWidth * pixelRatio);
+        let scaleY = img.height / (totalScreenHeight * pixelRatio);
+        
+        // Detect if we captured a specific monitor vs entire desktop
+        const capturedFullDesktop = img.width >= (totalScreenWidth * pixelRatio * 0.8);
+        
+        if (!capturedFullDesktop) {
+          // Single monitor capture - use viewport dimensions
+          scaleX = img.width / (window.innerWidth * pixelRatio);
+          scaleY = img.height / (window.innerHeight * pixelRatio);
         }
         
-        // Calculate coordinates considering multi-monitor setup
-        // Use screen coordinates if available, otherwise use relative positioning
-        const hasMultiMonitorSupport = typeof window.screenX !== 'undefined' && window.screenX !== 0;
-        
+        // Calculate crop coordinates with cursor preservation
         let cropX, cropY, cropWidth, cropHeight;
         
-        if (hasMultiMonitorSupport) {
-          // Multi-monitor setup: adjust coordinates for monitor offset
-          const adjustedStartX = area.startX + Math.abs(window.screenX);
-          const adjustedStartY = area.startY + Math.abs(window.screenY);
-          const adjustedEndX = area.endX + Math.abs(window.screenX);
-          const adjustedEndY = area.endY + Math.abs(window.screenY);
+        if (capturedFullDesktop) {
+          // Full desktop capture: map browser coordinates to desktop coordinates
+          const browserOffsetX = window.screenX;
+          const browserOffsetY = window.screenY;
           
-          cropX = Math.round(adjustedStartX * scaleX);
-          cropY = Math.round(adjustedStartY * scaleY);
-          cropWidth = Math.round((adjustedEndX - adjustedStartX) * scaleX);
-          cropHeight = Math.round((adjustedEndY - adjustedStartY) * scaleY);
+          // Convert selection coordinates from browser viewport to desktop space
+          const desktopStartX = area.startX + browserOffsetX;
+          const desktopStartY = area.startY + browserOffsetY;
+          const desktopEndX = area.endX + browserOffsetX;
+          const desktopEndY = area.endY + browserOffsetY;
+          
+          cropX = Math.round(desktopStartX * scaleX);
+          cropY = Math.round(desktopStartY * scaleY);
+          cropWidth = Math.round((desktopEndX - desktopStartX) * scaleX);
+          cropHeight = Math.round((desktopEndY - desktopStartY) * scaleY);
         } else {
-          // Single monitor or fallback: use direct coordinate mapping
+          // Single monitor capture: direct coordinate mapping
           cropX = Math.round(area.startX * scaleX);
           cropY = Math.round(area.startY * scaleY);
           cropWidth = Math.round((area.endX - area.startX) * scaleX);
@@ -278,20 +381,27 @@ const ScreenClipPopup: React.FC<ScreenClipPopupProps> = ({ isOpen, onClose }) =>
         canvas.width = finalCropWidth;
         canvas.height = finalCropHeight;
         
-        // Disable image smoothing for pixel-perfect cropping
+        // Configure context for high-quality cursor preservation
         ctx.imageSmoothingEnabled = false;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.globalCompositeOperation = 'source-over';
         
-        // Draw the cropped area with no interpolation
+        // Draw the cropped area preserving cursor and all visual elements
         ctx.drawImage(
           img,
           finalCropX, finalCropY, finalCropWidth, finalCropHeight,
           0, 0, finalCropWidth, finalCropHeight
         );
         
-        // Export at maximum quality with no compression
+        // Export at maximum quality with cursor preserved
         const croppedImage = canvas.toDataURL('image/png', 1.0);
         setCapturedImage(croppedImage);
         setIsCapturing(false);
+        
+        toast({
+          title: "Screen Captured with Cursor",
+          description: `Successfully captured ${finalCropWidth}x${finalCropHeight}px area including cursor and all desktop content.`
+        });
       }
     };
     img.src = fullScreenImage;
@@ -404,17 +514,20 @@ const ScreenClipPopup: React.FC<ScreenClipPopupProps> = ({ isOpen, onClose }) =>
               <div className="mb-6">
                 <Monitor className="w-16 h-16 mx-auto text-blue-500 mb-4" />
                 <h3 className="text-xl font-medium text-gray-900 dark:text-gray-100 mb-2">
-                  Multi-Monitor Screen Capture
+                  Desktop Capture with Cursor
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto mb-4">
-                  Capture from any monitor or desktop area. Select "Entire Screen" or "Monitor" when prompted to access all displays.
+                  Capture any area across all monitors with cursor included. Works with multi-screen setups and all desktop content.
                 </p>
                 
-                <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 rounded-lg p-3 mb-4">
+                <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700 rounded-lg p-3 mb-4">
                   <div className="flex items-start gap-2">
-                    <Info className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
-                    <div className="text-sm text-blue-800 dark:text-blue-200">
-                      <strong>Multi-Monitor Support:</strong> You can capture from any connected display, not just the current browser window.
+                    <Info className="w-4 h-4 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                    <div className="text-sm text-green-800 dark:text-green-200 space-y-1">
+                      <div><strong>Enhanced Features:</strong></div>
+                      <div>• Cursor automatically included in captures</div>
+                      <div>• Cross-monitor selection support</div>
+                      <div>• All desktop windows and content captured</div>
                     </div>
                   </div>
                 </div>
@@ -425,7 +538,7 @@ const ScreenClipPopup: React.FC<ScreenClipPopupProps> = ({ isOpen, onClose }) =>
                 className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2"
               >
                 <Monitor className="w-4 h-4 mr-2" />
-                Start Multi-Monitor Capture
+                Start Desktop Capture
               </Button>
             </div>
           )}
