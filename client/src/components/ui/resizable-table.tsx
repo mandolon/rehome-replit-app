@@ -250,9 +250,11 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
                 {column.title}
                 {index < columns.length - 1 && (
                   <div 
-                    className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-blue-500/20 group-hover:bg-blue-500/10"
+                    className="absolute -right-2 top-0 bottom-0 w-4 cursor-col-resize hover:bg-blue-500/20 flex items-center justify-center"
                     onMouseDown={(e) => handleMouseDown(e, column.key)}
-                  />
+                  >
+                    <div className="w-0.5 h-full bg-gray-300 group-hover:bg-blue-500/30" />
+                  </div>
                 )}
               </div>
             ))}
