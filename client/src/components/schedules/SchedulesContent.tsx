@@ -5,13 +5,14 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ResizableTable, type TableColumn, type TableRow } from '@/components/ui/resizable-table';
 import { Plus, Download, Upload, X, Camera, Home, ArrowLeft, Grid, ChefHat, ShowerHead, Bed, List } from 'lucide-react';
 
 interface ScheduleItem {
   id: string;
   room: string;
-  type: 'fixture' | 'appliance' | 'lighting';
+  type: 'fixture' | 'appliance' | 'lighting' | 'window' | 'door';
   item: string;
   manufacturer: string;
   model: string;
@@ -182,8 +183,8 @@ const SchedulesContent = () => {
     ));
   };
 
-  // Define table columns for the resizable table
-  const getTableColumns = (): TableColumn[] => [
+  // Define table columns for fixtures, appliances, and lighting
+  const getMainTableColumns = (): TableColumn[] => [
     {
       key: 'type',
       title: 'Type',
@@ -257,13 +258,115 @@ const SchedulesContent = () => {
     }
   ];
 
-  const addNewItem = () => {
+  // Define table columns for windows
+  const getWindowTableColumns = (): TableColumn[] => [
+    {
+      key: 'item',
+      title: 'Window Type',
+      width: 160,
+      minWidth: 120,
+      maxWidth: 250,
+      type: 'select',
+      options: ['Single Hung', 'Double Hung', 'Casement', 'Awning', 'Sliding', 'Bay', 'Bow', 'Picture', 'Hopper', 'Jalousie'],
+      allowCustomInput: true,
+      customInputPlaceholder: 'Enter custom window type...',
+      placeholder: 'Select window type...'
+    },
+    {
+      key: 'manufacturer',
+      title: 'Manufacturer',
+      width: 128,
+      minWidth: 100,
+      maxWidth: 200,
+      type: 'input',
+      placeholder: 'Manufacturer'
+    },
+    {
+      key: 'model',
+      title: 'Model',
+      width: 128,
+      minWidth: 100,
+      maxWidth: 200,
+      type: 'input',
+      placeholder: 'Model'
+    },
+    {
+      key: 'finish',
+      title: 'Finish',
+      width: 112,
+      minWidth: 80,
+      maxWidth: 150,
+      type: 'input',
+      placeholder: 'Finish'
+    },
+    {
+      key: 'comments',
+      title: 'Comments',
+      width: 200,
+      minWidth: 150,
+      type: 'input',
+      placeholder: 'Comments'
+    }
+  ];
+
+  // Define table columns for doors
+  const getDoorTableColumns = (): TableColumn[] => [
+    {
+      key: 'item',
+      title: 'Door Type',
+      width: 160,
+      minWidth: 120,
+      maxWidth: 250,
+      type: 'select',
+      options: ['Entry Door', 'Interior Door', 'French Door', 'Sliding Door', 'Pocket Door', 'Bifold Door', 'Barn Door', 'Storm Door', 'Screen Door', 'Garage Door'],
+      allowCustomInput: true,
+      customInputPlaceholder: 'Enter custom door type...',
+      placeholder: 'Select door type...'
+    },
+    {
+      key: 'manufacturer',
+      title: 'Manufacturer',
+      width: 128,
+      minWidth: 100,
+      maxWidth: 200,
+      type: 'input',
+      placeholder: 'Manufacturer'
+    },
+    {
+      key: 'model',
+      title: 'Model',
+      width: 128,
+      minWidth: 100,
+      maxWidth: 200,
+      type: 'input',
+      placeholder: 'Model'
+    },
+    {
+      key: 'finish',
+      title: 'Finish',
+      width: 112,
+      minWidth: 80,
+      maxWidth: 150,
+      type: 'input',
+      placeholder: 'Finish'
+    },
+    {
+      key: 'comments',
+      title: 'Comments',
+      width: 200,
+      minWidth: 150,
+      type: 'input',
+      placeholder: 'Comments'
+    }
+  ];
+
+  const addNewItem = (itemType: 'fixture' | 'appliance' | 'lighting' | 'window' | 'door' = 'fixture') => {
     if (!selectedRoom) return;
     
     const newItem: ScheduleItem = {
       id: Date.now().toString(),
       room: selectedRoom,
-      type: 'fixture',
+      type: itemType,
       item: '',
       manufacturer: '',
       model: '',
@@ -405,28 +508,89 @@ const SchedulesContent = () => {
               </div>
 
               {/* Resizable Table */}
-              <ResizableTable
-                columns={getTableColumns()}
-                data={(() => {
-                  const filteredItems = categoryFilter === 'all' 
-                    ? roomItems 
-                    : roomItems.filter(item => item.type === categoryFilter);
-                  return filteredItems;
-                })()}
-                onDataChange={(newData) => {
-                  const otherRoomItems = scheduleItems.filter(item => item.room !== selectedRoom);
-                  setScheduleItems([...otherRoomItems, ...newData as ScheduleItem[]]);
-                }}
-                onAddRow={addNewItem}
-                onDeleteRow={(id) => {
-                  setScheduleItems(scheduleItems.filter(item => item.id !== id));
-                }}
-                addButtonText="Add Item"
-                emptyStateText={categoryFilter === 'all' 
-                  ? 'No items scheduled for this room yet. Click "Add Item" to get started.'
-                  : `No ${categoryFilter} items found. Add some items or change the filter.`
-                }
-              />
+              <Tabs defaultValue="fixtures" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="fixtures">Fixtures & Appliances</TabsTrigger>
+                  <TabsTrigger value="openings">Windows & Doors</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="fixtures" className="space-y-4">
+                  <ResizableTable
+                    columns={getMainTableColumns()}
+                    data={roomItems.filter(item => ['fixture', 'appliance', 'lighting'].includes(item.type))}
+                    onDataChange={(newData) => {
+                      const otherItems = scheduleItems.filter(item => 
+                        item.room !== selectedRoom || !['fixture', 'appliance', 'lighting'].includes(item.type)
+                      );
+                      setScheduleItems([...otherItems, ...newData as ScheduleItem[]]);
+                    }}
+                    onAddRow={() => addNewItem('fixture')}
+                    onDeleteRow={(id) => {
+                      setScheduleItems(scheduleItems.filter(item => item.id !== id));
+                    }}
+                    addButtonText="Add Fixture/Appliance"
+                    emptyStateText="No fixtures, appliances, or lighting items scheduled for this room yet."
+                  />
+                </TabsContent>
+                
+                <TabsContent value="openings" className="space-y-4">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Windows Card */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-base">Windows</CardTitle>
+                        <CardDescription>Manage window specifications</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <ResizableTable
+                          columns={getWindowTableColumns()}
+                          data={roomItems.filter(item => item.type === 'window')}
+                          onDataChange={(newData) => {
+                            const otherItems = scheduleItems.filter(item => 
+                              item.room !== selectedRoom || item.type !== 'window'
+                            );
+                            setScheduleItems([...otherItems, ...newData as ScheduleItem[]]);
+                          }}
+                          onAddRow={() => addNewItem('window')}
+                          onDeleteRow={(id) => {
+                            setScheduleItems(scheduleItems.filter(item => item.id !== id));
+                          }}
+                          addButtonText="Add Window"
+                          emptyStateText="No windows scheduled for this room yet."
+                          className="max-h-96"
+                        />
+                      </CardContent>
+                    </Card>
+                    
+                    {/* Doors Card */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-base">Doors</CardTitle>
+                        <CardDescription>Manage door specifications</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <ResizableTable
+                          columns={getDoorTableColumns()}
+                          data={roomItems.filter(item => item.type === 'door')}
+                          onDataChange={(newData) => {
+                            const otherItems = scheduleItems.filter(item => 
+                              item.room !== selectedRoom || item.type !== 'door'
+                            );
+                            setScheduleItems([...otherItems, ...newData as ScheduleItem[]]);
+                          }}
+                          onAddRow={() => addNewItem('door')}
+                          onDeleteRow={(id) => {
+                            setScheduleItems(scheduleItems.filter(item => item.id !== id));
+                          }}
+                          addButtonText="Add Door"
+                          emptyStateText="No doors scheduled for this room yet."
+                          className="max-h-96"
+                        />
+                      </CardContent>
+                    </Card>
+                  </div>
+                </TabsContent>
+              </Tabs>
             </div>
           </ScrollArea>
         </div>
