@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { ResizableTable, type TableColumn, type TableRow } from '@/components/ui/resizable-table';
 import { Plus, Download, Upload, X, Camera, Home, ArrowLeft, Grid, ChefHat, ShowerHead, Bed, List } from 'lucide-react';
 
 interface ScheduleItem {
@@ -80,8 +81,6 @@ const SchedulesContent = () => {
   const [newRoomName, setNewRoomName] = useState('');
   const [isAddingRoom, setIsAddingRoom] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'fixture' | 'appliance' | 'lighting'>('all');
-  const [focusedRowIndex, setFocusedRowIndex] = useState<number>(-1);
-  const [customItems, setCustomItems] = useState<Record<string, string>>({});
   const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([
     {
       id: '1',
@@ -183,22 +182,80 @@ const SchedulesContent = () => {
     ));
   };
 
-  // Item options based on category
-  const getItemOptions = (type: 'fixture' | 'appliance' | 'lighting') => {
-    const baseOptions = (() => {
-      switch (type) {
-        case 'fixture':
-          return ['Kitchen Sink', 'Bathroom Sink', 'Vanity Faucet', 'Shower Head', 'Bathtub', 'Toilet', 'Kitchen Faucet', 'Shower Valve', 'Towel Bar', 'Grab Bar'];
-        case 'appliance':
-          return ['Refrigerator', 'Dishwasher', 'Range', 'Cooktop', 'Oven', 'Microwave', 'Range Hood', 'Garbage Disposal', 'Wine Cooler', 'Ice Maker'];
-        case 'lighting':
-          return ['Pendant Light', 'Chandelier', 'Recessed Light', 'Under Cabinet LED', 'Vanity Light', 'Ceiling Fan', 'Wall Sconce', 'Track Light', 'Floor Lamp', 'Table Lamp'];
-        default:
-          return [];
-      }
-    })();
-    return [...baseOptions, 'Other'];
-  };
+  // Define table columns for the resizable table
+  const getTableColumns = (): TableColumn[] => [
+    {
+      key: 'type',
+      title: 'Type',
+      width: 96,
+      minWidth: 80,
+      maxWidth: 120,
+      type: 'select',
+      options: ['fixture', 'appliance', 'lighting'],
+      placeholder: 'Select type...'
+    },
+    {
+      key: 'item',
+      title: 'Item',
+      width: 160,
+      minWidth: 120,
+      maxWidth: 250,
+      type: 'select',
+      options: (rowData: any) => {
+        const baseOptions = (() => {
+          switch (rowData.type) {
+            case 'fixture':
+              return ['Kitchen Sink', 'Bathroom Sink', 'Vanity Faucet', 'Shower Head', 'Bathtub', 'Toilet', 'Kitchen Faucet', 'Shower Valve', 'Towel Bar', 'Grab Bar'];
+            case 'appliance':
+              return ['Refrigerator', 'Dishwasher', 'Range', 'Cooktop', 'Oven', 'Microwave', 'Range Hood', 'Garbage Disposal', 'Wine Cooler', 'Ice Maker'];
+            case 'lighting':
+              return ['Pendant Light', 'Chandelier', 'Recessed Light', 'Under Cabinet LED', 'Vanity Light', 'Ceiling Fan', 'Wall Sconce', 'Track Light', 'Floor Lamp', 'Table Lamp'];
+            default:
+              return [];
+          }
+        })();
+        return baseOptions;
+      },
+      allowCustomInput: true,
+      customInputPlaceholder: 'Enter custom item name...',
+      placeholder: 'Select item...'
+    },
+    {
+      key: 'manufacturer',
+      title: 'Manufacturer',
+      width: 128,
+      minWidth: 100,
+      maxWidth: 200,
+      type: 'input',
+      placeholder: 'Manufacturer'
+    },
+    {
+      key: 'model',
+      title: 'Model',
+      width: 128,
+      minWidth: 100,
+      maxWidth: 200,
+      type: 'input',
+      placeholder: 'Model'
+    },
+    {
+      key: 'finish',
+      title: 'Finish',
+      width: 112,
+      minWidth: 80,
+      maxWidth: 150,
+      type: 'input',
+      placeholder: 'Finish'
+    },
+    {
+      key: 'comments',
+      title: 'Comments',
+      width: 200, // This will be flex-1 (full remaining width)
+      minWidth: 150,
+      type: 'input',
+      placeholder: 'Comments'
+    }
+  ];
 
   const addNewItem = () => {
     if (!selectedRoom) return;
@@ -215,62 +272,6 @@ const SchedulesContent = () => {
     };
     
     setScheduleItems([...scheduleItems, newItem]);
-    setFocusedRowIndex(scheduleItems.filter(item => item.room === selectedRoom).length);
-  };
-
-  // Handle keyboard navigation
-  const handleKeyDown = (e: React.KeyboardEvent, itemId: string, currentIndex: number, filteredItems: ScheduleItem[], column?: string) => {
-    if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      const newIndex = Math.max(0, currentIndex - 1);
-      setFocusedRowIndex(newIndex);
-    } else if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      const newIndex = Math.min(filteredItems.length - 1, currentIndex + 1);
-      setFocusedRowIndex(newIndex);
-    } else if (e.key === 'Enter') {
-      e.preventDefault();
-      if (column === 'comments') {
-        // Only add new row when Enter is pressed in the comments column
-        addNewItem();
-      } else {
-        // Move to next input field in the same row
-        moveToNextField(currentIndex, column);
-      }
-    }
-  };
-
-  // Move focus to the next field in the current row
-  const moveToNextField = (rowIndex: number, currentColumn?: string) => {
-    const columnOrder = ['type', 'item', 'manufacturer', 'model', 'finish', 'comments'];
-    const currentColumnIndex = currentColumn ? columnOrder.indexOf(currentColumn) : -1;
-    const nextColumnIndex = currentColumnIndex + 1;
-    
-    if (nextColumnIndex < columnOrder.length) {
-      const nextColumn = columnOrder[nextColumnIndex];
-      // Focus the next input field
-      setTimeout(() => {
-        const nextInput = document.querySelector(`[data-row="${rowIndex}"][data-column="${nextColumn}"]`) as HTMLElement;
-        if (nextInput) {
-          nextInput.focus();
-        }
-      }, 10);
-    }
-  };
-
-  // Handle item selection including "Other" option
-  const handleItemSelection = (itemId: string, value: string) => {
-    if (value === 'Other') {
-      // Set a placeholder for custom input
-      updateItem(itemId, 'item', '');
-      setCustomItems({ ...customItems, [itemId]: 'custom' });
-    } else {
-      updateItem(itemId, 'item', value);
-      // Remove from custom items if it was previously custom
-      const newCustomItems = { ...customItems };
-      delete newCustomItems[itemId];
-      setCustomItems(newCustomItems);
-    }
   };
 
 
@@ -403,186 +404,29 @@ const SchedulesContent = () => {
                 </Button>
               </div>
 
-              {/* Unified Table */}
-              <div className="space-y-0">
-                {(() => {
+              {/* Resizable Table */}
+              <ResizableTable
+                columns={getTableColumns()}
+                data={(() => {
                   const filteredItems = categoryFilter === 'all' 
                     ? roomItems 
                     : roomItems.filter(item => item.type === categoryFilter);
-                  
-                  return filteredItems.length > 0 ? (
-                    <>
-                      {/* Table Header */}
-                      <div className="flex py-2 px-0 text-xs font-medium text-muted-foreground sticky top-0 z-10 bg-background" style={{ borderBottom: '1px solid #bbbbbb' }}>
-                        <div className="w-12 flex-shrink-0 pl-3 pr-2">#</div>
-                        <div className="w-24 flex-shrink-0 px-2">Type</div>
-                        <div className="w-40 flex-shrink-0 px-2">Item</div>
-                        <div className="w-32 flex-shrink-0 px-2">Manufacturer</div>
-                        <div className="w-32 flex-shrink-0 px-2">Model</div>
-                        <div className="w-28 flex-shrink-0 px-2">Finish</div>
-                        <div className="flex-1 min-w-0 px-2">Comments</div>
-                        <div className="w-8 flex-shrink-0 pr-3"></div>
-                      </div>
-
-                      {/* Table Rows */}
-                      {filteredItems.map((item, index) => (
-                        <div 
-                          key={item.id} 
-                          className={`flex py-1 px-0 hover:bg-muted/30 transition-colors group ${
-                            focusedRowIndex === index ? 'bg-muted/50' : ''
-                          }`}
-                          style={{ borderBottom: '1px solid #bbbbbb' }}
-                          tabIndex={0}
-                          onKeyDown={(e) => handleKeyDown(e, item.id, index, filteredItems)}
-                        >
-                          <div className="w-12 flex-shrink-0 pl-3 pr-2 text-xs text-muted-foreground flex items-center">
-                            {index + 1}
-                          </div>
-                          <div className="w-24 flex-shrink-0 px-2">
-                            <Select 
-                              value={item.type} 
-                              onValueChange={(value: 'fixture' | 'appliance' | 'lighting') => 
-                                updateItem(item.id, 'type', value)
-                              }
-                            >
-                              <SelectTrigger 
-                                className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full" 
-                                style={{ fontSize: '0.75rem' }}
-                                data-row={index}
-                                data-column="type"
-                                onKeyDown={(e) => handleKeyDown(e, item.id, index, filteredItems, 'type')}
-                              >
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="fixture">Fixture</SelectItem>
-                                <SelectItem value="appliance">Appliance</SelectItem>
-                                <SelectItem value="lighting">Lighting</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="w-40 flex-shrink-0 px-2">
-                            {customItems[item.id] === 'custom' ? (
-                              <Input 
-                                value={item.item} 
-                                onChange={(e) => updateItem(item.id, 'item', e.target.value)}
-                                className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
-                                style={{ fontSize: '0.75rem' }}
-                                placeholder="Enter custom item name..."
-                                data-row={index}
-                                data-column="item"
-                                onKeyDown={(e) => handleKeyDown(e, item.id, index, filteredItems, 'item')}
-                                autoFocus
-                              />
-                            ) : (
-                              <Select 
-                                value={item.item} 
-                                onValueChange={(value) => handleItemSelection(item.id, value)}
-                              >
-                                <SelectTrigger 
-                                  className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full" 
-                                  style={{ fontSize: '0.75rem' }}
-                                  data-row={index}
-                                  data-column="item"
-                                  onKeyDown={(e) => handleKeyDown(e, item.id, index, filteredItems, 'item')}
-                                >
-                                  <SelectValue placeholder="Select item..." />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {getItemOptions(item.type).map((option) => (
-                                    <SelectItem key={option} value={option}>{option}</SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            )}
-                          </div>
-                          <div className="w-32 flex-shrink-0 px-2">
-                            <Input 
-                              value={item.manufacturer} 
-                              onChange={(e) => updateItem(item.id, 'manufacturer', e.target.value)}
-                              className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
-                              style={{ fontSize: '0.75rem' }}
-                              placeholder="Manufacturer"
-                              data-row={index}
-                              data-column="manufacturer"
-                              onKeyDown={(e) => handleKeyDown(e, item.id, index, filteredItems, 'manufacturer')}
-                            />
-                          </div>
-                          <div className="w-32 flex-shrink-0 px-2">
-                            <Input 
-                              value={item.model} 
-                              onChange={(e) => updateItem(item.id, 'model', e.target.value)}
-                              className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
-                              style={{ fontSize: '0.75rem' }}
-                              placeholder="Model"
-                              data-row={index}
-                              data-column="model"
-                              onKeyDown={(e) => handleKeyDown(e, item.id, index, filteredItems, 'model')}
-                            />
-                          </div>
-                          <div className="w-28 flex-shrink-0 px-2">
-                            <Input 
-                              value={item.finish} 
-                              onChange={(e) => updateItem(item.id, 'finish', e.target.value)}
-                              className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
-                              style={{ fontSize: '0.75rem' }}
-                              placeholder="Finish"
-                              data-row={index}
-                              data-column="finish"
-                              onKeyDown={(e) => handleKeyDown(e, item.id, index, filteredItems, 'finish')}
-                            />
-                          </div>
-                          <div className="flex-1 min-w-0 px-2">
-                            <Input 
-                              value={item.comments} 
-                              onChange={(e) => updateItem(item.id, 'comments', e.target.value)}
-                              className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
-                              style={{ fontSize: '0.75rem' }}
-                              placeholder="Comments"
-                              data-row={index}
-                              data-column="comments"
-                              onKeyDown={(e) => handleKeyDown(e, item.id, index, filteredItems, 'comments')}
-                            />
-                          </div>
-                          <div className="w-8 flex-shrink-0 pr-3 flex justify-center">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => deleteItem(item.id)}
-                              className="h-5 w-5 p-0 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/10 hover:text-destructive"
-                            >
-                              <X className="w-3 h-3" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-
-                      {/* Single Add Button */}
-                      <div className="flex py-2 px-0">
-                        <div className="w-12 flex-shrink-0 pl-3"></div>
-                        <div className="flex-1 px-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={addNewItem}
-                            className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/30"
-                          >
-                            <Plus className="w-3 h-3 mr-1" />
-                            Add Item
-                          </Button>
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="text-center text-muted-foreground italic py-8 text-sm">
-                      {categoryFilter === 'all' 
-                        ? 'No items scheduled for this room yet. Click "Add Item" to get started.'
-                        : `No ${categoryFilter} items found. Add some items or change the filter.`
-                      }
-                    </div>
-                  );
+                  return filteredItems;
                 })()}
-              </div>
+                onDataChange={(newData) => {
+                  const otherRoomItems = scheduleItems.filter(item => item.room !== selectedRoom);
+                  setScheduleItems([...otherRoomItems, ...newData as ScheduleItem[]]);
+                }}
+                onAddRow={addNewItem}
+                onDeleteRow={(id) => {
+                  setScheduleItems(scheduleItems.filter(item => item.id !== id));
+                }}
+                addButtonText="Add Item"
+                emptyStateText={categoryFilter === 'all' 
+                  ? 'No items scheduled for this room yet. Click "Add Item" to get started.'
+                  : `No ${categoryFilter} items found. Add some items or change the filter.`
+                }
+              />
             </div>
           </ScrollArea>
         </div>
