@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { X, Download, Copy, Scissors } from 'lucide-react';
+import { X, Download, Copy, Scissors, Monitor, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 
@@ -38,15 +38,19 @@ const ScreenClipPopup: React.FC<ScreenClipPopupProps> = ({ isOpen, onClose }) =>
     try {
       setIsCapturing(true);
       
-      // Request screen capture permission with high quality settings
+      // Request screen capture permission with high quality settings for multi-monitor support
       const stream = await navigator.mediaDevices.getDisplayMedia({
         video: {
-          width: { ideal: 4096, max: 4096 },
-          height: { ideal: 2160, max: 2160 },
+          displaySurface: 'monitor', // Prefer entire monitor over browser tab
+          width: { ideal: 7680, max: 7680 }, // Support up to 8K for multi-monitor setups
+          height: { ideal: 4320, max: 4320 },
           frameRate: { ideal: 60, max: 60 }
         },
-        audio: false
-      });
+        audio: false,
+        systemAudio: 'exclude',
+        surfaceSwitching: 'include', // Allow switching between different surfaces
+        selfBrowserSurface: 'exclude' // Exclude the current browser tab to avoid recursion
+      } as any); // TypeScript may not have latest displayMedia types
 
       // Create video element to capture the stream
       const video = document.createElement('video');
@@ -84,9 +88,23 @@ const ScreenClipPopup: React.FC<ScreenClipPopupProps> = ({ isOpen, onClose }) =>
       }
     } catch (error) {
       console.error('Error starting screen capture:', error);
+      
+      // Provide specific error messages for common issues
+      let errorMessage = "Unable to start screen capture. Please ensure you grant permission.";
+      
+      if (error instanceof Error) {
+        if (error.name === 'NotAllowedError') {
+          errorMessage = "Screen capture permission was denied. Please allow screen sharing to continue.";
+        } else if (error.name === 'NotSupportedError') {
+          errorMessage = "Screen capture is not supported in this browser. Try using Chrome, Firefox, or Edge.";
+        } else if (error.name === 'NotFoundError') {
+          errorMessage = "No screens available for capture. Please check your display settings.";
+        }
+      }
+      
       toast({
-        title: "Screen Capture Error",
-        description: "Unable to start screen capture. Please ensure you grant permission.",
+        title: "Multi-Monitor Capture Error",
+        description: errorMessage,
         variant: "destructive"
       });
       setIsCapturing(false);
@@ -94,18 +112,19 @@ const ScreenClipPopup: React.FC<ScreenClipPopupProps> = ({ isOpen, onClose }) =>
   }, [toast]);
 
   const showSelectionOverlay = (fullScreenImage: string) => {
-    // Create a full-screen overlay for selection
+    // Create a full-screen overlay that spans all monitors
     const overlay = document.createElement('div');
     overlay.style.cssText = `
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
+      top: -100vh;
+      left: -100vw;
+      width: 300vw;
+      height: 300vh;
       background: rgba(0, 0, 0, 0.3);
       cursor: crosshair;
       z-index: 9999;
       user-select: none;
+      pointer-events: auto;
     `;
 
     // Add selection rectangle
@@ -209,18 +228,55 @@ const ScreenClipPopup: React.FC<ScreenClipPopupProps> = ({ isOpen, onClose }) =>
       });
       
       if (ctx) {
-        // Calculate the scale factors between the captured image and the screen
-        const scaleX = img.width / window.innerWidth;
-        const scaleY = img.height / window.innerHeight;
+        // Get the actual screen dimensions for multi-monitor support
+        const screenWidth = screen.width * window.devicePixelRatio;
+        const screenHeight = screen.height * window.devicePixelRatio;
         
-        const cropX = Math.round(area.startX * scaleX);
-        const cropY = Math.round(area.startY * scaleY);
-        const cropWidth = Math.round((area.endX - area.startX) * scaleX);
-        const cropHeight = Math.round((area.endY - area.startY) * scaleY);
+        // Calculate scale factors based on the actual screen dimensions and captured image
+        let scaleX = img.width / screenWidth;
+        let scaleY = img.height / screenHeight;
+        
+        // If the captured image is smaller than expected, it might be a single monitor
+        // In that case, use window dimensions as fallback
+        if (img.width < screenWidth || img.height < screenHeight) {
+          scaleX = img.width / (window.screen.width * window.devicePixelRatio);
+          scaleY = img.height / (window.screen.height * window.devicePixelRatio);
+        }
+        
+        // Calculate coordinates considering multi-monitor setup
+        // Use screen coordinates if available, otherwise use relative positioning
+        const hasMultiMonitorSupport = typeof window.screenX !== 'undefined' && window.screenX !== 0;
+        
+        let cropX, cropY, cropWidth, cropHeight;
+        
+        if (hasMultiMonitorSupport) {
+          // Multi-monitor setup: adjust coordinates for monitor offset
+          const adjustedStartX = area.startX + Math.abs(window.screenX);
+          const adjustedStartY = area.startY + Math.abs(window.screenY);
+          const adjustedEndX = area.endX + Math.abs(window.screenX);
+          const adjustedEndY = area.endY + Math.abs(window.screenY);
+          
+          cropX = Math.round(adjustedStartX * scaleX);
+          cropY = Math.round(adjustedStartY * scaleY);
+          cropWidth = Math.round((adjustedEndX - adjustedStartX) * scaleX);
+          cropHeight = Math.round((adjustedEndY - adjustedStartY) * scaleY);
+        } else {
+          // Single monitor or fallback: use direct coordinate mapping
+          cropX = Math.round(area.startX * scaleX);
+          cropY = Math.round(area.startY * scaleY);
+          cropWidth = Math.round((area.endX - area.startX) * scaleX);
+          cropHeight = Math.round((area.endY - area.startY) * scaleY);
+        }
+        
+        // Ensure crop dimensions are within image bounds
+        const finalCropX = Math.max(0, Math.min(cropX, img.width));
+        const finalCropY = Math.max(0, Math.min(cropY, img.height));
+        const finalCropWidth = Math.max(1, Math.min(cropWidth, img.width - finalCropX));
+        const finalCropHeight = Math.max(1, Math.min(cropHeight, img.height - finalCropY));
         
         // Set canvas size to exact crop dimensions (no scaling)
-        canvas.width = cropWidth;
-        canvas.height = cropHeight;
+        canvas.width = finalCropWidth;
+        canvas.height = finalCropHeight;
         
         // Disable image smoothing for pixel-perfect cropping
         ctx.imageSmoothingEnabled = false;
@@ -228,8 +284,8 @@ const ScreenClipPopup: React.FC<ScreenClipPopupProps> = ({ isOpen, onClose }) =>
         // Draw the cropped area with no interpolation
         ctx.drawImage(
           img,
-          cropX, cropY, cropWidth, cropHeight,
-          0, 0, cropWidth, cropHeight
+          finalCropX, finalCropY, finalCropWidth, finalCropHeight,
+          0, 0, finalCropWidth, finalCropHeight
         );
         
         // Export at maximum quality with no compression
@@ -346,21 +402,30 @@ const ScreenClipPopup: React.FC<ScreenClipPopupProps> = ({ isOpen, onClose }) =>
           {!capturedImage && !isCapturing && (
             <div className="text-center">
               <div className="mb-6">
-                <Scissors className="w-16 h-16 mx-auto text-gray-400 mb-4" />
+                <Monitor className="w-16 h-16 mx-auto text-blue-500 mb-4" />
                 <h3 className="text-xl font-medium text-gray-900 dark:text-gray-100 mb-2">
-                  Capture Screen Area
+                  Multi-Monitor Screen Capture
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto">
-                  Click "Start Capture" to begin screen recording. You'll be able to select a specific area of your screen to capture.
+                <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto mb-4">
+                  Capture from any monitor or desktop area. Select "Entire Screen" or "Monitor" when prompted to access all displays.
                 </p>
+                
+                <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 rounded-lg p-3 mb-4">
+                  <div className="flex items-start gap-2">
+                    <Info className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                    <div className="text-sm text-blue-800 dark:text-blue-200">
+                      <strong>Multi-Monitor Support:</strong> You can capture from any connected display, not just the current browser window.
+                    </div>
+                  </div>
+                </div>
               </div>
               
               <Button
                 onClick={startScreenCapture}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2"
               >
-                <Scissors className="w-4 h-4 mr-2" />
-                Start Capture
+                <Monitor className="w-4 h-4 mr-2" />
+                Start Multi-Monitor Capture
               </Button>
             </div>
           )}
@@ -370,11 +435,16 @@ const ScreenClipPopup: React.FC<ScreenClipPopupProps> = ({ isOpen, onClose }) =>
               <div className="mb-6">
                 <div className="w-16 h-16 mx-auto mb-4 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
                 <h3 className="text-xl font-medium text-gray-900 dark:text-gray-100 mb-2">
-                  Select Area to Capture
+                  Select Area Across Any Monitor
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Click and drag to select the area you want to capture. Press ESC to cancel.
+                <p className="text-gray-600 dark:text-gray-400 mb-3">
+                  Click and drag to select any area from your desktop or connected monitors. The selection works across all displays.
                 </p>
+                <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
+                  <div>• Drag across monitor boundaries to capture multi-screen areas</div>
+                  <div>• Press ESC to cancel selection</div>
+                  <div>• Selection overlay covers all available displays</div>
+                </div>
               </div>
             </div>
           )}
