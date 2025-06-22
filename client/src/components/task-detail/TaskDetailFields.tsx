@@ -91,22 +91,22 @@ const TaskDetailFields: React.FC<TaskDetailFieldsProps> = ({
   };
 
   return (
-    <div className="grid grid-cols-5 gap-2 py-1">
-      <div>
-        <label className="text-xs text-muted-foreground">
+    <div className="grid grid-cols-5 gap-2" style={{ padding: '4px 0', marginTop: '-8px' }}>
+      <div style={{ lineHeight: '1.2' }}>
+        <label className="text-xs text-muted-foreground" style={{ display: 'block', marginBottom: '1px' }}>
           Created by
         </label>
         <div className="text-xs">{getCreatedByName(task.createdBy)}</div>
       </div>
-      <div>
-        <label className="text-xs text-muted-foreground">
+      <div style={{ lineHeight: '1.2' }}>
+        <label className="text-xs text-muted-foreground" style={{ display: 'block', marginBottom: '1px' }}>
           Date Created
         </label>
         <div className="text-xs">{formatCreatedDate(task.createdAt)}</div>
       </div>
       {/* ASSIGNED TO - uses TaskRowAssignees for perfect consistency with table */}
-      <div>
-        <label className="text-xs text-muted-foreground">
+      <div style={{ lineHeight: '1.2' }}>
+        <label className="text-xs text-muted-foreground" style={{ display: 'block', marginBottom: '1px' }}>
           Assigned to
         </label>
         <div className="text-xs">
@@ -119,8 +119,8 @@ const TaskDetailFields: React.FC<TaskDetailFieldsProps> = ({
           />
         </div>
       </div>
-      <div>
-        <label className="text-xs text-muted-foreground">
+      <div style={{ lineHeight: '1.2' }}>
+        <label className="text-xs text-muted-foreground" style={{ display: 'block', marginBottom: '1px' }}>
           Track Time
         </label>
         <InlineTimeField
@@ -129,7 +129,7 @@ const TaskDetailFields: React.FC<TaskDetailFieldsProps> = ({
           onTimeUpdated={handleTimeUpdated}
         />
       </div>
-      <div>
+      <div style={{ lineHeight: '1.2' }}>
         <label className="text-xs text-muted-foreground">
           Due Date
         </label>
