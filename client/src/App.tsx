@@ -23,6 +23,7 @@ import ClientWhiteboards from "./pages/ClientWhiteboards";
 import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 import TasksPage from "./pages/TasksPage";
+import SchedulesPage from "./pages/SchedulesPage";
 import ClientAccountPage from "./pages/ClientAccountPage";
 import ClientDashboard from "./pages/ClientDashboard";
 import AdminHelpPage from "./pages/AdminHelpPage";
@@ -80,6 +81,7 @@ const App = () => {
                               <Route path="/" element={<Index />} />
                               <Route path="/home2" element={<Home2 />} />
                               <Route path="/tasks" element={<TasksPage />} />
+                              <Route path="/schedules" element={<SchedulesPage />} />
                               <Route path="/dashboard" element={<Dashboard />} />
                               <Route path="/projects" element={<Projects />} />
                               <Route path="/project/:projectId" element={<ProjectPage />} />
