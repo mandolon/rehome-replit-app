@@ -141,10 +141,10 @@ const SchedulesContent = () => {
   }, {} as Record<string, ScheduleItem[]>);
 
   return (
-    <div className="flex-1 bg-background overflow-hidden">
+    <div className="flex-1 bg-background">
       <div className="h-full flex flex-col">
-        <div className="flex-1 px-4 sm:px-6 lg:px-8 py-4 lg:py-6 overflow-auto">
-          <div className="max-w-7xl mx-auto space-y-6">
+        <div className="flex-1 px-4 sm:px-6 lg:px-8 py-4 lg:py-6 overflow-y-auto">
+          <div className="max-w-7xl mx-auto space-y-6 pb-8">
             
             {/* Header Card */}
             <Card className="border-0 shadow-none bg-muted/30">
@@ -311,12 +311,13 @@ const SchedulesContent = () => {
 
             {/* Edit/Add Item Modal */}
             {editingItem && (
-              <Card className="border-0 shadow-lg bg-background fixed inset-0 z-50 m-4 overflow-auto">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-semibold">
-                    {isAddingNew ? 'Add New Item' : 'Edit Item'}
-                  </CardTitle>
-                </CardHeader>
+              <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+                <Card className="border-0 shadow-lg bg-background w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm font-semibold">
+                      {isAddingNew ? 'Add New Item' : 'Edit Item'}
+                    </CardTitle>
+                  </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -425,7 +426,8 @@ const SchedulesContent = () => {
                     </Button>
                   </div>
                 </CardContent>
-              </Card>
+                </Card>
+              </div>
             )}
           </div>
         </div>
