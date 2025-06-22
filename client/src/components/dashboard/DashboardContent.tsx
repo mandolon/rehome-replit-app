@@ -132,7 +132,7 @@ const DashboardContent = () => {
                   className="flex-[1.8] min-h-[200px] border-0 shadow-none bg-muted/30 transition-all duration-300"
                 >
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-lg group-hover:text-foreground/80 transition-colors">
+                    <CardTitle className="text-lg">
                       Welcome back to your project dashboard
                     </CardTitle>
                     <CardDescription className="text-xs leading-relaxed line-clamp-3">
@@ -202,13 +202,13 @@ const DashboardContent = () => {
                         <div className="flex items-center justify-between">
                           <span className="text-xs text-muted-foreground">With Due Dates</span>
                           <span className="text-xs font-medium text-orange-600 dark:text-orange-400">
-                            {activeTasks.filter(task => task.dueDate).length}
+                            {activeTasks.filter((task: any) => task.dueDate).length}
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-xs text-muted-foreground">Due This Week</span>
                           <span className="text-xs font-medium text-red-600 dark:text-red-400">
-                            {activeTasks.filter(task => {
+                            {activeTasks.filter((task: any) => {
                               if (!task.dueDate) return false;
                               const dueDate = new Date(task.dueDate);
                               const now = new Date();
@@ -217,7 +217,7 @@ const DashboardContent = () => {
                             }).length}
                           </span>
                         </div>
-                        {activeTasks.slice(0, 2).map((task, index) => (
+                        {activeTasks.slice(0, 2).map((task: any, index: number) => (
                           <div key={task.taskId} className="bg-muted/50 rounded-lg p-2 space-y-1">
                             <div className="flex items-start justify-between">
                               <span className="text-xs font-medium text-foreground line-clamp-1 flex-1 mr-2">
@@ -250,7 +250,7 @@ const DashboardContent = () => {
                 className="h-full border-0 shadow-none bg-muted/30 transition-all duration-300 flex flex-col"
               >
                 <CardHeader className="pb-2 space-y-2">
-                  <CardTitle className="text-base font-semibold group-hover:text-foreground/80 transition-colors">
+                  <CardTitle className="text-base font-semibold">
                     Analytics & Reports
                   </CardTitle>
                   <CardDescription className="text-xs text-muted-foreground">
