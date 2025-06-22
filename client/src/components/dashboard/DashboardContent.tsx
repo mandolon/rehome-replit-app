@@ -245,47 +245,70 @@ const DashboardContent = () => {
                 </Card>
               </div>
 
-              {/* Column 3: Analytics Overview */}
+              {/* Column 3: Recent Activity */}
               <Card 
                 className="h-full border-0 shadow-none bg-muted/30 transition-all duration-300 flex flex-col"
               >
                 <CardHeader className="pb-2 space-y-2">
                   <CardTitle className="text-base font-semibold">
-                    Analytics & Reports
+                    Recent Activity
                   </CardTitle>
                   <CardDescription className="text-xs text-muted-foreground">
-                    Performance Dashboard
+                    Collaborative Actions
                   </CardDescription>
                   <p className="text-muted-foreground text-xs leading-tight line-clamp-2">
-                    Comprehensive project analytics, team performance metrics, and detailed reports for all your projects.
+                    Latest team activities, updates, and collaborative actions across your projects.
                   </p>
                 </CardHeader>
                 <CardContent className="flex-1 space-y-2 pt-0">
-                  <div className="bg-muted/50 rounded-lg p-2">
-                    <div className="flex items-center justify-between mb-1">
-                      <div className="text-foreground font-semibold text-xs">Project Completion</div>
-                      <div className="text-foreground font-bold text-xs">78%</div>
-                    </div>
-                    <div className="text-muted-foreground text-xs">Average across all projects</div>
-                    <div className="mt-1 bg-muted rounded-full h-1">
-                      <div className="bg-foreground/60 h-1 rounded-full" style={{width: '78%'}}></div>
+                  <div className="bg-muted/50 rounded-lg p-2 space-y-1">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="text-foreground font-semibold text-xs">Sarah completed task</div>
+                        <div className="text-muted-foreground text-xs">"Update landing page design"</div>
+                      </div>
+                      <div className="text-muted-foreground text-xs whitespace-nowrap ml-2">2 min ago</div>
                     </div>
                   </div>
                   
-                  <div className="bg-muted/50 rounded-lg p-2">
-                    <div className="flex items-center justify-between mb-1">
-                      <div className="text-foreground font-semibold text-xs">Team Efficiency</div>
-                      <div className="text-foreground font-bold text-xs">+15%</div>
+                  <div className="bg-muted/50 rounded-lg p-2 space-y-1">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="text-foreground font-semibold text-xs">Mike added comment</div>
+                        <div className="text-muted-foreground text-xs">Peterson project review</div>
+                      </div>
+                      <div className="text-muted-foreground text-xs whitespace-nowrap ml-2">15 min ago</div>
                     </div>
-                    <div className="text-muted-foreground text-xs">Improvement this quarter</div>
                   </div>
                   
-                  <div className="bg-muted/50 rounded-lg p-2">
-                    <div className="flex items-center justify-between mb-1">
-                      <div className="text-foreground font-semibold text-xs">Revenue Growth</div>
-                      <div className="text-foreground font-bold text-xs">$24.5k</div>
+                  <div className="bg-muted/50 rounded-lg p-2 space-y-1">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="text-foreground font-semibold text-xs">New project created</div>
+                        <div className="text-muted-foreground text-xs">"Mobile App Redesign"</div>
+                      </div>
+                      <div className="text-muted-foreground text-xs whitespace-nowrap ml-2">1 hr ago</div>
                     </div>
-                    <div className="text-muted-foreground text-xs">Generated this month</div>
+                  </div>
+                  
+                  <div className="bg-muted/50 rounded-lg p-2 space-y-1">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="text-foreground font-semibold text-xs">Alex uploaded files</div>
+                        <div className="text-muted-foreground text-xs">Design assets for review</div>
+                      </div>
+                      <div className="text-muted-foreground text-xs whitespace-nowrap ml-2">2 hr ago</div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-muted/50 rounded-lg p-2 space-y-1">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="text-foreground font-semibold text-xs">Team meeting scheduled</div>
+                        <div className="text-muted-foreground text-xs">Weekly project sync</div>
+                      </div>
+                      <div className="text-muted-foreground text-xs whitespace-nowrap ml-2">3 hr ago</div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>

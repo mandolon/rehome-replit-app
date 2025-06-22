@@ -148,9 +148,15 @@ const OriginalDashboardContent = () => {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="pt-0">
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span>Project Dashboard</span>
-                      <span className="group-hover:text-foreground/70 transition-colors">→</span>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="bg-muted/50 backdrop-blur-sm rounded-lg p-2">
+                        <div className="text-lg font-bold mb-0.5">24</div>
+                        <div className="text-xs text-muted-foreground font-medium">Active Projects</div>
+                      </div>
+                      <div className="bg-muted/50 backdrop-blur-sm rounded-lg p-2">
+                        <div className="text-lg font-bold mb-0.5">156</div>
+                        <div className="text-xs text-muted-foreground font-medium">Open Tasks</div>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
