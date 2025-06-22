@@ -198,11 +198,18 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
             data-column={column.key}
             onKeyDown={(e) => handleKeyDown(e, row.id, rowIndex, column.key)}
           >
-            <SelectValue placeholder={column.placeholder} />
+            <SelectValue placeholder={column.placeholder}>
+              {row[column.key] && column.key === 'type' 
+                ? row[column.key].charAt(0).toUpperCase() + row[column.key].slice(1)
+                : row[column.key]
+              }
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {options.map((option) => (
-              <SelectItem key={option} value={option}>{option}</SelectItem>
+              <SelectItem key={option} value={option}>
+                {column.key === 'type' ? option.charAt(0).toUpperCase() + option.slice(1) : option}
+              </SelectItem>
             ))}
             {column.allowCustomInput && (
               <SelectItem value="Other">Other</SelectItem>
@@ -249,9 +256,7 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
                 )}
               </div>
             ))}
-            <div className="flex-1 min-w-0 px-2">
-              {columns[columns.length - 1]?.title}
-            </div>
+
             <div className="w-8 flex-shrink-0 pr-3"></div>
           </div>
 
@@ -269,11 +274,11 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
                 {index + 1}
               </div>
               {columns.slice(0, -1).map((column) => (
-                <div key={column.key} className="flex-shrink-0 px-2" style={{ width: `${column.width}px` }}>
+                <div key={column.key} className="flex-shrink-0 px-2 hover:bg-muted/20 transition-colors" style={{ width: `${column.width}px` }}>
                   {renderCell(row, column, index)}
                 </div>
               ))}
-              <div className="flex-1 min-w-0 px-2">
+              <div className="flex-1 min-w-0 px-2 hover:bg-muted/20 transition-colors">
                 {renderCell(row, columns[columns.length - 1], index)}
               </div>
               <div className="w-8 flex-shrink-0 pr-3 flex justify-center">
