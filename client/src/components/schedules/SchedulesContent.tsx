@@ -219,7 +219,7 @@ const SchedulesContent = () => {
   };
 
   // Handle keyboard navigation
-  const handleKeyDown = (e: React.KeyboardEvent, itemId: string, currentIndex: number, filteredItems: ScheduleItem[]) => {
+  const handleKeyDown = (e: React.KeyboardEvent, itemId: string, currentIndex: number, filteredItems: ScheduleItem[], column?: string) => {
     if (e.key === 'ArrowUp') {
       e.preventDefault();
       const newIndex = Math.max(0, currentIndex - 1);
@@ -230,7 +230,31 @@ const SchedulesContent = () => {
       setFocusedRowIndex(newIndex);
     } else if (e.key === 'Enter') {
       e.preventDefault();
-      addNewItem();
+      if (column === 'comments') {
+        // Only add new row when Enter is pressed in the comments column
+        addNewItem();
+      } else {
+        // Move to next input field in the same row
+        moveToNextField(currentIndex, column);
+      }
+    }
+  };
+
+  // Move focus to the next field in the current row
+  const moveToNextField = (rowIndex: number, currentColumn?: string) => {
+    const columnOrder = ['type', 'item', 'manufacturer', 'model', 'finish', 'comments'];
+    const currentColumnIndex = currentColumn ? columnOrder.indexOf(currentColumn) : -1;
+    const nextColumnIndex = currentColumnIndex + 1;
+    
+    if (nextColumnIndex < columnOrder.length) {
+      const nextColumn = columnOrder[nextColumnIndex];
+      // Focus the next input field
+      setTimeout(() => {
+        const nextInput = document.querySelector(`[data-row="${rowIndex}"][data-column="${nextColumn}"]`) as HTMLElement;
+        if (nextInput) {
+          nextInput.focus();
+        }
+      }, 10);
     }
   };
 
@@ -421,7 +445,13 @@ const SchedulesContent = () => {
                                 updateItem(item.id, 'type', value)
                               }
                             >
-                              <SelectTrigger className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full" style={{ fontSize: '0.75rem' }}>
+                              <SelectTrigger 
+                                className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full" 
+                                style={{ fontSize: '0.75rem' }}
+                                data-row={index}
+                                data-column="type"
+                                onKeyDown={(e) => handleKeyDown(e, item.id, index, filteredItems, 'type')}
+                              >
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
@@ -439,6 +469,9 @@ const SchedulesContent = () => {
                                 className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
                                 style={{ fontSize: '0.75rem' }}
                                 placeholder="Enter custom item name..."
+                                data-row={index}
+                                data-column="item"
+                                onKeyDown={(e) => handleKeyDown(e, item.id, index, filteredItems, 'item')}
                                 autoFocus
                               />
                             ) : (
@@ -446,7 +479,13 @@ const SchedulesContent = () => {
                                 value={item.item} 
                                 onValueChange={(value) => handleItemSelection(item.id, value)}
                               >
-                                <SelectTrigger className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full" style={{ fontSize: '0.75rem' }}>
+                                <SelectTrigger 
+                                  className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full" 
+                                  style={{ fontSize: '0.75rem' }}
+                                  data-row={index}
+                                  data-column="item"
+                                  onKeyDown={(e) => handleKeyDown(e, item.id, index, filteredItems, 'item')}
+                                >
                                   <SelectValue placeholder="Select item..." />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -464,7 +503,9 @@ const SchedulesContent = () => {
                               className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
                               style={{ fontSize: '0.75rem' }}
                               placeholder="Manufacturer"
-                              onKeyDown={(e) => handleKeyDown(e, item.id, index, filteredItems)}
+                              data-row={index}
+                              data-column="manufacturer"
+                              onKeyDown={(e) => handleKeyDown(e, item.id, index, filteredItems, 'manufacturer')}
                             />
                           </div>
                           <div className="flex-1 min-w-0 px-2">
@@ -474,7 +515,9 @@ const SchedulesContent = () => {
                               className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
                               style={{ fontSize: '0.75rem' }}
                               placeholder="Model"
-                              onKeyDown={(e) => handleKeyDown(e, item.id, index, filteredItems)}
+                              data-row={index}
+                              data-column="model"
+                              onKeyDown={(e) => handleKeyDown(e, item.id, index, filteredItems, 'model')}
                             />
                           </div>
                           <div className="flex-1 min-w-0 px-2">
@@ -484,7 +527,9 @@ const SchedulesContent = () => {
                               className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
                               style={{ fontSize: '0.75rem' }}
                               placeholder="Finish"
-                              onKeyDown={(e) => handleKeyDown(e, item.id, index, filteredItems)}
+                              data-row={index}
+                              data-column="finish"
+                              onKeyDown={(e) => handleKeyDown(e, item.id, index, filteredItems, 'finish')}
                             />
                           </div>
                           <div className="flex-1 min-w-0 px-2">
@@ -494,7 +539,9 @@ const SchedulesContent = () => {
                               className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
                               style={{ fontSize: '0.75rem' }}
                               placeholder="Comments"
-                              onKeyDown={(e) => handleKeyDown(e, item.id, index, filteredItems)}
+                              data-row={index}
+                              data-column="comments"
+                              onKeyDown={(e) => handleKeyDown(e, item.id, index, filteredItems, 'comments')}
                             />
                           </div>
                           <div className="w-8 flex-shrink-0 pr-3 flex justify-center">
