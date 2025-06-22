@@ -38,23 +38,15 @@ const ScreenClipPopup: React.FC<ScreenClipPopupProps> = ({ isOpen, onClose }) =>
     try {
       setIsCapturing(true);
       
-      // Request screen capture permission with cursor and high quality settings
+      // Request screen capture with optimal browser compatibility
       const stream = await navigator.mediaDevices.getDisplayMedia({
         video: {
-          displaySurface: 'monitor', // Prefer entire monitor over browser tab
-          width: { ideal: 7680, max: 7680 }, // Support up to 8K for multi-monitor setups
-          height: { ideal: 4320, max: 4320 },
-          frameRate: { ideal: 60, max: 60 },
-          cursor: 'always', // Always include cursor in capture
-          logicalSurface: true // Capture logical surface including all windows
+          width: { ideal: 1920, max: 3840 },
+          height: { ideal: 1080, max: 2160 },
+          frameRate: { ideal: 30, max: 60 }
         },
-        audio: false,
-        systemAudio: 'exclude',
-        surfaceSwitching: 'include', // Allow switching between different surfaces
-        selfBrowserSurface: 'exclude', // Exclude the current browser tab to avoid recursion
-        preferCurrentTab: false, // Prefer screen/monitor over current tab
-        monitorTypeSurfaces: 'include' // Include all monitor surfaces
-      } as any); // TypeScript may not have latest displayMedia types
+        audio: false
+      });
 
       // Create video element to capture the stream with cursor
       const video = document.createElement('video');
@@ -325,51 +317,22 @@ const ScreenClipPopup: React.FC<ScreenClipPopupProps> = ({ isOpen, onClose }) =>
       });
       
       if (ctx) {
-        // Enhanced coordinate mapping for cursor-aware multi-monitor capture
-        const pixelRatio = window.devicePixelRatio;
+        // Simple coordinate mapping for browser-based screen capture
+        const pixelRatio = window.devicePixelRatio || 1;
         
-        // Calculate true screen dimensions including all monitors
-        const totalScreenWidth = screen.width;
-        const totalScreenHeight = screen.height;
+        // Calculate scale factors based on captured image dimensions
+        const scaleX = img.width / window.innerWidth;
+        const scaleY = img.height / window.innerHeight;
         
-        // Determine scale factors based on captured image vs actual screen dimensions
-        let scaleX = img.width / (totalScreenWidth * pixelRatio);
-        let scaleY = img.height / (totalScreenHeight * pixelRatio);
+        // Apply pixel ratio adjustment
+        const adjustedScaleX = scaleX * pixelRatio;
+        const adjustedScaleY = scaleY * pixelRatio;
         
-        // Detect if we captured a specific monitor vs entire desktop
-        const capturedFullDesktop = img.width >= (totalScreenWidth * pixelRatio * 0.8);
-        
-        if (!capturedFullDesktop) {
-          // Single monitor capture - use viewport dimensions
-          scaleX = img.width / (window.innerWidth * pixelRatio);
-          scaleY = img.height / (window.innerHeight * pixelRatio);
-        }
-        
-        // Calculate crop coordinates with cursor preservation
-        let cropX, cropY, cropWidth, cropHeight;
-        
-        if (capturedFullDesktop) {
-          // Full desktop capture: map browser coordinates to desktop coordinates
-          const browserOffsetX = window.screenX;
-          const browserOffsetY = window.screenY;
-          
-          // Convert selection coordinates from browser viewport to desktop space
-          const desktopStartX = area.startX + browserOffsetX;
-          const desktopStartY = area.startY + browserOffsetY;
-          const desktopEndX = area.endX + browserOffsetX;
-          const desktopEndY = area.endY + browserOffsetY;
-          
-          cropX = Math.round(desktopStartX * scaleX);
-          cropY = Math.round(desktopStartY * scaleY);
-          cropWidth = Math.round((desktopEndX - desktopStartX) * scaleX);
-          cropHeight = Math.round((desktopEndY - desktopStartY) * scaleY);
-        } else {
-          // Single monitor capture: direct coordinate mapping
-          cropX = Math.round(area.startX * scaleX);
-          cropY = Math.round(area.startY * scaleY);
-          cropWidth = Math.round((area.endX - area.startX) * scaleX);
-          cropHeight = Math.round((area.endY - area.startY) * scaleY);
-        }
+        // Calculate crop coordinates
+        const cropX = Math.round(area.startX * adjustedScaleX);
+        const cropY = Math.round(area.startY * adjustedScaleY);
+        const cropWidth = Math.round((area.endX - area.startX) * adjustedScaleX);
+        const cropHeight = Math.round((area.endY - area.startY) * adjustedScaleY);
         
         // Ensure crop dimensions are within image bounds
         const finalCropX = Math.max(0, Math.min(cropX, img.width));
@@ -399,8 +362,8 @@ const ScreenClipPopup: React.FC<ScreenClipPopupProps> = ({ isOpen, onClose }) =>
         setIsCapturing(false);
         
         toast({
-          title: "Screen Captured with Cursor",
-          description: `Successfully captured ${finalCropWidth}x${finalCropHeight}px area including cursor and all desktop content.`
+          title: "Screen Area Captured",
+          description: `Successfully captured ${finalCropWidth}x${finalCropHeight}px area from shared content.`
         });
       }
     };
@@ -514,20 +477,30 @@ const ScreenClipPopup: React.FC<ScreenClipPopupProps> = ({ isOpen, onClose }) =>
               <div className="mb-6">
                 <Monitor className="w-16 h-16 mx-auto text-blue-500 mb-4" />
                 <h3 className="text-xl font-medium text-gray-900 dark:text-gray-100 mb-2">
-                  Desktop Capture with Cursor
+                  Screen Capture Tool
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto mb-4">
-                  Capture any area across all monitors with cursor included. Works with multi-screen setups and all desktop content.
+                  Capture screens, windows, or browser tabs using your browser's built-in screen sharing API.
                 </p>
                 
-                <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700 rounded-lg p-3 mb-4">
+                <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 rounded-lg p-3 mb-4">
                   <div className="flex items-start gap-2">
-                    <Info className="w-4 h-4 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                    <div className="text-sm text-green-800 dark:text-green-200 space-y-1">
-                      <div><strong>Enhanced Features:</strong></div>
-                      <div>• Cursor automatically included in captures</div>
-                      <div>• Cross-monitor selection support</div>
-                      <div>• All desktop windows and content captured</div>
+                    <Info className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                    <div className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+                      <div><strong>Capture Options:</strong></div>
+                      <div>• Choose "Entire Screen" for full screen capture</div>
+                      <div>• Choose "Window" to capture specific applications</div>
+                      <div>• Choose "Browser Tab" to capture web content</div>
+                      <div>• Cursor visibility depends on your browser and selection</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-lg p-3 mb-4">
+                  <div className="flex items-start gap-2">
+                    <Info className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
+                    <div className="text-xs text-amber-800 dark:text-amber-200">
+                      <strong>Browser Limitations:</strong> Web browsers can only capture content you explicitly share. For unrestricted desktop capture, consider using this app as an Electron desktop application.
                     </div>
                   </div>
                 </div>
@@ -538,7 +511,7 @@ const ScreenClipPopup: React.FC<ScreenClipPopupProps> = ({ isOpen, onClose }) =>
                 className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2"
               >
                 <Monitor className="w-4 h-4 mr-2" />
-                Start Desktop Capture
+                Start Screen Capture
               </Button>
             </div>
           )}
@@ -548,15 +521,15 @@ const ScreenClipPopup: React.FC<ScreenClipPopupProps> = ({ isOpen, onClose }) =>
               <div className="mb-6">
                 <div className="w-16 h-16 mx-auto mb-4 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
                 <h3 className="text-xl font-medium text-gray-900 dark:text-gray-100 mb-2">
-                  Select Area Across Any Monitor
+                  Select Area to Capture
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400 mb-3">
-                  Click and drag to select any area from your desktop or connected monitors. The selection works across all displays.
+                  Click and drag to select the area you want to capture from the shared screen/window.
                 </p>
                 <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
-                  <div>• Drag across monitor boundaries to capture multi-screen areas</div>
+                  <div>• Drag to create selection rectangle</div>
                   <div>• Press ESC to cancel selection</div>
-                  <div>• Selection overlay covers all available displays</div>
+                  <div>• Area depends on what you chose to share</div>
                 </div>
               </div>
             </div>
