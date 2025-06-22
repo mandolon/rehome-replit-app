@@ -3,8 +3,6 @@ import { LayoutGrid, Users, ClipboardList, FileText, Settings, BarChart3, Trendi
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useActiveTasks } from '@/hooks/useActiveTasks';
-import { format } from 'date-fns';
-import type { Task } from '@shared/schema';
 
 const DashboardContent = () => {
   // Get active tasks data
@@ -211,13 +209,13 @@ const DashboardContent = () => {
                         <div className="flex items-center justify-between">
                           <span className="text-xs text-muted-foreground">With Due Dates</span>
                           <span className="text-xs font-medium text-orange-600 dark:text-orange-400">
-                            {activeTasks.filter((task: any) => task.dueDate).length}
+                            {activeTasks.filter(task => task.dueDate).length}
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-xs text-muted-foreground">Due This Week</span>
                           <span className="text-xs font-medium text-red-600 dark:text-red-400">
-                            {activeTasks.filter((task: any) => {
+                            {activeTasks.filter(task => {
                               if (!task.dueDate) return false;
                               const dueDate = new Date(task.dueDate);
                               const now = new Date();
@@ -226,7 +224,7 @@ const DashboardContent = () => {
                             }).length}
                           </span>
                         </div>
-                        {activeTasks.slice(0, 2).map((task: any, index: number) => (
+                        {activeTasks.slice(0, 2).map((task, index) => (
                           <div key={task.taskId} className="bg-muted/50 rounded-lg p-2 space-y-1">
                             <div className="flex items-start justify-between">
                               <span className="text-xs font-medium text-foreground line-clamp-1 flex-1 mr-2">
@@ -238,7 +236,7 @@ const DashboardContent = () => {
                             </div>
                             {task.dueDate && (
                               <div className="text-xs text-muted-foreground">
-                                Due: {format(new Date(task.dueDate), 'MMM d')}
+                                Due: {new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                               </div>
                             )}
                           </div>
