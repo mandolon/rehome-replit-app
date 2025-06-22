@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Filter, Search, Plus, Calendar, ChevronDown, CheckCircle } from 'lucide-react';
+import { Filter, Search, Plus, Calendar, ChevronDown, CheckCircle, Scissors } from 'lucide-react';
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Calendar as ShadcnCalendar } from "@/components/ui/calendar";
@@ -8,6 +8,7 @@ import AssigneeFilterPopover from './AssigneeFilterPopover';
 import CreatedByFilterPopover from './CreatedByFilterPopover';
 import NotePopup from './NotePopup';
 import TodoPopup from './TodoPopup';
+import ScreenClipPopup from './ScreenClipPopup';
 
 interface TaskBoardFiltersProps {
   onAddTask: () => void;
@@ -33,6 +34,7 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed, onFiltersChan
   const [selectedProject, setSelectedProject] = useState<string>('');
   const [notePopupOpen, setNotePopupOpen] = useState(false);
   const [todoPopupOpen, setTodoPopupOpen] = useState(false);
+  const [screenClipPopupOpen, setScreenClipPopupOpen] = useState(false);
 
   // Notify parent component when filters change
   useEffect(() => {
@@ -201,6 +203,15 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed, onFiltersChan
             Add Note
           </button>
 
+          {/* Screen Clip button */}
+          <button 
+            onClick={() => setScreenClipPopupOpen(true)}
+            className="flex items-center gap-1 px-2 py-1 text-xs rounded border text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 border-transparent hover:border-gray-200 dark:hover:border-gray-700"
+          >
+            <Scissors className="w-3 h-3" />
+            Screen Clip
+          </button>
+
           {/* Add ToDo button */}
           <button 
             onClick={() => setTodoPopupOpen(true)}
@@ -247,6 +258,12 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed, onFiltersChan
       <TodoPopup 
         isOpen={todoPopupOpen} 
         onClose={() => setTodoPopupOpen(false)} 
+      />
+
+      {/* Screen Clip Popup */}
+      <ScreenClipPopup 
+        isOpen={screenClipPopupOpen} 
+        onClose={() => setScreenClipPopupOpen(false)} 
       />
     </div>
   );
