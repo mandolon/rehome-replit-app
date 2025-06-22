@@ -3,12 +3,12 @@
 
 import React from 'react';
 import AppLayout from '@/components/layout/AppLayout';
-import DashboardContent from '@/components/dashboard/DashboardContent';
+import OriginalDashboardContent from '@/components/dashboard/OriginalDashboardContent';
 
 const Index = () => {
   return (
     <AppLayout>
-      <DashboardContent />
+      <OriginalDashboardContent />
     </AppLayout>
   );
 };
