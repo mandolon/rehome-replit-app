@@ -316,15 +316,14 @@ const SchedulesContent = () => {
                 {roomItems.length > 0 && (
                   <>
                     {/* Table Header */}
-                    <div className="flex py-3 px-3 text-xs font-medium text-muted-foreground sticky top-0 z-10 bg-background" style={{ borderBottom: '1px solid #bbbbbb' }}>
-                      <div className="w-12 flex-shrink-0 border-r border-gray-300 pr-2">#</div>
-                      <div className="flex-1 min-w-0 border-r border-gray-300 px-2">Type</div>
-                      <div className="flex-1 min-w-0 border-r border-gray-300 px-2">Item</div>
-                      <div className="flex-1 min-w-0 border-r border-gray-300 px-2">Manufacturer</div>
-                      <div className="flex-1 min-w-0 border-r border-gray-300 px-2">Model</div>
-                      <div className="flex-1 min-w-0 border-r border-gray-300 px-2">Finish</div>
-                      <div className="flex-1 min-w-0 border-r border-gray-300 px-2">Comments</div>
-                      <div className="w-8 flex-shrink-0 pl-2"></div>
+                    <div className="flex py-2 px-0 text-xs font-medium text-muted-foreground sticky top-0 z-10 bg-background" style={{ borderBottom: '1px solid #bbbbbb' }}>
+                      <div className="w-12 flex-shrink-0 pl-3 pr-2">#</div>
+                      <div className="flex-1 min-w-0 px-2">Item</div>
+                      <div className="flex-1 min-w-0 px-2">Manufacturer</div>
+                      <div className="flex-1 min-w-0 px-2">Model</div>
+                      <div className="flex-1 min-w-0 px-2">Finish</div>
+                      <div className="flex-1 min-w-0 px-2">Comments</div>
+                      <div className="w-8 flex-shrink-0 pr-3"></div>
                     </div>
 
                     {/* Category Sections */}
@@ -335,36 +334,19 @@ const SchedulesContent = () => {
                       return (
                         <div key={category}>
                           {/* Category Label */}
-                          <div className="flex py-1.5 px-3" style={{ borderBottom: '1px solid #bbbbbb' }}>
-                            <div className="text-xs font-medium text-foreground">
+                          <div className="flex py-1.5 px-0" style={{ borderBottom: '1px solid #bbbbbb' }}>
+                            <div className="pl-3 text-xs font-medium text-foreground">
                               {categoryLabels[category]}
                             </div>
                           </div>
 
                           {/* Category Items */}
                           {categoryItems.map((item, itemIndex) => (
-                            <div key={item.id} className="flex py-1 px-3 hover:bg-muted/30 transition-colors group" style={{ borderBottom: '1px solid #bbbbbb' }}>
-                              <div className="w-12 flex-shrink-0 border-r border-gray-300 pr-2 text-xs text-muted-foreground flex items-center">
+                            <div key={item.id} className="flex py-1 px-0 hover:bg-muted/30 transition-colors group" style={{ borderBottom: '1px solid #bbbbbb' }}>
+                              <div className="w-12 flex-shrink-0 pl-3 pr-2 text-xs text-muted-foreground flex items-center">
                                 {itemIndex + 1}
                               </div>
-                              <div className="flex-1 min-w-0 border-r border-gray-300 px-2">
-                                <Select 
-                                  value={item.type} 
-                                  onValueChange={(value: 'fixture' | 'appliance' | 'lighting') => 
-                                    updateItem(item.id, 'type', value)
-                                  }
-                                >
-                                  <SelectTrigger className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full" style={{ fontSize: '0.75rem' }}>
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="fixture">Fixture</SelectItem>
-                                    <SelectItem value="appliance">Appliance</SelectItem>
-                                    <SelectItem value="lighting">Lighting</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                              <div className="flex-1 min-w-0 border-r border-gray-300 px-2">
+                              <div className="flex-1 min-w-0 px-2">
                                 <Input 
                                   value={item.item} 
                                   onChange={(e) => updateItem(item.id, 'item', e.target.value)}
@@ -373,7 +355,7 @@ const SchedulesContent = () => {
                                   placeholder="Item name"
                                 />
                               </div>
-                              <div className="flex-1 min-w-0 border-r border-gray-300 px-2">
+                              <div className="flex-1 min-w-0 px-2">
                                 <Input 
                                   value={item.manufacturer} 
                                   onChange={(e) => updateItem(item.id, 'manufacturer', e.target.value)}
@@ -382,7 +364,7 @@ const SchedulesContent = () => {
                                   placeholder="Manufacturer"
                                 />
                               </div>
-                              <div className="flex-1 min-w-0 border-r border-gray-300 px-2">
+                              <div className="flex-1 min-w-0 px-2">
                                 <Input 
                                   value={item.model} 
                                   onChange={(e) => updateItem(item.id, 'model', e.target.value)}
@@ -391,7 +373,7 @@ const SchedulesContent = () => {
                                   placeholder="Model"
                                 />
                               </div>
-                              <div className="flex-1 min-w-0 border-r border-gray-300 px-2">
+                              <div className="flex-1 min-w-0 px-2">
                                 <Input 
                                   value={item.finish} 
                                   onChange={(e) => updateItem(item.id, 'finish', e.target.value)}
@@ -400,7 +382,7 @@ const SchedulesContent = () => {
                                   placeholder="Finish"
                                 />
                               </div>
-                              <div className="flex-1 min-w-0 border-r border-gray-300 px-2">
+                              <div className="flex-1 min-w-0 px-2">
                                 <Input 
                                   value={item.comments} 
                                   onChange={(e) => updateItem(item.id, 'comments', e.target.value)}
@@ -409,7 +391,7 @@ const SchedulesContent = () => {
                                   placeholder="Comments"
                                 />
                               </div>
-                              <div className="w-8 flex-shrink-0 pl-2 flex justify-center">
+                              <div className="w-8 flex-shrink-0 pr-3 flex justify-center">
                                 <Button
                                   variant="ghost"
                                   size="sm"
@@ -423,9 +405,9 @@ const SchedulesContent = () => {
                           ))}
 
                           {/* Add Button Below Category */}
-                          <div className="flex py-1 px-3">
-                            <div className="w-12 flex-shrink-0"></div>
-                            <div className="flex-1">
+                          <div className="flex py-1 px-0">
+                            <div className="w-12 flex-shrink-0 pl-3"></div>
+                            <div className="flex-1 px-2">
                               <Button
                                 variant="ghost"
                                 size="sm"
