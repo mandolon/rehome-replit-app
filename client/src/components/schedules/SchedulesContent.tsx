@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Plus, Download, Upload, X, Camera, Home, ArrowLeft, Grid } from 'lucide-react';
+import { Plus, Download, Upload, X, Camera, Home, ArrowLeft, Grid, ChefHat, ShowerHead, Bed } from 'lucide-react';
 
 interface ScheduleItem {
   id: string;
@@ -25,11 +25,24 @@ interface RoomCardProps {
   onClick: () => void;
 }
 
+const getRoomIcon = (room: string) => {
+  switch (room.toLowerCase()) {
+    case 'kitchen':
+      return <ChefHat className="w-12 h-12 text-muted-foreground mb-2" />;
+    case 'bathroom':
+      return <ShowerHead className="w-12 h-12 text-muted-foreground mb-2" />;
+    case 'bedroom 1':
+      return <Bed className="w-12 h-12 text-muted-foreground mb-2" />;
+    default:
+      return <Home className="w-12 h-12 text-muted-foreground mb-2" />;
+  }
+};
+
 const RoomCard = ({ room, itemCount, onClick }: RoomCardProps) => {
   return (
     <div className="group cursor-pointer" onClick={onClick}>
       <div className="relative aspect-square bg-muted rounded-lg mb-2 flex flex-col items-center justify-center group-hover:bg-muted/80 transition-colors">
-        <Home className="w-12 h-12 text-muted-foreground mb-2" />
+        {getRoomIcon(room)}
         <div className="text-xs text-muted-foreground">
           {itemCount} {itemCount === 1 ? 'item' : 'items'}
         </div>
@@ -68,7 +81,7 @@ const SchedulesContent = () => {
     },
     {
       id: '3',
-      room: 'Master Bathroom',
+      room: 'Bathroom',
       type: 'fixture',
       item: 'Vanity Faucet',
       manufacturer: 'Delta',
@@ -78,7 +91,7 @@ const SchedulesContent = () => {
     },
     {
       id: '4',
-      room: 'Master Bathroom',
+      room: 'Bathroom',
       type: 'fixture',
       item: 'Shower Head',
       manufacturer: 'Grohe',
@@ -88,23 +101,13 @@ const SchedulesContent = () => {
     },
     {
       id: '5',
-      room: 'Living Room',
+      room: 'Bedroom 1',
       type: 'fixture',
       item: 'Ceiling Fan',
       manufacturer: 'Hunter',
       model: 'Builder Plus 52"',
       finish: 'Brushed Nickel',
       comments: 'Remote control included'
-    },
-    {
-      id: '6',
-      room: 'Guest Bathroom',
-      type: 'fixture',
-      item: 'Toilet',
-      manufacturer: 'American Standard',
-      model: 'Champion 4',
-      finish: 'White',
-      comments: 'Water efficient model'
     }
   ]);
   
@@ -120,7 +123,8 @@ const SchedulesContent = () => {
     comments: ''
   });
 
-  // Get unique rooms and their item counts
+  // Define default rooms and get item counts
+  const defaultRooms = ['Kitchen', 'Bathroom', 'Bedroom 1'];
   const roomData = scheduleItems.reduce((acc, item) => {
     if (!acc[item.room]) {
       acc[item.room] = 0;
@@ -129,18 +133,24 @@ const SchedulesContent = () => {
     return acc;
   }, {} as Record<string, number>);
 
+  // Ensure all default rooms are included even if they have no items
+  defaultRooms.forEach(room => {
+    if (!roomData[room]) {
+      roomData[room] = 0;
+    }
+  });
+
   const rooms = Object.keys(roomData);
 
-  const saveItem = (item: ScheduleItem) => {
-    if (editingItem) {
-      setScheduleItems(scheduleItems.map(i => i.id === item.id ? item : i));
-    } else {
-      const newItem = { ...item, id: Date.now().toString() };
-      setScheduleItems([...scheduleItems, newItem]);
-    }
-    setEditingItem(null);
-    setIsAddingNew(false);
-    setNewItemData({
+  const updateItem = (id: string, field: keyof ScheduleItem, value: string) => {
+    setScheduleItems(scheduleItems.map(item => 
+      item.id === id ? { ...item, [field]: value } : item
+    ));
+  };
+
+  const addNewItem = () => {
+    const newItem: ScheduleItem = {
+      id: Date.now().toString(),
       room: selectedRoom || '',
       type: 'fixture',
       item: '',
@@ -148,7 +158,8 @@ const SchedulesContent = () => {
       model: '',
       finish: '',
       comments: ''
-    });
+    };
+    setScheduleItems([...scheduleItems, newItem]);
   };
 
   const deleteItem = (id: string) => {
@@ -197,7 +208,7 @@ const SchedulesContent = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <Button 
-                    onClick={() => setIsAddingNew(true)}
+                    onClick={addNewItem}
                     size="sm"
                     className="flex items-center gap-2"
                   >
@@ -219,154 +230,99 @@ const SchedulesContent = () => {
           </div>
 
           <ScrollArea className="flex-1 min-h-0">
-            <div className="px-6 py-4 space-y-4">
-              {/* Add New Item Form */}
-              {isAddingNew && (
-                <Card className="border-2 border-dashed border-primary/20 bg-primary/5">
-                  <CardHeader>
-                    <CardTitle className="text-base">Add New Item</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">Type</label>
-                        <Select 
-                          value={newItemData.type} 
-                          onValueChange={(value: 'fixture' | 'appliance' | 'material') => 
-                            setNewItemData({...newItemData, type: value})
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="fixture">Fixture</SelectItem>
-                            <SelectItem value="appliance">Appliance</SelectItem>
-                            <SelectItem value="material">Material</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">Item</label>
-                        <Input 
-                          value={newItemData.item || ''} 
-                          onChange={(e) => setNewItemData({...newItemData, item: e.target.value})}
-                          placeholder="e.g., Kitchen Sink"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">Manufacturer</label>
-                        <Input 
-                          value={newItemData.manufacturer || ''} 
-                          onChange={(e) => setNewItemData({...newItemData, manufacturer: e.target.value})}
-                          placeholder="e.g., Kohler"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">Model</label>
-                        <Input 
-                          value={newItemData.model || ''} 
-                          onChange={(e) => setNewItemData({...newItemData, model: e.target.value})}
-                          placeholder="e.g., K-6489"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">Finish</label>
-                        <Input 
-                          value={newItemData.finish || ''} 
-                          onChange={(e) => setNewItemData({...newItemData, finish: e.target.value})}
-                          placeholder="e.g., Stainless Steel"
-                        />
-                      </div>
+            <div className="px-6 py-2">
+              {/* Compact Inline Editing Table */}
+              <div className="space-y-1">
+                {/* Table Header */}
+                <div className="grid grid-cols-7 gap-2 py-2 px-3 bg-muted/50 rounded-md text-xs font-medium text-muted-foreground">
+                  <div>Type</div>
+                  <div>Item</div>
+                  <div>Manufacturer</div>
+                  <div>Model</div>
+                  <div>Finish</div>
+                  <div>Comments</div>
+                  <div className="w-8"></div>
+                </div>
+
+                {/* Table Rows */}
+                {roomItems.map((item) => (
+                  <div key={item.id} className="grid grid-cols-7 gap-2 py-2 px-3 bg-background border rounded-md hover:bg-muted/30 transition-colors">
+                    <div>
+                      <Select 
+                        value={item.type} 
+                        onValueChange={(value: 'fixture' | 'appliance' | 'material') => 
+                          updateItem(item.id, 'type', value)
+                        }
+                      >
+                        <SelectTrigger className="h-7 text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="fixture">Fixture</SelectItem>
+                          <SelectItem value="appliance">Appliance</SelectItem>
+                          <SelectItem value="material">Material</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div>
-                      <label className="text-sm font-medium mb-2 block">Comments</label>
-                      <Textarea 
-                        value={newItemData.comments || ''} 
-                        onChange={(e) => setNewItemData({...newItemData, comments: e.target.value})}
-                        placeholder="Additional notes or specifications"
-                        rows={3}
+                      <Input 
+                        value={item.item} 
+                        onChange={(e) => updateItem(item.id, 'item', e.target.value)}
+                        className="h-7 text-xs"
+                        placeholder="Item name"
                       />
                     </div>
-                    <div className="flex gap-2">
-                      <Button 
-                        onClick={() => saveItem(newItemData as ScheduleItem)}
-                        disabled={!newItemData.item || !newItemData.manufacturer}
+                    <div>
+                      <Input 
+                        value={item.manufacturer} 
+                        onChange={(e) => updateItem(item.id, 'manufacturer', e.target.value)}
+                        className="h-7 text-xs"
+                        placeholder="Manufacturer"
+                      />
+                    </div>
+                    <div>
+                      <Input 
+                        value={item.model} 
+                        onChange={(e) => updateItem(item.id, 'model', e.target.value)}
+                        className="h-7 text-xs"
+                        placeholder="Model"
+                      />
+                    </div>
+                    <div>
+                      <Input 
+                        value={item.finish} 
+                        onChange={(e) => updateItem(item.id, 'finish', e.target.value)}
+                        className="h-7 text-xs"
+                        placeholder="Finish"
+                      />
+                    </div>
+                    <div>
+                      <Input 
+                        value={item.comments} 
+                        onChange={(e) => updateItem(item.id, 'comments', e.target.value)}
+                        className="h-7 text-xs"
+                        placeholder="Comments"
+                      />
+                    </div>
+                    <div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => deleteItem(item.id)}
+                        className="h-7 w-7 p-0"
                       >
-                        Save Item
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        onClick={() => {
-                          setIsAddingNew(false);
-                          setNewItemData({
-                            room: selectedRoom || '',
-                            type: 'fixture',
-                            item: '',
-                            manufacturer: '',
-                            model: '',
-                            finish: '',
-                            comments: ''
-                          });
-                        }}
-                      >
-                        Cancel
+                        <X className="w-3 h-3" />
                       </Button>
                     </div>
-                  </CardContent>
-                </Card>
-              )}
+                  </div>
+                ))}
 
-              {/* Room Items */}
-              {roomItems.map((item) => (
-                <Card key={item.id} className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                          <div className="text-sm font-medium text-muted-foreground mb-1">Item</div>
-                          <div className="font-medium">{item.item}</div>
-                          <div className="text-xs text-muted-foreground mt-1 capitalize">
-                            {item.type}
-                          </div>
-                        </div>
-                        <div>
-                          <div className="text-sm font-medium text-muted-foreground mb-1">Specifications</div>
-                          <div className="text-sm">{item.manufacturer}</div>
-                          <div className="text-sm text-muted-foreground">{item.model}</div>
-                          <div className="text-sm text-muted-foreground">{item.finish}</div>
-                        </div>
-                        <div>
-                          <div className="text-sm font-medium text-muted-foreground mb-1">Comments</div>
-                          <div className="text-sm">{item.comments || 'No comments'}</div>
-                        </div>
-                      </div>
-                      <div className="flex gap-2 ml-4">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setEditingItem(item)}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => deleteItem(item.id)}
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-
-              {roomItems.length === 0 && (
-                <div className="text-center text-muted-foreground italic py-8">
-                  No items scheduled for this room yet.
-                </div>
-              )}
+                {roomItems.length === 0 && (
+                  <div className="text-center text-muted-foreground italic py-8 text-sm">
+                    No items scheduled for this room yet. Click "Add Item" to get started.
+                  </div>
+                )}
+              </div>
             </div>
           </ScrollArea>
         </div>
