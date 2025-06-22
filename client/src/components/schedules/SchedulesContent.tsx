@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Plus, Download, Upload, X, Camera, Home, ArrowLeft, Grid, ChefHat, ShowerHead, Bed, List, Wrench, Zap, Lightbulb } from 'lucide-react';
+import { Plus, Download, Upload, X, Camera, Home, ArrowLeft, Grid, ChefHat, ShowerHead, Bed, List } from 'lucide-react';
 
 interface ScheduleItem {
   id: string;
@@ -211,19 +211,7 @@ const SchedulesContent = () => {
     return grouped;
   };
 
-  // Get category icon
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case 'fixture':
-        return <Wrench className="w-3 h-3" />;
-      case 'appliance':
-        return <Zap className="w-3 h-3" />;
-      case 'lighting':
-        return <Lightbulb className="w-3 h-3" />;
-      default:
-        return null;
-    }
-  };
+
 
   const deleteItem = (id: string) => {
     setScheduleItems(scheduleItems.filter(item => item.id !== id));
@@ -328,15 +316,15 @@ const SchedulesContent = () => {
                 {roomItems.length > 0 && (
                   <>
                     {/* Table Header */}
-                    <div className="grid grid-cols-8 gap-4 py-3 px-3 text-xs font-medium text-muted-foreground border-b border-border/30 sticky top-0 z-10 bg-background">
-                      <div className="w-8">#</div>
-                      <div>Type</div>
-                      <div>Item</div>
-                      <div>Manufacturer</div>
-                      <div>Model</div>
-                      <div>Finish</div>
-                      <div>Comments</div>
-                      <div className="w-6"></div>
+                    <div className="flex py-3 px-3 text-xs font-medium text-muted-foreground sticky top-0 z-10 bg-background" style={{ borderBottom: '1px solid #bbbbbb' }}>
+                      <div className="w-12 flex-shrink-0 border-r border-gray-300 pr-2">#</div>
+                      <div className="flex-1 min-w-0 border-r border-gray-300 px-2">Type</div>
+                      <div className="flex-1 min-w-0 border-r border-gray-300 px-2">Item</div>
+                      <div className="flex-1 min-w-0 border-r border-gray-300 px-2">Manufacturer</div>
+                      <div className="flex-1 min-w-0 border-r border-gray-300 px-2">Model</div>
+                      <div className="flex-1 min-w-0 border-r border-gray-300 px-2">Finish</div>
+                      <div className="flex-1 min-w-0 border-r border-gray-300 px-2">Comments</div>
+                      <div className="w-8 flex-shrink-0 pl-2"></div>
                     </div>
 
                     {/* Category Sections */}
@@ -347,10 +335,9 @@ const SchedulesContent = () => {
                       return (
                         <div key={category}>
                           {/* Category Label with Add Button */}
-                          <div className="grid grid-cols-8 gap-4 py-2 px-3 bg-muted/30 border-b border-border">
-                            <div className="col-span-8 flex items-center justify-between">
-                              <div className="text-xs font-medium text-foreground flex items-center gap-2">
-                                {getCategoryIcon(category)}
+                          <div className="flex py-2 px-3" style={{ borderBottom: '1px solid #bbbbbb' }}>
+                            <div className="flex-1 flex items-center justify-between">
+                              <div className="text-xs font-medium text-foreground">
                                 {categoryLabels[category]}
                               </div>
                               <Button
@@ -367,18 +354,18 @@ const SchedulesContent = () => {
 
                           {/* Category Items */}
                           {categoryItems.map((item, itemIndex) => (
-                            <div key={item.id} className="grid grid-cols-8 gap-4 py-2 px-3 hover:bg-muted/30 transition-colors group border-b border-border/10">
-                              <div className="text-xs text-muted-foreground flex items-center">
+                            <div key={item.id} className="flex py-2 px-3 hover:bg-muted/30 transition-colors group" style={{ borderBottom: '1px solid #bbbbbb' }}>
+                              <div className="w-12 flex-shrink-0 border-r border-gray-300 pr-2 text-xs text-muted-foreground flex items-center">
                                 {itemIndex + 1}
                               </div>
-                              <div>
+                              <div className="flex-1 min-w-0 border-r border-gray-300 px-2">
                                 <Select 
                                   value={item.type} 
                                   onValueChange={(value: 'fixture' | 'appliance' | 'lighting') => 
                                     updateItem(item.id, 'type', value)
                                   }
                                 >
-                                  <SelectTrigger className="h-7 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0" style={{ fontSize: '0.75rem' }}>
+                                  <SelectTrigger className="h-7 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full" style={{ fontSize: '0.75rem' }}>
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
@@ -388,52 +375,52 @@ const SchedulesContent = () => {
                                   </SelectContent>
                                 </Select>
                               </div>
-                              <div>
+                              <div className="flex-1 min-w-0 border-r border-gray-300 px-2">
                                 <Input 
                                   value={item.item} 
                                   onChange={(e) => updateItem(item.id, 'item', e.target.value)}
-                                  className="h-7 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0"
+                                  className="h-7 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
                                   style={{ fontSize: '0.75rem' }}
                                   placeholder="Item name"
                                 />
                               </div>
-                              <div>
+                              <div className="flex-1 min-w-0 border-r border-gray-300 px-2">
                                 <Input 
                                   value={item.manufacturer} 
                                   onChange={(e) => updateItem(item.id, 'manufacturer', e.target.value)}
-                                  className="h-7 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0"
+                                  className="h-7 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
                                   style={{ fontSize: '0.75rem' }}
                                   placeholder="Manufacturer"
                                 />
                               </div>
-                              <div>
+                              <div className="flex-1 min-w-0 border-r border-gray-300 px-2">
                                 <Input 
                                   value={item.model} 
                                   onChange={(e) => updateItem(item.id, 'model', e.target.value)}
-                                  className="h-7 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0"
+                                  className="h-7 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
                                   style={{ fontSize: '0.75rem' }}
                                   placeholder="Model"
                                 />
                               </div>
-                              <div>
+                              <div className="flex-1 min-w-0 border-r border-gray-300 px-2">
                                 <Input 
                                   value={item.finish} 
                                   onChange={(e) => updateItem(item.id, 'finish', e.target.value)}
-                                  className="h-7 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0"
+                                  className="h-7 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
                                   style={{ fontSize: '0.75rem' }}
                                   placeholder="Finish"
                                 />
                               </div>
-                              <div>
+                              <div className="flex-1 min-w-0 border-r border-gray-300 px-2">
                                 <Input 
                                   value={item.comments} 
                                   onChange={(e) => updateItem(item.id, 'comments', e.target.value)}
-                                  className="h-7 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0"
+                                  className="h-7 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
                                   style={{ fontSize: '0.75rem' }}
                                   placeholder="Comments"
                                 />
                               </div>
-                              <div className="flex justify-center">
+                              <div className="w-8 flex-shrink-0 pl-2 flex justify-center">
                                 <Button
                                   variant="ghost"
                                   size="sm"
