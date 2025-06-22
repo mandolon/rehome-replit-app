@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ResizableTable, type TableColumn, type TableRow } from '@/components/ui/resizable-table';
-import { Plus, Download, Upload, X, Camera, Home, ArrowLeft, Grid, ChefHat, ShowerHead, Bed, List } from 'lucide-react';
+import { Plus, Download, Upload, X, Camera, Home, ArrowLeft, Grid, ChefHat, ShowerHead, Bed, List, DoorOpen, Square } from 'lucide-react';
 
 interface ScheduleItem {
   id: string;
@@ -348,7 +348,11 @@ const SchedulesContent = () => {
   };
 
   if (selectedRoom) {
-    const roomItems = scheduleItems.filter(item => item.room === selectedRoom);
+    const roomItems = selectedRoom === 'Windows' 
+      ? scheduleItems.filter(item => item.type === 'window')
+      : selectedRoom === 'Doors'
+      ? scheduleItems.filter(item => item.type === 'door')
+      : scheduleItems.filter(item => item.room === selectedRoom);
 
     return (
       <div className="flex-1 bg-background overflow-hidden">
@@ -369,12 +373,15 @@ const SchedulesContent = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <Button 
-                    onClick={() => addNewItem()}
+                    onClick={() => addNewItem(
+                      selectedRoom === 'Windows' ? 'window' :
+                      selectedRoom === 'Doors' ? 'door' : 'fixture'
+                    )}
                     size="sm"
                     className="flex items-center gap-2"
                   >
                     <Plus className="w-4 h-4" />
-                    Add Item
+                    Add {selectedRoom === 'Windows' ? 'Window' : selectedRoom === 'Doors' ? 'Door' : 'Item'}
                   </Button>
                   <Button 
                     onClick={exportToCSV}
@@ -392,64 +399,83 @@ const SchedulesContent = () => {
 
           <ScrollArea className="flex-1 min-h-0">
             <div className="px-6 py-4">
-              {/* Category Filter Controls */}
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-sm text-muted-foreground">Filter by:</span>
-                <Button
-                  variant={categoryFilter === 'all' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setCategoryFilter('all')}
-                  className="h-7 px-3 text-xs"
-                >
-                  All
-                </Button>
-                <Button
-                  variant={categoryFilter === 'fixture' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setCategoryFilter('fixture')}
-                  className="h-7 px-3 text-xs"
-                >
-                  Fixtures
-                </Button>
-                <Button
-                  variant={categoryFilter === 'appliance' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setCategoryFilter('appliance')}
-                  className="h-7 px-3 text-xs"
-                >
-                  Appliances
-                </Button>
-                <Button
-                  variant={categoryFilter === 'lighting' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setCategoryFilter('lighting')}
-                  className="h-7 px-3 text-xs"
-                >
-                  Lighting
-                </Button>
-              </div>
+              {/* Category Filter Controls - only show for regular rooms, not Windows/Doors */}
+              {!['Windows', 'Doors'].includes(selectedRoom) && (
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="text-sm text-muted-foreground">Filter by:</span>
+                  <Button
+                    variant={categoryFilter === 'all' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setCategoryFilter('all')}
+                    className="h-7 px-3 text-xs"
+                  >
+                    All
+                  </Button>
+                  <Button
+                    variant={categoryFilter === 'fixture' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setCategoryFilter('fixture')}
+                    className="h-7 px-3 text-xs"
+                  >
+                    Fixtures
+                  </Button>
+                  <Button
+                    variant={categoryFilter === 'appliance' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setCategoryFilter('appliance')}
+                    className="h-7 px-3 text-xs"
+                  >
+                    Appliances
+                  </Button>
+                  <Button
+                    variant={categoryFilter === 'lighting' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setCategoryFilter('lighting')}
+                    className="h-7 px-3 text-xs"
+                  >
+                    Lighting
+                  </Button>
+                </div>
+              )}
 
               {/* Resizable Table */}
               <ResizableTable
                 columns={getTableColumns()}
                 data={(() => {
+                  if (['Windows', 'Doors'].includes(selectedRoom)) {
+                    return roomItems;
+                  }
                   const filteredItems = categoryFilter === 'all' 
                     ? roomItems 
                     : roomItems.filter(item => item.type === categoryFilter);
                   return filteredItems;
                 })()}
                 onDataChange={(newData) => {
-                  const otherRoomItems = scheduleItems.filter(item => item.room !== selectedRoom);
-                  setScheduleItems([...otherRoomItems, ...newData as ScheduleItem[]]);
+                  if (selectedRoom === 'Windows') {
+                    const otherItems = scheduleItems.filter(item => item.type !== 'window');
+                    setScheduleItems([...otherItems, ...newData as ScheduleItem[]]);
+                  } else if (selectedRoom === 'Doors') {
+                    const otherItems = scheduleItems.filter(item => item.type !== 'door');
+                    setScheduleItems([...otherItems, ...newData as ScheduleItem[]]);
+                  } else {
+                    const otherRoomItems = scheduleItems.filter(item => item.room !== selectedRoom);
+                    setScheduleItems([...otherRoomItems, ...newData as ScheduleItem[]]);
+                  }
                 }}
-                onAddRow={addNewItem}
+                onAddRow={() => addNewItem(
+                  selectedRoom === 'Windows' ? 'window' :
+                  selectedRoom === 'Doors' ? 'door' : 'fixture'
+                )}
                 onDeleteRow={(id) => {
                   setScheduleItems(scheduleItems.filter(item => item.id !== id));
                 }}
-                addButtonText="Add Item"
-                emptyStateText={categoryFilter === 'all' 
-                  ? 'No items scheduled for this room yet. Click "Add Item" to get started.'
-                  : `No ${categoryFilter} items found. Add some items or change the filter.`
+                addButtonText={`Add ${selectedRoom === 'Windows' ? 'Window' : selectedRoom === 'Doors' ? 'Door' : 'Item'}`}
+                emptyStateText={
+                  selectedRoom === 'Windows' ? 'No windows scheduled yet. Click "Add Window" to get started.' :
+                  selectedRoom === 'Doors' ? 'No doors scheduled yet. Click "Add Door" to get started.' :
+                  categoryFilter === 'all' 
+                    ? 'No items scheduled for this room yet. Click "Add Item" to get started.'
+                    : `No ${categoryFilter} items found. Add some items or change the filter.`
                 }
               />
             </div>
@@ -648,78 +674,40 @@ const SchedulesContent = () => {
 
           {/* Windows & Doors Tab */}
           {activeTab === 'windows-doors' && (
-            <div className="space-y-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {/* Windows Card */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span>Windows</span>
-                    <Button 
-                      onClick={() => addNewItem('window')}
-                      size="sm"
-                      className="flex items-center gap-2"
-                    >
-                      <Plus className="w-4 h-4" />
-                      Add Window
-                    </Button>
-                  </CardTitle>
-                  <CardDescription>
-                    Manage window schedules across all rooms
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ResizableTable
-                    columns={getTableColumns()}
-                    data={scheduleItems.filter(item => item.type === 'window')}
-                    onDataChange={(newData) => {
-                      const otherItems = scheduleItems.filter(item => item.type !== 'window');
-                      setScheduleItems([...otherItems, ...newData as ScheduleItem[]]);
-                    }}
-                    onAddRow={() => addNewItem('window')}
-                    onDeleteRow={(id) => {
-                      setScheduleItems(scheduleItems.filter(item => item.id !== id));
-                    }}
-                    addButtonText="Add Window"
-                    emptyStateText="No windows scheduled yet. Click 'Add Window' to get started."
-                  />
-                </CardContent>
-              </Card>
+              <div className="group cursor-pointer relative">
+                <div onClick={() => setSelectedRoom('Windows')}>
+                  <div className="relative aspect-square bg-muted rounded-lg mb-2 flex flex-col items-center justify-center group-hover:bg-muted/80 transition-colors">
+                    <Square className="w-12 h-12 text-muted-foreground mb-2" />
+                    <div className="text-xs text-muted-foreground">
+                      {scheduleItems.filter(item => item.type === 'window').length} {scheduleItems.filter(item => item.type === 'window').length === 1 ? 'item' : 'items'}
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-sm font-medium truncate group-hover:text-primary transition-colors">
+                      Windows
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               {/* Doors Card */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span>Doors</span>
-                    <Button 
-                      onClick={() => addNewItem('door')}
-                      size="sm"
-                      className="flex items-center gap-2"
-                    >
-                      <Plus className="w-4 h-4" />
-                      Add Door
-                    </Button>
-                  </CardTitle>
-                  <CardDescription>
-                    Manage door schedules across all rooms
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ResizableTable
-                    columns={getTableColumns()}
-                    data={scheduleItems.filter(item => item.type === 'door')}
-                    onDataChange={(newData) => {
-                      const otherItems = scheduleItems.filter(item => item.type !== 'door');
-                      setScheduleItems([...otherItems, ...newData as ScheduleItem[]]);
-                    }}
-                    onAddRow={() => addNewItem('door')}
-                    onDeleteRow={(id) => {
-                      setScheduleItems(scheduleItems.filter(item => item.id !== id));
-                    }}
-                    addButtonText="Add Door"
-                    emptyStateText="No doors scheduled yet. Click 'Add Door' to get started."
-                  />
-                </CardContent>
-              </Card>
+              <div className="group cursor-pointer relative">
+                <div onClick={() => setSelectedRoom('Doors')}>
+                  <div className="relative aspect-square bg-muted rounded-lg mb-2 flex flex-col items-center justify-center group-hover:bg-muted/80 transition-colors">
+                    <DoorOpen className="w-12 h-12 text-muted-foreground mb-2" />
+                    <div className="text-xs text-muted-foreground">
+                      {scheduleItems.filter(item => item.type === 'door').length} {scheduleItems.filter(item => item.type === 'door').length === 1 ? 'item' : 'items'}
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-sm font-medium truncate group-hover:text-primary transition-colors">
+                      Doors
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>
