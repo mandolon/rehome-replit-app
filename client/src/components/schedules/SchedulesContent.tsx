@@ -180,11 +180,11 @@ const SchedulesContent = () => {
     ));
   };
 
-  const addNewItem = () => {
+  const addNewItem = (category?: 'fixture' | 'appliance' | 'lighting') => {
     const newItem: ScheduleItem = {
       id: Date.now().toString(),
       room: selectedRoom || '',
-      type: 'fixture',
+      type: category || 'fixture',
       item: '',
       manufacturer: '',
       model: '',
@@ -192,6 +192,10 @@ const SchedulesContent = () => {
       comments: ''
     };
     setScheduleItems([...scheduleItems, newItem]);
+  };
+
+  const addNewItemForCategory = (category: 'fixture' | 'appliance' | 'lighting') => () => {
+    addNewItem(category);
   };
 
   // Group items by category for display
@@ -282,7 +286,7 @@ const SchedulesContent = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <Button 
-                    onClick={addNewItem}
+                    onClick={() => addNewItem()}
                     size="sm"
                     className="flex items-center gap-2"
                   >
@@ -334,10 +338,21 @@ const SchedulesContent = () => {
                             </div>
                           )}
                           
-                          {/* Category Label */}
+                          {/* Category Label with Add Button */}
                           <div className="grid grid-cols-7 gap-2 py-1 px-3">
-                            <div className="col-span-7 text-xs font-medium text-muted-foreground">
-                              {categoryLabels[category]}
+                            <div className="col-span-7 flex items-center justify-between">
+                              <div className="text-xs font-medium text-muted-foreground">
+                                {categoryLabels[category]}
+                              </div>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={addNewItemForCategory(category)}
+                                className="h-5 px-2 text-xs text-muted-foreground hover:text-foreground"
+                              >
+                                <Plus className="w-3 h-3 mr-1" />
+                                Add
+                              </Button>
                             </div>
                           </div>
 
