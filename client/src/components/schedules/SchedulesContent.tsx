@@ -81,7 +81,7 @@ const SchedulesContent = () => {
   const [customRooms, setCustomRooms] = useState<string[]>([]);
   const [newRoomName, setNewRoomName] = useState('');
   const [isAddingRoom, setIsAddingRoom] = useState(false);
-  const [categoryFilter, setCategoryFilter] = useState<'all' | 'fixture' | 'appliance' | 'lighting'>('all');
+
   const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([
     {
       id: '1',
@@ -142,6 +142,46 @@ const SchedulesContent = () => {
       model: 'Design Pro 3000K',
       finish: 'White',
       comments: 'Linkable strips'
+    },
+    {
+      id: '7',
+      room: 'Kitchen',
+      type: 'window',
+      item: 'Double Hung',
+      manufacturer: 'Pella',
+      model: 'Impervia',
+      finish: 'White',
+      comments: 'Energy Star rated'
+    },
+    {
+      id: '8',
+      room: 'Kitchen',
+      type: 'door',
+      item: 'Entry Door',
+      manufacturer: 'Therma-Tru',
+      model: 'Classic-Craft Canvas',
+      finish: 'Cherry',
+      comments: 'Fiberglass with decorative glass'
+    },
+    {
+      id: '9',
+      room: 'Bathroom',
+      type: 'window',
+      item: 'Casement',
+      manufacturer: 'Andersen',
+      model: '400 Series',
+      finish: 'White',
+      comments: 'Obscure glass for privacy'
+    },
+    {
+      id: '10',
+      room: 'Bathroom',
+      type: 'door',
+      item: 'Interior Door',
+      manufacturer: 'Masonite',
+      model: 'Heritage',
+      finish: 'Primed',
+      comments: 'Hollow core, ready for paint'
     }
   ]);
   
@@ -447,14 +487,6 @@ const SchedulesContent = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <Button 
-                    onClick={() => addNewItem()}
-                    size="sm"
-                    className="flex items-center gap-2"
-                  >
-                    <Plus className="w-4 h-4" />
-                    Add Item
-                  </Button>
-                  <Button 
                     onClick={exportToCSV}
                     variant="outline"
                     size="sm"
@@ -470,44 +502,7 @@ const SchedulesContent = () => {
 
           <ScrollArea className="flex-1 min-h-0">
             <div className="px-6 py-4">
-              {/* Category Filter Controls */}
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-sm text-muted-foreground">Filter by:</span>
-                <Button
-                  variant={categoryFilter === 'all' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setCategoryFilter('all')}
-                  className="h-7 px-3 text-xs"
-                >
-                  All
-                </Button>
-                <Button
-                  variant={categoryFilter === 'fixture' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setCategoryFilter('fixture')}
-                  className="h-7 px-3 text-xs"
-                >
-                  Fixtures
-                </Button>
-                <Button
-                  variant={categoryFilter === 'appliance' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setCategoryFilter('appliance')}
-                  className="h-7 px-3 text-xs"
-                >
-                  Appliances
-                </Button>
-                <Button
-                  variant={categoryFilter === 'lighting' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setCategoryFilter('lighting')}
-                  className="h-7 px-3 text-xs"
-                >
-                  Lighting
-                </Button>
-              </div>
-
-              {/* Resizable Table */}
+              {/* Tabs for different item categories */}
               <Tabs defaultValue="fixtures" className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="fixtures">Fixtures & Appliances</TabsTrigger>
