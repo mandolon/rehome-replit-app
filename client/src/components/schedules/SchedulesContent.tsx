@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Plus, Download, Upload, X, Camera } from 'lucide-react';
+import { Plus, Download, Upload, X, Camera, Home, ArrowLeft, Grid } from 'lucide-react';
 
 interface ScheduleItem {
   id: string;
@@ -19,9 +19,32 @@ interface ScheduleItem {
   image?: string;
 }
 
+interface RoomCardProps {
+  room: string;
+  itemCount: number;
+  onClick: () => void;
+}
+
+const RoomCard = ({ room, itemCount, onClick }: RoomCardProps) => {
+  return (
+    <div className="group cursor-pointer" onClick={onClick}>
+      <div className="relative aspect-square bg-muted rounded-lg mb-2 flex flex-col items-center justify-center group-hover:bg-muted/80 transition-colors">
+        <Home className="w-12 h-12 text-muted-foreground mb-2" />
+        <div className="text-xs text-muted-foreground">
+          {itemCount} {itemCount === 1 ? 'item' : 'items'}
+        </div>
+      </div>
+      <div className="space-y-1">
+        <div className="text-sm font-medium truncate group-hover:text-primary transition-colors">
+          {room}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const SchedulesContent = () => {
-  const [rooms, setRooms] = useState(['Kitchen', 'Living Room', 'Bathroom']);
-  const [newRoom, setNewRoom] = useState('');
+  const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
   const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([
     {
       id: '1',
@@ -45,37 +68,80 @@ const SchedulesContent = () => {
     },
     {
       id: '3',
-      room: 'Bathroom',
+      room: 'Master Bathroom',
       type: 'fixture',
       item: 'Vanity Faucet',
       manufacturer: 'Delta',
       model: 'Trinsic 559LF',
       finish: 'Champagne Bronze',
       comments: 'Single handle, 1.2 GPM'
+    },
+    {
+      id: '4',
+      room: 'Master Bathroom',
+      type: 'fixture',
+      item: 'Shower Head',
+      manufacturer: 'Grohe',
+      model: 'Rainshower 310',
+      finish: 'Chrome',
+      comments: 'Rain shower with handheld'
+    },
+    {
+      id: '5',
+      room: 'Living Room',
+      type: 'fixture',
+      item: 'Ceiling Fan',
+      manufacturer: 'Hunter',
+      model: 'Builder Plus 52"',
+      finish: 'Brushed Nickel',
+      comments: 'Remote control included'
+    },
+    {
+      id: '6',
+      room: 'Guest Bathroom',
+      type: 'fixture',
+      item: 'Toilet',
+      manufacturer: 'American Standard',
+      model: 'Champion 4',
+      finish: 'White',
+      comments: 'Water efficient model'
     }
   ]);
   
   const [editingItem, setEditingItem] = useState<ScheduleItem | null>(null);
   const [isAddingNew, setIsAddingNew] = useState(false);
+  const [newItemData, setNewItemData] = useState<Partial<ScheduleItem>>({
+    room: selectedRoom || '',
+    type: 'fixture',
+    item: '',
+    manufacturer: '',
+    model: '',
+    finish: '',
+    comments: ''
+  });
 
-  const addRoom = () => {
-    if (newRoom.trim() && !rooms.includes(newRoom.trim())) {
-      setRooms([...rooms, newRoom.trim()]);
-      setNewRoom('');
+  // Get unique rooms and their item counts
+  const roomData = scheduleItems.reduce((acc, item) => {
+    if (!acc[item.room]) {
+      acc[item.room] = 0;
     }
-  };
+    acc[item.room]++;
+    return acc;
+  }, {} as Record<string, number>);
 
-  const removeRoom = (roomToRemove: string) => {
-    if (rooms.length > 1) {
-      setRooms(rooms.filter(room => room !== roomToRemove));
-      setScheduleItems(scheduleItems.filter(item => item.room !== roomToRemove));
+  const rooms = Object.keys(roomData);
+
+  const saveItem = (item: ScheduleItem) => {
+    if (editingItem) {
+      setScheduleItems(scheduleItems.map(i => i.id === item.id ? item : i));
+    } else {
+      const newItem = { ...item, id: Date.now().toString() };
+      setScheduleItems([...scheduleItems, newItem]);
     }
-  };
-
-  const addNewItem = () => {
-    setEditingItem({
-      id: Date.now().toString(),
-      room: rooms[0],
+    setEditingItem(null);
+    setIsAddingNew(false);
+    setNewItemData({
+      room: selectedRoom || '',
       type: 'fixture',
       item: '',
       manufacturer: '',
@@ -83,357 +149,273 @@ const SchedulesContent = () => {
       finish: '',
       comments: ''
     });
-    setIsAddingNew(true);
-  };
-
-  const saveItem = (item: ScheduleItem) => {
-    if (isAddingNew) {
-      setScheduleItems([...scheduleItems, item]);
-      setIsAddingNew(false);
-    } else {
-      setScheduleItems(scheduleItems.map(existing => 
-        existing.id === item.id ? item : existing
-      ));
-    }
-    setEditingItem(null);
   };
 
   const deleteItem = (id: string) => {
     setScheduleItems(scheduleItems.filter(item => item.id !== id));
   };
 
-  const downloadSchedule = () => {
-    const content = scheduleItems.map(item => 
-      `${item.room} - ${item.type.toUpperCase()}\n` +
-      `Item: ${item.item}\n` +
-      `Manufacturer: ${item.manufacturer}\n` +
-      `Model: ${item.model}\n` +
-      `Finish: ${item.finish}\n` +
-      `Comments: ${item.comments}\n` +
-      '-------------------\n'
-    ).join('\n');
-    
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
+  const exportToCSV = () => {
+    const headers = ['Room', 'Type', 'Item', 'Manufacturer', 'Model', 'Finish', 'Comments'];
+    const csvContent = [
+      headers.join(','),
+      ...scheduleItems.map(item => 
+        [item.room, item.type, item.item, item.manufacturer, item.model, item.finish, item.comments]
+          .map(field => `"${field}"`)
+          .join(',')
+      )
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'project-schedule.txt';
+    a.download = 'project-schedule.csv';
     a.click();
-    URL.revokeObjectURL(url);
+    window.URL.revokeObjectURL(url);
   };
 
-  const handleImageUpload = (itemId: string, event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const imageUrl = e.target?.result as string;
-        setScheduleItems(scheduleItems.map(item =>
-          item.id === itemId ? { ...item, image: imageUrl } : item
-        ));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  if (selectedRoom) {
+    const roomItems = scheduleItems.filter(item => item.room === selectedRoom);
 
-  const groupedItems = rooms.reduce((acc, room) => {
-    acc[room] = scheduleItems.filter(item => item.room === room);
-    return acc;
-  }, {} as Record<string, ScheduleItem[]>);
-
-  return (
-    <div className="flex-1 bg-background overflow-hidden">
-      <div className="h-full flex flex-col">
-        <ScrollArea className="flex-1 min-h-0">
-          <div className="px-4 sm:px-6 lg:px-8 py-4 lg:py-6">
-            <div className="max-w-7xl mx-auto space-y-6 pb-8">
-            
-            {/* Header Card */}
-            <Card className="border-0 shadow-none bg-muted/30">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-lg">
-                      Fixture, Material & Appliance Schedules
-                    </CardTitle>
-                    <CardDescription className="text-xs leading-relaxed">
-                      Manage and track selections for residential projects. Add items, upload photos, and export schedules for construction documents.
-                    </CardDescription>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button onClick={addNewItem} size="sm" className="text-xs">
-                      <Plus className="w-3 h-3 mr-1" />
-                      Add Item
-                    </Button>
-                    <Button onClick={downloadSchedule} variant="outline" size="sm" className="text-xs">
-                      <Download className="w-3 h-3 mr-1" />
-                      Download Schedule
-                    </Button>
-                  </div>
+    return (
+      <div className="flex-1 bg-background overflow-hidden">
+        <div className="h-full flex flex-col">
+          <div className="border-b border-border">
+            <div className="px-6 py-4">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => setSelectedRoom(null)}
+                    className="p-2"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                  </Button>
+                  <h1 className="text-lg font-semibold">{selectedRoom} Schedule</h1>
                 </div>
-              </CardHeader>
-            </Card>
-
-            {/* Room Management */}
-            <Card className="border-0 shadow-none bg-muted/30">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-semibold">Manage Rooms</CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <div className="flex flex-wrap gap-2 mb-3">
-                  {rooms.map(room => (
-                    <div key={room} className="flex items-center bg-muted/50 rounded-lg px-2 py-1">
-                      <span className="text-xs font-medium mr-2">{room}</span>
-                      {rooms.length > 1 && (
-                        <button
-                          onClick={() => removeRoom(room)}
-                          className="text-muted-foreground hover:text-foreground"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Add new room..."
-                    value={newRoom}
-                    onChange={(e) => setNewRoom(e.target.value)}
-                    className="text-xs"
-                    onKeyPress={(e) => e.key === 'Enter' && addRoom()}
-                  />
-                  <Button onClick={addRoom} size="sm" variant="outline" className="text-xs">
-                    Add Room
+                <div className="flex items-center gap-2">
+                  <Button 
+                    onClick={() => setIsAddingNew(true)}
+                    size="sm"
+                    className="flex items-center gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Add Item
+                  </Button>
+                  <Button 
+                    onClick={exportToCSV}
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    Export
                   </Button>
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Schedule Items by Room */}
-            {rooms.map(room => (
-              <Card key={room} className="border-0 shadow-none bg-muted/30">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-semibold">{room}</CardTitle>
-                  <CardDescription className="text-xs text-muted-foreground">
-                    {groupedItems[room]?.length || 0} items
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="border-b border-border/50">
-                          <th className="text-left text-xs font-semibold text-muted-foreground py-2 px-2">Photo</th>
-                          <th className="text-left text-xs font-semibold text-muted-foreground py-2 px-2">Type</th>
-                          <th className="text-left text-xs font-semibold text-muted-foreground py-2 px-2">Item</th>
-                          <th className="text-left text-xs font-semibold text-muted-foreground py-2 px-2">Manufacturer</th>
-                          <th className="text-left text-xs font-semibold text-muted-foreground py-2 px-2">Model</th>
-                          <th className="text-left text-xs font-semibold text-muted-foreground py-2 px-2">Finish</th>
-                          <th className="text-left text-xs font-semibold text-muted-foreground py-2 px-2">Comments</th>
-                          <th className="text-left text-xs font-semibold text-muted-foreground py-2 px-2">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {groupedItems[room]?.map(item => (
-                          <tr key={item.id} className="border-b border-border/20">
-                            <td className="py-2 px-2">
-                              {item.image ? (
-                                <img 
-                                  src={item.image} 
-                                  alt={item.item}
-                                  className="w-8 h-8 rounded object-cover"
-                                />
-                              ) : (
-                                <div className="w-8 h-8 bg-muted/50 rounded flex items-center justify-center">
-                                  <Camera className="w-3 h-3 text-muted-foreground" />
-                                </div>
-                              )}
-                              <input
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => handleImageUpload(item.id, e)}
-                                className="hidden"
-                                id={`image-${item.id}`}
-                              />
-                              <label
-                                htmlFor={`image-${item.id}`}
-                                className="cursor-pointer text-xs text-blue-600 hover:text-blue-800 block mt-1"
-                              >
-                                {item.image ? 'Change' : 'Upload'}
-                              </label>
-                            </td>
-                            <td className="py-2 px-2">
-                              <span className={`text-xs px-2 py-1 rounded ${
-                                item.type === 'fixture' ? 'bg-blue-100 text-blue-800' :
-                                item.type === 'appliance' ? 'bg-green-100 text-green-800' :
-                                'bg-orange-100 text-orange-800'
-                              }`}>
-                                {item.type}
-                              </span>
-                            </td>
-                            <td className="py-2 px-2 text-xs font-medium">{item.item}</td>
-                            <td className="py-2 px-2 text-xs">{item.manufacturer}</td>
-                            <td className="py-2 px-2 text-xs">{item.model}</td>
-                            <td className="py-2 px-2 text-xs">{item.finish}</td>
-                            <td className="py-2 px-2 text-xs">{item.comments}</td>
-                            <td className="py-2 px-2">
-                              <div className="flex gap-1">
-                                <Button
-                                  onClick={() => setEditingItem(item)}
-                                  size="sm"
-                                  variant="outline"
-                                  className="text-xs h-6 px-2"
-                                >
-                                  Edit
-                                </Button>
-                                <Button
-                                  onClick={() => deleteItem(item.id)}
-                                  size="sm"
-                                  variant="outline"
-                                  className="text-xs h-6 px-2 text-red-600 hover:text-red-800"
-                                >
-                                  Delete
-                                </Button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                    {(!groupedItems[room] || groupedItems[room].length === 0) && (
-                      <div className="text-center py-8 text-muted-foreground text-xs">
-                        No items in {room} yet. Click "Add Item" to get started.
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-
-            {/* Edit/Add Item Modal */}
-            {editingItem && (
-              <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-                <Card className="border-0 shadow-lg bg-background w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-semibold">
-                      {isAddingNew ? 'Add New Item' : 'Edit Item'}
-                    </CardTitle>
-                  </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-xs font-medium text-muted-foreground">Room</label>
-                      <Select
-                        value={editingItem.room}
-                        onValueChange={(value) => setEditingItem({...editingItem, room: value})}
-                      >
-                        <SelectTrigger className="text-xs">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {rooms.map(room => (
-                            <SelectItem key={room} value={room}>{room}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium text-muted-foreground">Type</label>
-                      <Select
-                        value={editingItem.type}
-                        onValueChange={(value) => setEditingItem({...editingItem, type: value as 'fixture' | 'appliance' | 'material'})}
-                      >
-                        <SelectTrigger className="text-xs">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="fixture">Fixture</SelectItem>
-                          <SelectItem value="appliance">Appliance</SelectItem>
-                          <SelectItem value="material">Material</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <label className="text-xs font-medium text-muted-foreground">Item</label>
-                    <Input
-                      value={editingItem.item}
-                      onChange={(e) => setEditingItem({...editingItem, item: e.target.value})}
-                      className="text-xs"
-                      placeholder="e.g., Kitchen Sink, Refrigerator, Tile"
-                    />
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-xs font-medium text-muted-foreground">Manufacturer</label>
-                      <Input
-                        value={editingItem.manufacturer}
-                        onChange={(e) => setEditingItem({...editingItem, manufacturer: e.target.value})}
-                        className="text-xs"
-                        placeholder="e.g., Kohler, Sub-Zero"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium text-muted-foreground">Model</label>
-                      <Input
-                        value={editingItem.model}
-                        onChange={(e) => setEditingItem({...editingItem, model: e.target.value})}
-                        className="text-xs"
-                        placeholder="e.g., K-6489, BI-42SD/S/TH"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <label className="text-xs font-medium text-muted-foreground">Finish</label>
-                    <Input
-                      value={editingItem.finish}
-                      onChange={(e) => setEditingItem({...editingItem, finish: e.target.value})}
-                      className="text-xs"
-                      placeholder="e.g., Stainless Steel, Champagne Bronze"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="text-xs font-medium text-muted-foreground">Comments</label>
-                    <Textarea
-                      value={editingItem.comments}
-                      onChange={(e) => setEditingItem({...editingItem, comments: e.target.value})}
-                      className="text-xs"
-                      placeholder="Additional notes or specifications"
-                      rows={3}
-                    />
-                  </div>
-                  
-                  <div className="flex gap-2 pt-4">
-                    <Button
-                      onClick={() => saveItem(editingItem)}
-                      className="text-xs"
-                      disabled={!editingItem.item || !editingItem.manufacturer}
-                    >
-                      {isAddingNew ? 'Add Item' : 'Save Changes'}
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        setEditingItem(null);
-                        setIsAddingNew(false);
-                      }}
-                      variant="outline"
-                      className="text-xs"
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                </CardContent>
-                </Card>
               </div>
-            )}
             </div>
           </div>
-        </ScrollArea>
+
+          <ScrollArea className="flex-1 min-h-0">
+            <div className="px-6 py-4 space-y-4">
+              {/* Add New Item Form */}
+              {isAddingNew && (
+                <Card className="border-2 border-dashed border-primary/20 bg-primary/5">
+                  <CardHeader>
+                    <CardTitle className="text-base">Add New Item</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-sm font-medium mb-2 block">Type</label>
+                        <Select 
+                          value={newItemData.type} 
+                          onValueChange={(value: 'fixture' | 'appliance' | 'material') => 
+                            setNewItemData({...newItemData, type: value})
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="fixture">Fixture</SelectItem>
+                            <SelectItem value="appliance">Appliance</SelectItem>
+                            <SelectItem value="material">Material</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium mb-2 block">Item</label>
+                        <Input 
+                          value={newItemData.item || ''} 
+                          onChange={(e) => setNewItemData({...newItemData, item: e.target.value})}
+                          placeholder="e.g., Kitchen Sink"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium mb-2 block">Manufacturer</label>
+                        <Input 
+                          value={newItemData.manufacturer || ''} 
+                          onChange={(e) => setNewItemData({...newItemData, manufacturer: e.target.value})}
+                          placeholder="e.g., Kohler"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium mb-2 block">Model</label>
+                        <Input 
+                          value={newItemData.model || ''} 
+                          onChange={(e) => setNewItemData({...newItemData, model: e.target.value})}
+                          placeholder="e.g., K-6489"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium mb-2 block">Finish</label>
+                        <Input 
+                          value={newItemData.finish || ''} 
+                          onChange={(e) => setNewItemData({...newItemData, finish: e.target.value})}
+                          placeholder="e.g., Stainless Steel"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">Comments</label>
+                      <Textarea 
+                        value={newItemData.comments || ''} 
+                        onChange={(e) => setNewItemData({...newItemData, comments: e.target.value})}
+                        placeholder="Additional notes or specifications"
+                        rows={3}
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <Button 
+                        onClick={() => saveItem(newItemData as ScheduleItem)}
+                        disabled={!newItemData.item || !newItemData.manufacturer}
+                      >
+                        Save Item
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        onClick={() => {
+                          setIsAddingNew(false);
+                          setNewItemData({
+                            room: selectedRoom || '',
+                            type: 'fixture',
+                            item: '',
+                            manufacturer: '',
+                            model: '',
+                            finish: '',
+                            comments: ''
+                          });
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Room Items */}
+              {roomItems.map((item) => (
+                <Card key={item.id} className="hover:shadow-md transition-shadow">
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                          <div className="text-sm font-medium text-muted-foreground mb-1">Item</div>
+                          <div className="font-medium">{item.item}</div>
+                          <div className="text-xs text-muted-foreground mt-1 capitalize">
+                            {item.type}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-sm font-medium text-muted-foreground mb-1">Specifications</div>
+                          <div className="text-sm">{item.manufacturer}</div>
+                          <div className="text-sm text-muted-foreground">{item.model}</div>
+                          <div className="text-sm text-muted-foreground">{item.finish}</div>
+                        </div>
+                        <div>
+                          <div className="text-sm font-medium text-muted-foreground mb-1">Comments</div>
+                          <div className="text-sm">{item.comments || 'No comments'}</div>
+                        </div>
+                      </div>
+                      <div className="flex gap-2 ml-4">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setEditingItem(item)}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => deleteItem(item.id)}
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+
+              {roomItems.length === 0 && (
+                <div className="text-center text-muted-foreground italic py-8">
+                  No items scheduled for this room yet.
+                </div>
+              )}
+            </div>
+          </ScrollArea>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="h-full flex flex-col bg-background">
+      <div className="border-b border-border">
+        <div className="px-6 py-4">
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="text-lg font-semibold">Project Schedules</h1>
+            <Button 
+              onClick={exportToCSV}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <Download className="w-4 h-4" />
+              Export All
+            </Button>
+          </div>
+          <div className="flex items-center space-x-6">
+            <button className="text-sm pb-2 border-b-2 border-primary text-foreground font-medium">
+              All Rooms
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-auto">
+        <div className="px-6 py-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            {rooms.map((room) => (
+              <RoomCard
+                key={room}
+                room={room}
+                itemCount={roomData[room]}
+                onClick={() => setSelectedRoom(room)}
+              />
+            ))}
+          </div>
+          {rooms.length === 0 && (
+            <div className="text-center text-muted-foreground italic py-8">
+              No rooms with scheduled items found.
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
