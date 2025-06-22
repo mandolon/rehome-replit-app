@@ -534,110 +534,192 @@ const SchedulesContent = () => {
 
       <div className="flex-1 overflow-auto">
         <div className="px-6 py-4">
-          {/* Add Room Dialog */}
-          {isAddingRoom && (
-            <Card className="mb-4 border-2 border-dashed border-primary/20 bg-primary/5">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2">
-                  <Input
-                    value={newRoomName}
-                    onChange={(e) => setNewRoomName(e.target.value)}
-                    placeholder="Enter room name (e.g., Master Bedroom, Office)"
-                    className="flex-1"
-                    onKeyPress={(e) => e.key === 'Enter' && addRoom()}
-                  />
-                  <Button onClick={addRoom} size="sm">
-                    Add
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => {
-                      setIsAddingRoom(false);
-                      setNewRoomName('');
-                    }}
-                  >
-                    Cancel
-                  </Button>
+          {/* Appliances, Fixtures & Lighting Tab */}
+          {activeTab === 'appliances-fixtures-lighting' && (
+            <>
+              {/* Add Room Dialog */}
+              {isAddingRoom && (
+                <Card className="mb-4 border-2 border-dashed border-primary/20 bg-primary/5">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-2">
+                      <Input
+                        value={newRoomName}
+                        onChange={(e) => setNewRoomName(e.target.value)}
+                        placeholder="Enter room name (e.g., Master Bedroom, Office)"
+                        className="flex-1"
+                        onKeyPress={(e) => e.key === 'Enter' && addRoom()}
+                      />
+                      <Button onClick={addRoom} size="sm">
+                        Add
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => {
+                          setIsAddingRoom(false);
+                          setNewRoomName('');
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Card View */}
+              {viewMode === 'card' && (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                  {rooms.map((room) => (
+                    <RoomCard
+                      key={room}
+                      room={room}
+                      itemCount={roomData[room]}
+                      onClick={() => setSelectedRoom(room)}
+                      onDelete={() => deleteRoom(room)}
+                      isDeletable={!defaultRooms.includes(room)}
+                    />
+                  ))}
                 </div>
-              </CardContent>
-            </Card>
-          )}
+              )}
 
-          {/* Card View */}
-          {viewMode === 'card' && (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-              {rooms.map((room) => (
-                <RoomCard
-                  key={room}
-                  room={room}
-                  itemCount={roomData[room]}
-                  onClick={() => setSelectedRoom(room)}
-                  onDelete={() => deleteRoom(room)}
-                  isDeletable={!defaultRooms.includes(room)}
-                />
-              ))}
-            </div>
-          )}
+              {/* List View */}
+              {viewMode === 'list' && (
+                <div className="space-y-2">
+                  {rooms.map((room) => {
+                    const roomItems = scheduleItems.filter(item => item.room === room);
+                    const categoryCount = {
+                      fixtures: roomItems.filter(item => item.type === 'fixture').length,
+                      appliances: roomItems.filter(item => item.type === 'appliance').length,
+                      lighting: roomItems.filter(item => item.type === 'lighting').length
+                    };
+                    const lastUpdated = "Recently"; // Could be calculated from actual data
 
-          {/* List View */}
-          {viewMode === 'list' && (
-            <div className="space-y-2">
-              {rooms.map((room) => {
-                const roomItems = scheduleItems.filter(item => item.room === room);
-                const categoryCount = {
-                  fixtures: roomItems.filter(item => item.type === 'fixture').length,
-                  appliances: roomItems.filter(item => item.type === 'appliance').length,
-                  lighting: roomItems.filter(item => item.type === 'lighting').length
-                };
-                const lastUpdated = "Recently"; // Could be calculated from actual data
-
-                return (
-                  <div 
-                    key={room} 
-                    className="flex items-center gap-3 p-4 hover:bg-muted/50 rounded-lg cursor-pointer border bg-background"
-                    onClick={() => setSelectedRoom(room)}
-                  >
-                    <div className="flex-shrink-0">
-                      {getRoomIcon(room)}
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-medium text-sm flex gap-2 items-center">
-                        {room}
-                        {!defaultRooms.includes(room) && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              deleteRoom(room);
-                            }}
-                            className="h-5 w-5 p-0 opacity-0 group-hover:opacity-100 hover:bg-destructive hover:text-destructive-foreground"
-                          >
-                            <X className="w-3 h-3" />
-                          </Button>
-                        )}
+                    return (
+                      <div 
+                        key={room} 
+                        className="flex items-center gap-3 p-4 hover:bg-muted/50 rounded-lg cursor-pointer border bg-background"
+                        onClick={() => setSelectedRoom(room)}
+                      >
+                        <div className="flex-shrink-0">
+                          {getRoomIcon(room)}
+                        </div>
+                        <div className="flex-1">
+                          <div className="font-medium text-sm flex gap-2 items-center">
+                            {room}
+                            {!defaultRooms.includes(room) && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  deleteRoom(room);
+                                }}
+                                className="h-5 w-5 p-0 opacity-0 group-hover:opacity-100 hover:bg-destructive hover:text-destructive-foreground"
+                              >
+                                <X className="w-3 h-3" />
+                              </Button>
+                            )}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {categoryCount.fixtures > 0 && `${categoryCount.fixtures} fixtures`}
+                            {categoryCount.appliances > 0 && `${categoryCount.fixtures > 0 ? ', ' : ''}${categoryCount.appliances} appliances`}
+                            {categoryCount.lighting > 0 && `${(categoryCount.fixtures > 0 || categoryCount.appliances > 0) ? ', ' : ''}${categoryCount.lighting} lighting`}
+                            {roomData[room] === 0 && 'No items'}
+                          </div>
+                          <div className="text-xs text-muted-foreground">{lastUpdated}</div>
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {roomData[room]} {roomData[room] === 1 ? 'item' : 'items'}
+                        </div>
                       </div>
-                      <div className="text-xs text-muted-foreground">
-                        {categoryCount.fixtures > 0 && `${categoryCount.fixtures} fixtures`}
-                        {categoryCount.appliances > 0 && `${categoryCount.fixtures > 0 ? ', ' : ''}${categoryCount.appliances} appliances`}
-                        {categoryCount.lighting > 0 && `${(categoryCount.fixtures > 0 || categoryCount.appliances > 0) ? ', ' : ''}${categoryCount.lighting} lighting`}
-                        {roomData[room] === 0 && 'No items'}
-                      </div>
-                      <div className="text-xs text-muted-foreground">{lastUpdated}</div>
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      {roomData[room]} {roomData[room] === 1 ? 'item' : 'items'}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {rooms.length === 0 && (
+                <div className="text-center text-muted-foreground italic py-8">
+                  No rooms found. Click "Add Room" to create your first room.
+                </div>
+              )}
+            </>
           )}
 
-          {rooms.length === 0 && (
-            <div className="text-center text-muted-foreground italic py-8">
-              No rooms found. Click "Add Room" to create your first room.
+          {/* Windows & Doors Tab */}
+          {activeTab === 'windows-doors' && (
+            <div className="space-y-6">
+              {/* Windows Card */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span>Windows</span>
+                    <Button 
+                      onClick={() => addNewItem('window')}
+                      size="sm"
+                      className="flex items-center gap-2"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Add Window
+                    </Button>
+                  </CardTitle>
+                  <CardDescription>
+                    Manage window schedules across all rooms
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ResizableTable
+                    columns={getTableColumns()}
+                    data={scheduleItems.filter(item => item.type === 'window')}
+                    onDataChange={(newData) => {
+                      const otherItems = scheduleItems.filter(item => item.type !== 'window');
+                      setScheduleItems([...otherItems, ...newData as ScheduleItem[]]);
+                    }}
+                    onAddRow={() => addNewItem('window')}
+                    onDeleteRow={(id) => {
+                      setScheduleItems(scheduleItems.filter(item => item.id !== id));
+                    }}
+                    addButtonText="Add Window"
+                    emptyStateText="No windows scheduled yet. Click 'Add Window' to get started."
+                  />
+                </CardContent>
+              </Card>
+
+              {/* Doors Card */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span>Doors</span>
+                    <Button 
+                      onClick={() => addNewItem('door')}
+                      size="sm"
+                      className="flex items-center gap-2"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Add Door
+                    </Button>
+                  </CardTitle>
+                  <CardDescription>
+                    Manage door schedules across all rooms
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ResizableTable
+                    columns={getTableColumns()}
+                    data={scheduleItems.filter(item => item.type === 'door')}
+                    onDataChange={(newData) => {
+                      const otherItems = scheduleItems.filter(item => item.type !== 'door');
+                      setScheduleItems([...otherItems, ...newData as ScheduleItem[]]);
+                    }}
+                    onAddRow={() => addNewItem('door')}
+                    onDeleteRow={(id) => {
+                      setScheduleItems(scheduleItems.filter(item => item.id !== id));
+                    }}
+                    addButtonText="Add Door"
+                    emptyStateText="No doors scheduled yet. Click 'Add Door' to get started."
+                  />
+                </CardContent>
+              </Card>
             </div>
           )}
         </div>
