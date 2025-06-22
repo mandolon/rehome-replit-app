@@ -141,10 +141,9 @@ const SchedulesContent = () => {
   }, {} as Record<string, ScheduleItem[]>);
 
   return (
-    <div className="flex-1 bg-background">
-      <div className="h-full flex flex-col">
-        <div className="flex-1 px-4 sm:px-6 lg:px-8 py-4 lg:py-6 overflow-y-auto">
-          <div className="max-w-7xl mx-auto space-y-6 pb-8">
+    <div className="w-full bg-background">
+      <div className="px-4 sm:px-6 lg:px-8 py-4 lg:py-6">
+        <div className="max-w-7xl mx-auto space-y-6 pb-8">
             
             {/* Header Card */}
             <Card className="border-0 shadow-none bg-muted/30">
@@ -429,7 +428,6 @@ const SchedulesContent = () => {
                 </Card>
               </div>
             )}
-          </div>
         </div>
       </div>
     </div>
