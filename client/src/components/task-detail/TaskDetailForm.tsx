@@ -137,7 +137,7 @@ const TaskDetailForm = ({ task: originalTask, onTimeUpdated }: TaskDetailFormPro
         onSave={handleSaveDescription}
         disabled={descLoading}
       />
-      <div className="-mt-1">
+      <div className="-mt-2">
         <TaskDetailFields
           task={task}
           currentUser={currentUser}
