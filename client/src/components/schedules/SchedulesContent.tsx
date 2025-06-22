@@ -314,7 +314,7 @@ const SchedulesContent = () => {
                 {roomItems.length > 0 && (
                   <>
                     {/* Single Table Header */}
-                    <div className="grid grid-cols-7 gap-2 py-2 px-3 bg-muted/50 rounded-md text-xs font-medium text-muted-foreground sticky top-0 z-10">
+                    <div className="grid grid-cols-7 gap-3 py-3 px-1 text-xs font-medium text-muted-foreground sticky top-0 z-10 bg-background">
                       <div>Type</div>
                       <div>Item</div>
                       <div>Manufacturer</div>
@@ -333,13 +333,13 @@ const SchedulesContent = () => {
                         <div key={category}>
                           {/* Category Divider */}
                           {categoryIndex > 0 && (
-                            <div className="py-1">
-                              <div className="border-t border-border"></div>
+                            <div className="py-3">
+                              <div className="border-t border-border/30"></div>
                             </div>
                           )}
                           
                           {/* Category Label with Add Button */}
-                          <div className="grid grid-cols-7 gap-2 py-1 px-3">
+                          <div className="grid grid-cols-7 gap-3 py-2 px-1">
                             <div className="col-span-7 flex items-center justify-between">
                               <div className="text-xs font-medium text-muted-foreground">
                                 {categoryLabels[category]}
@@ -357,8 +357,8 @@ const SchedulesContent = () => {
                           </div>
 
                           {/* Category Items */}
-                          {categoryItems.map((item) => (
-                            <div key={item.id} className="grid grid-cols-7 gap-2 py-2 px-3 bg-background border rounded-md hover:bg-muted/30 transition-colors">
+                          {categoryItems.map((item, itemIndex) => (
+                            <div key={item.id} className="grid grid-cols-7 gap-3 py-2 px-1 hover:bg-muted/20 transition-colors group">
                               <div>
                                 <Select 
                                   value={item.type} 
@@ -366,7 +366,7 @@ const SchedulesContent = () => {
                                     updateItem(item.id, 'type', value)
                                   }
                                 >
-                                  <SelectTrigger className="h-7 text-xs">
+                                  <SelectTrigger className="h-7 text-xs border-0 shadow-none bg-transparent hover:bg-muted/50">
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
@@ -380,7 +380,7 @@ const SchedulesContent = () => {
                                 <Input 
                                   value={item.item} 
                                   onChange={(e) => updateItem(item.id, 'item', e.target.value)}
-                                  className="h-7 text-xs"
+                                  className="h-7 text-xs border-0 shadow-none bg-transparent hover:bg-muted/50 focus:bg-background"
                                   placeholder="Item name"
                                 />
                               </div>
@@ -388,7 +388,7 @@ const SchedulesContent = () => {
                                 <Input 
                                   value={item.manufacturer} 
                                   onChange={(e) => updateItem(item.id, 'manufacturer', e.target.value)}
-                                  className="h-7 text-xs"
+                                  className="h-7 text-xs border-0 shadow-none bg-transparent hover:bg-muted/50 focus:bg-background"
                                   placeholder="Manufacturer"
                                 />
                               </div>
@@ -396,7 +396,7 @@ const SchedulesContent = () => {
                                 <Input 
                                   value={item.model} 
                                   onChange={(e) => updateItem(item.id, 'model', e.target.value)}
-                                  className="h-7 text-xs"
+                                  className="h-7 text-xs border-0 shadow-none bg-transparent hover:bg-muted/50 focus:bg-background"
                                   placeholder="Model"
                                 />
                               </div>
@@ -404,7 +404,7 @@ const SchedulesContent = () => {
                                 <Input 
                                   value={item.finish} 
                                   onChange={(e) => updateItem(item.id, 'finish', e.target.value)}
-                                  className="h-7 text-xs"
+                                  className="h-7 text-xs border-0 shadow-none bg-transparent hover:bg-muted/50 focus:bg-background"
                                   placeholder="Finish"
                                 />
                               </div>
@@ -412,7 +412,7 @@ const SchedulesContent = () => {
                                 <Input 
                                   value={item.comments} 
                                   onChange={(e) => updateItem(item.id, 'comments', e.target.value)}
-                                  className="h-7 text-xs"
+                                  className="h-7 text-xs border-0 shadow-none bg-transparent hover:bg-muted/50 focus:bg-background"
                                   placeholder="Comments"
                                 />
                               </div>
@@ -421,11 +421,15 @@ const SchedulesContent = () => {
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => deleteItem(item.id)}
-                                  className="h-7 w-7 p-0"
+                                  className="h-7 w-7 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
                                 >
                                   <X className="w-3 h-3" />
                                 </Button>
                               </div>
+                              {/* Subtle row divider */}
+                              {itemIndex < categoryItems.length - 1 && (
+                                <div className="col-span-7 border-b border-border/20 -mx-1 mt-1"></div>
+                              )}
                             </div>
                           ))}
                         </div>
