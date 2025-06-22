@@ -71,11 +71,7 @@ const DashboardContent = () => {
     href: '/dashboard'
   };
 
-  const handleCardClick = (href: string) => {
-    if (href) {
-      window.location.href = href;
-    }
-  };
+  // Cards are now static - no navigation functionality
 
   const renderCard = (card: {
     id: string;
@@ -90,14 +86,13 @@ const DashboardContent = () => {
     return (
       <Card
         key={card.id}
-        onClick={() => handleCardClick(card.href)}
         className={cn(
-          "border-0 shadow-none bg-muted/30 cursor-pointer transition-all duration-300 hover:shadow-lg group",
+          "border-0 shadow-none bg-muted/30 transition-all duration-300",
           className
         )}
       >
         <CardHeader className="pb-2 space-y-1">
-          <CardTitle className="text-sm font-semibold group-hover:text-foreground/80 transition-colors line-clamp-1">
+          <CardTitle className="text-sm font-semibold line-clamp-1">
             {card.title}
           </CardTitle>
           <CardDescription className="text-xs text-muted-foreground line-clamp-1">
@@ -134,8 +129,7 @@ const DashboardContent = () => {
               <div className="flex flex-col gap-3 min-h-0">
                 {/* Welcome Card - Keeping original layout with new colors */}
                 <Card 
-                  className="flex-[1.8] min-h-[200px] border-0 shadow-none bg-muted/30 cursor-pointer transition-all duration-300 hover:shadow-lg group"
-                  onClick={() => handleCardClick(column1Cards[0].href)}
+                  className="flex-[1.8] min-h-[200px] border-0 shadow-none bg-muted/30 transition-all duration-300"
                 >
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg group-hover:text-foreground/80 transition-colors">
@@ -173,11 +167,10 @@ const DashboardContent = () => {
                 
                 {/* My Tasks card */}
                 <Card 
-                  className="flex-1 border-0 shadow-none bg-muted/30 cursor-pointer transition-all duration-300 hover:shadow-lg group"
-                  onClick={() => handleCardClick(column2CombinedCard.href)}
+                  className="flex-1 border-0 shadow-none bg-muted/30 transition-all duration-300"
                 >
                   <CardHeader className="pb-2 space-y-1">
-                    <CardTitle className="text-sm font-semibold group-hover:text-foreground/80 transition-colors">
+                    <CardTitle className="text-sm font-semibold">
                       {column2CombinedCard.title}
                     </CardTitle>
                     <CardDescription className="text-xs text-muted-foreground">
@@ -254,8 +247,7 @@ const DashboardContent = () => {
 
               {/* Column 3: Analytics Overview */}
               <Card 
-                className="h-full border-0 shadow-none bg-muted/30 cursor-pointer transition-all duration-300 hover:shadow-lg group flex flex-col"
-                onClick={() => handleCardClick(column3Card.href)}
+                className="h-full border-0 shadow-none bg-muted/30 transition-all duration-300 flex flex-col"
               >
                 <CardHeader className="pb-2 space-y-2">
                   <CardTitle className="text-base font-semibold group-hover:text-foreground/80 transition-colors">
