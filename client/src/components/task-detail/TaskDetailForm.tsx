@@ -121,7 +121,7 @@ const TaskDetailForm = ({ task: originalTask, onTimeUpdated }: TaskDetailFormPro
   } = useTaskDetailDescriptionSave(task, setTask, isSupabaseTask);
 
   return (
-    <div className="space-y-3 relative">
+    <div className="space-y-2 relative">
       <TaskDetailTitleSection
         isEditing={isEditing}
         editingValue={editingValue}
@@ -137,7 +137,7 @@ const TaskDetailForm = ({ task: originalTask, onTimeUpdated }: TaskDetailFormPro
         onSave={handleSaveDescription}
         disabled={descLoading}
       />
-      <div className="-mt-2">
+      <div className="mt-1">
         <TaskDetailFields
           task={task}
           currentUser={currentUser}

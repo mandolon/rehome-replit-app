@@ -91,7 +91,7 @@ const TaskDetailFields: React.FC<TaskDetailFieldsProps> = ({
   };
 
   return (
-    <div className="grid grid-cols-5 gap-3">
+    <div className="grid grid-cols-5 gap-2 py-1">
       <div className="space-y-0.5">
         <label className="text-xs text-muted-foreground">
           Created by
