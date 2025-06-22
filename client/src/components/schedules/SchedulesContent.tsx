@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Plus, Download, Upload, X, Camera } from 'lucide-react';
 
 interface ScheduleItem {
@@ -141,9 +142,11 @@ const SchedulesContent = () => {
   }, {} as Record<string, ScheduleItem[]>);
 
   return (
-    <div className="w-full bg-background">
-      <div className="px-4 sm:px-6 lg:px-8 py-4 lg:py-6">
-        <div className="max-w-7xl mx-auto space-y-6 pb-8">
+    <div className="flex-1 bg-background overflow-hidden">
+      <div className="h-full flex flex-col">
+        <ScrollArea className="flex-1 min-h-0">
+          <div className="px-4 sm:px-6 lg:px-8 py-4 lg:py-6">
+            <div className="max-w-7xl mx-auto space-y-6 pb-8">
             
             {/* Header Card */}
             <Card className="border-0 shadow-none bg-muted/30">
@@ -428,7 +431,9 @@ const SchedulesContent = () => {
                 </Card>
               </div>
             )}
-        </div>
+            </div>
+          </div>
+        </ScrollArea>
       </div>
     </div>
   );
