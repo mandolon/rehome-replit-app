@@ -415,11 +415,11 @@ const SchedulesContent = () => {
                       {/* Table Header */}
                       <div className="flex py-2 px-0 text-xs font-medium text-muted-foreground sticky top-0 z-10 bg-background" style={{ borderBottom: '1px solid #bbbbbb' }}>
                         <div className="w-12 flex-shrink-0 pl-3 pr-2">#</div>
-                        <div className="w-20 flex-shrink-0 px-2">Type</div>
+                        <div className="w-24 flex-shrink-0 px-2">Type</div>
                         <div className="w-40 flex-shrink-0 px-2">Item</div>
-                        <div className="w-28 flex-shrink-0 px-2">Manufacturer</div>
+                        <div className="w-32 flex-shrink-0 px-2">Manufacturer</div>
                         <div className="w-32 flex-shrink-0 px-2">Model</div>
-                        <div className="w-24 flex-shrink-0 px-2">Finish</div>
+                        <div className="w-28 flex-shrink-0 px-2">Finish</div>
                         <div className="flex-1 min-w-0 px-2">Comments</div>
                         <div className="w-8 flex-shrink-0 pr-3"></div>
                       </div>
@@ -438,7 +438,7 @@ const SchedulesContent = () => {
                           <div className="w-12 flex-shrink-0 pl-3 pr-2 text-xs text-muted-foreground flex items-center">
                             {index + 1}
                           </div>
-                          <div className="w-20 flex-shrink-0 px-2">
+                          <div className="w-24 flex-shrink-0 px-2">
                             <Select 
                               value={item.type} 
                               onValueChange={(value: 'fixture' | 'appliance' | 'lighting') => 
@@ -496,7 +496,7 @@ const SchedulesContent = () => {
                               </Select>
                             )}
                           </div>
-                          <div className="w-28 flex-shrink-0 px-2">
+                          <div className="w-32 flex-shrink-0 px-2">
                             <Input 
                               value={item.manufacturer} 
                               onChange={(e) => updateItem(item.id, 'manufacturer', e.target.value)}
@@ -520,7 +520,7 @@ const SchedulesContent = () => {
                               onKeyDown={(e) => handleKeyDown(e, item.id, index, filteredItems, 'model')}
                             />
                           </div>
-                          <div className="w-24 flex-shrink-0 px-2">
+                          <div className="w-28 flex-shrink-0 px-2">
                             <Input 
                               value={item.finish} 
                               onChange={(e) => updateItem(item.id, 'finish', e.target.value)}
