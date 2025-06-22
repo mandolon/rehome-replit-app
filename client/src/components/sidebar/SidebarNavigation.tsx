@@ -41,6 +41,7 @@ const SidebarNavigation = React.memo(({ isCollapsed, isOpen, onToggle }: Sidebar
   const handleNavigateClientDashboard = useCallback(() => navigate('/client/dashboard'), [navigate]);
   const handleNavigateClientWhiteboards = useCallback(() => navigate('/client/whiteboards'), [navigate]);
   const handleNavigateHome = useCallback(() => navigate('/'), [navigate]);
+  const handleNavigateHome2 = useCallback(() => navigate('/home2'), [navigate]);
   const handleNavigateTasks = useCallback(() => navigate('/tasks'), [navigate]);
   const handleNavigateProjects = useCallback(() => navigate('/projects'), [navigate]);
   const handleNavigateInbox = useCallback(() => navigate('/inbox'), [navigate]);
@@ -62,6 +63,7 @@ const SidebarNavigation = React.memo(({ isCollapsed, isOpen, onToggle }: Sidebar
     if (clientMode) return clientNavItems;
     return [
       { icon: Home, label: 'Home', active: false, onClick: handleNavigateHome },
+      { icon: Home, label: 'Home 2', active: false, onClick: handleNavigateHome2 },
       { icon: ClipboardList, label: 'Task Board (Final)', active: false, onClick: handleNavigateTasks },
       { icon: FolderOpen, label: 'Projects', active: false, onClick: handleNavigateProjects },
       { icon: Inbox, label: 'Inbox', active: false, onClick: handleNavigateInbox },
@@ -76,6 +78,7 @@ const SidebarNavigation = React.memo(({ isCollapsed, isOpen, onToggle }: Sidebar
   }, [
     clientMode,
     handleNavigateHome,
+    handleNavigateHome2,
     handleNavigateTasks,
     handleNavigateProjects,
     handleNavigateInbox,

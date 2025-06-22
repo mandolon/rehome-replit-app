@@ -8,6 +8,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
+import Home2 from "./pages/Home2";
 import Dashboard from "./pages/Dashboard";
 import ProjectPage from "./pages/ProjectPage";
 import Projects from "./pages/Projects";
@@ -77,6 +78,7 @@ const App = () => {
                           <ProtectedRoute>
                             <Routes>
                               <Route path="/" element={<Index />} />
+                              <Route path="/home2" element={<Home2 />} />
                               <Route path="/tasks" element={<TasksPage />} />
                               <Route path="/dashboard" element={<Dashboard />} />
                               <Route path="/projects" element={<Projects />} />
