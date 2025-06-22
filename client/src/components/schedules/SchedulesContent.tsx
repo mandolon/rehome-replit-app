@@ -23,6 +23,8 @@ interface RoomCardProps {
   room: string;
   itemCount: number;
   onClick: () => void;
+  onDelete?: () => void;
+  isDeletable?: boolean;
 }
 
 const getRoomIcon = (room: string) => {
@@ -38,26 +40,44 @@ const getRoomIcon = (room: string) => {
   }
 };
 
-const RoomCard = ({ room, itemCount, onClick }: RoomCardProps) => {
+const RoomCard = ({ room, itemCount, onClick, onDelete, isDeletable }: RoomCardProps) => {
   return (
-    <div className="group cursor-pointer" onClick={onClick}>
-      <div className="relative aspect-square bg-muted rounded-lg mb-2 flex flex-col items-center justify-center group-hover:bg-muted/80 transition-colors">
-        {getRoomIcon(room)}
-        <div className="text-xs text-muted-foreground">
-          {itemCount} {itemCount === 1 ? 'item' : 'items'}
+    <div className="group cursor-pointer relative">
+      <div onClick={onClick}>
+        <div className="relative aspect-square bg-muted rounded-lg mb-2 flex flex-col items-center justify-center group-hover:bg-muted/80 transition-colors">
+          {getRoomIcon(room)}
+          <div className="text-xs text-muted-foreground">
+            {itemCount} {itemCount === 1 ? 'item' : 'items'}
+          </div>
+        </div>
+        <div className="space-y-1">
+          <div className="text-sm font-medium truncate group-hover:text-primary transition-colors">
+            {room}
+          </div>
         </div>
       </div>
-      <div className="space-y-1">
-        <div className="text-sm font-medium truncate group-hover:text-primary transition-colors">
-          {room}
-        </div>
-      </div>
+      {isDeletable && onDelete && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete();
+          }}
+          className="absolute -top-2 -right-2 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity bg-background border shadow-sm hover:bg-destructive hover:text-destructive-foreground"
+        >
+          <X className="w-3 h-3" />
+        </Button>
+      )}
     </div>
   );
 };
 
 const SchedulesContent = () => {
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
+  const [customRooms, setCustomRooms] = useState<string[]>([]);
+  const [newRoomName, setNewRoomName] = useState('');
+  const [isAddingRoom, setIsAddingRoom] = useState(false);
   const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([
     {
       id: '1',
@@ -125,6 +145,7 @@ const SchedulesContent = () => {
 
   // Define default rooms and get item counts
   const defaultRooms = ['Kitchen', 'Bathroom', 'Bedroom 1'];
+  const allRooms = [...defaultRooms, ...customRooms];
   const roomData = scheduleItems.reduce((acc, item) => {
     if (!acc[item.room]) {
       acc[item.room] = 0;
@@ -133,14 +154,14 @@ const SchedulesContent = () => {
     return acc;
   }, {} as Record<string, number>);
 
-  // Ensure all default rooms are included even if they have no items
-  defaultRooms.forEach(room => {
+  // Ensure all rooms are included even if they have no items
+  allRooms.forEach(room => {
     if (!roomData[room]) {
       roomData[room] = 0;
     }
   });
 
-  const rooms = Object.keys(roomData);
+  const rooms = allRooms;
 
   const updateItem = (id: string, field: keyof ScheduleItem, value: string) => {
     setScheduleItems(scheduleItems.map(item => 
@@ -164,6 +185,28 @@ const SchedulesContent = () => {
 
   const deleteItem = (id: string) => {
     setScheduleItems(scheduleItems.filter(item => item.id !== id));
+  };
+
+  const addRoom = () => {
+    const trimmedName = newRoomName.trim();
+    if (trimmedName && ![...defaultRooms, ...customRooms].includes(trimmedName)) {
+      setCustomRooms([...customRooms, trimmedName]);
+      setNewRoomName('');
+      setIsAddingRoom(false);
+    }
+  };
+
+  const deleteRoom = (roomToDelete: string) => {
+    // Don't allow deletion of default rooms
+    if (!defaultRooms.includes(roomToDelete)) {
+      setCustomRooms(customRooms.filter(room => room !== roomToDelete));
+      // Remove all items from this room
+      setScheduleItems(scheduleItems.filter(item => item.room !== roomToDelete));
+      // If currently viewing this room, go back to room list
+      if (selectedRoom === roomToDelete) {
+        setSelectedRoom(null);
+      }
+    }
   };
 
   const exportToCSV = () => {
@@ -336,15 +379,25 @@ const SchedulesContent = () => {
         <div className="px-6 py-4">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-lg font-semibold">Project Schedules</h1>
-            <Button 
-              onClick={exportToCSV}
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2"
-            >
-              <Download className="w-4 h-4" />
-              Export All
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button 
+                onClick={() => setIsAddingRoom(true)}
+                size="sm"
+                className="flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                Add Room
+              </Button>
+              <Button 
+                onClick={exportToCSV}
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-2"
+              >
+                <Download className="w-4 h-4" />
+                Export All
+              </Button>
+            </div>
           </div>
           <div className="flex items-center space-x-6">
             <button className="text-sm pb-2 border-b-2 border-primary text-foreground font-medium">
@@ -356,6 +409,36 @@ const SchedulesContent = () => {
 
       <div className="flex-1 overflow-auto">
         <div className="px-6 py-4">
+          {/* Add Room Dialog */}
+          {isAddingRoom && (
+            <Card className="mb-4 border-2 border-dashed border-primary/20 bg-primary/5">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={newRoomName}
+                    onChange={(e) => setNewRoomName(e.target.value)}
+                    placeholder="Enter room name (e.g., Master Bedroom, Office)"
+                    className="flex-1"
+                    onKeyPress={(e) => e.key === 'Enter' && addRoom()}
+                  />
+                  <Button onClick={addRoom} size="sm">
+                    Add
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => {
+                      setIsAddingRoom(false);
+                      setNewRoomName('');
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {rooms.map((room) => (
               <RoomCard
@@ -363,12 +446,14 @@ const SchedulesContent = () => {
                 room={room}
                 itemCount={roomData[room]}
                 onClick={() => setSelectedRoom(room)}
+                onDelete={() => deleteRoom(room)}
+                isDeletable={!defaultRooms.includes(room)}
               />
             ))}
           </div>
           {rooms.length === 0 && (
             <div className="text-center text-muted-foreground italic py-8">
-              No rooms with scheduled items found.
+              No rooms found. Click "Add Room" to create your first room.
             </div>
           )}
         </div>
