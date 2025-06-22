@@ -121,23 +121,27 @@ const TaskDetailForm = ({ task: originalTask, onTimeUpdated }: TaskDetailFormPro
   } = useTaskDetailDescriptionSave(task, setTask, isSupabaseTask);
 
   return (
-    <div className="space-y-2 relative">
-      <TaskDetailTitleSection
-        isEditing={isEditing}
-        editingValue={editingValue}
-        setEditingValue={setEditingValue}
-        startEditingTask={startEditingTask}
-        saveTaskEdit={saveTaskEdit}
-        cancelTaskEdit={cancelTaskEdit}
-        task={task}
-        onChangeStatus={handleChangeStatus}
-      />
-      <TaskDetailDescription
-        value={desc}
-        onSave={handleSaveDescription}
-        disabled={descLoading}
-      />
-      <div className="mt-1">
+    <div className="relative">
+      <div className="mb-4">
+        <TaskDetailTitleSection
+          isEditing={isEditing}
+          editingValue={editingValue}
+          setEditingValue={setEditingValue}
+          startEditingTask={startEditingTask}
+          saveTaskEdit={saveTaskEdit}
+          cancelTaskEdit={cancelTaskEdit}
+          task={task}
+          onChangeStatus={handleChangeStatus}
+        />
+      </div>
+      <div className="mb-4">
+        <TaskDetailDescription
+          value={desc}
+          onSave={handleSaveDescription}
+          disabled={descLoading}
+        />
+      </div>
+      <div className="mb-2">
         <TaskDetailFields
           task={task}
           currentUser={currentUser}
