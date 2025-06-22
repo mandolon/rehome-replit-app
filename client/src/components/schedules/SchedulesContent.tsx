@@ -204,16 +204,20 @@ const SchedulesContent = () => {
   };
 
   // Define table columns for the resizable table
-  const getTableColumns = (): TableColumn[] => [
+  const getTableColumns = (tableType?: 'window' | 'door'): TableColumn[] => [
     {
       key: 'type',
-      title: 'Type',
+      title: tableType === 'window' ? 'Window Type' : tableType === 'door' ? 'Door Type' : 'Type',
       width: 96,
       minWidth: 80,
       maxWidth: 120,
       type: 'select',
-      options: ['fixture', 'appliance', 'lighting'],
-      placeholder: 'Select type...'
+      options: tableType === 'window' 
+        ? ['Picture Window', 'Double Hung', 'Casement', 'Sliding', 'Bay Window', 'Bow Window', 'Awning', 'Single Hung', 'Fixed', 'Garden Window']
+        : tableType === 'door'
+        ? ['Entry Door', 'Interior Door', 'Patio Door', 'French Door', 'Sliding Door', 'Bi-fold Door', 'Pocket Door', 'Storm Door', 'Screen Door', 'Garage Door']
+        : ['fixture', 'appliance', 'lighting'],
+      placeholder: tableType === 'window' ? 'Select window type...' : tableType === 'door' ? 'Select door type...' : 'Select type...'
     },
     {
       key: 'item',
@@ -232,9 +236,9 @@ const SchedulesContent = () => {
             case 'lighting':
               return ['Pendant Light', 'Chandelier', 'Recessed Light', 'Under Cabinet LED', 'Vanity Light', 'Ceiling Fan', 'Wall Sconce', 'Track Light', 'Floor Lamp', 'Table Lamp'];
             case 'window':
-              return ['Picture Window', 'Double Hung Window', 'Casement Window', 'Sliding Window', 'Bay Window', 'Bow Window', 'Awning Window', 'Single Hung Window', 'Fixed Window', 'Garden Window'];
+              return [];
             case 'door':
-              return ['Entry Door', 'Patio Door', 'French Door', 'Sliding Door', 'Bi-fold Door', 'Pocket Door', 'Storm Door', 'Screen Door', 'Interior Door', 'Garage Door'];
+              return [];
             default:
               return [];
           }
@@ -285,9 +289,12 @@ const SchedulesContent = () => {
   const addNewItem = (itemType: ScheduleItem['type'] = 'fixture') => {
     if (!selectedRoom) return;
     
+    // For Windows and Doors, use a generic room assignment since they're category-based
+    const roomAssignment = selectedRoom === 'Windows' || selectedRoom === 'Doors' ? 'Various' : selectedRoom;
+    
     const newItem: ScheduleItem = {
       id: Date.now().toString(),
-      room: selectedRoom,
+      room: roomAssignment,
       type: itemType,
       item: '',
       manufacturer: '',
@@ -440,7 +447,11 @@ const SchedulesContent = () => {
 
               {/* Resizable Table */}
               <ResizableTable
-                columns={getTableColumns()}
+                columns={getTableColumns(
+                  selectedRoom === 'Windows' ? 'window' : 
+                  selectedRoom === 'Doors' ? 'door' : 
+                  undefined
+                )}
                 data={(() => {
                   if (['Windows', 'Doors'].includes(selectedRoom)) {
                     return roomItems;
