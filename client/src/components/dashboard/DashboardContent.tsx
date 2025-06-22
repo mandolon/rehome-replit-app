@@ -245,70 +245,60 @@ const DashboardContent = () => {
                 </Card>
               </div>
 
-              {/* Column 3: Recent Activity */}
+              {/* Column 3: Upcoming */}
               <Card 
                 className="h-full border-0 shadow-none bg-muted/30 transition-all duration-300 flex flex-col"
               >
                 <CardHeader className="pb-2 space-y-2">
                   <CardTitle className="text-base font-semibold">
-                    Recent Activity
+                    Upcoming
                   </CardTitle>
                   <CardDescription className="text-xs text-muted-foreground">
-                    Collaborative Actions
+                    Tasks & Deadlines
                   </CardDescription>
                   <p className="text-muted-foreground text-xs leading-tight line-clamp-2">
-                    Latest team activities, updates, and collaborative actions across your projects.
+                    Important deadlines, pending tasks, and items requiring your attention in the coming days.
                   </p>
                 </CardHeader>
                 <CardContent className="flex-1 space-y-2 pt-0">
-                  <div className="bg-muted/50 rounded-lg p-2 space-y-1">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="text-foreground font-semibold text-xs">Sarah completed task</div>
-                        <div className="text-muted-foreground text-xs">"Update landing page design"</div>
-                      </div>
-                      <div className="text-muted-foreground text-xs whitespace-nowrap ml-2">2 min ago</div>
+                  <div className="bg-muted/50 rounded-lg p-2">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="text-foreground font-semibold text-xs">Task "Finalize Permit Set"</div>
+                      <div className="text-orange-600 dark:text-orange-400 font-bold text-xs">Tomorrow</div>
                     </div>
+                    <div className="text-muted-foreground text-xs">Due date approaching</div>
                   </div>
                   
-                  <div className="bg-muted/50 rounded-lg p-2 space-y-1">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="text-foreground font-semibold text-xs">Mike added comment</div>
-                        <div className="text-muted-foreground text-xs">Peterson project review</div>
-                      </div>
-                      <div className="text-muted-foreground text-xs whitespace-nowrap ml-2">15 min ago</div>
+                  <div className="bg-muted/50 rounded-lg p-2">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="text-foreground font-semibold text-xs">Invoice #0234 unpaid</div>
+                      <div className="text-red-600 dark:text-red-400 font-bold text-xs">3 days</div>
                     </div>
+                    <div className="text-muted-foreground text-xs">Payment overdue</div>
                   </div>
                   
-                  <div className="bg-muted/50 rounded-lg p-2 space-y-1">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="text-foreground font-semibold text-xs">New project created</div>
-                        <div className="text-muted-foreground text-xs">"Mobile App Redesign"</div>
-                      </div>
-                      <div className="text-muted-foreground text-xs whitespace-nowrap ml-2">1 hr ago</div>
+                  <div className="bg-muted/50 rounded-lg p-2">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="text-foreground font-semibold text-xs">Matt's Quick Ask</div>
+                      <div className="text-blue-600 dark:text-blue-400 font-bold text-xs">Pending</div>
                     </div>
+                    <div className="text-muted-foreground text-xs">Needs your response</div>
                   </div>
                   
-                  <div className="bg-muted/50 rounded-lg p-2 space-y-1">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="text-foreground font-semibold text-xs">Alex uploaded files</div>
-                        <div className="text-muted-foreground text-xs">Design assets for review</div>
-                      </div>
-                      <div className="text-muted-foreground text-xs whitespace-nowrap ml-2">2 hr ago</div>
+                  <div className="bg-muted/50 rounded-lg p-2">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="text-foreground font-semibold text-xs">Project Review Meeting</div>
+                      <div className="text-foreground font-bold text-xs">Friday</div>
                     </div>
+                    <div className="text-muted-foreground text-xs">Peterson Street project</div>
                   </div>
                   
-                  <div className="bg-muted/50 rounded-lg p-2 space-y-1">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="text-foreground font-semibold text-xs">Team meeting scheduled</div>
-                        <div className="text-muted-foreground text-xs">Weekly project sync</div>
-                      </div>
-                      <div className="text-muted-foreground text-xs whitespace-nowrap ml-2">3 hr ago</div>
+                  <div className="bg-muted/50 rounded-lg p-2">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="text-foreground font-semibold text-xs">Client Presentation</div>
+                      <div className="text-foreground font-bold text-xs">Next Week</div>
                     </div>
+                    <div className="text-muted-foreground text-xs">Design proposal review</div>
                   </div>
                 </CardContent>
               </Card>
