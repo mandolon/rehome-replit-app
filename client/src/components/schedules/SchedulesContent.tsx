@@ -334,27 +334,16 @@ const SchedulesContent = () => {
 
                       return (
                         <div key={category}>
-                          {/* Category Label with Add Button */}
-                          <div className="flex py-2 px-3" style={{ borderBottom: '1px solid #bbbbbb' }}>
-                            <div className="flex-1 flex items-center justify-between">
-                              <div className="text-xs font-medium text-foreground">
-                                {categoryLabels[category]}
-                              </div>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={addNewItemForCategory(category)}
-                                className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground hover:bg-background/50"
-                              >
-                                <Plus className="w-3 h-3 mr-1" />
-                                Add
-                              </Button>
+                          {/* Category Label */}
+                          <div className="flex py-1.5 px-3" style={{ borderBottom: '1px solid #bbbbbb' }}>
+                            <div className="text-xs font-medium text-foreground">
+                              {categoryLabels[category]}
                             </div>
                           </div>
 
                           {/* Category Items */}
                           {categoryItems.map((item, itemIndex) => (
-                            <div key={item.id} className="flex py-2 px-3 hover:bg-muted/30 transition-colors group" style={{ borderBottom: '1px solid #bbbbbb' }}>
+                            <div key={item.id} className="flex py-1 px-3 hover:bg-muted/30 transition-colors group" style={{ borderBottom: '1px solid #bbbbbb' }}>
                               <div className="w-12 flex-shrink-0 border-r border-gray-300 pr-2 text-xs text-muted-foreground flex items-center">
                                 {itemIndex + 1}
                               </div>
@@ -365,7 +354,7 @@ const SchedulesContent = () => {
                                     updateItem(item.id, 'type', value)
                                   }
                                 >
-                                  <SelectTrigger className="h-7 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full" style={{ fontSize: '0.75rem' }}>
+                                  <SelectTrigger className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full" style={{ fontSize: '0.75rem' }}>
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
@@ -379,7 +368,7 @@ const SchedulesContent = () => {
                                 <Input 
                                   value={item.item} 
                                   onChange={(e) => updateItem(item.id, 'item', e.target.value)}
-                                  className="h-7 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
+                                  className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
                                   style={{ fontSize: '0.75rem' }}
                                   placeholder="Item name"
                                 />
@@ -388,7 +377,7 @@ const SchedulesContent = () => {
                                 <Input 
                                   value={item.manufacturer} 
                                   onChange={(e) => updateItem(item.id, 'manufacturer', e.target.value)}
-                                  className="h-7 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
+                                  className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
                                   style={{ fontSize: '0.75rem' }}
                                   placeholder="Manufacturer"
                                 />
@@ -397,7 +386,7 @@ const SchedulesContent = () => {
                                 <Input 
                                   value={item.model} 
                                   onChange={(e) => updateItem(item.id, 'model', e.target.value)}
-                                  className="h-7 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
+                                  className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
                                   style={{ fontSize: '0.75rem' }}
                                   placeholder="Model"
                                 />
@@ -406,7 +395,7 @@ const SchedulesContent = () => {
                                 <Input 
                                   value={item.finish} 
                                   onChange={(e) => updateItem(item.id, 'finish', e.target.value)}
-                                  className="h-7 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
+                                  className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
                                   style={{ fontSize: '0.75rem' }}
                                   placeholder="Finish"
                                 />
@@ -415,7 +404,7 @@ const SchedulesContent = () => {
                                 <Input 
                                   value={item.comments} 
                                   onChange={(e) => updateItem(item.id, 'comments', e.target.value)}
-                                  className="h-7 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
+                                  className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
                                   style={{ fontSize: '0.75rem' }}
                                   placeholder="Comments"
                                 />
@@ -425,13 +414,29 @@ const SchedulesContent = () => {
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => deleteItem(item.id)}
-                                  className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/10 hover:text-destructive"
+                                  className="h-5 w-5 p-0 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/10 hover:text-destructive"
                                 >
                                   <X className="w-3 h-3" />
                                 </Button>
                               </div>
                             </div>
                           ))}
+
+                          {/* Add Button Below Category */}
+                          <div className="flex py-1 px-3">
+                            <div className="w-12 flex-shrink-0"></div>
+                            <div className="flex-1">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={addNewItemForCategory(category)}
+                                className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                              >
+                                <Plus className="w-3 h-3 mr-1" />
+                                Add {categoryLabels[category].toLowerCase()}
+                              </Button>
+                            </div>
+                          </div>
                         </div>
                       );
                     })}
