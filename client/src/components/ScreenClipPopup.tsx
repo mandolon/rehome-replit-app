@@ -38,9 +38,13 @@ const ScreenClipPopup: React.FC<ScreenClipPopupProps> = ({ isOpen, onClose }) =>
     try {
       setIsCapturing(true);
       
-      // Request screen capture permission
+      // Request screen capture permission with high quality settings
       const stream = await navigator.mediaDevices.getDisplayMedia({
-        video: true,
+        video: {
+          width: { ideal: 4096, max: 4096 },
+          height: { ideal: 2160, max: 2160 },
+          frameRate: { ideal: 60, max: 60 }
+        },
         audio: false
       });
 
@@ -54,15 +58,23 @@ const ScreenClipPopup: React.FC<ScreenClipPopupProps> = ({ isOpen, onClose }) =>
         video.onloadedmetadata = resolve;
       });
 
-      // Create canvas to capture the frame
+      // Create high-quality canvas to capture the frame
       const canvas = document.createElement('canvas');
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext('2d', { 
+        alpha: false,
+        desynchronized: false,
+        colorSpace: 'srgb'
+      });
       
       if (ctx) {
+        // Disable image smoothing for pixel-perfect rendering
+        ctx.imageSmoothingEnabled = false;
         ctx.drawImage(video, 0, 0);
-        const imageData = canvas.toDataURL('image/png');
+        
+        // Use maximum quality PNG export (no compression)
+        const imageData = canvas.toDataURL('image/png', 1.0);
         
         // Stop the stream
         stream.getTracks().forEach(track => track.stop());
@@ -190,28 +202,38 @@ const ScreenClipPopup: React.FC<ScreenClipPopupProps> = ({ isOpen, onClose }) =>
     const img = new Image();
     img.onload = () => {
       const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext('2d', { 
+        alpha: false,
+        desynchronized: false,
+        colorSpace: 'srgb'
+      });
       
       if (ctx) {
         // Calculate the scale factors between the captured image and the screen
         const scaleX = img.width / window.innerWidth;
         const scaleY = img.height / window.innerHeight;
         
-        const cropX = area.startX * scaleX;
-        const cropY = area.startY * scaleY;
-        const cropWidth = (area.endX - area.startX) * scaleX;
-        const cropHeight = (area.endY - area.startY) * scaleY;
+        const cropX = Math.round(area.startX * scaleX);
+        const cropY = Math.round(area.startY * scaleY);
+        const cropWidth = Math.round((area.endX - area.startX) * scaleX);
+        const cropHeight = Math.round((area.endY - area.startY) * scaleY);
         
+        // Set canvas size to exact crop dimensions (no scaling)
         canvas.width = cropWidth;
         canvas.height = cropHeight;
         
+        // Disable image smoothing for pixel-perfect cropping
+        ctx.imageSmoothingEnabled = false;
+        
+        // Draw the cropped area with no interpolation
         ctx.drawImage(
           img,
           cropX, cropY, cropWidth, cropHeight,
           0, 0, cropWidth, cropHeight
         );
         
-        const croppedImage = canvas.toDataURL('image/png');
+        // Export at maximum quality with no compression
+        const croppedImage = canvas.toDataURL('image/png', 1.0);
         setCapturedImage(croppedImage);
         setIsCapturing(false);
       }
@@ -219,35 +241,74 @@ const ScreenClipPopup: React.FC<ScreenClipPopupProps> = ({ isOpen, onClose }) =>
     img.src = fullScreenImage;
   };
 
-  const saveImage = () => {
+  const saveImage = useCallback((format: 'png' | 'jpg' = 'png') => {
     if (!capturedImage) return;
 
-    const link = document.createElement('a');
-    link.download = `screen-clip-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.png`;
-    link.href = capturedImage;
-    link.click();
+    const downloadImage = (imageData: string, ext: string) => {
+      const link = document.createElement('a');
+      link.download = `screen-clip-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.${ext}`;
+      link.href = imageData;
+      link.click();
 
-    toast({
-      title: "Image Saved",
-      description: "Screen clip has been downloaded successfully."
-    });
-  };
+      toast({
+        title: "High-Quality Image Saved",
+        description: `Screen clip has been downloaded as ${ext.toUpperCase()} with maximum quality.`
+      });
+    };
+
+    if (format === 'jpg') {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d', { 
+        alpha: false,
+        desynchronized: false,
+        colorSpace: 'srgb'
+      });
+      const img = new Image();
+      
+      img.onload = () => {
+        if (!ctx) return;
+        
+        canvas.width = img.width;
+        canvas.height = img.height;
+        
+        // Fill with white background for JPEG
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Disable smoothing for sharp rendering
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(img, 0, 0);
+        
+        // Export as high-quality JPEG (quality = 1.0 = maximum)
+        const jpegImage = canvas.toDataURL('image/jpeg', 1.0);
+        downloadImage(jpegImage, 'jpg');
+      };
+      
+      img.src = capturedImage;
+    } else {
+      downloadImage(capturedImage, 'png');
+    }
+  }, [capturedImage, toast]);
 
   const copyToClipboard = async () => {
     if (!capturedImage) return;
 
     try {
-      // Convert data URL to blob
+      // Convert data URL to high-quality blob
       const response = await fetch(capturedImage);
       const blob = await response.blob();
       
+      // Ensure we're copying the original PNG format for maximum quality
       await navigator.clipboard.write([
-        new ClipboardItem({ 'image/png': blob })
+        new ClipboardItem({ 
+          'image/png': blob,
+          'image/jpeg': blob // Fallback for compatibility
+        })
       ]);
 
       toast({
-        title: "Copied to Clipboard",
-        description: "Screen clip has been copied to your clipboard."
+        title: "High-Quality Image Copied",
+        description: "Screen clip has been copied to your clipboard with full resolution."
       });
     } catch (error) {
       console.error('Error copying to clipboard:', error);
@@ -330,12 +391,21 @@ const ScreenClipPopup: React.FC<ScreenClipPopupProps> = ({ isOpen, onClose }) =>
               
               <div className="flex justify-center gap-3">
                 <Button
-                  onClick={saveImage}
+                  onClick={() => saveImage('png')}
                   variant="outline"
                   className="flex items-center gap-2"
                 >
                   <Download className="w-4 h-4" />
-                  Save Image
+                  Save PNG
+                </Button>
+                
+                <Button
+                  onClick={() => saveImage('jpg')}
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  <Download className="w-4 h-4" />
+                  Save JPG
                 </Button>
                 
                 <Button
