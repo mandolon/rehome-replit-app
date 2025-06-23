@@ -72,13 +72,20 @@
 .pdf-pin {
   position: absolute;
   z-index: 15;
-  cursor: pointer;
+  cursor: grab;
   transform: translate(-50%, -50%);
-  transition: transform 0.2s ease-in-out;
+  transition: transform 0.1s ease-out;
 }
 
 .pdf-pin:hover {
   transform: translate(-50%, -50%) scale(1.1);
+}
+
+.pdf-pin.dragging {
+  z-index: 30;
+  cursor: grabbing;
+  transition: none;
+  transform: translate(-50%, -50%) scale(1.05);
 }
 
 .pdf-pin-circle {

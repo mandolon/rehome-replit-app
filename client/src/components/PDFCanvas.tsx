@@ -45,6 +45,8 @@ const PDFCanvas = forwardRef<PDFCanvasHandle, PDFCanvasProps>(({
   const lastPanPoint = useRef({ x: 0, y: 0 });
   const isDraggingPin = useRef(false);
   const draggedPinId = useRef<string | null>(null);
+  const lastDragUpdate = useRef(0);
+  const [draggingPinId, setDraggingPinId] = useState<string | null>(null);
 
   useImperativeHandle(ref, () => ({
     getCanvasElement: () => canvasRef.current,
@@ -209,12 +211,11 @@ const PDFCanvas = forwardRef<PDFCanvasHandle, PDFCanvasProps>(({
         {getCurrentPagePins().map((pin) => (
           <div
             key={pin.id}
-            className="pdf-pin"
+            className={`pdf-pin ${draggingPinId === pin.id ? 'dragging' : ''}`}
             style={{ 
               left: pin.x, 
               top: pin.y,
-              '--pin-color': pin.user.color,
-              cursor: 'grab'
+              '--pin-color': pin.user.color
             } as React.CSSProperties & { '--pin-color': string }}
             onMouseDown={(e) => {
               if (e.button === 0) { // Left mouse button only
@@ -222,19 +223,25 @@ const PDFCanvas = forwardRef<PDFCanvasHandle, PDFCanvasProps>(({
                 e.stopPropagation();
                 isDraggingPin.current = true;
                 draggedPinId.current = pin.id;
+                setDraggingPinId(pin.id);
                 
                 const handleMouseMove = (moveEvent: MouseEvent) => {
                   if (!isDraggingPin.current || !canvasRef.current) return;
                   
-                  const rect = canvasRef.current.getBoundingClientRect();
-                  const x = moveEvent.clientX - rect.left;
-                  const y = moveEvent.clientY - rect.top;
-                  
-                  // Calculate percentage coordinates
-                  const xPercent = Math.max(0, Math.min(100, (x / canvasRef.current.width) * 100));
-                  const yPercent = Math.max(0, Math.min(100, (y / canvasRef.current.height) * 100));
-                  
-                  onPinDrag(pin.id, xPercent, yPercent);
+                  // Use requestAnimationFrame for smoother movement
+                  requestAnimationFrame(() => {
+                    if (!canvasRef.current) return;
+                    
+                    const rect = canvasRef.current.getBoundingClientRect();
+                    const x = moveEvent.clientX - rect.left;
+                    const y = moveEvent.clientY - rect.top;
+                    
+                    // Calculate percentage coordinates with bounds checking
+                    const xPercent = Math.max(0, Math.min(100, (x / canvasRef.current.width) * 100));
+                    const yPercent = Math.max(0, Math.min(100, (y / canvasRef.current.height) * 100));
+                    
+                    onPinDrag(pin.id, xPercent, yPercent);
+                  });
                 };
                 
                 const handleMouseUp = () => {

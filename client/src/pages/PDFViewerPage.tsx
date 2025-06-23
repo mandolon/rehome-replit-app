@@ -651,8 +651,8 @@ export default function PDFViewerPage() {
               ref={popoverRef}
               className="absolute z-50 bg-white dark:bg-gray-800 border rounded-lg shadow-lg p-3 w-64"
               style={{
-                left: popoverComment.x + 10,
-                top: popoverComment.y - 10,
+                left: popoverComment.x + 35,
+                top: popoverComment.y - 5,
               }}
               onClick={(e) => e.stopPropagation()}
             >
