@@ -156,9 +156,11 @@ const PDFCanvas = forwardRef<PDFCanvasHandle, PDFCanvasProps>(({
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!canvasRef.current || isPanning.current) return;
 
+    console.log('PDFCanvas click event triggered');
     const rect = canvasRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
+    console.log('Click coordinates:', { x, y });
     onCanvasClick(x, y);
   };
 

@@ -215,10 +215,11 @@ export default function PDFViewerPage() {
 
 
   const handleCanvasClick = (x: number, y: number) => {
-    if (!hovering) return;
+    console.log('Canvas clicked:', { x, y, canvasHovering, currentPage });
     
     setPopoverComment({ x, y, pageNumber: currentPage });
     setPopoverText("");
+    console.log('Popover comment set:', { x, y });
   };
 
   const addPopoverComment = () => {
@@ -517,8 +518,8 @@ export default function PDFViewerPage() {
               ref={popoverRef}
               className="absolute z-50 bg-white dark:bg-gray-800 border rounded-lg shadow-lg p-3 w-64"
               style={{
-                left: Math.min(popoverComment.x + 10, window.innerWidth - 280),
-                top: Math.max(popoverComment.y - 10, 10),
+                left: popoverComment.x + 10,
+                top: popoverComment.y - 10,
               }}
               onClick={(e) => e.stopPropagation()}
             >
