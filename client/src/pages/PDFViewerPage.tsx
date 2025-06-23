@@ -99,6 +99,7 @@ export default function PDFViewerPage() {
   const [highlightedComment, setHighlightedComment] = useState<string | null>(null);
   const [popoverComment, setPopoverComment] = useState<{ x: number; y: number; pageNumber: number } | null>(null);
   const [popoverText, setPopoverText] = useState("");
+  const [cursorPosition, setCursorPosition] = useState<{ x: number; y: number } | null>(null);
   
   const pdfCanvasRef = useRef<PDFCanvasHandle>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -468,7 +469,19 @@ export default function PDFViewerPage() {
           className="w-full h-full overflow-auto relative"
           style={{ maxHeight: 'calc(100vh - 4rem)' }}
           onMouseEnter={() => setHovering(true)}
-          onMouseLeave={() => setHovering(false)}
+          onMouseLeave={() => {
+            setHovering(false);
+            setCursorPosition(null);
+          }}
+          onMouseMove={(e) => {
+            if (hovering) {
+              const rect = e.currentTarget.getBoundingClientRect();
+              setCursorPosition({
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+              });
+            }
+          }}
         >
           <PDFCanvas
             ref={pdfCanvasRef}
@@ -480,6 +493,21 @@ export default function PDFViewerPage() {
             pins={getCurrentPagePins()}
           />
           
+          {/* Cursor Comment Indicator */}
+          {hovering && cursorPosition && !popoverComment && (
+            <div
+              className="absolute z-40 pointer-events-none"
+              style={{
+                left: cursorPosition.x + 15,
+                top: cursorPosition.y - 5,
+              }}
+            >
+              <div className="bg-black/80 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
+                Click to add comment
+              </div>
+            </div>
+          )}
+
           {/* Popover Comment Input */}
           {popoverComment && (
             <div
