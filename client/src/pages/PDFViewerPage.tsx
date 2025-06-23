@@ -196,6 +196,24 @@ export default function PDFViewerPage() {
     };
   };
 
+  // Debug component lifecycle and render timing
+  useEffect(() => {
+    console.log("🔄 PDFViewerPage component rendered/updated");
+    console.log("🔍 Current component state:", {
+      pdfDoc: !!pdfDoc,
+      scale,
+      currentPage,
+      totalPages,
+      isLoading,
+      sidebarOpen,
+      hovering,
+      uploadedPdfUrl: !!uploadedPdfUrl,
+      currentPdfUrl,
+      pinsCount: pins.length,
+      commentsCount: comments.length
+    });
+  });
+
   // Sample PDF URL - using Mozilla's sample PDF
   const PDF_URL = "https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf";
 
