@@ -622,7 +622,7 @@ const SchedulesContent = () => {
       const existingItems = scheduleItems.filter(item => item.type === itemType);
       const existingNumbers = existingItems
         .map(item => item.number)
-        .filter(num => num && num.startsWith(prefix))
+        .filter((num): num is string => Boolean(num && num.startsWith(prefix)))
         .map(num => {
           const match = num.match(new RegExp(`^${prefix}-(\\d+)$`));
           return match ? parseInt(match[1]) : 0;

@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Plus, X } from 'lucide-react';
 
 export interface TableColumn {
@@ -481,9 +482,9 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
   return (
     <div className={`space-y-0 ${className}`} ref={tableRef}>
       {data.length > 0 ? (
-        <>
+        <div className="border border-border rounded-md overflow-hidden">
           {/* Table Header */}
-          <div className="flex py-2 px-0 text-xs font-medium text-muted-foreground sticky top-0 z-10 bg-background" style={{ borderBottom: '1px solid #bbbbbb' }}>
+          <div className="flex py-2 px-0 text-xs font-medium text-muted-foreground bg-background border-b" style={{ borderBottom: '1px solid #bbbbbb' }}>
             {!hideRowNumbers && <div className="w-12 flex-shrink-0 pl-3 pr-2">#</div>}
             {columns.map((column, index) => (
               <div 
@@ -506,8 +507,10 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
             <div className="w-8 flex-shrink-0 pr-3"></div>
           </div>
 
-          {/* Table Rows */}
-          {data.map((row, index) => (
+          {/* Scrollable Table Body */}
+          <ScrollArea className="h-[400px]">
+            {/* Table Rows */}
+            {data.map((row, index) => (
             <div 
               key={row.id} 
               className={`flex py-1 px-0 hover:bg-muted/30 transition-colors group ${
@@ -541,11 +544,12 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
               </div>
             </div>
           ))}
+          </ScrollArea>
 
           {/* Add Button */}
           {showAddButton && (
-            <div className="flex py-2 px-0">
-              <div className="w-12 flex-shrink-0 pl-3"></div>
+            <div className="flex py-2 px-0 border-t bg-background">
+              {!hideRowNumbers && <div className="w-12 flex-shrink-0 pl-3"></div>}
               <div className="flex-1 px-2">
                 <Button
                   variant="ghost"
@@ -559,7 +563,7 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
               </div>
             </div>
           )}
-        </>
+        </div>
       ) : (
         <div className="text-center text-muted-foreground italic py-8 text-sm">
           {emptyStateText}
