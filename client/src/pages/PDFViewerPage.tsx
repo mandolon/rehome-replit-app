@@ -239,6 +239,30 @@ export default function PDFViewerPage() {
     };
   }, [handleOutsideClick]);
 
+  // Wheel zoom functionality for enhanced user experience
+  const handleWheel = useCallback((e: WheelEvent) => {
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? -0.1 : 0.1;
+      setScale(prev => {
+        const newScale = Math.max(0.05, Math.min(10, prev + delta));
+        console.log("Wheel zoom:", { from: prev, to: newScale, delta });
+        return newScale;
+      });
+    }
+  }, []);
+
+  // Add wheel zoom event listener
+  useEffect(() => {
+    const container = pdfContainerRef.current;
+    if (container) {
+      container.addEventListener('wheel', handleWheel, { passive: false });
+      return () => {
+        container.removeEventListener('wheel', handleWheel);
+      };
+    }
+  }, [handleWheel]);
+
   // Main functions
   const loadPDF = async () => {
     try {
@@ -424,30 +448,6 @@ export default function PDFViewerPage() {
       return newScale;
     });
   };
-
-  // Wheel zoom functionality for enhanced user experience
-  const handleWheel = useCallback((e: WheelEvent) => {
-    if (e.ctrlKey || e.metaKey) {
-      e.preventDefault();
-      const delta = e.deltaY > 0 ? -0.1 : 0.1;
-      setScale(prev => {
-        const newScale = Math.max(0.05, Math.min(10, prev + delta));
-        console.log("Wheel zoom:", { from: prev, to: newScale, delta });
-        return newScale;
-      });
-    }
-  }, []);
-
-  // Add wheel zoom event listener
-  useEffect(() => {
-    const container = pdfContainerRef.current;
-    if (container) {
-      container.addEventListener('wheel', handleWheel, { passive: false });
-      return () => {
-        container.removeEventListener('wheel', handleWheel);
-      };
-    }
-  }, [handleWheel]);
 
   const nextPage = () => {
     if (currentPage < totalPages) {
