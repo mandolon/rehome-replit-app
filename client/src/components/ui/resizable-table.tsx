@@ -203,7 +203,7 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
     } else if (e.key === 'Enter') {
       e.preventDefault();
       
-      // If in edit mode, save and move to next field
+      // If in edit mode, save and exit edit mode
       if (isInEditMode && isInputColumn) {
         // Apply dimension formatting if needed
         const currentValue = (e.target as HTMLInputElement).value;
@@ -235,7 +235,6 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
         }
         
         setEditingCell(null);
-        moveToNextField(currentIndex, column);
         return;
       }
       
