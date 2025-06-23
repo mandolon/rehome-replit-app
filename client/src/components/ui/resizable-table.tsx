@@ -48,6 +48,7 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
   const [columns, setColumns] = useState(initialColumns);
   const [isResizing, setIsResizing] = useState<string | null>(null);
   const [focusedRowIndex, setFocusedRowIndex] = useState<number>(-1);
+  const [editingCell, setEditingCell] = useState<string | null>(null);
   const [customInputs, setCustomInputs] = useState<Record<string, string>>({});
   const tableRef = useRef<HTMLDivElement>(null);
   const startXRef = useRef<number>(0);
@@ -132,6 +133,8 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
     const currentColumn = columns.find(col => col.key === column);
     const isSelectColumn = currentColumn?.type === 'select';
     const isInputColumn = currentColumn?.type === 'input';
+    const cellKey = `${rowId}-${column}`;
+    const isInEditMode = editingCell === cellKey;
     
     if (e.key === 'ArrowUp') {
       e.preventDefault();
@@ -150,12 +153,9 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
       }
       
       // For input columns, enter edit mode (focus)
-      if (isInputColumn) {
-        const input = e.target as HTMLInputElement;
-        if (input && document.activeElement !== input) {
-          input.focus();
-          return;
-        }
+      if (isInputColumn && !isInEditMode) {
+        setEditingCell(cellKey);
+        return;
       }
       
       // Navigate to next row
@@ -169,6 +169,11 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
         }
       }, 10);
     } else if (e.key === 'ArrowLeft') {
+      // If in edit mode on input, allow normal cursor movement
+      if (isInEditMode && isInputColumn) {
+        return; // Don't prevent default, let input handle cursor movement
+      }
+      
       e.preventDefault();
       const currentColumnIndex = columns.findIndex(col => col.key === column);
       const prevColumnIndex = Math.max(0, currentColumnIndex - 1);
@@ -180,6 +185,11 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
         }
       }, 10);
     } else if (e.key === 'ArrowRight') {
+      // If in edit mode on input, allow normal cursor movement
+      if (isInEditMode && isInputColumn) {
+        return; // Don't prevent default, let input handle cursor movement
+      }
+      
       e.preventDefault();
       const currentColumnIndex = columns.findIndex(col => col.key === column);
       const nextColumnIndex = Math.min(columns.length - 1, currentColumnIndex + 1);
@@ -191,6 +201,12 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
         }
       }, 10);
     } else if (e.key === 'Enter') {
+      // For dropdowns and values, activate the cell
+      if (isSelectColumn || isInputColumn) {
+        setEditingCell(cellKey);
+        return;
+      }
+      
       e.preventDefault();
       const currentColumnIndex = columns.findIndex(col => col.key === column);
       const isLastColumn = currentColumnIndex === columns.length - 1;
@@ -200,6 +216,9 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
       } else {
         moveToNextField(currentIndex, column);
       }
+    } else if (e.key === 'Escape') {
+      // Exit edit mode
+      setEditingCell(null);
     }
   };
 
@@ -248,11 +267,18 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
             checked={isChecked}
             onChange={(e) => {
               const checked = e.target.checked;
-              // For mutually exclusive checkboxes (existing/new), uncheck the other
-              if (checked && isExistingNewPair) {
-                updateRowData(row.id, otherKey, false);
+              if (isExistingNewPair) {
+                if (checked) {
+                  // If checking this box, uncheck the other
+                  updateRowData(row.id, otherKey, false);
+                  updateRowData(row.id, column.key, true);
+                } else {
+                  // If unchecking this box, just uncheck it
+                  updateRowData(row.id, column.key, false);
+                }
+              } else {
+                updateRowData(row.id, column.key, checked);
               }
-              updateRowData(row.id, column.key, checked);
             }}
             className={`w-4 h-4 ${isHalfTone ? 'opacity-40' : ''}`}
             style={isHalfTone ? { filter: 'contrast(0.5)' } : {}}
@@ -303,14 +329,33 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
     }
 
     const formatDimension = (value: string) => {
-      // Auto-format dimension inputs like "1 0" to "1'-0""
+      // Auto-format dimension inputs for width and height columns
       if (column.key === 'width' || column.key === 'height') {
-        // Match patterns like "1 0", "3 4", "12 6", etc.
-        const match = value.match(/^(\d+)\s+(\d+)$/);
+        // Handle various input patterns
+        const cleanValue = value.trim();
+        
+        // Pattern: "1 0", "3 4", "12 6", etc. (feet and inches separated by space)
+        let match = cleanValue.match(/^(\d+)\s+(\d+)$/);
         if (match) {
           const feet = match[1];
           const inches = match[2];
           return `${feet}'-${inches}"`;
+        }
+        
+        // Pattern: single number (treat as feet)
+        match = cleanValue.match(/^(\d+)$/);
+        if (match) {
+          const feet = match[1];
+          return `${feet}'-0"`;
+        }
+        
+        // Pattern: decimal number (convert to feet and inches)
+        match = cleanValue.match(/^(\d+)\.(\d+)$/);
+        if (match) {
+          const wholeFeet = match[1];
+          const decimal = parseFloat('0.' + match[2]);
+          const inches = Math.round(decimal * 12);
+          return `${wholeFeet}'-${inches}"`;
         }
       }
       return value;
@@ -320,15 +365,18 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
       <Input 
         value={row[column.key] || ''} 
         onChange={(e) => {
-          const formattedValue = formatDimension(e.target.value);
-          updateRowData(row.id, column.key, formattedValue);
+          updateRowData(row.id, column.key, e.target.value);
         }}
         onBlur={(e) => {
-          // Apply formatting on blur as well
+          // Apply formatting on blur
           const formattedValue = formatDimension(e.target.value);
           if (formattedValue !== e.target.value) {
             updateRowData(row.id, column.key, formattedValue);
           }
+          setEditingCell(null);
+        }}
+        onFocus={() => {
+          setEditingCell(`${row.id}-${column.key}`);
         }}
         className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
         style={{ fontSize: '0.75rem' }}
