@@ -133,10 +133,44 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
       e.preventDefault();
       const newIndex = Math.max(0, currentIndex - 1);
       setFocusedRowIndex(newIndex);
+      setTimeout(() => {
+        const nextInput = document.querySelector(`[data-row="${newIndex}"][data-column="${column}"]`) as HTMLElement;
+        if (nextInput) {
+          nextInput.focus();
+        }
+      }, 10);
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
       const newIndex = Math.min(data.length - 1, currentIndex + 1);
       setFocusedRowIndex(newIndex);
+      setTimeout(() => {
+        const nextInput = document.querySelector(`[data-row="${newIndex}"][data-column="${column}"]`) as HTMLElement;
+        if (nextInput) {
+          nextInput.focus();
+        }
+      }, 10);
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      const currentColumnIndex = columns.findIndex(col => col.key === column);
+      const prevColumnIndex = Math.max(0, currentColumnIndex - 1);
+      const prevColumn = columns[prevColumnIndex];
+      setTimeout(() => {
+        const prevInput = document.querySelector(`[data-row="${currentIndex}"][data-column="${prevColumn.key}"]`) as HTMLElement;
+        if (prevInput) {
+          prevInput.focus();
+        }
+      }, 10);
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      const currentColumnIndex = columns.findIndex(col => col.key === column);
+      const nextColumnIndex = Math.min(columns.length - 1, currentColumnIndex + 1);
+      const nextColumn = columns[nextColumnIndex];
+      setTimeout(() => {
+        const nextInput = document.querySelector(`[data-row="${currentIndex}"][data-column="${nextColumn.key}"]`) as HTMLElement;
+        if (nextInput) {
+          nextInput.focus();
+        }
+      }, 10);
     } else if (e.key === 'Enter') {
       e.preventDefault();
       const currentColumnIndex = columns.findIndex(col => col.key === column);
@@ -182,21 +216,27 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
     const isCustomInput = customInputs[cellKey] === 'custom';
 
     if (column.type === 'checkbox') {
+      const isChecked = !!row[column.key];
+      const isExistingNewPair = column.key === 'existing' || column.key === 'new';
+      const otherKey = column.key === 'existing' ? 'new' : 'existing';
+      const isOtherChecked = isExistingNewPair && !!row[otherKey];
+      const isHalfTone = isExistingNewPair && !isChecked && isOtherChecked;
+
       return (
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-center h-full py-1">
           <input
             type="checkbox"
-            checked={!!row[column.key]}
+            checked={isChecked}
             onChange={(e) => {
               const checked = e.target.checked;
               // For mutually exclusive checkboxes (existing/new), uncheck the other
-              if (checked && (column.key === 'existing' || column.key === 'new')) {
-                const otherKey = column.key === 'existing' ? 'new' : 'existing';
+              if (checked && isExistingNewPair) {
                 updateRowData(row.id, otherKey, false);
               }
               updateRowData(row.id, column.key, checked);
             }}
-            className="w-4 h-4"
+            className={`w-4 h-4 ${isHalfTone ? 'opacity-40' : ''}`}
+            style={isHalfTone ? { filter: 'contrast(0.5)' } : {}}
             data-row={rowIndex}
             data-column={column.key}
             onKeyDown={(e) => handleKeyDown(e, row.id, rowIndex, column.key)}
@@ -243,10 +283,34 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
       );
     }
 
+    const formatDimension = (value: string) => {
+      // Auto-format dimension inputs like "1 0" to "1'-0""
+      if (column.key === 'width' || column.key === 'height') {
+        // Match patterns like "1 0", "3 4", "12 6", etc.
+        const match = value.match(/^(\d+)\s+(\d+)$/);
+        if (match) {
+          const feet = match[1];
+          const inches = match[2];
+          return `${feet}'-${inches}"`;
+        }
+      }
+      return value;
+    };
+
     return (
       <Input 
         value={row[column.key] || ''} 
-        onChange={(e) => updateRowData(row.id, column.key, e.target.value)}
+        onChange={(e) => {
+          const formattedValue = formatDimension(e.target.value);
+          updateRowData(row.id, column.key, formattedValue);
+        }}
+        onBlur={(e) => {
+          // Apply formatting on blur as well
+          const formattedValue = formatDimension(e.target.value);
+          if (formattedValue !== e.target.value) {
+            updateRowData(row.id, column.key, formattedValue);
+          }
+        }}
         className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
         style={{ fontSize: '0.75rem' }}
         placeholder={isCustomInput ? column.customInputPlaceholder : column.placeholder}
