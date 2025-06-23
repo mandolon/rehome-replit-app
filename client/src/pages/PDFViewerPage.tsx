@@ -21,8 +21,8 @@ import {
 } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
 
-// Configure PDF.js to work without external worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = '';
+// Configure PDF.js worker with Mozilla CDN
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://mozilla.github.io/pdf.js/build/pdf.worker.min.js';
 
 interface User {
   id: string;
