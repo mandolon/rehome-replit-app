@@ -21,8 +21,8 @@ import {
 } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
 
-// Configure PDF.js worker using jsdelivr CDN
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.worker.min.js';
+// Configure PDF.js to work without external worker
+pdfjsLib.GlobalWorkerOptions.workerSrc = '';
 
 interface User {
   id: string;
