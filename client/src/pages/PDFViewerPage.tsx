@@ -96,8 +96,12 @@ export default function PDFViewerPage() {
   const [commentText, setCommentText] = useState("");
   const [uploadedPdfUrl, setUploadedPdfUrl] = useState<string | null>(null);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+  const [highlightedComment, setHighlightedComment] = useState<string | null>(null);
+  const [popoverComment, setPopoverComment] = useState<{ x: number; y: number; pageNumber: number } | null>(null);
+  const [popoverText, setPopoverText] = useState("");
   
   const pdfCanvasRef = useRef<PDFCanvasHandle>(null);
+  const popoverRef = useRef<HTMLDivElement>(null);
 
   // Sample PDF URL - using Mozilla's sample PDF
   const PDF_URL = "https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf";
@@ -248,6 +252,44 @@ export default function PDFViewerPage() {
         ? { ...comment, replies: [...comment.replies, reply] }
         : comment
     ));
+  };
+
+  const editComment = (commentId: string, newText: string) => {
+    setComments(comments.map(comment => 
+      comment.id === commentId 
+        ? { ...comment, text: newText }
+        : comment
+    ));
+  };
+
+  const deleteComment = (commentId: string) => {
+    // Remove the comment
+    setComments(comments.filter(comment => comment.id !== commentId));
+    
+    // Remove associated pin and renumber remaining pins
+    const updatedPins = pins.filter(pin => {
+      const associatedComment = comments.find(c => c.id === commentId);
+      return !(associatedComment && pin.x === associatedComment.x && pin.y === associatedComment.y && pin.pageNumber === associatedComment.pageNumber);
+    });
+    
+    // Renumber pins sequentially by pageNumber and position
+    const renumberedPins = updatedPins
+      .sort((a, b) => {
+        if (a.pageNumber !== b.pageNumber) return a.pageNumber - b.pageNumber;
+        return a.y - b.y || a.x - b.x; // Sort by position
+      })
+      .map((pin, index) => ({ ...pin, number: index + 1 }));
+    
+    setPins(renumberedPins);
+    
+    // Clear highlighting if this comment was highlighted
+    if (highlightedComment === commentId) {
+      setHighlightedComment(null);
+    }
+  };
+
+  const highlightComment = (commentId: string) => {
+    setHighlightedComment(highlightedComment === commentId ? null : commentId);
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
