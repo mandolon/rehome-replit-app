@@ -241,7 +241,21 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
       const enterKey = `${rowId}-${column}`;
       const currentCount = enterPressCount[enterKey] || 0;
       
-      // If in edit mode, save and check for double Enter
+      // If not in edit mode, single Enter activates the cell
+      if (!isInEditMode) {
+        setEditingCell(cellKey);
+        setEnterPressCount({ ...enterPressCount, [enterKey]: 1 });
+        setTimeout(() => {
+          setEnterPressCount(prev => {
+            const newCount = { ...prev };
+            delete newCount[enterKey];
+            return newCount;
+          });
+        }, 1000);
+        return;
+      }
+      
+      // If in edit mode, check for double Enter
       if (isInEditMode && isInputColumn) {
         // Apply dimension formatting if needed
         const currentValue = (e.target as HTMLInputElement).value;
@@ -274,16 +288,23 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
         
         // Check for double Enter
         if (currentCount === 1) {
-          // Second Enter - move to next column
+          // Second Enter - move to next column or create new row if last column
+          const currentColumnIndex = columns.findIndex(col => col.key === column);
+          const isLastColumn = currentColumnIndex === columns.length - 1;
+          
           setEditingCell(null);
           setEnterPressCount({});
-          moveToNextField(currentIndex, column);
+          
+          if (isLastColumn) {
+            onAddRow();
+          } else {
+            moveToNextField(currentIndex, column);
+          }
           return;
         } else {
           // First Enter - stay in same cell but track the press
           setEnterPressCount({ ...enterPressCount, [enterKey]: 1 });
           setTimeout(() => {
-            // Reset count after a delay if no second Enter
             setEnterPressCount(prev => {
               const newCount = { ...prev };
               delete newCount[enterKey];
@@ -292,21 +313,6 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
           }, 1000);
           return;
         }
-      }
-      
-      // For dropdowns, checkboxes, and values, activate the cell
-      if (isSelectColumn || isInputColumn || currentColumn?.type === 'checkbox') {
-        setEditingCell(cellKey);
-        return;
-      }
-      
-      const currentColumnIndex = columns.findIndex(col => col.key === column);
-      const isLastColumn = currentColumnIndex === columns.length - 1;
-      
-      if (isLastColumn) {
-        onAddRow();
-      } else {
-        moveToNextField(currentIndex, column);
       }
     } else if (e.key === 'Escape') {
       // Exit edit mode and reset Enter count
@@ -482,35 +488,35 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
   return (
     <div className={`space-y-0 ${className}`} ref={tableRef}>
       {data.length > 0 ? (
-        <div className="border border-border rounded-md overflow-hidden">
-          {/* Table Header */}
-          <div className="flex py-2 px-0 text-xs font-medium text-muted-foreground bg-background border-b" style={{ borderBottom: '1px solid #bbbbbb' }}>
-            {!hideRowNumbers && <div className="w-12 flex-shrink-0 pl-3 pr-2">#</div>}
-            {columns.map((column, index) => (
-              <div 
-                key={column.key}
-                className="flex-shrink-0 px-2 relative group"
-                style={{ width: `${column.width}px` }}
-              >
-                {column.title}
-                {index < columns.length - 1 && (
+        <>
+          <ScrollArea className="h-[400px] w-full">
+            <div className="min-w-fit">
+              {/* Table Header */}
+              <div className="flex py-2 px-0 text-xs font-medium text-muted-foreground sticky top-0 z-10 bg-background" style={{ borderBottom: '1px solid #bbbbbb' }}>
+                {!hideRowNumbers && <div className="w-12 flex-shrink-0 pl-3 pr-2">#</div>}
+                {columns.map((column, index) => (
                   <div 
-                    className="absolute -right-2 top-0 bottom-0 w-4 cursor-col-resize hover:bg-blue-500/20 flex items-center justify-center"
-                    onMouseDown={(e) => handleMouseDown(e, column.key)}
+                    key={column.key}
+                    className="flex-shrink-0 px-2 relative group"
+                    style={{ width: `${column.width}px` }}
                   >
-                    <div className="w-0.5 h-full bg-gray-300 group-hover:bg-blue-500/30" />
+                    {column.title}
+                    {index < columns.length - 1 && (
+                      <div 
+                        className="absolute -right-2 top-0 bottom-0 w-4 cursor-col-resize hover:bg-blue-500/20 flex items-center justify-center"
+                        onMouseDown={(e) => handleMouseDown(e, column.key)}
+                      >
+                        <div className="w-0.5 h-full bg-gray-300 group-hover:bg-blue-500/30" />
+                      </div>
+                    )}
                   </div>
-                )}
+                ))}
+
+                <div className="w-8 flex-shrink-0 pr-3"></div>
               </div>
-            ))}
 
-            <div className="w-8 flex-shrink-0 pr-3"></div>
-          </div>
-
-          {/* Scrollable Table Body */}
-          <ScrollArea className="h-[400px]">
-            {/* Table Rows */}
-            {data.map((row, index) => (
+              {/* Table Rows */}
+              {data.map((row, index) => (
             <div 
               key={row.id} 
               className={`flex py-1 px-0 hover:bg-muted/30 transition-colors group ${
@@ -544,11 +550,12 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
               </div>
             </div>
           ))}
+            </div>
           </ScrollArea>
 
           {/* Add Button */}
           {showAddButton && (
-            <div className="flex py-2 px-0 border-t bg-background">
+            <div className="flex py-2 px-0">
               {!hideRowNumbers && <div className="w-12 flex-shrink-0 pl-3"></div>}
               <div className="flex-1 px-2">
                 <Button
@@ -563,7 +570,7 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
               </div>
             </div>
           )}
-        </div>
+        </>
       ) : (
         <div className="text-center text-muted-foreground italic py-8 text-sm">
           {emptyStateText}
