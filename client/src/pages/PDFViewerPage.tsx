@@ -160,17 +160,10 @@ export default function PDFViewerPage() {
 
   // Handle window resize to maintain fit mode consistency
   useEffect(() => {
-    console.log("🪟 Setting up window resize listener, pdfDoc available:", !!pdfDoc);
-    
     const handleResize = async () => {
-      console.log("🔄 Window resize detected, recalculating fit scale...");
       if (pdfDoc) {
-        console.log("📏 Calculating new fit scale due to resize...");
         const newFitScale = await calculateFitToHeightScale(pdfDoc);
-        console.log("📏 New fit scale from resize:", newFitScale);
         setScale(newFitScale);
-      } else {
-        console.log("❌ No PDF document available for resize calculation");
       }
     };
 
@@ -178,7 +171,6 @@ export default function PDFViewerPage() {
     window.addEventListener('resize', debouncedResize);
     
     return () => {
-      console.log("🧹 Cleaning up window resize listener");
       window.removeEventListener('resize', debouncedResize);
     };
   }, [pdfDoc]);
@@ -243,61 +235,24 @@ export default function PDFViewerPage() {
 
   const loadPDF = async () => {
     try {
-      console.log("🚀 Starting PDF loading process");
-      console.log("📂 Current PDF URL:", currentPdfUrl);
-      console.log("🔄 Setting loading state to true");
-      
       setIsLoading(true);
       
-      console.log("📋 Creating PDF.js loading task with URL:", currentPdfUrl);
       const loadingTask = pdfjsLib.getDocument(currentPdfUrl);
-      
-      console.log("⏳ Waiting for PDF document to load...");
       const pdf = await loadingTask.promise;
       
-      console.log("✅ PDF document loaded successfully!");
-      console.log("📊 PDF Details:", {
-        numPages: pdf.numPages,
-        fingerprints: pdf.fingerprints
-      });
-      
-      console.log("🔧 Setting PDF document state...");
       setPdfDoc(pdf);
       setTotalPages(pdf.numPages);
-      setCurrentPage(1); // Reset to first page when loading new PDF
-      
-      console.log("📏 Current scale before fit calculation:", scale);
-      
-      // Wait for next tick to ensure state is updated
-      await new Promise(resolve => setTimeout(resolve, 0));
+      setCurrentPage(1);
       
       // Calculate and apply fit-to-height scale for new PDF
-      console.log("🎯 Starting fit-to-height calculation for new PDF...");
       const fitScale = await calculateFitToHeightScale(pdf);
-      console.log("📏 Calculated fit scale:", fitScale);
-      
-      console.log("🔄 Setting new scale:", fitScale);
       setScale(fitScale);
       
-      // Wait for scale update
-      await new Promise(resolve => setTimeout(resolve, 0));
-      
-      console.log("✅ PDF loading complete with fit scale applied:", fitScale);
-      console.log("🔍 Final state check:", { 
-        scale: fitScale, 
-        pdfDocSet: !!pdf, 
-        totalPages: pdf.numPages 
-      });
-      
-      console.log("🗑️ Clearing existing pins and comments for new PDF");
       // Clear existing pins and comments when loading new PDF
       setPins([]);
       setComments([]);
       
-      console.log("✅ PDF loading complete, setting loading state to false");
       setIsLoading(false);
-      
-      // Auto-fit to height for new PDFs
       if (fitToHeight) {
         setTimeout(async () => {
           const fitScale = await calculateFitToHeightScale();
