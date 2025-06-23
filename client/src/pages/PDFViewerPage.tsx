@@ -321,55 +321,54 @@ export default function PDFViewerPage() {
     <div className="relative h-screen bg-gray-50 dark:bg-gray-900">
       {/* Fixed Toolbar */}
       <div className={`fixed top-0 left-0 right-0 z-20 bg-white dark:bg-gray-800 border-b p-3 shadow-sm transition-all duration-200 ${sidebarOpen ? 'mr-80' : 'mr-0'}`}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+            >
+              {sidebarOpen ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              {sidebarOpen ? "Hide" : "Show"} Comments
+            </Button>
+            
+            <Separator orientation="vertical" className="h-6" />
+            
+            <div className="flex items-center gap-1">
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setSidebarOpen(!sidebarOpen)}
+                onClick={prevPage}
+                disabled={currentPage <= 1}
               >
-                {sidebarOpen ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                {sidebarOpen ? "Hide" : "Show"} Comments
+                <ChevronLeft className="h-4 w-4" />
               </Button>
-              
-              <Separator orientation="vertical" className="h-6" />
-              
-              <div className="flex items-center gap-1">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={prevPage}
-                  disabled={currentPage <= 1}
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <span className="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded">
-                  {currentPage} / {totalPages}
-                </span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={nextPage}
-                  disabled={currentPage >= totalPages}
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
-
-              <Separator orientation="vertical" className="h-6" />
-
-              {/* Document Title */}
-              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                <span className="font-medium">
-                  {uploadedFileName || "Sample Document"}
-                </span>
-                {uploadedFileName && (
-                  <Badge variant="secondary" className="text-xs">
-                    Uploaded
-                  </Badge>
-                )}
-              </div>
+              <span className="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded">
+                {currentPage} / {totalPages}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={nextPage}
+                disabled={currentPage >= totalPages}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
             </div>
+
+            <Separator orientation="vertical" className="h-6" />
+
+            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+              <span className="font-medium">
+                {uploadedFileName || "Sample Document"}
+              </span>
+              {uploadedFileName && (
+                <Badge variant="secondary" className="text-xs">
+                  Uploaded
+                </Badge>
+              )}
+            </div>
+          </div>
 
             <div className="flex items-center gap-2">
               <div className="relative">
