@@ -83,7 +83,7 @@ export default function PDFViewerPage() {
   const [pins, setPins] = useState<Pin[]>([]);
   const [hovering, setHovering] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [scale, setScale] = useState(1.0);
+  const [scale, setScale] = useState(1.3); // Better default for standard letter readability
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [pdfDoc, setPdfDoc] = useState<pdfjsLib.PDFDocumentProxy | null>(null);
@@ -189,34 +189,134 @@ export default function PDFViewerPage() {
     }
   };
 
-  const calculateFitScale = (page: pdfjsLib.PDFPageProxy): number => {
-    if (!pdfContainerRef.current) return 1.2;
+  const logContainerDimensions = (label: string) => {
+    if (!pdfContainerRef.current) return;
     
-    const containerRect = pdfContainerRef.current.getBoundingClientRect();
-    const containerWidth = containerRect.width - 64; // Account for padding
-    const containerHeight = containerRect.height - 64; // Account for padding
+    const container = pdfContainerRef.current;
+    const containerRect = container.getBoundingClientRect();
+    const parentRect = container.parentElement?.getBoundingClientRect();
+    
+    console.log(`📏 ${label} - Container Dimensions:`, {
+      containerRect: {
+        width: containerRect.width,
+        height: containerRect.height,
+        top: containerRect.top,
+        left: containerRect.left
+      },
+      parentRect: parentRect ? {
+        width: parentRect.width,
+        height: parentRect.height,
+        top: parentRect.top,
+        left: parentRect.left
+      } : null,
+      containerStyles: {
+        overflow: getComputedStyle(container).overflow,
+        position: getComputedStyle(container).position,
+        display: getComputedStyle(container).display,
+        maxWidth: getComputedStyle(container).maxWidth,
+        maxHeight: getComputedStyle(container).maxHeight
+      },
+      scrollInfo: {
+        scrollHeight: container.scrollHeight,
+        clientHeight: container.clientHeight,
+        scrollWidth: container.scrollWidth,
+        clientWidth: container.clientWidth,
+        hasVerticalOverflow: container.scrollHeight > container.clientHeight,
+        hasHorizontalOverflow: container.scrollWidth > container.clientWidth
+      }
+    });
+  };
+
+  const calculateFitScale = (page: pdfjsLib.PDFPageProxy): number => {
+    if (!pdfContainerRef.current) {
+      console.log("❌ No container ref for fit scale calculation");
+      return 1.3;
+    }
+    
+    logContainerDimensions("Before Fit Scale Calculation");
+    
+    const container = pdfContainerRef.current;
+    const containerParent = container.parentElement;
+    if (!containerParent) {
+      console.log("❌ No container parent for fit scale calculation");
+      return 1.3;
+    }
+    
+    // Get the actual available space in the PDF viewer area
+    const parentRect = containerParent.getBoundingClientRect();
+    const toolbar = document.querySelector('[class*="border-b p-3"]') as HTMLElement;
+    const toolbarHeight = toolbar ? toolbar.offsetHeight : 60;
+    
+    const containerPadding = 32; // Account for padding
+    const availableWidth = parentRect.width - containerPadding;
+    const availableHeight = parentRect.height - containerPadding - toolbarHeight;
+    
+    console.log("📏 Available space calculation:", {
+      parentWidth: parentRect.width,
+      parentHeight: parentRect.height,
+      toolbarHeight,
+      containerPadding,
+      availableWidth,
+      availableHeight
+    });
     
     const viewport = page.getViewport({ scale: 1 });
-    const scaleX = containerWidth / viewport.width;
-    const scaleY = containerHeight / viewport.height;
+    const scaleX = availableWidth / viewport.width;
+    const scaleY = availableHeight / viewport.height;
     
-    // Use the smaller scale to ensure the PDF fits entirely
-    const fitScale = Math.min(scaleX, scaleY);
+    // Use the smaller scale to ensure the PDF fits entirely, with some margin
+    const fitScale = Math.min(scaleX, scaleY) * 0.95; // 5% margin for safety
+    
     console.log("📐 Calculated fit scale:", {
-      containerWidth,
-      containerHeight,
+      availableWidth,
+      availableHeight,
       pageWidth: viewport.width,
       pageHeight: viewport.height,
       scaleX,
       scaleY,
-      fitScale
+      rawFitScale: Math.min(scaleX, scaleY),
+      fitScaleWithMargin: fitScale,
+      clampedFitScale: Math.max(0.3, Math.min(fitScale, 3))
     });
     
-    return Math.max(0.1, Math.min(fitScale, 3)); // Clamp between 0.1 and 3
+    return Math.max(0.3, Math.min(fitScale, 3)); // Clamp between 0.3 and 3
+  };
+
+  const logCanvasDimensions = (canvas: HTMLCanvasElement, viewport: pdfjsLib.PageViewport, label: string) => {
+    const canvasRect = canvas.getBoundingClientRect();
+    const canvasStyles = getComputedStyle(canvas);
+    
+    console.log(`🖼️ ${label} - Canvas Dimensions:`, {
+      canvas: {
+        width: canvas.width,
+        height: canvas.height,
+        displayWidth: canvasRect.width,
+        displayHeight: canvasRect.height
+      },
+      viewport: {
+        width: viewport.width,
+        height: viewport.height,
+        scale: viewport.scale
+      },
+      canvasStyles: {
+        width: canvasStyles.width,
+        height: canvasStyles.height,
+        maxWidth: canvasStyles.maxWidth,
+        maxHeight: canvasStyles.maxHeight,
+        objectFit: canvasStyles.objectFit,
+        display: canvasStyles.display
+      },
+      positioning: {
+        top: canvasRect.top,
+        left: canvasRect.left,
+        bottom: canvasRect.bottom,
+        right: canvasRect.right
+      }
+    });
   };
 
   const renderPage = async (pageNum: number) => {
-    console.log(`🎨 Starting to render page ${pageNum}`);
+    console.log(`🎨 Starting to render page ${pageNum} with scale: ${scale}`);
     
     if (!pdfDoc) {
       console.log("❌ No PDF document available for rendering");
@@ -227,6 +327,8 @@ export default function PDFViewerPage() {
       console.log("❌ PDF container ref not available");
       return;
     }
+
+    logContainerDimensions("Before Page Render");
 
     try {
       console.log(`📄 Getting page ${pageNum} from PDF document`);
@@ -239,16 +341,19 @@ export default function PDFViewerPage() {
       let currentScale = scale;
       if (fitMode) {
         currentScale = calculateFitScale(page);
-        if (currentScale !== scale) {
+        if (Math.abs(currentScale - scale) > 0.01) { // Only update if significantly different
           setScale(currentScale);
           console.log(`📏 Updated scale to fit: ${currentScale}`);
+          return; // Exit early, will re-render with new scale
         }
       }
 
       // Remove existing canvas
       if (canvasRef.current) {
         console.log("🗑️ Removing existing canvas");
-        canvasRef.current.remove();
+        const oldCanvas = canvasRef.current;
+        logCanvasDimensions(oldCanvas, page.getViewport({ scale: currentScale }), "Before Canvas Removal");
+        oldCanvas.remove();
       }
 
       console.log(`📐 Creating viewport with scale ${currentScale}`);
@@ -256,7 +361,8 @@ export default function PDFViewerPage() {
       console.log("📐 Viewport dimensions:", {
         width: viewport.width,
         height: viewport.height,
-        scale: viewport.scale
+        scale: viewport.scale,
+        rotation: viewport.rotation
       });
 
       console.log("🖼️ Creating new canvas element");
@@ -270,11 +376,16 @@ export default function PDFViewerPage() {
 
       canvas.height = viewport.height;
       canvas.width = viewport.width;
-      canvas.className = "border shadow-lg bg-white max-w-full max-h-full";
+      canvas.className = "border shadow-lg bg-white";
+      canvas.style.maxWidth = "100%";
+      canvas.style.maxHeight = "100%";
+      canvas.style.objectFit = "contain";
       
       console.log("🔗 Appending canvas to container");
       pdfContainerRef.current.appendChild(canvas);
       canvasRef.current = canvas;
+
+      logCanvasDimensions(canvas, viewport, "After Canvas Creation");
 
       const renderContext = {
         canvasContext: context,
@@ -284,6 +395,15 @@ export default function PDFViewerPage() {
       console.log(`🎨 Starting to render page ${pageNum} to canvas`);
       await page.render(renderContext).promise;
       console.log(`✅ Page ${pageNum} rendered successfully to canvas`);
+      
+      logCanvasDimensions(canvas, viewport, "After Page Render");
+      logContainerDimensions("After Page Render Complete");
+      
+      // Check for overflow after rendering
+      setTimeout(() => {
+        logContainerDimensions("Post-Render Overflow Check");
+      }, 100);
+      
     } catch (error) {
       console.error(`❌ Error rendering page ${pageNum}:`, error);
       if (error instanceof Error) {
@@ -412,19 +532,35 @@ export default function PDFViewerPage() {
   };
 
   const zoomIn = () => {
+    const newScale = Math.min(scale + 0.25, 3);
+    console.log("🔍 Zoom In triggered:", {
+      previousScale: scale,
+      newScale,
+      fitMode: fitMode
+    });
     setFitMode(false);
-    setScale(prev => Math.min(prev + 0.25, 3));
+    setScale(newScale);
+    logContainerDimensions("After Zoom In");
   };
 
   const zoomOut = () => {
+    const newScale = Math.max(scale - 0.25, 0.5);
+    console.log("🔍 Zoom Out triggered:", {
+      previousScale: scale,
+      newScale,
+      fitMode: fitMode
+    });
     setFitMode(false);
-    setScale(prev => Math.max(prev - 0.25, 0.5));
+    setScale(newScale);
+    logContainerDimensions("After Zoom Out");
   };
 
   const fitToPage = () => {
+    console.log("📐 Fit To Page triggered");
     setFitMode(true);
     if (pageRef.current) {
       const fitScale = calculateFitScale(pageRef.current);
+      console.log("📐 Setting fit scale:", fitScale);
       setScale(fitScale);
     }
   };
@@ -685,6 +821,7 @@ export default function PDFViewerPage() {
           className="flex-1 overflow-auto relative"
           onMouseEnter={() => setHovering(true)}
           onMouseLeave={() => setHovering(false)}
+          style={{ maxHeight: 'calc(100vh - 80px)' }} // Prevent vertical overflow
         >
           {/* Hover instruction */}
           {hovering && (
@@ -693,11 +830,18 @@ export default function PDFViewerPage() {
             </div>
           )}
 
-          <div className="flex justify-center items-center min-h-full p-4">
+          <div className="flex justify-center items-start min-h-full p-4" style={{ minHeight: 'calc(100vh - 120px)' }}>
             <div 
               ref={pdfContainerRef}
-              className="relative cursor-crosshair flex justify-center items-center"
+              className="relative cursor-crosshair"
               onClick={handleCanvasClick}
+              style={{ 
+                maxWidth: '100%',
+                maxHeight: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
             >
               {/* Pins for current page */}
               {getCurrentPagePins().map((pin) => (
