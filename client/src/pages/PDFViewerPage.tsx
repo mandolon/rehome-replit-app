@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
 import { 
   ZoomIn, 
   ZoomOut, 
@@ -15,7 +16,8 @@ import {
   ChevronRight,
   Eye,
   EyeOff,
-  Reply
+  Reply,
+  Upload
 } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
 
@@ -89,6 +91,7 @@ export default function PDFViewerPage() {
   const [commentText, setCommentText] = useState("");
   const [replyText, setReplyText] = useState("");
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [uploadedPdfUrl, setUploadedPdfUrl] = useState<string | null>(null);
   
   const pdfContainerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -96,6 +99,9 @@ export default function PDFViewerPage() {
 
   // Sample PDF URL - using Mozilla's sample PDF
   const PDF_URL = "https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf";
+
+  // Use uploaded PDF URL if available, otherwise use default
+  const currentPdfUrl = uploadedPdfUrl || PDF_URL;
 
   useEffect(() => {
     loadPDF();
@@ -107,13 +113,23 @@ export default function PDFViewerPage() {
     }
   }, [pdfDoc, currentPage, scale]);
 
+  useEffect(() => {
+    if (uploadedPdfUrl) {
+      loadPDF();
+    }
+  }, [uploadedPdfUrl]);
+
   const loadPDF = async () => {
     try {
       setIsLoading(true);
-      const loadingTask = pdfjsLib.getDocument(PDF_URL);
+      const loadingTask = pdfjsLib.getDocument(currentPdfUrl);
       const pdf = await loadingTask.promise;
       setPdfDoc(pdf);
       setTotalPages(pdf.numPages);
+      setCurrentPage(1); // Reset to first page when loading new PDF
+      // Clear existing pins and comments when loading new PDF
+      setPins([]);
+      setComments([]);
       setIsLoading(false);
     } catch (error) {
       console.error("Error loading PDF:", error);
@@ -222,9 +238,19 @@ export default function PDFViewerPage() {
     setReplyingTo(null);
   };
 
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && file.type === 'application/pdf') {
+      const fileUrl = URL.createObjectURL(file);
+      setUploadedPdfUrl(fileUrl);
+    } else {
+      alert('Please select a valid PDF file.');
+    }
+  };
+
   const downloadPDF = () => {
     const link = document.createElement("a");
-    link.href = PDF_URL;
+    link.href = currentPdfUrl;
     link.download = "document.pdf";
     link.click();
   };
@@ -424,6 +450,27 @@ export default function PDFViewerPage() {
             </div>
 
             <div className="flex items-center gap-2">
+              <div className="relative">
+                <input
+                  type="file"
+                  accept=".pdf"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                  id="pdf-upload"
+                />
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => document.getElementById('pdf-upload')?.click()}
+                  className="flex items-center gap-2"
+                >
+                  <Upload className="h-4 w-4" />
+                  Upload PDF
+                </Button>
+              </div>
+              
+              <Separator orientation="vertical" className="h-6" />
+              
               <Button variant="outline" size="sm" onClick={zoomOut}>
                 <ZoomOut className="h-4 w-4" />
               </Button>
