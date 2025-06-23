@@ -106,61 +106,122 @@ export default function PDFViewerPage() {
   const currentPdfUrl = uploadedPdfUrl || PDF_URL;
 
   useEffect(() => {
+    console.log("🚀 Initial PDF load useEffect triggered");
     loadPDF();
   }, []);
 
   useEffect(() => {
+    console.log("🎨 Render page useEffect triggered:", { pdfDoc: !!pdfDoc, currentPage, totalPages, scale });
     if (pdfDoc && currentPage <= totalPages) {
       renderPage(currentPage);
     }
   }, [pdfDoc, currentPage, scale]);
 
   useEffect(() => {
+    console.log("📤 Upload URL useEffect triggered:", { uploadedPdfUrl });
     if (uploadedPdfUrl) {
+      console.log("🔄 Triggering loadPDF due to uploaded PDF URL change");
       loadPDF();
     }
   }, [uploadedPdfUrl]);
 
+  useEffect(() => {
+    console.log("📊 Current PDF URL changed:", { currentPdfUrl, uploadedPdfUrl });
+  }, [currentPdfUrl]);
+
   const loadPDF = async () => {
     try {
+      console.log("🚀 Starting PDF loading process");
+      console.log("📂 Current PDF URL:", currentPdfUrl);
+      console.log("🔄 Setting loading state to true");
+      
       setIsLoading(true);
+      
+      console.log("📋 Creating PDF.js loading task with URL:", currentPdfUrl);
       const loadingTask = pdfjsLib.getDocument(currentPdfUrl);
+      
+      console.log("⏳ Waiting for PDF document to load...");
       const pdf = await loadingTask.promise;
+      
+      console.log("✅ PDF document loaded successfully!");
+      console.log("📊 PDF Details:", {
+        numPages: pdf.numPages,
+        fingerprints: pdf.fingerprints
+      });
+      
       setPdfDoc(pdf);
       setTotalPages(pdf.numPages);
       setCurrentPage(1); // Reset to first page when loading new PDF
+      
+      console.log("🗑️ Clearing existing pins and comments for new PDF");
       // Clear existing pins and comments when loading new PDF
       setPins([]);
       setComments([]);
+      
+      console.log("✅ PDF loading complete, setting loading state to false");
       setIsLoading(false);
     } catch (error) {
-      console.error("Error loading PDF:", error);
+      console.error("❌ Error loading PDF:", error);
+      console.error("❌ PDF URL that failed:", currentPdfUrl);
+      if (error instanceof Error) {
+        console.error("❌ Error details:", {
+          name: error.name,
+          message: error.message,
+          stack: error.stack
+        });
+      }
       setIsLoading(false);
     }
   };
 
   const renderPage = async (pageNum: number) => {
-    if (!pdfDoc || !pdfContainerRef.current) return;
+    console.log(`🎨 Starting to render page ${pageNum}`);
+    
+    if (!pdfDoc) {
+      console.log("❌ No PDF document available for rendering");
+      return;
+    }
+    
+    if (!pdfContainerRef.current) {
+      console.log("❌ PDF container ref not available");
+      return;
+    }
 
     try {
+      console.log(`📄 Getting page ${pageNum} from PDF document`);
       const page = await pdfDoc.getPage(pageNum);
       pageRef.current = page;
+      
+      console.log(`✅ Page ${pageNum} retrieved successfully`);
 
       // Remove existing canvas
       if (canvasRef.current) {
+        console.log("🗑️ Removing existing canvas");
         canvasRef.current.remove();
       }
 
+      console.log(`📐 Creating viewport with scale ${scale}`);
       const viewport = page.getViewport({ scale });
+      console.log("📐 Viewport dimensions:", {
+        width: viewport.width,
+        height: viewport.height,
+        scale: viewport.scale
+      });
+
+      console.log("🖼️ Creating new canvas element");
       const canvas = document.createElement("canvas");
       const context = canvas.getContext("2d");
       
-      if (!context) return;
+      if (!context) {
+        console.log("❌ Failed to get 2D context from canvas");
+        return;
+      }
 
       canvas.height = viewport.height;
       canvas.width = viewport.width;
       canvas.className = "border shadow-lg bg-white";
       
+      console.log("🔗 Appending canvas to container");
       pdfContainerRef.current.appendChild(canvas);
       canvasRef.current = canvas;
 
@@ -169,9 +230,18 @@ export default function PDFViewerPage() {
         viewport: viewport,
       };
 
+      console.log(`🎨 Starting to render page ${pageNum} to canvas`);
       await page.render(renderContext).promise;
+      console.log(`✅ Page ${pageNum} rendered successfully to canvas`);
     } catch (error) {
-      console.error("Error rendering page:", error);
+      console.error(`❌ Error rendering page ${pageNum}:`, error);
+      if (error instanceof Error) {
+        console.error("❌ Error details:", {
+          name: error.name,
+          message: error.message,
+          stack: error.stack
+        });
+      }
     }
   };
 
@@ -241,16 +311,38 @@ export default function PDFViewerPage() {
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("🔄 PDF upload process started");
     const file = event.target.files?.[0];
+    
+    if (!file) {
+      console.log("❌ No file selected");
+      return;
+    }
+    
+    console.log("📄 File selected:", {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      lastModified: file.lastModified
+    });
+    
     if (file && file.type === 'application/pdf') {
+      console.log("✅ Valid PDF file detected, creating object URL");
       const fileUrl = URL.createObjectURL(file);
+      console.log("🔗 Object URL created:", fileUrl);
+      
       setUploadedPdfUrl(fileUrl);
       setUploadedFileName(file.name);
+      
+      console.log("📊 State updated - uploadedPdfUrl:", fileUrl);
+      console.log("📊 State updated - uploadedFileName:", file.name);
+      
       toast({
         title: "PDF Uploaded Successfully",
         description: `${file.name} has been loaded for viewing.`,
       });
     } else {
+      console.log("❌ Invalid file type:", file.type);
       toast({
         title: "Invalid File Type",
         description: "Please select a valid PDF file.",
