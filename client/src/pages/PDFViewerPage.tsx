@@ -21,9 +21,9 @@ import {
 } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
 
-// Disable PDF.js worker to avoid loading issues in development
-pdfjsLib.GlobalWorkerOptions.workerSrc = '';
-console.log('PDF.js configured to run without external worker');
+// Configure PDF.js worker with a working CDN that supports CORS
+pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js`;
+console.log('PDF.js worker configured with CDNJS');
 
 interface User {
   id: string;
@@ -171,11 +171,11 @@ export default function PDFViewerPage() {
       
       console.log("📋 Creating PDF.js loading task with URL:", currentPdfUrl);
       
-      // Configure loading task with worker disabled
+      // Configure loading task with proper parameters
       const loadingTask = pdfjsLib.getDocument({
         url: currentPdfUrl,
-        disableWorker: true,
-        isEvalSupported: false,
+        cMapUrl: 'https://unpkg.com/pdfjs-dist@3.4.120/cmaps/',
+        cMapPacked: true,
         disableAutoFetch: false,
         disableStream: false
       });
