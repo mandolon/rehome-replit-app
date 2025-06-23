@@ -154,6 +154,9 @@ Changelog:
   * Implemented draggable comment markers with percentage-based positioning
   * Added relative positioning system that maintains marker placement across zoom levels
   * Enhanced marker system to store both pixel and percentage coordinates for responsive positioning
+  * Implemented default Fit mode that automatically calculates scale to fit PDF height on initial load
+  * Added responsive fit mode that adapts to window resize events with debounced scaling
+  * Enhanced PDF loading process to consistently apply fit-to-height scale for new documents
 ```
 
 ## User Preferences

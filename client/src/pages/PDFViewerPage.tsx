@@ -153,6 +153,32 @@ export default function PDFViewerPage() {
     }
   }, [scale, pdfDoc]);
 
+  // Handle window resize to maintain fit mode consistency
+  useEffect(() => {
+    const handleResize = async () => {
+      if (pdfDoc) {
+        const newFitScale = await calculateFitToHeightScale();
+        setScale(newFitScale);
+      }
+    };
+
+    const debouncedResize = debounce(handleResize, 150);
+    window.addEventListener('resize', debouncedResize);
+    
+    return () => {
+      window.removeEventListener('resize', debouncedResize);
+    };
+  }, [pdfDoc]);
+
+  // Simple debounce function
+  const debounce = (func: Function, delay: number) => {
+    let timeoutId: NodeJS.Timeout;
+    return (...args: any[]) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func.apply(null, args), delay);
+    };
+  };
+
   // Sample PDF URL - using Mozilla's sample PDF
   const PDF_URL = "https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf";
 
@@ -176,19 +202,22 @@ export default function PDFViewerPage() {
     console.log("📊 Current PDF URL changed:", { currentPdfUrl, uploadedPdfUrl });
   }, [currentPdfUrl]);
 
-  const calculateFitToHeightScale = async () => {
-    if (!pdfDoc || !pdfCanvasRef.current) return 1.2;
+  const calculateFitToHeightScale = async (pdf?: pdfjsLib.PDFDocumentProxy) => {
+    const doc = pdf || pdfDoc;
+    if (!doc) return 1.2;
     
     try {
-      const page = await pdfDoc.getPage(currentPage);
+      const page = await doc.getPage(1); // Always use first page for initial calculation
       const viewport = page.getViewport({ scale: 1 });
       
-      // Get container dimensions (accounting for padding and margins)
-      const containerHeight = window.innerHeight - 64 - 64; // toolbar height + padding
-      const availableHeight = containerHeight - 32; // extra padding
+      // Get container dimensions (accounting for toolbar, padding, and margins)
+      const containerHeight = window.innerHeight - 80 - 40; // toolbar height + padding
+      const availableHeight = Math.max(400, containerHeight - 60); // minimum height with extra padding
       
       const fitScale = availableHeight / viewport.height;
-      return Math.max(0.1, fitScale); // Minimum scale of 0.1
+      const clampedScale = Math.max(0.3, Math.min(3.0, fitScale)); // Clamp between 0.3 and 3.0
+      
+      return clampedScale;
     } catch (error) {
       console.error("Error calculating fit-to-height scale:", error);
       return 1.2;
@@ -218,6 +247,12 @@ export default function PDFViewerPage() {
       setPdfDoc(pdf);
       setTotalPages(pdf.numPages);
       setCurrentPage(1); // Reset to first page when loading new PDF
+      
+      // Calculate and apply fit-to-height scale for new PDF
+      const fitScale = await calculateFitToHeightScale(pdf);
+      setScale(fitScale);
+      
+      console.log("📏 Applied fit-to-height scale:", fitScale);
       
       console.log("🗑️ Clearing existing pins and comments for new PDF");
       // Clear existing pins and comments when loading new PDF
