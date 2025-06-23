@@ -24,6 +24,57 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
   }
+
+  /* PDF Viewer Styles */
+  .pdf-page-container {
+    transition: width 0.3s ease, height 0.3s ease;
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pdf-canvas {
+    display: block;
+    transform-origin: top left;
+    transition: transform 0.3s ease;
+    max-width: none;
+    max-height: none;
+  }
+
+  #pdf-viewer-container {
+    overflow: auto;
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  #comment-sidebar {
+    flex-shrink: 0;
+    height: 100vh;
+    min-width: 320px;
+  }
+
+  #toolbar {
+    flex-shrink: 0;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  /* Layout structure */
+  .pdf-main-layout {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+  }
+
+  .pdf-content-area {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+  }
 }
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. */
