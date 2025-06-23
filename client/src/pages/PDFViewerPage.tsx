@@ -155,23 +155,7 @@ export default function PDFViewerPage() {
     }
   }, [scale]);
 
-  // Handle window resize to maintain fit mode consistency
-  useEffect(() => {
-    const handleResize = async () => {
-      if (fitToHeight && pdfDoc) {
-        console.log("🔄 Window resized, recalculating fit scale");
-        const newFitScale = await calculateFitToHeightScale(pdfDoc);
-        setScale(newFitScale);
-      }
-    };
 
-    const debouncedResize = debounce(handleResize, 150);
-    window.addEventListener('resize', debouncedResize);
-    
-    return () => {
-      window.removeEventListener('resize', debouncedResize);
-    };
-  }, [pdfDoc, fitToHeight, calculateFitToHeightScale]);
 
   // Simple debounce function
   const debounce = (func: Function, delay: number) => {
@@ -188,10 +172,10 @@ export default function PDFViewerPage() {
   // Use uploaded PDF URL if available, otherwise use default
   const currentPdfUrl = uploadedPdfUrl || PDF_URL;
 
+  // Load PDF when component mounts or URL changes
   useEffect(() => {
-    console.log("🚀 PDF URL changed, loading:", currentPdfUrl);
     loadPDF();
-  }, [currentPdfUrl]);
+  }, [loadPDF]);
 
   const calculateFitToHeightScale = useCallback(async (pdf?: pdfjsLib.PDFDocumentProxy) => {
     const doc = pdf || pdfDoc;
