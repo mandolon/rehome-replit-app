@@ -615,15 +615,49 @@ const SchedulesContent = () => {
     // For Windows and Doors, use a generic room assignment since they're category-based
     const roomAssignment = selectedRoom === 'Windows' || selectedRoom === 'Doors' ? 'Various' : selectedRoom;
     
+    // Generate auto-number for windows and doors
+    let autoNumber = '';
+    if (itemType === 'window' || itemType === 'door') {
+      const prefix = itemType === 'door' ? 'D' : 'W';
+      const existingItems = scheduleItems.filter(item => item.type === itemType);
+      const existingNumbers = existingItems
+        .map(item => item.number)
+        .filter(num => num && num.startsWith(prefix))
+        .map(num => {
+          const match = num.match(new RegExp(`^${prefix}-(\\d+)$`));
+          return match ? parseInt(match[1]) : 0;
+        })
+        .filter(num => !isNaN(num));
+      
+      const maxNumber = existingNumbers.length > 0 ? Math.max(...existingNumbers) : 0;
+      autoNumber = `${prefix}-${maxNumber + 1}`;
+    }
+    
     const newItem: ScheduleItem = {
       id: Date.now().toString(),
       room: roomAssignment,
       type: itemType,
+      number: autoNumber,
       item: '',
       manufacturer: '',
       model: '',
       finish: '',
-      comments: ''
+      comments: '',
+      // Door/Window specific fields
+      style: itemType === 'door' ? 'A' : '',
+      function: itemType === 'door' ? 'Interior' : '',
+      swing: itemType === 'door' ? 'Right' : '',
+      doorType: itemType === 'door' ? 'Single' : undefined,
+      panel: itemType === 'door' ? '1' : undefined,
+      width: '',
+      height: '',
+      material: '',
+      existing: false,
+      new: false,
+      // Window-specific fields
+      sillHeight: itemType === 'window' ? '' : undefined,
+      glassType: itemType === 'window' ? '' : undefined,
+      egress: itemType === 'window' ? '' : undefined
     };
     
     setScheduleItems([...scheduleItems, newItem]);
