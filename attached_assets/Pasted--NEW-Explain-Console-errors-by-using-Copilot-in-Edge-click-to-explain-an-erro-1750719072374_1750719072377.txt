@@ -1,0 +1,461 @@
+[NEW] Explain Console errors by using Copilot in Edge: click
+         
+         to explain an error. 
+        Learn more
+        Don't show again
+react-dom.development.js:29895 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+App.tsx:55 App component is rendering, current path: /sandbox/pdf-viewer
+PDFViewerPage.tsx:96 📊 Scale state changed: {newScale: 1.2, timestamp: '2025-06-23T22:43:39.055Z', stackTrace: Array(5)}
+PDFViewerPage.tsx:167 🪟 Setting up window resize listener, pdfDoc available: false
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: false, scale: 1.2, currentPage: 1, totalPages: 0, isLoading: true, …}
+PDFViewerPage.tsx:224 🚀 Initial PDF load useEffect triggered
+PDFViewerPage.tsx:225 🔍 Initial state check: {currentScale: 1.2, pdfDoc: false, currentPdfUrl: 'https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf', isLoading: true}
+PDFViewerPage.tsx:306 🚀 Starting PDF loading process
+PDFViewerPage.tsx:307 📂 Current PDF URL: https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf
+PDFViewerPage.tsx:308 🔄 Setting loading state to true
+PDFViewerPage.tsx:312 📋 Creating PDF.js loading task with URL: https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf
+PDFViewerPage.tsx:315 ⏳ Waiting for PDF document to load...
+PDFViewerPage.tsx:235 📤 Upload URL useEffect triggered: {uploadedPdfUrl: null}
+PDFViewerPage.tsx:249 📊 Current PDF URL changed: {currentPdfUrl: 'https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf', uploadedPdfUrl: null}
+PDFViewerPage.tsx:318 ✅ PDF document loaded successfully!
+PDFViewerPage.tsx:319 📊 PDF Details: {numPages: 14, fingerprints: Array(2)}
+PDFViewerPage.tsx:324 🔧 Setting PDF document state...
+PDFViewerPage.tsx:329 📏 Current scale before fit calculation: 1.2
+PDFViewerPage.tsx:185 🧹 Cleaning up window resize listener
+PDFViewerPage.tsx:167 🪟 Setting up window resize listener, pdfDoc available: true
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: true, …}
+PDFViewerPage.tsx:335 🎯 Starting fit-to-height calculation for new PDF...
+PDFViewerPage.tsx:253 🔍 calculateFitToHeightScale called with: {pdf: true, pdfDoc: false}
+PDFViewerPage.tsx:262 📄 Getting first page for fit calculation...
+PDFViewerPage.tsx:266 📐 PDF page dimensions (scale 1): {width: 612, height: 792}
+PDFViewerPage.tsx:279 📏 Container dimensions: {windowHeight: 962, toolbarHeight: 80, padding: 40, extraPadding: 60, containerHeight: 842, …}
+PDFViewerPage.tsx:291 ⚖️ Scale calculations: {rawFitScale: 0.9873737373737373, clampedScale: 0.9873737373737373, willFit: true}
+PDFViewerPage.tsx:337 📏 Calculated fit scale: 0.9873737373737373
+PDFViewerPage.tsx:339 🔄 Setting new scale: 0.9873737373737373
+PDFViewerPage.tsx:96 📊 Scale state changed: {newScale: 0.9873737373737373, timestamp: '2025-06-23T22:43:39.255Z', stackTrace: Array(5)}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: true, …}
+PDFViewerPage.tsx:345 ✅ PDF loading complete with fit scale applied: 0.9873737373737373
+PDFViewerPage.tsx:346 🔍 Final state check: {scale: 0.9873737373737373, pdfDocSet: true, totalPages: 14}
+PDFViewerPage.tsx:352 🗑️ Clearing existing pins and comments for new PDF
+PDFViewerPage.tsx:357 ✅ PDF loading complete, setting loading state to false
+PDFCanvas.tsx:127 🎨 PDFCanvas useEffect triggered: {pdfDoc: true, currentPage: 1, scale: 0.9873737373737373, timestamp: '2025-06-23T22:43:39.263Z'}
+PDFCanvas.tsx:135 🎯 Calling renderPage with scale: 0.9873737373737373
+PDFCanvas.tsx:57 🎨 PDFCanvas: Starting to render page 1
+PDFCanvas.tsx:70 📄 PDFCanvas: Getting page 1 from PDF document
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFCanvas.tsx:73 ✅ PDFCanvas: Page 1 retrieved successfully
+PDFCanvas.tsx:81 📐 PDFCanvas: Creating viewport with scale 0.9873737373737373
+PDFCanvas.tsx:83 📐 PDFCanvas: Viewport dimensions: {width: 604.2727272727273, height: 782, scale: 0.9873737373737373}
+PDFCanvas.tsx:89 🖼️ PDFCanvas: Creating new canvas element
+PDFCanvas.tsx:102 🔗 PDFCanvas: Appending canvas to container
+PDFCanvas.tsx:111 🎨 PDFCanvas: Starting to render page 1 to canvas
+PDFCanvas.tsx:113 ✅ PDFCanvas: Page 1 rendered successfully to canvas
+PDFViewerPage.tsx:253 🔍 calculateFitToHeightScale called with: {pdf: false, pdfDoc: false}
+PDFViewerPage.tsx:257 ❌ No PDF document available for fit calculation
+PDFCanvas.tsx:127 🎨 PDFCanvas useEffect triggered: {pdfDoc: true, currentPage: 1, scale: 1.2, timestamp: '2025-06-23T22:43:39.371Z'}
+PDFCanvas.tsx:135 🎯 Calling renderPage with scale: 1.2
+PDFCanvas.tsx:57 🎨 PDFCanvas: Starting to render page 1
+PDFCanvas.tsx:70 📄 PDFCanvas: Getting page 1 from PDF document
+PDFViewerPage.tsx:96 📊 Scale state changed: {newScale: 1.2, timestamp: '2025-06-23T22:43:39.372Z', stackTrace: Array(5)}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFCanvas.tsx:73 ✅ PDFCanvas: Page 1 retrieved successfully
+PDFCanvas.tsx:77 🗑️ PDFCanvas: Removing existing canvas
+PDFCanvas.tsx:81 📐 PDFCanvas: Creating viewport with scale 1.2
+PDFCanvas.tsx:83 📐 PDFCanvas: Viewport dimensions: {width: 734.4, height: 950.4, scale: 1.2}
+PDFCanvas.tsx:89 🖼️ PDFCanvas: Creating new canvas element
+PDFCanvas.tsx:102 🔗 PDFCanvas: Appending canvas to container
+PDFCanvas.tsx:111 🎨 PDFCanvas: Starting to render page 1 to canvas
+PDFCanvas.tsx:113 ✅ PDFCanvas: Page 1 rendered successfully to canvas
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 1.2, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:253 🔍 calculateFitToHeightScale called with: {pdf: false, pdfDoc: true}
+PDFViewerPage.tsx:262 📄 Getting first page for fit calculation...
+PDFViewerPage.tsx:266 📐 PDF page dimensions (scale 1): {width: 612, height: 792}
+PDFViewerPage.tsx:279 📏 Container dimensions: {windowHeight: 962, toolbarHeight: 80, padding: 40, extraPadding: 60, containerHeight: 842, …}
+PDFViewerPage.tsx:291 ⚖️ Scale calculations: {rawFitScale: 0.9873737373737373, clampedScale: 0.9873737373737373, willFit: true}
+PDFCanvas.tsx:127 🎨 PDFCanvas useEffect triggered: {pdfDoc: true, currentPage: 1, scale: 0.9873737373737373, timestamp: '2025-06-23T22:43:45.008Z'}
+PDFCanvas.tsx:135 🎯 Calling renderPage with scale: 0.9873737373737373
+PDFCanvas.tsx:57 🎨 PDFCanvas: Starting to render page 1
+PDFCanvas.tsx:70 📄 PDFCanvas: Getting page 1 from PDF document
+PDFViewerPage.tsx:96 📊 Scale state changed: {newScale: 0.9873737373737373, timestamp: '2025-06-23T22:43:45.008Z', stackTrace: Array(5)}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFCanvas.tsx:73 ✅ PDFCanvas: Page 1 retrieved successfully
+PDFCanvas.tsx:77 🗑️ PDFCanvas: Removing existing canvas
+PDFCanvas.tsx:81 📐 PDFCanvas: Creating viewport with scale 0.9873737373737373
+PDFCanvas.tsx:83 📐 PDFCanvas: Viewport dimensions: {width: 604.2727272727273, height: 782, scale: 0.9873737373737373}
+PDFCanvas.tsx:89 🖼️ PDFCanvas: Creating new canvas element
+PDFCanvas.tsx:102 🔗 PDFCanvas: Appending canvas to container
+PDFCanvas.tsx:111 🎨 PDFCanvas: Starting to render page 1 to canvas
+PDFCanvas.tsx:113 ✅ PDFCanvas: Page 1 rendered successfully to canvas
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+PDFViewerPage.tsx:201 🔄 PDFViewerPage component rendered/updated
+PDFViewerPage.tsx:202 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+ 🔄 PDFViewerPage component rendered/updated
+ 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+ 🔄 PDFViewerPage component rendered/updated
+ 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+ 🔄 PDFViewerPage component rendered/updated
+ 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+ 🔄 PDFViewerPage component rendered/updated
+ 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+ 🔄 PDFViewerPage component rendered/updated
+ 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+ 🔄 PDFViewerPage component rendered/updated
+ 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+ 🔄 PDFViewerPage component rendered/updated
+ 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+ 🔄 PDFViewerPage component rendered/updated
+ 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+ 🔄 PDFViewerPage component rendered/updated
+ 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+ 🔄 PDFViewerPage component rendered/updated
+ 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+ 🔄 PDFViewerPage component rendered/updated
+ 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}
+ 🔄 PDFViewerPage component rendered/updated
+ 🔍 Current component state: {pdfDoc: true, scale: 0.9873737373737373, currentPage: 1, totalPages: 14, isLoading: false, …}

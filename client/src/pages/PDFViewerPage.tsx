@@ -91,13 +91,9 @@ export default function PDFViewerPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [scale, setScale] = useState(1.2);
   
-  // Add debugging for scale changes
+  // Track scale changes for debugging
   useEffect(() => {
-    console.log("📊 Scale state changed:", { 
-      newScale: scale,
-      timestamp: new Date().toISOString(),
-      stackTrace: new Error().stack?.split('\n').slice(0, 5)
-    });
+    console.log("📊 Scale changed to:", scale);
   }, [scale]);
   const [fitToHeight, setFitToHeight] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -133,7 +129,7 @@ export default function PDFViewerPage() {
 
   // Update pin positions when scale changes to maintain relative positioning
   useEffect(() => {
-    if (scale && pdfCanvasRef.current) {
+    if (scale && pdfCanvasRef.current && pins.length > 0) {
       const canvas = pdfCanvasRef.current.getCanvasElement();
       if (canvas) {
         // Update all pins to maintain their percentage-based positions
@@ -160,7 +156,7 @@ export default function PDFViewerPage() {
         }
       }
     }
-  }, [scale, pdfDoc]);
+  }, [scale]);
 
   // Handle window resize to maintain fit mode consistency
   useEffect(() => {
@@ -170,7 +166,7 @@ export default function PDFViewerPage() {
       console.log("🔄 Window resize detected, recalculating fit scale...");
       if (pdfDoc) {
         console.log("📏 Calculating new fit scale due to resize...");
-        const newFitScale = await calculateFitToHeightScale();
+        const newFitScale = await calculateFitToHeightScale(pdfDoc);
         console.log("📏 New fit scale from resize:", newFitScale);
         setScale(newFitScale);
       } else {
@@ -196,24 +192,6 @@ export default function PDFViewerPage() {
     };
   };
 
-  // Debug component lifecycle and render timing
-  useEffect(() => {
-    console.log("🔄 PDFViewerPage component rendered/updated");
-    console.log("🔍 Current component state:", {
-      pdfDoc: !!pdfDoc,
-      scale,
-      currentPage,
-      totalPages,
-      isLoading,
-      sidebarOpen,
-      hovering,
-      uploadedPdfUrl: !!uploadedPdfUrl,
-      currentPdfUrl,
-      pinsCount: pins.length,
-      commentsCount: comments.length
-    });
-  });
-
   // Sample PDF URL - using Mozilla's sample PDF
   const PDF_URL = "https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf";
 
@@ -222,12 +200,6 @@ export default function PDFViewerPage() {
 
   useEffect(() => {
     console.log("🚀 Initial PDF load useEffect triggered");
-    console.log("🔍 Initial state check:", { 
-      currentScale: scale, 
-      pdfDoc: !!pdfDoc, 
-      currentPdfUrl,
-      isLoading 
-    });
     loadPDF();
   }, []);
 
@@ -235,38 +207,19 @@ export default function PDFViewerPage() {
     console.log("📤 Upload URL useEffect triggered:", { uploadedPdfUrl });
     if (uploadedPdfUrl) {
       console.log("🔄 Triggering loadPDF due to uploaded PDF URL change");
-      console.log("🔍 Upload state check:", { 
-        currentScale: scale, 
-        pdfDoc: !!pdfDoc, 
-        uploadedPdfUrl,
-        isLoading 
-      });
       loadPDF();
     }
   }, [uploadedPdfUrl]);
 
-  useEffect(() => {
-    console.log("📊 Current PDF URL changed:", { currentPdfUrl, uploadedPdfUrl });
-  }, [currentPdfUrl]);
-
   const calculateFitToHeightScale = async (pdf?: pdfjsLib.PDFDocumentProxy) => {
-    console.log("🔍 calculateFitToHeightScale called with:", { pdf: !!pdf, pdfDoc: !!pdfDoc });
-    
     const doc = pdf || pdfDoc;
     if (!doc) {
-      console.log("❌ No PDF document available for fit calculation");
       return 1.2;
     }
     
     try {
-      console.log("📄 Getting first page for fit calculation...");
-      const page = await doc.getPage(1); // Always use first page for initial calculation
+      const page = await doc.getPage(1);
       const viewport = page.getViewport({ scale: 1 });
-      
-      console.log("📐 PDF page dimensions (scale 1):", {
-        width: viewport.width,
-        height: viewport.height
-      });
       
       // Get container dimensions (accounting for toolbar, padding, and margins)
       const windowHeight = window.innerHeight;
@@ -276,27 +229,14 @@ export default function PDFViewerPage() {
       const containerHeight = windowHeight - toolbarHeight - padding;
       const availableHeight = Math.max(400, containerHeight - extraPadding);
       
-      console.log("📏 Container dimensions:", {
-        windowHeight,
-        toolbarHeight,
-        padding,
-        extraPadding,
-        containerHeight,
-        availableHeight
-      });
-      
       const fitScale = availableHeight / viewport.height;
       const clampedScale = Math.max(0.3, Math.min(3.0, fitScale));
       
-      console.log("⚖️ Scale calculations:", {
-        rawFitScale: fitScale,
-        clampedScale,
-        willFit: fitScale >= 0.3 && fitScale <= 3.0
-      });
+      console.log("📏 Fit scale calculated:", clampedScale);
       
       return clampedScale;
     } catch (error) {
-      console.error("❌ Error calculating fit-to-height scale:", error);
+      console.error("Error calculating fit-to-height scale:", error);
       return 1.2;
     }
   };
