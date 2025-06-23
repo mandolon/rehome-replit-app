@@ -129,6 +129,10 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, rowId: string, currentIndex: number, column: string) => {
+    const currentColumn = columns.find(col => col.key === column);
+    const isSelectColumn = currentColumn?.type === 'select';
+    const isInputColumn = currentColumn?.type === 'input';
+    
     if (e.key === 'ArrowUp') {
       e.preventDefault();
       const newIndex = Math.max(0, currentIndex - 1);
@@ -140,6 +144,21 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
         }
       }, 10);
     } else if (e.key === 'ArrowDown') {
+      // For select columns, let the dropdown open naturally
+      if (isSelectColumn) {
+        return; // Don't prevent default, let select handle it
+      }
+      
+      // For input columns, enter edit mode (focus)
+      if (isInputColumn) {
+        const input = e.target as HTMLInputElement;
+        if (input && document.activeElement !== input) {
+          input.focus();
+          return;
+        }
+      }
+      
+      // Navigate to next row
       e.preventDefault();
       const newIndex = Math.min(data.length - 1, currentIndex + 1);
       setFocusedRowIndex(newIndex);
