@@ -669,6 +669,7 @@ export default function PDFViewerPage() {
               {/* Comment box */}
               {showCommentBox && pendingComment && (
                 <div
+                  data-comment-box
                   className="absolute z-20 bg-white border shadow-lg rounded-lg p-3 min-w-[250px]"
                   style={{ 
                     left: pendingComment.x * scale + 20, 
