@@ -370,59 +370,52 @@ export default function PDFViewerPage() {
   };
 
   const fitToScreen = () => {
-    console.log("🎯 fitToScreen() called");
+    console.log("fitToScreen() called");
     
     const canvas = document.querySelector('.pdf-canvas') as HTMLCanvasElement;
     const container = document.getElementById('pdf-viewer-container');
     
     if (!canvas || !container) {
-      console.log("❌ Canvas or container not found");
+      console.log("Canvas or container not found");
       return;
     }
     
-    // Reset any previous transforms first
+    // Reset any previous transforms
     canvas.style.transform = '';
     canvas.style.transformOrigin = 'top left';
     
-    // Force a reflow to ensure we get accurate dimensions
+    // Force reflow to get accurate dimensions
     canvas.offsetHeight;
     
-    // Get container visible dimensions using getBoundingClientRect
+    // Get container dimensions using getBoundingClientRect
     const containerRect = container.getBoundingClientRect();
-    const availableWidth = containerRect.width - 64; // Account for padding
+    const availableWidth = containerRect.width - 64; // Account for padding (32px each side)
     const availableHeight = containerRect.height - 64;
     
-    // Get canvas natural dimensions (before any scaling)
-    const canvasRect = canvas.getBoundingClientRect();
+    // Get canvas natural dimensions
     const canvasWidth = canvas.offsetWidth;
     const canvasHeight = canvas.offsetHeight;
     
-    console.log("📐 Available space:", { availableWidth, availableHeight });
-    console.log("📐 Canvas natural size:", { canvasWidth, canvasHeight });
+    console.log("Available space:", { availableWidth, availableHeight });
+    console.log("Canvas size:", { canvasWidth, canvasHeight });
     
     if (canvasWidth === 0 || canvasHeight === 0 || availableWidth <= 0 || availableHeight <= 0) {
-      console.log("❌ Invalid dimensions");
+      console.log("Invalid dimensions detected");
       return;
     }
     
-    // Calculate scale to fit both width and height within container
+    // Calculate scale factors
     const scaleX = availableWidth / canvasWidth;
     const scaleY = availableHeight / canvasHeight;
-    const fitScale = Math.min(scaleX, scaleY); // Use the smaller scale to prevent overflow
+    const fitScale = Math.min(scaleX, scaleY); // Use smaller scale to prevent overflow
     
-    console.log("📏 Scale calculation:", { scaleX, scaleY, fitScale });
+    console.log("Scale factors:", { scaleX, scaleY, fitScale });
     
-    // Apply the transform
+    // Apply CSS transform
     canvas.style.transform = `scale(${fitScale})`;
     canvas.style.transformOrigin = 'top left';
     
-    // Calculate final scaled dimensions for verification
-    const finalWidth = canvasWidth * fitScale;
-    const finalHeight = canvasHeight * fitScale;
-    
-    console.log("✅ Applied scale:", fitScale);
-    console.log("📊 Final dimensions:", { finalWidth, finalHeight });
-    console.log("🔍 Fits in container:", finalWidth <= availableWidth && finalHeight <= availableHeight);
+    console.log("Applied scale:", fitScale);
   };
 
   const resetZoom = () => {
@@ -473,260 +466,257 @@ export default function PDFViewerPage() {
   }
 
   return (
-    <div className="h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
-      {/* Fixed Header Toolbar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-800 border-b p-3 shadow-sm">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-            >
-              {sidebarOpen ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              {sidebarOpen ? "Hide" : "Show"} Comments
-            </Button>
-            
-            <Separator orientation="vertical" className="h-6" />
-            
-            <div className="flex items-center gap-1">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={prevPage}
-                disabled={currentPage <= 1}
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <span className="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded">
-                {currentPage} / {totalPages}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={nextPage}
-                disabled={currentPage >= totalPages}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-
-            <Separator orientation="vertical" className="h-6" />
-
-            {/* Document Title */}
-            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-              <span className="font-medium">
-                {uploadedFileName || "Sample Document"}
-              </span>
-              {uploadedFileName && (
-                <Badge variant="secondary" className="text-xs">
-                  Uploaded
-                </Badge>
-              )}
+    <div className="h-screen bg-gray-50 dark:bg-gray-900 flex">
+      {/* Left Sidebar for Comments */}
+      {sidebarOpen && (
+        <div id="comment-sidebar" className="w-80 bg-white dark:bg-gray-800 border-r shadow-lg flex flex-col">
+          <div className="p-4 border-b">
+            <div className="flex items-center gap-2">
+              <MessageSquare className="h-5 w-5" />
+              <h2 className="text-lg font-semibold">Comments</h2>
+              <Badge variant="secondary">{comments.length}</Badge>
             </div>
           </div>
-
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <input
-                type="file"
-                accept=".pdf"
-                onChange={handleFileUpload}
-                className="hidden"
-                id="pdf-upload"
-              />
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => document.getElementById('pdf-upload')?.click()}
-                className="flex items-center gap-2"
-              >
-                <Upload className="h-4 w-4" />
-                Upload PDF
-              </Button>
-            </div>
-            
-            <Separator orientation="vertical" className="h-6" />
-            
-            <Button variant="outline" size="sm" onClick={zoomOut}>
-              <ZoomOut className="h-4 w-4" />
-            </Button>
-            <span className="px-2 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded min-w-[60px] text-center">
-              {Math.round(scale * 100)}%
-            </span>
-            <Button variant="outline" size="sm" onClick={zoomIn}>
-              <ZoomIn className="h-4 w-4" />
-            </Button>
-            <Button variant="outline" size="sm" onClick={fitToScreen}>
-              <Maximize className="h-4 w-4" />
-              Fit
-            </Button>
-            
-            <Separator orientation="vertical" className="h-6" />
-            
-            <Button variant="outline" size="sm" onClick={downloadPDF}>
-              <Download className="h-4 w-4" />
-              Download
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content Area */}
-      <div className="flex flex-1 pt-16"> {/* pt-16 to account for fixed header */}
-        {/* Main PDF Viewer */}
-        <div className="flex-1 flex flex-col">
-          {/* PDF Container */}
-          <div 
-            id="pdf-viewer-container"
-            className="flex-1 overflow-auto p-8 relative"
-            onMouseEnter={() => setHovering(true)}
-            onMouseLeave={() => setHovering(false)}
-          >
-            {/* Hover instruction */}
-            {hovering && (
-              <div className="absolute top-4 left-4 bg-black text-white px-3 py-2 rounded-lg text-sm z-10 pointer-events-none">
-                Click to add comment
+          
+          <ScrollArea className="flex-1 p-4">
+            {getCurrentPageComments().length === 0 ? (
+              <div className="text-center text-gray-500 mt-8">
+                <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>No comments on this page</p>
+                <p className="text-sm mt-2">Click anywhere on the PDF to add a comment</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {getCurrentPageComments().map((comment, index) => {
+                  const pinNumber = getCurrentPagePins().find(p => 
+                    p.x === comment.x && p.y === comment.y
+                  )?.number || index + 1;
+                  
+                  return (
+                    <Card key={comment.id} className="border-l-4" style={{ borderLeftColor: comment.user.color }}>
+                      <CardHeader className="pb-2">
+                        <div className="flex items-center gap-2">
+                          <div 
+                            className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold"
+                            style={{ backgroundColor: comment.user.color }}
+                          >
+                            {pinNumber}
+                          </div>
+                          <CardTitle className="text-sm">{comment.user.name}</CardTitle>
+                          <span className="text-xs text-gray-500 ml-auto">
+                            Page {comment.pageNumber}
+                          </span>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        <p className="text-sm mb-2">{comment.text}</p>
+                        <p className="text-xs text-gray-500 mb-3">
+                          {formatTimestamp(comment.timestamp)}
+                        </p>
+                        
+                        {/* Replies */}
+                        {comment.replies.length > 0 && (
+                          <div className="space-y-2 mb-3">
+                            <Separator />
+                            {comment.replies.map((reply) => (
+                              <div key={reply.id} className="ml-4 pl-3 border-l-2 border-gray-200">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span className="text-xs font-medium">{reply.user.name}</span>
+                                  <span className="text-xs text-gray-500">
+                                    {formatTimestamp(reply.timestamp)}
+                                  </span>
+                                </div>
+                                <p className="text-xs text-gray-700 dark:text-gray-300">{reply.text}</p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        
+                        {/* Reply input */}
+                        {replyingTo === comment.id ? (
+                          <div className="space-y-2">
+                            <Textarea
+                              placeholder="Write a reply..."
+                              value={replyText}
+                              onChange={(e) => setReplyText(e.target.value)}
+                              className="min-h-[60px]"
+                            />
+                            <div className="flex gap-2">
+                              <Button 
+                                size="sm" 
+                                onClick={() => addReply(comment.id)}
+                                disabled={!replyText.trim()}
+                              >
+                                Reply
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                onClick={() => setReplyingTo(null)}
+                              >
+                                Cancel
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => setReplyingTo(comment.id)}
+                            className="flex items-center gap-1 text-xs"
+                          >
+                            <Reply className="h-3 w-3" />
+                            Reply
+                          </Button>
+                        )}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
             )}
+          </ScrollArea>
+        </div>
+      )}
 
-            <div className="flex justify-center">
-              <div 
-                ref={pdfContainerRef}
-                className="pdf-page-container relative cursor-crosshair"
-                onClick={handleCanvasClick}
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col">
+        {/* Toolbar */}
+        <div id="toolbar" className="bg-white dark:bg-gray-800 border-b p-3 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
               >
-                {/* Pins for current page */}
-                {getCurrentPagePins().map((pin) => (
-                  <div
-                    key={pin.id}
-                    className="absolute z-10 cursor-pointer transform -translate-x-1/2 -translate-y-1/2"
-                    style={{ left: pin.x, top: pin.y }}
-                  >
-                    <div
-                      className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-white hover:scale-110 transition-transform"
-                      style={{ backgroundColor: pin.user.color }}
-                    >
-                      {pin.number}
-                    </div>
-                  </div>
-                ))}
+                {sidebarOpen ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                {sidebarOpen ? "Hide" : "Show"} Comments
+              </Button>
+              
+              <Separator orientation="vertical" className="h-6" />
+              
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={prevPage}
+                  disabled={currentPage <= 1}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <span className="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded">
+                  {currentPage} / {totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={nextPage}
+                  disabled={currentPage >= totalPages}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
               </div>
+
+              <Separator orientation="vertical" className="h-6" />
+
+              {/* Document Title */}
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                <span className="font-medium">
+                  {uploadedFileName || "Sample Document"}
+                </span>
+                {uploadedFileName && (
+                  <Badge variant="secondary" className="text-xs">
+                    Uploaded
+                  </Badge>
+                )}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <input
+                  type="file"
+                  accept=".pdf"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                  id="pdf-upload"
+                />
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => document.getElementById('pdf-upload')?.click()}
+                  className="flex items-center gap-2"
+                >
+                  <Upload className="h-4 w-4" />
+                  Upload PDF
+                </Button>
+              </div>
+              
+              <Separator orientation="vertical" className="h-6" />
+              
+              <Button variant="outline" size="sm" onClick={zoomOut}>
+                <ZoomOut className="h-4 w-4" />
+              </Button>
+              <span className="px-2 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded min-w-[60px] text-center">
+                {Math.round(scale * 100)}%
+              </span>
+              <Button variant="outline" size="sm" onClick={zoomIn}>
+                <ZoomIn className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="sm" onClick={fitToScreen}>
+                <Maximize className="h-4 w-4" />
+                Fit
+              </Button>
+              
+              <Separator orientation="vertical" className="h-6" />
+              
+              <Button variant="outline" size="sm" onClick={downloadPDF}>
+                <Download className="h-4 w-4" />
+                Download
+              </Button>
             </div>
           </div>
         </div>
 
-        {/* Right Sidebar */}
-        {sidebarOpen && (
-          <div id="comment-sidebar" className="w-80 bg-white dark:bg-gray-800 border-l shadow-lg flex flex-col">
-            <div className="p-4 border-b">
-              <div className="flex items-center gap-2">
-                <MessageSquare className="h-5 w-5" />
-                <h2 className="text-lg font-semibold">Comments</h2>
-                <Badge variant="secondary">{comments.length}</Badge>
-              </div>
+        {/* PDF Viewer Container */}
+        <div 
+          id="pdf-viewer-container"
+          className="flex-1 overflow-auto p-8 relative"
+          onMouseEnter={() => setHovering(true)}
+          onMouseLeave={() => setHovering(false)}
+        >
+          {/* Hover instruction */}
+          {hovering && (
+            <div className="absolute top-4 left-4 bg-black text-white px-3 py-2 rounded-lg text-sm z-10 pointer-events-none">
+              Click to add comment
             </div>
-            
-            <ScrollArea className="flex-1 p-4">
-              {getCurrentPageComments().length === 0 ? (
-                <div className="text-center text-gray-500 mt-8">
-                  <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>No comments on this page</p>
-                  <p className="text-sm mt-2">Click anywhere on the PDF to add a comment</p>
+          )}
+
+          <div className="flex justify-center">
+            <div 
+              ref={pdfContainerRef}
+              className="pdf-page-container relative cursor-crosshair"
+              onClick={handleCanvasClick}
+            >
+              {/* Pins for current page */}
+              {getCurrentPagePins().map((pin) => (
+                <div
+                  key={pin.id}
+                  className="absolute z-10 cursor-pointer transform -translate-x-1/2 -translate-y-1/2"
+                  style={{ left: pin.x, top: pin.y }}
+                >
+                  <div
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-white hover:scale-110 transition-transform"
+                    style={{ backgroundColor: pin.user.color }}
+                  >
+                    {pin.number}
+                  </div>
                 </div>
-              ) : (
-                <div className="space-y-4">
-                  {getCurrentPageComments().map((comment, index) => {
-                    const pinNumber = getCurrentPagePins().find(p => 
-                      p.x === comment.x && p.y === comment.y
-                    )?.number || index + 1;
-                    
-                    return (
-                      <Card key={comment.id} className="border-l-4" style={{ borderLeftColor: comment.user.color }}>
-                        <CardHeader className="pb-2">
-                          <div className="flex items-center gap-2">
-                            <div 
-                              className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold"
-                              style={{ backgroundColor: comment.user.color }}
-                            >
-                              {pinNumber}
-                            </div>
-                            <CardTitle className="text-sm">{comment.user.name}</CardTitle>
-                            <span className="text-xs text-gray-500 ml-auto">
-                              Page {comment.pageNumber}
-                            </span>
-                          </div>
-                        </CardHeader>
-                        <CardContent className="pt-0">
-                          <p className="text-sm mb-2">{comment.text}</p>
-                          <p className="text-xs text-gray-500 mb-3">
-                            {formatTimestamp(comment.timestamp)}
-                          </p>
-                          
-                          {/* Replies */}
-                          {comment.replies.length > 0 && (
-                            <div className="space-y-2 mb-3">
-                              <Separator />
-                              {comment.replies.map((reply) => (
-                                <div key={reply.id} className="ml-4 pl-3 border-l-2 border-gray-200">
-                                  <div className="flex items-center gap-2 mb-1">
-                                    <span className="text-xs font-medium">{reply.user.name}</span>
-                                    <span className="text-xs text-gray-500">
-                                      {formatTimestamp(reply.timestamp)}
-                                    </span>
-                                  </div>
-                                  <p className="text-xs text-gray-700 dark:text-gray-300">{reply.text}</p>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                          
-                          {/* Reply input */}
-                          {replyingTo === comment.id ? (
-                            <div className="space-y-2">
-                              <Textarea
-                                placeholder="Write a reply..."
-                                value={replyText}
-                                onChange={(e) => setReplyText(e.target.value)}
-                                className="min-h-[60px]"
-                              />
-                              <div className="flex gap-2">
-                                <Button 
-                                  size="sm" 
-                                  onClick={() => addReply(comment.id)}
-                                  disabled={!replyText.trim()}
-                                >
-                                  Reply
-                                </Button>
-                                <Button 
-                                  size="sm" 
-                                  variant="outline" 
-                                  onClick={() => setReplyingTo(null)}
-                                >
-                                  Cancel
-                                </Button>
-                              </div>
-                            </div>
-                          ) : (
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => setReplyingTo(comment.id)}
-                              className="flex items-center gap-1 text-xs"
-                            >
-                              <Reply className="h-3 w-3" />
-                              Reply
-                            </Button>
-                          )}
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
-                </div>
-              )}
-            </ScrollArea>
+              ))}
+            </div>
           </div>
-        )}
+        </div>
       </div>
 
       {/* Comment Dialog */}
