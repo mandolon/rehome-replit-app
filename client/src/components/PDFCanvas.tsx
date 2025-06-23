@@ -137,13 +137,30 @@ const PDFCanvas = forwardRef<PDFCanvasHandle, PDFCanvasProps>(({
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isPanning) return;
+    if (!isPanning || !canvasRef.current || !containerRef.current) return;
+    
+    const canvas = canvasRef.current;
+    const container = containerRef.current.parentElement;
+    if (!container) return;
     
     const newPanOffset = {
       x: e.clientX - panStart.x,
       y: e.clientY - panStart.y
     };
-    setPanOffset(newPanOffset);
+    
+    // Apply boundary constraints to prevent panning too far
+    const containerRect = container.getBoundingClientRect();
+    const canvasRect = canvas.getBoundingClientRect();
+    
+    const maxPanX = Math.max(0, (canvasRect.width - containerRect.width) / 2 + 100);
+    const maxPanY = Math.max(0, (canvasRect.height - containerRect.height) / 2 + 100);
+    
+    const constrainedOffset = {
+      x: Math.max(-maxPanX, Math.min(maxPanX, newPanOffset.x)),
+      y: Math.max(-maxPanY, Math.min(maxPanY, newPanOffset.y))
+    };
+    
+    setPanOffset(constrainedOffset);
     e.preventDefault();
   };
 
@@ -189,7 +206,7 @@ const PDFCanvas = forwardRef<PDFCanvasHandle, PDFCanvasProps>(({
         onMouseLeave={handleMouseLeave}
         style={{
           transform: `translate(${panOffset.x}px, ${panOffset.y}px)`,
-          cursor: isPanning ? 'grabbing' : 'grab'
+          cursor: isPanning ? 'grabbing' : (scale > 1.5 ? 'grab' : 'crosshair')
         }}
       >
         {/* Pins for current page */}
