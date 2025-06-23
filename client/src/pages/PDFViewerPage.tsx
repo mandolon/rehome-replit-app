@@ -154,6 +154,11 @@ export default function PDFViewerPage() {
     }
   }, [pdfDoc, pdfContainerRef.current]);
 
+  // Update pin positions when PDF dimensions change due to zoom
+  useEffect(() => {
+    updatePinPositions();
+  }, [pdfDimensions, updatePinPositions]);
+
   const loadPDF = async () => {
     try {
       console.log("🚀 Starting PDF loading process");
@@ -373,7 +378,6 @@ export default function PDFViewerPage() {
   };
 
 
-
   const renumberPins = () => {
     const updatedPins = pins.map(pin => {
       const samePagePins = pins.filter(p => p.pageNumber === pin.pageNumber && p.id !== pin.id);
@@ -433,11 +437,19 @@ export default function PDFViewerPage() {
   };
 
   const zoomIn = () => {
-    setScale(prev => Math.min(prev + 0.25, 3));
+    setScale(prev => {
+      const newScale = Math.min(prev + 0.25, 5); // Increased max zoom for large format PDFs
+      console.log("🔍 Zooming in:", { from: prev, to: newScale });
+      return newScale;
+    });
   };
 
   const zoomOut = () => {
-    setScale(prev => Math.max(prev - 0.25, 0.5));
+    setScale(prev => {
+      const newScale = Math.max(prev - 0.25, 0.1); // Reduced min zoom for large format PDFs
+      console.log("🔍 Zooming out:", { from: prev, to: newScale });
+      return newScale;
+    });
   };
 
   const nextPage = () => {
@@ -522,13 +534,19 @@ export default function PDFViewerPage() {
     const constrainedX = Math.max(0, Math.min(newX, canvasRef.current.width));
     const constrainedY = Math.max(0, Math.min(newY, canvasRef.current.height));
 
+    // Calculate new relative positions
+    const newRelativeX = constrainedX / canvasRef.current.width;
+    const newRelativeY = constrainedY / canvasRef.current.height;
+
     setPins(prev => prev.map(pin => 
-      pin.id === draggedPin ? { ...pin, x: constrainedX, y: constrainedY } : pin
+      pin.id === draggedPin 
+        ? { ...pin, x: constrainedX, y: constrainedY, relativeX: newRelativeX, relativeY: newRelativeY } 
+        : pin
     ));
     
     setComments(prev => prev.map(comment => 
       comment.id.includes(draggedPin.split('-')[1]) 
-        ? { ...comment, x: constrainedX, y: constrainedY } 
+        ? { ...comment, x: constrainedX, y: constrainedY, relativeX: newRelativeX, relativeY: newRelativeY } 
         : comment
     ));
   };
