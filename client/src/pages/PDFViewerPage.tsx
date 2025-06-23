@@ -172,10 +172,7 @@ export default function PDFViewerPage() {
   // Use uploaded PDF URL if available, otherwise use default
   const currentPdfUrl = uploadedPdfUrl || PDF_URL;
 
-  // Load PDF when component mounts or URL changes
-  useEffect(() => {
-    loadPDF();
-  }, [loadPDF]);
+  // Will add useEffect after function declarations
 
   const calculateFitToHeightScale = useCallback(async (pdf?: pdfjsLib.PDFDocumentProxy) => {
     const doc = pdf || pdfDoc;
@@ -572,6 +569,11 @@ export default function PDFViewerPage() {
     }
     return currentPins;
   };
+
+  // Load PDF when component mounts or URL changes
+  useEffect(() => {
+    loadPDF();
+  }, [loadPDF]);
 
   if (isLoading) {
     return (
