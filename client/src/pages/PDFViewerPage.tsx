@@ -1,11 +1,11 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
 import { 
   ZoomIn, 
@@ -17,7 +17,10 @@ import {
   Eye,
   EyeOff,
   Reply,
-  Upload
+  Upload,
+  Edit,
+  Trash,
+  GripVertical
 } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
 
@@ -82,22 +85,28 @@ export default function PDFViewerPage() {
   const [pins, setPins] = useState<Pin[]>([]);
   const [hovering, setHovering] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [scale, setScale] = useState(1.2);
+  const [sidebarWidth, setSidebarWidth] = useState(320);
+  const [scale, setScale] = useState(1.0);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [pdfDoc, setPdfDoc] = useState<pdfjsLib.PDFDocumentProxy | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [showCommentDialog, setShowCommentDialog] = useState(false);
-  const [pendingPin, setPendingPin] = useState<{ x: number; y: number; pageNumber: number } | null>(null);
+  const [activeComment, setActiveComment] = useState<string | null>(null);
   const [commentText, setCommentText] = useState("");
   const [replyText, setReplyText] = useState("");
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [uploadedPdfUrl, setUploadedPdfUrl] = useState<string | null>(null);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+  const [editingComment, setEditingComment] = useState<string | null>(null);
+  const [draggedPin, setDraggedPin] = useState<string | null>(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [highlightedComment, setHighlightedComment] = useState<string | null>(null);
   
   const pdfContainerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const pageRef = useRef<pdfjsLib.PDFPageProxy | null>(null);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const resizeRef = useRef<HTMLDivElement>(null);
 
   // Sample PDF URL - using Mozilla's sample PDF
   const PDF_URL = "https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf";
@@ -128,6 +137,13 @@ export default function PDFViewerPage() {
   useEffect(() => {
     console.log("📊 Current PDF URL changed:", { currentPdfUrl, uploadedPdfUrl });
   }, [currentPdfUrl]);
+
+  // Auto-fit PDF to viewer height
+  useEffect(() => {
+    if (pdfDoc && pdfContainerRef.current) {
+      autoFitToHeight();
+    }
+  }, [pdfDoc, pdfContainerRef.current]);
 
   const loadPDF = async () => {
     try {
@@ -171,8 +187,28 @@ export default function PDFViewerPage() {
         });
       }
       setIsLoading(false);
+      toast({
+        title: "PDF Loading Error",
+        description: "Failed to load the PDF document. Please try again.",
+        variant: "destructive",
+      });
     }
   };
+
+  const autoFitToHeight = useCallback(async () => {
+    if (!pdfDoc || !pdfContainerRef.current) return;
+    
+    try {
+      const page = await pdfDoc.getPage(1);
+      const viewport = page.getViewport({ scale: 1 });
+      const containerHeight = pdfContainerRef.current.clientHeight - 40; // Account for padding
+      const newScale = containerHeight / viewport.height;
+      console.log("📐 Auto-fitting PDF to height:", { containerHeight, newScale });
+      setScale(newScale);
+    } catch (error) {
+      console.error("❌ Error auto-fitting PDF:", error);
+    }
+  }, [pdfDoc]);
 
   const renderPage = async (pageNum: number) => {
     console.log(`🎨 Starting to render page ${pageNum}`);
@@ -219,7 +255,7 @@ export default function PDFViewerPage() {
 
       canvas.height = viewport.height;
       canvas.width = viewport.width;
-      canvas.className = "border shadow-lg bg-white";
+      canvas.className = "border shadow-lg bg-white max-w-full";
       
       console.log("🔗 Appending canvas to container");
       pdfContainerRef.current.appendChild(canvas);
@@ -246,68 +282,43 @@ export default function PDFViewerPage() {
   };
 
   const handleCanvasClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!canvasRef.current) return;
+    if (!canvasRef.current || draggedPin) return;
 
     const rect = canvasRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    setPendingPin({ x, y, pageNumber: currentPage });
-    setShowCommentDialog(true);
-  };
-
-  const addComment = () => {
-    if (!pendingPin || !commentText.trim()) return;
-
+    console.log("📍 Adding new comment pin at:", { x, y, page: currentPage });
+    
     const commentId = `comment-${Date.now()}`;
     const pinId = `pin-${Date.now()}`;
-    const pinNumber = pins.filter(p => p.pageNumber === currentPage).length + 1;
+    const pinNumber = getNextPinNumber();
 
     const newPin: Pin = {
       id: pinId,
-      x: pendingPin.x,
-      y: pendingPin.y,
-      pageNumber: pendingPin.pageNumber,
+      x,
+      y,
+      pageNumber: currentPage,
       user: CURRENT_USER,
       number: pinNumber,
     };
 
-    const newComment: Comment = {
-      id: commentId,
-      x: pendingPin.x,
-      y: pendingPin.y,
-      pageNumber: pendingPin.pageNumber,
-      text: commentText,
-      user: CURRENT_USER,
-      replies: [],
-      timestamp: new Date(),
-    };
-
-    setPins([...pins, newPin]);
-    setComments([...comments, newComment]);
-    setCommentText("");
-    setPendingPin(null);
-    setShowCommentDialog(false);
+    setPins(prev => [...prev, newPin]);
+    setActiveComment(commentId);
   };
 
-  const addReply = (commentId: string) => {
-    if (!replyText.trim()) return;
+  const getNextPinNumber = () => {
+    const currentPagePins = pins.filter(p => p.pageNumber === currentPage);
+    return currentPagePins.length + 1;
+  };
 
-    const reply: Reply = {
-      id: `reply-${Date.now()}`,
-      text: replyText,
-      user: CURRENT_USER,
-      timestamp: new Date(),
-    };
-
-    setComments(comments.map(comment => 
-      comment.id === commentId 
-        ? { ...comment, replies: [...comment.replies, reply] }
-        : comment
-    ));
-
-    setReplyText("");
-    setReplyingTo(null);
+  const renumberPins = () => {
+    const updatedPins = pins.map(pin => {
+      const samePagePins = pins.filter(p => p.pageNumber === pin.pageNumber && p.id !== pin.id);
+      const smallerNumbers = samePagePins.filter(p => p.number < pin.number);
+      return { ...pin, number: smallerNumbers.length + 1 };
+    });
+    setPins(updatedPins);
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -349,14 +360,13 @@ export default function PDFViewerPage() {
         variant: "destructive",
       });
     }
-    // Reset the input
     event.target.value = '';
   };
 
   const downloadPDF = () => {
     const link = document.createElement("a");
     link.href = currentPdfUrl;
-    link.download = "document.pdf";
+    link.download = uploadedFileName || "document.pdf";
     link.click();
   };
 
@@ -380,6 +390,65 @@ export default function PDFViewerPage() {
     }
   };
 
+  const saveComment = () => {
+    if (!commentText.trim() || !activeComment) return;
+
+    const commentId = activeComment;
+    const relatedPin = pins.find(pin => pin.id.includes(activeComment.split('-')[1]));
+    
+    if (!relatedPin) return;
+
+    const newComment: Comment = {
+      id: commentId,
+      x: relatedPin.x,
+      y: relatedPin.y,
+      pageNumber: relatedPin.pageNumber,
+      text: commentText,
+      user: CURRENT_USER,
+      replies: [],
+      timestamp: new Date(),
+    };
+
+    setComments(prev => [...prev, newComment]);
+    setCommentText("");
+    setActiveComment(null);
+    
+    console.log("💬 Comment saved:", newComment);
+  };
+
+  const cancelComment = () => {
+    if (activeComment) {
+      // Remove the pin that was just created
+      setPins(prev => prev.filter(pin => !pin.id.includes(activeComment.split('-')[1])));
+    }
+    setActiveComment(null);
+    setCommentText("");
+  };
+
+  const deleteComment = (commentId: string) => {
+    setComments(prev => prev.filter(c => c.id !== commentId));
+    setPins(prev => prev.filter(pin => !pin.id.includes(commentId.split('-')[1])));
+    renumberPins();
+    
+    console.log("🗑️ Comment deleted:", commentId);
+  };
+
+  const handlePinDrag = (pinId: string, newX: number, newY: number) => {
+    setPins(prev => prev.map(pin => 
+      pin.id === pinId ? { ...pin, x: newX, y: newY } : pin
+    ));
+    
+    setComments(prev => prev.map(comment => 
+      comment.id.includes(pinId.split('-')[1]) 
+        ? { ...comment, x: newX, y: newY } 
+        : comment
+    ));
+  };
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    setMousePosition({ x: e.clientX, y: e.clientY });
+  }, []);
+
   const getCurrentPageComments = () => {
     return comments.filter(comment => comment.pageNumber === currentPage);
   };
@@ -392,6 +461,26 @@ export default function PDFViewerPage() {
     return date.toLocaleDateString() + " " + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
+  // Sidebar resize functionality
+  const handleResizeStart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startWidth = sidebarWidth;
+
+    const handleResize = (e: MouseEvent) => {
+      const newWidth = startWidth - (e.clientX - startX);
+      setSidebarWidth(Math.max(200, Math.min(600, newWidth)));
+    };
+
+    const handleResizeEnd = () => {
+      document.removeEventListener('mousemove', handleResize);
+      document.removeEventListener('mouseup', handleResizeEnd);
+    };
+
+    document.addEventListener('mousemove', handleResize);
+    document.addEventListener('mouseup', handleResizeEnd);
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -402,120 +491,8 @@ export default function PDFViewerPage() {
 
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Sidebar */}
-      {sidebarOpen && (
-        <div className="w-80 border-r bg-white dark:bg-gray-800 shadow-lg">
-          <div className="p-4 border-b">
-            <div className="flex items-center gap-2">
-              <MessageSquare className="h-5 w-5" />
-              <h2 className="text-lg font-semibold">Comments</h2>
-              <Badge variant="secondary">{comments.length}</Badge>
-            </div>
-          </div>
-          
-          <ScrollArea className="h-full p-4">
-            {getCurrentPageComments().length === 0 ? (
-              <div className="text-center text-gray-500 mt-8">
-                <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>No comments on this page</p>
-                <p className="text-sm mt-2">Click anywhere on the PDF to add a comment</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {getCurrentPageComments().map((comment, index) => {
-                  const pinNumber = getCurrentPagePins().find(p => 
-                    p.x === comment.x && p.y === comment.y
-                  )?.number || index + 1;
-                  
-                  return (
-                    <Card key={comment.id} className="border-l-4" style={{ borderLeftColor: comment.user.color }}>
-                      <CardHeader className="pb-2">
-                        <div className="flex items-center gap-2">
-                          <div 
-                            className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold"
-                            style={{ backgroundColor: comment.user.color }}
-                          >
-                            {pinNumber}
-                          </div>
-                          <CardTitle className="text-sm">{comment.user.name}</CardTitle>
-                          <span className="text-xs text-gray-500 ml-auto">
-                            Page {comment.pageNumber}
-                          </span>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="pt-0">
-                        <p className="text-sm mb-2">{comment.text}</p>
-                        <p className="text-xs text-gray-500 mb-3">
-                          {formatTimestamp(comment.timestamp)}
-                        </p>
-                        
-                        {/* Replies */}
-                        {comment.replies.length > 0 && (
-                          <div className="space-y-2 mb-3">
-                            <Separator />
-                            {comment.replies.map((reply) => (
-                              <div key={reply.id} className="ml-4 pl-3 border-l-2 border-gray-200">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <span className="text-xs font-medium">{reply.user.name}</span>
-                                  <span className="text-xs text-gray-500">
-                                    {formatTimestamp(reply.timestamp)}
-                                  </span>
-                                </div>
-                                <p className="text-xs text-gray-700 dark:text-gray-300">{reply.text}</p>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                        
-                        {/* Reply input */}
-                        {replyingTo === comment.id ? (
-                          <div className="space-y-2">
-                            <Textarea
-                              placeholder="Write a reply..."
-                              value={replyText}
-                              onChange={(e) => setReplyText(e.target.value)}
-                              className="min-h-[60px]"
-                            />
-                            <div className="flex gap-2">
-                              <Button 
-                                size="sm" 
-                                onClick={() => addReply(comment.id)}
-                                disabled={!replyText.trim()}
-                              >
-                                Reply
-                              </Button>
-                              <Button 
-                                size="sm" 
-                                variant="outline" 
-                                onClick={() => setReplyingTo(null)}
-                              >
-                                Cancel
-                              </Button>
-                            </div>
-                          </div>
-                        ) : (
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => setReplyingTo(comment.id)}
-                            className="flex items-center gap-1 text-xs"
-                          >
-                            <Reply className="h-3 w-3" />
-                            Reply
-                          </Button>
-                        )}
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            )}
-          </ScrollArea>
-        </div>
-      )}
-
       {/* Main PDF Viewer */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col" style={{ marginRight: sidebarOpen ? sidebarWidth : 0 }}>
         {/* Toolbar */}
         <div className="bg-white dark:bg-gray-800 border-b p-3 shadow-sm">
           <div className="flex items-center justify-between">
@@ -612,13 +589,21 @@ export default function PDFViewerPage() {
 
         {/* PDF Container */}
         <div 
-          className="flex-1 overflow-auto p-8 relative"
+          className="flex-1 overflow-auto p-4 relative"
           onMouseEnter={() => setHovering(true)}
           onMouseLeave={() => setHovering(false)}
+          onMouseMove={handleMouseMove}
         >
           {/* Hover instruction */}
-          {hovering && (
-            <div className="absolute top-4 left-4 bg-black text-white px-3 py-2 rounded-lg text-sm z-10 pointer-events-none">
+          {hovering && !activeComment && (
+            <div 
+              className="absolute bg-black/75 text-white px-2 py-1 rounded text-xs z-50 pointer-events-none"
+              style={{ 
+                left: mousePosition.x - 400, 
+                top: mousePosition.y - 100,
+                transform: 'translate(-50%, -100%)'
+              }}
+            >
               Click to add comment
             </div>
           )}
@@ -631,58 +616,253 @@ export default function PDFViewerPage() {
             >
               {/* Pins for current page */}
               {getCurrentPagePins().map((pin) => (
-                <div
-                  key={pin.id}
-                  className="absolute z-10 cursor-pointer transform -translate-x-1/2 -translate-y-1/2"
-                  style={{ left: pin.x, top: pin.y }}
-                >
-                  <div
-                    className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-white hover:scale-110 transition-transform"
-                    style={{ backgroundColor: pin.user.color }}
-                  >
-                    {pin.number}
-                  </div>
-                </div>
+                <Popover key={pin.id} open={activeComment === `comment-${pin.id.split('-')[1]}`}>
+                  <PopoverTrigger asChild>
+                    <div
+                      className="absolute z-10 cursor-move transform -translate-x-1/2 -translate-y-1/2 hover:scale-110 transition-transform"
+                      style={{ left: pin.x, top: pin.y }}
+                      draggable
+                      onDragStart={() => setDraggedPin(pin.id)}
+                      onDrag={(e) => {
+                        if (e.clientX && e.clientY && canvasRef.current) {
+                          const rect = canvasRef.current.getBoundingClientRect();
+                          const newX = e.clientX - rect.left;
+                          const newY = e.clientY - rect.top;
+                          handlePinDrag(pin.id, newX, newY);
+                        }
+                      }}
+                      onDragEnd={() => setDraggedPin(null)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const commentId = comments.find(c => 
+                          c.x === pin.x && c.y === pin.y && c.pageNumber === pin.pageNumber
+                        )?.id;
+                        if (commentId) {
+                          setHighlightedComment(commentId);
+                        }
+                      }}
+                    >
+                      <div
+                        className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-white"
+                        style={{ backgroundColor: pin.user.color }}
+                      >
+                        {pin.number}
+                      </div>
+                    </div>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-80 p-3">
+                    <div className="space-y-3">
+                      <Textarea
+                        placeholder="Enter your comment..."
+                        value={commentText}
+                        onChange={(e) => setCommentText(e.target.value)}
+                        className="min-h-[80px] text-sm"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            saveComment();
+                          }
+                          if (e.key === 'Escape') {
+                            cancelComment();
+                          }
+                        }}
+                        autoFocus
+                      />
+                      <div className="flex justify-end gap-2">
+                        <Button size="sm" variant="outline" onClick={cancelComment}>
+                          Cancel
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          onClick={saveComment}
+                          disabled={!commentText.trim()}
+                        >
+                          Save Comment
+                        </Button>
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
               ))}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Comment Dialog */}
-      <Dialog open={showCommentDialog} onOpenChange={setShowCommentDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add Comment</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <Textarea
-              placeholder="Enter your comment..."
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-              className="min-h-[100px]"
-            />
-            <div className="flex justify-end gap-2">
-              <Button 
-                variant="outline" 
-                onClick={() => {
-                  setShowCommentDialog(false);
-                  setCommentText("");
-                  setPendingPin(null);
-                }}
-              >
-                Cancel
-              </Button>
-              <Button 
-                onClick={addComment}
-                disabled={!commentText.trim()}
-              >
-                Add Comment
-              </Button>
+      {/* Right Sidebar */}
+      {sidebarOpen && (
+        <div 
+          ref={sidebarRef}
+          className="fixed right-0 top-0 h-full bg-white dark:bg-gray-800 shadow-lg border-l z-20"
+          style={{ width: sidebarWidth }}
+        >
+          {/* Resize handle */}
+          <div
+            ref={resizeRef}
+            className="absolute left-0 top-0 w-1 h-full bg-gray-300 dark:bg-gray-600 cursor-col-resize hover:bg-blue-500 transition-colors"
+            onMouseDown={handleResizeStart}
+          >
+            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+              <GripVertical className="h-4 w-4 text-gray-400" />
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+
+          <div className="p-3 border-b">
+            <div className="flex items-center gap-2">
+              <MessageSquare className="h-4 w-4" />
+              <h2 className="text-sm font-semibold">Comments</h2>
+              <Badge variant="secondary" className="text-xs">{comments.length}</Badge>
+            </div>
+          </div>
+          
+          <ScrollArea className="h-full p-3">
+            {getCurrentPageComments().length === 0 ? (
+              <div className="text-center text-gray-500 mt-8">
+                <MessageSquare className="h-8 w-8 mx-auto mb-3 opacity-50" />
+                <p className="text-sm">No comments on this page</p>
+                <p className="text-xs mt-1">Click anywhere on the PDF to add a comment</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {getCurrentPageComments().map((comment, index) => {
+                  const pinNumber = getCurrentPagePins().find(p => 
+                    p.x === comment.x && p.y === comment.y
+                  )?.number || index + 1;
+                  
+                  return (
+                    <Card 
+                      key={comment.id} 
+                      className={`border-l-4 transition-colors ${
+                        highlightedComment === comment.id ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+                      }`}
+                      style={{ borderLeftColor: comment.user.color }}
+                    >
+                      <CardHeader className="pb-1 px-3 pt-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div 
+                              className="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-bold"
+                              style={{ backgroundColor: comment.user.color }}
+                            >
+                              {pinNumber}
+                            </div>
+                            <CardTitle className="text-xs">{comment.user.name}</CardTitle>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-6 w-6 p-0"
+                              onClick={() => setEditingComment(comment.id)}
+                            >
+                              <Edit className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-6 w-6 p-0 text-red-500 hover:text-red-700"
+                              onClick={() => deleteComment(comment.id)}
+                            >
+                              <Trash className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="pt-0 px-3 pb-2">
+                        {editingComment === comment.id ? (
+                          <div className="space-y-2">
+                            <Textarea
+                              value={commentText || comment.text}
+                              onChange={(e) => setCommentText(e.target.value)}
+                              className="min-h-[60px] text-xs"
+                            />
+                            <div className="flex gap-1">
+                              <Button size="sm" className="text-xs px-2 py-1">
+                                Save
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                className="text-xs px-2 py-1"
+                                onClick={() => {
+                                  setEditingComment(null);
+                                  setCommentText("");
+                                }}
+                              >
+                                Cancel
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <p className="text-xs mb-1">{comment.text}</p>
+                            <p className="text-xs text-gray-500">
+                              {formatTimestamp(comment.timestamp)}
+                            </p>
+                          </>
+                        )}
+                        
+                        {/* Replies */}
+                        {comment.replies.length > 0 && (
+                          <div className="space-y-1 mt-2">
+                            <Separator />
+                            {comment.replies.map((reply) => (
+                              <div key={reply.id} className="ml-3 pl-2 border-l border-gray-200">
+                                <div className="flex items-center gap-1 mb-1">
+                                  <span className="text-xs font-medium">{reply.user.name}</span>
+                                  <span className="text-xs text-gray-500">
+                                    {formatTimestamp(reply.timestamp)}
+                                  </span>
+                                </div>
+                                <p className="text-xs text-gray-700 dark:text-gray-300">{reply.text}</p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        
+                        {/* Reply input */}
+                        {replyingTo === comment.id ? (
+                          <div className="space-y-2 mt-2">
+                            <Textarea
+                              placeholder="Write a reply..."
+                              value={replyText}
+                              onChange={(e) => setReplyText(e.target.value)}
+                              className="min-h-[50px] text-xs"
+                            />
+                            <div className="flex gap-1">
+                              <Button size="sm" className="text-xs px-2 py-1">
+                                Reply
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                className="text-xs px-2 py-1"
+                                onClick={() => setReplyingTo(null)}
+                              >
+                                Cancel
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => setReplyingTo(comment.id)}
+                            className="flex items-center gap-1 text-xs mt-1 px-1 py-0 h-5"
+                          >
+                            <Reply className="h-3 w-3" />
+                            Reply
+                          </Button>
+                        )}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
+          </ScrollArea>
+        </div>
+      )}
     </div>
   );
 }
