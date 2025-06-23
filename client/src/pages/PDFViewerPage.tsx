@@ -100,6 +100,7 @@ export default function PDFViewerPage() {
   const [popoverComment, setPopoverComment] = useState<{ x: number; y: number; pageNumber: number } | null>(null);
   const [popoverText, setPopoverText] = useState("");
   const [cursorPosition, setCursorPosition] = useState<{ x: number; y: number } | null>(null);
+  const [canvasHovering, setCanvasHovering] = useState(false);
   
   const pdfCanvasRef = useRef<PDFCanvasHandle>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -468,20 +469,6 @@ export default function PDFViewerPage() {
         <div 
           className="w-full h-full overflow-auto relative"
           style={{ maxHeight: 'calc(100vh - 4rem)' }}
-          onMouseEnter={() => setHovering(true)}
-          onMouseLeave={() => {
-            setHovering(false);
-            setCursorPosition(null);
-          }}
-          onMouseMove={(e) => {
-            if (hovering) {
-              const rect = e.currentTarget.getBoundingClientRect();
-              setCursorPosition({
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top
-              });
-            }
-          }}
         >
           <PDFCanvas
             ref={pdfCanvasRef}
@@ -489,7 +476,18 @@ export default function PDFViewerPage() {
             currentPage={currentPage}
             scale={scale}
             onCanvasClick={handleCanvasClick}
-            hovering={hovering}
+            hovering={canvasHovering}
+            onHoverChange={setCanvasHovering}
+            onCursorMove={(x, y) => {
+              const container = pdfCanvasRef.current?.getContainerElement();
+              if (container) {
+                const containerRect = container.getBoundingClientRect();
+                setCursorPosition({
+                  x: containerRect.left + x,
+                  y: containerRect.top + y
+                });
+              }
+            }}
             pins={getCurrentPagePins()}
           />
           

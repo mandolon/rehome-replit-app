@@ -8,6 +8,8 @@ interface PDFCanvasProps {
   scale: number;
   onCanvasClick: (x: number, y: number) => void;
   hovering: boolean;
+  onHoverChange: (hovering: boolean) => void;
+  onCursorMove: (x: number, y: number) => void;
   pins: Array<{
     id: string;
     x: number;
@@ -29,6 +31,8 @@ const PDFCanvas = forwardRef<PDFCanvasHandle, PDFCanvasProps>(({
   scale,
   onCanvasClick,
   hovering,
+  onHoverChange,
+  onCursorMove,
   pins
 }, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -176,12 +180,20 @@ const PDFCanvas = forwardRef<PDFCanvasHandle, PDFCanvasProps>(({
         className="pdf-canvas-wrapper"
         onClick={handleClick}
         onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
+        onMouseMove={(e) => {
+          handleMouseMove(e);
+          if (canvasRef.current) {
+            const rect = canvasRef.current.getBoundingClientRect();
+            onCursorMove(e.clientX - rect.left, e.clientY - rect.top);
+          }
+        }}
         onMouseUp={handleMouseUp}
+        onMouseEnter={() => onHoverChange(true)}
         onMouseLeave={() => {
           isPanning.current = false;
+          onHoverChange(false);
           if (containerRef.current) {
-            containerRef.current.style.cursor = hovering ? 'crosshair' : 'default';
+            containerRef.current.style.cursor = 'default';
           }
         }}
       >
