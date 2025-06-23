@@ -101,6 +101,8 @@ export default function PDFViewerPage() {
   const [draggedPin, setDraggedPin] = useState<string | null>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [highlightedComment, setHighlightedComment] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   
   const pdfContainerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -282,11 +284,18 @@ export default function PDFViewerPage() {
   };
 
   const handleCanvasClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!canvasRef.current || draggedPin) return;
+    if (!canvasRef.current || draggedPin || activeComment) return;
 
-    const rect = canvasRef.current.getBoundingClientRect();
+    // Only allow clicking within the actual canvas bounds
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
+
+    // Check if click is within canvas bounds
+    if (x < 0 || y < 0 || x > canvas.width || y > canvas.height) {
+      return;
+    }
 
     console.log("📍 Adding new comment pin at:", { x, y, page: currentPage });
     
@@ -433,21 +442,73 @@ export default function PDFViewerPage() {
     console.log("🗑️ Comment deleted:", commentId);
   };
 
-  const handlePinDrag = (pinId: string, newX: number, newY: number) => {
+  const handlePinDragStart = (e: React.MouseEvent, pinId: string) => {
+    e.stopPropagation();
+    const pin = pins.find(p => p.id === pinId);
+    if (!pin || !canvasRef.current) return;
+
+    const rect = canvasRef.current.getBoundingClientRect();
+    const offsetX = e.clientX - rect.left - pin.x;
+    const offsetY = e.clientY - rect.top - pin.y;
+    
+    setDraggedPin(pinId);
+    setIsDragging(true);
+    setDragOffset({ x: offsetX, y: offsetY });
+  };
+
+  const handlePinDrag = (e: React.MouseEvent) => {
+    if (!isDragging || !draggedPin || !canvasRef.current) return;
+
+    const rect = canvasRef.current.getBoundingClientRect();
+    const newX = e.clientX - rect.left - dragOffset.x;
+    const newY = e.clientY - rect.top - dragOffset.y;
+
+    // Constrain to canvas bounds
+    const constrainedX = Math.max(0, Math.min(newX, canvasRef.current.width));
+    const constrainedY = Math.max(0, Math.min(newY, canvasRef.current.height));
+
     setPins(prev => prev.map(pin => 
-      pin.id === pinId ? { ...pin, x: newX, y: newY } : pin
+      pin.id === draggedPin ? { ...pin, x: constrainedX, y: constrainedY } : pin
     ));
     
     setComments(prev => prev.map(comment => 
-      comment.id.includes(pinId.split('-')[1]) 
-        ? { ...comment, x: newX, y: newY } 
+      comment.id.includes(draggedPin.split('-')[1]) 
+        ? { ...comment, x: constrainedX, y: constrainedY } 
         : comment
     ));
+  };
+
+  const handlePinDragEnd = () => {
+    setDraggedPin(null);
+    setIsDragging(false);
+    setDragOffset({ x: 0, y: 0 });
   };
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     setMousePosition({ x: e.clientX, y: e.clientY });
   }, []);
+
+  // Handle clicks outside PDF area to close comment boxes
+  const handleOutsideClick = useCallback((e: MouseEvent) => {
+    if (activeComment && canvasRef.current) {
+      const canvas = canvasRef.current;
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      // Check if click is outside canvas or outside comment popover
+      if (x < 0 || y < 0 || x > canvas.width || y > canvas.height) {
+        cancelComment();
+      }
+    }
+  }, [activeComment]);
+
+  useEffect(() => {
+    document.addEventListener('click', handleOutsideClick);
+    return () => {
+      document.removeEventListener('click', handleOutsideClick);
+    };
+  }, [handleOutsideClick]);
 
   const getCurrentPageComments = () => {
     return comments.filter(comment => comment.pageNumber === currentPage);
@@ -592,16 +653,21 @@ export default function PDFViewerPage() {
           className="flex-1 overflow-auto p-4 relative"
           onMouseEnter={() => setHovering(true)}
           onMouseLeave={() => setHovering(false)}
-          onMouseMove={handleMouseMove}
+          onMouseMove={(e) => {
+            handleMouseMove(e);
+            if (isDragging) {
+              handlePinDrag(e);
+            }
+          }}
+          onMouseUp={handlePinDragEnd}
         >
           {/* Hover instruction */}
-          {hovering && !activeComment && (
+          {hovering && !activeComment && !isDragging && (
             <div 
-              className="absolute bg-black/75 text-white px-2 py-1 rounded text-xs z-50 pointer-events-none"
+              className="fixed bg-black/75 text-white px-2 py-1 rounded text-xs z-50 pointer-events-none"
               style={{ 
-                left: mousePosition.x - 400, 
-                top: mousePosition.y - 100,
-                transform: 'translate(-50%, -100%)'
+                left: mousePosition.x + 10, 
+                top: mousePosition.y - 25
               }}
             >
               Click to add comment
@@ -621,24 +687,16 @@ export default function PDFViewerPage() {
                     <div
                       className="absolute z-10 cursor-move transform -translate-x-1/2 -translate-y-1/2 hover:scale-110 transition-transform"
                       style={{ left: pin.x, top: pin.y }}
-                      draggable
-                      onDragStart={() => setDraggedPin(pin.id)}
-                      onDrag={(e) => {
-                        if (e.clientX && e.clientY && canvasRef.current) {
-                          const rect = canvasRef.current.getBoundingClientRect();
-                          const newX = e.clientX - rect.left;
-                          const newY = e.clientY - rect.top;
-                          handlePinDrag(pin.id, newX, newY);
-                        }
-                      }}
-                      onDragEnd={() => setDraggedPin(null)}
+                      onMouseDown={(e) => handlePinDragStart(e, pin.id)}
                       onClick={(e) => {
                         e.stopPropagation();
-                        const commentId = comments.find(c => 
-                          c.x === pin.x && c.y === pin.y && c.pageNumber === pin.pageNumber
-                        )?.id;
-                        if (commentId) {
-                          setHighlightedComment(commentId);
+                        if (!isDragging) {
+                          const commentId = comments.find(c => 
+                            c.x === pin.x && c.y === pin.y && c.pageNumber === pin.pageNumber
+                          )?.id;
+                          if (commentId) {
+                            setHighlightedComment(commentId);
+                          }
                         }
                       }}
                     >
