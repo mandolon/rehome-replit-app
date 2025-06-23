@@ -77,6 +77,7 @@ const CURRENT_USER: User = {
 };
 
 export default function PDFViewerPage() {
+  const { toast } = useToast();
   const [comments, setComments] = useState<Comment[]>([]);
   const [pins, setPins] = useState<Pin[]>([]);
   const [hovering, setHovering] = useState(false);
@@ -92,6 +93,7 @@ export default function PDFViewerPage() {
   const [replyText, setReplyText] = useState("");
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [uploadedPdfUrl, setUploadedPdfUrl] = useState<string | null>(null);
+  const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
   
   const pdfContainerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -243,9 +245,20 @@ export default function PDFViewerPage() {
     if (file && file.type === 'application/pdf') {
       const fileUrl = URL.createObjectURL(file);
       setUploadedPdfUrl(fileUrl);
+      setUploadedFileName(file.name);
+      toast({
+        title: "PDF Uploaded Successfully",
+        description: `${file.name} has been loaded for viewing.`,
+      });
     } else {
-      alert('Please select a valid PDF file.');
+      toast({
+        title: "Invalid File Type",
+        description: "Please select a valid PDF file.",
+        variant: "destructive",
+      });
     }
+    // Reset the input
+    event.target.value = '';
   };
 
   const downloadPDF = () => {
@@ -412,9 +425,9 @@ export default function PDFViewerPage() {
       {/* Main PDF Viewer */}
       <div className="flex-1 flex flex-col">
         {/* Toolbar */}
-        <div className="bg-white dark:bg-gray-800 border-b p-4 shadow-sm">
+        <div className="bg-white dark:bg-gray-800 border-b p-3 shadow-sm">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <Button
                 variant="outline"
                 size="sm"
@@ -446,6 +459,20 @@ export default function PDFViewerPage() {
                 >
                   <ChevronRight className="h-4 w-4" />
                 </Button>
+              </div>
+
+              <Separator orientation="vertical" className="h-6" />
+
+              {/* Document Title */}
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                <span className="font-medium">
+                  {uploadedFileName || "Sample Document"}
+                </span>
+                {uploadedFileName && (
+                  <Badge variant="secondary" className="text-xs">
+                    Uploaded
+                  </Badge>
+                )}
               </div>
             </div>
 
