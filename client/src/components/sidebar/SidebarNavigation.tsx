@@ -13,7 +13,8 @@ import {
   FileText,
   ClipboardList,
   Clock,
-  FolderOpen
+  FolderOpen,
+  FileText as PdfIcon
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
@@ -51,6 +52,7 @@ const SidebarNavigation = React.memo(({ isCollapsed, isOpen, onToggle }: Sidebar
   const handleNavigateWhiteboards = useCallback(() => navigate('/whiteboards'), [navigate]);
   const handleNavigateTimesheets = useCallback(() => navigate('/timesheets'), [navigate]);
   const handleNavigateWorkRecords = useCallback(() => navigate('/work-records'), [navigate]);
+  const handleNavigatePDFViewer = useCallback(() => navigate('/sandbox/pdf-viewer'), [navigate]);
 
   // Client gets dashboard and Whiteboards
   const clientNavItems = [
@@ -73,6 +75,7 @@ const SidebarNavigation = React.memo(({ isCollapsed, isOpen, onToggle }: Sidebar
       { icon: FileImage, label: 'Whiteboards', active: false, onClick: handleNavigateWhiteboards },
       { icon: Clock, label: 'Timesheets', active: false, onClick: handleNavigateTimesheets },
       { icon: FileText, label: 'Work Records', active: false, onClick: handleNavigateWorkRecords },
+      { icon: PdfIcon, label: 'PDF Viewer', active: false, onClick: handleNavigatePDFViewer },
       { icon: LayoutDashboard, label: 'Client Dashboard', active: false, onClick: handleNavigateClientDashboard }
     ];
   }, [
@@ -88,6 +91,7 @@ const SidebarNavigation = React.memo(({ isCollapsed, isOpen, onToggle }: Sidebar
     handleNavigateWhiteboards,
     handleNavigateTimesheets,
     handleNavigateWorkRecords,
+    handleNavigatePDFViewer,
     handleNavigateClientDashboard,
     handleNavigateClientWhiteboards,
   ]);
