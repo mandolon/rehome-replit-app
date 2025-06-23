@@ -121,24 +121,42 @@ export default function PDFViewerPage() {
   // Use uploaded PDF URL if available, otherwise use default
   const currentPdfUrl = uploadedPdfUrl || PDF_URL;
 
-  // Helper functions defined first
+  // Enhanced marker positioning system for perfect anchoring
   const updatePinPositions = useCallback(() => {
-    if (!canvasRef.current || pdfDimensions.width === 0) return;
+    if (!canvasRef.current || pdfDimensions.width === 0 || pdfDimensions.height === 0) {
+      console.log("Skipping pin position update - invalid dimensions", { 
+        canvas: !!canvasRef.current, 
+        dimensions: pdfDimensions 
+      });
+      return;
+    }
+
+    console.log("Updating pin positions based on PDF dimensions:", pdfDimensions);
 
     setPins(prevPins => 
-      prevPins.map(pin => ({
-        ...pin,
-        x: pin.relativeX * pdfDimensions.width,
-        y: pin.relativeY * pdfDimensions.height
-      }))
+      prevPins.map(pin => {
+        const newX = pin.relativeX * pdfDimensions.width;
+        const newY = pin.relativeY * pdfDimensions.height;
+        console.log(`Pin ${pin.id}: relative(${pin.relativeX}, ${pin.relativeY}) -> absolute(${newX}, ${newY})`);
+        return {
+          ...pin,
+          x: newX,
+          y: newY
+        };
+      })
     );
 
     setComments(prevComments =>
-      prevComments.map(comment => ({
-        ...comment,
-        x: comment.relativeX * pdfDimensions.width,
-        y: comment.relativeY * pdfDimensions.height
-      }))
+      prevComments.map(comment => {
+        const newX = comment.relativeX * pdfDimensions.width;
+        const newY = comment.relativeY * pdfDimensions.height;
+        console.log(`Comment ${comment.id}: relative(${comment.relativeX}, ${comment.relativeY}) -> absolute(${newX}, ${newY})`);
+        return {
+          ...comment,
+          x: newX,
+          y: newY
+        };
+      })
     );
   }, [pdfDimensions]);
 
@@ -151,9 +169,10 @@ export default function PDFViewerPage() {
       const containerHeight = pdfContainerRef.current.clientHeight - 40;
       const containerWidth = pdfContainerRef.current.clientWidth - 40;
       
+      // For auto-fit, still use the minimum scale to fit content
       const scaleByHeight = containerHeight / viewport.height;
       const scaleByWidth = containerWidth / viewport.width;
-      const newScale = Math.min(scaleByHeight, scaleByWidth, 2);
+      const newScale = Math.min(scaleByHeight, scaleByWidth, 1.5); // Reduced cap for better initial fit
       
       console.log("Auto-fitting PDF:", { 
         containerHeight, 
@@ -248,7 +267,7 @@ export default function PDFViewerPage() {
   };
 
   const renderPage = async (pageNum: number) => {
-    console.log(`Starting to render page ${pageNum}`);
+    console.log(`Starting to render page ${pageNum} at scale ${scale}`);
     
     if (!pdfDoc || !pdfContainerRef.current) return;
 
@@ -261,6 +280,8 @@ export default function PDFViewerPage() {
       }
 
       const viewport = page.getViewport({ scale });
+      console.log("Viewport dimensions:", { width: viewport.width, height: viewport.height, scale });
+      
       setPdfDimensions({ width: viewport.width, height: viewport.height });
 
       const canvas = document.createElement("canvas");
@@ -268,9 +289,15 @@ export default function PDFViewerPage() {
       
       if (!context) return;
 
+      // Set canvas dimensions to match viewport exactly
       canvas.height = viewport.height;
       canvas.width = viewport.width;
-      canvas.className = "border shadow-lg bg-white max-w-full";
+      
+      // Remove width restrictions to allow zooming beyond container width
+      canvas.className = "border shadow-lg bg-white";
+      canvas.style.maxWidth = "none"; // Remove max-width restriction
+      canvas.style.width = `${viewport.width}px`;
+      canvas.style.height = `${viewport.height}px`;
       
       pdfContainerRef.current.appendChild(canvas);
       canvasRef.current = canvas;
@@ -281,9 +308,13 @@ export default function PDFViewerPage() {
       };
 
       await page.render(renderContext).promise;
-      console.log(`Page ${pageNum} rendered successfully to canvas`);
+      console.log(`Page ${pageNum} rendered successfully with dimensions ${viewport.width}x${viewport.height}`);
       
-      updatePinPositions();
+      // Update pin positions after rendering is complete
+      setTimeout(() => {
+        updatePinPositions();
+      }, 50);
+      
     } catch (error) {
       console.error(`Error rendering page ${pageNum}:`, error);
     }
@@ -294,17 +325,34 @@ export default function PDFViewerPage() {
 
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    
+    // Calculate click position relative to the canvas
+    const clickX = e.clientX - rect.left;
+    const clickY = e.clientY - rect.top;
 
-    if (x < 0 || y < 0 || x > canvas.width || y > canvas.height) {
+    // Ensure click is within canvas bounds
+    if (clickX < 0 || clickY < 0 || clickX > rect.width || clickY > rect.height) {
       return;
     }
 
-    const relativeX = x / canvas.width;
-    const relativeY = y / canvas.height;
+    // Convert screen coordinates to canvas coordinates accounting for any scaling
+    const scaleFactorX = canvas.width / rect.width;
+    const scaleFactorY = canvas.height / rect.height;
+    
+    const canvasX = clickX * scaleFactorX;
+    const canvasY = clickY * scaleFactorY;
 
-    console.log("Adding new comment pin at:", { x, y, relativeX, relativeY, page: currentPage });
+    // Calculate relative position (0-1) based on actual canvas dimensions
+    const relativeX = canvasX / canvas.width;
+    const relativeY = canvasY / canvas.height;
+
+    console.log("Enhanced click handling:", { 
+      screen: { x: clickX, y: clickY },
+      canvas: { x: canvasX, y: canvasY, width: canvas.width, height: canvas.height },
+      relative: { x: relativeX, y: relativeY },
+      scale: scale,
+      page: currentPage 
+    });
     
     const commentId = `comment-${Date.now()}`;
     const pinId = `pin-${Date.now()}`;
@@ -312,8 +360,8 @@ export default function PDFViewerPage() {
 
     const newPin: Pin = {
       id: pinId,
-      x,
-      y,
+      x: canvasX, // Use canvas coordinates
+      y: canvasY,
       pageNumber: currentPage,
       user: CURRENT_USER,
       number: pinNumber,
@@ -362,12 +410,44 @@ export default function PDFViewerPage() {
   };
 
   const zoomIn = () => {
-    setScale(prev => Math.min(prev + 0.25, 5));
+    setScale(prev => {
+      const newScale = Math.min(prev + 0.25, 10); // Increased max zoom to 10x for detailed inspection
+      console.log("Zooming in:", { from: prev, to: newScale });
+      return newScale;
+    });
   };
 
   const zoomOut = () => {
-    setScale(prev => Math.max(prev - 0.25, 0.1));
+    setScale(prev => {
+      const newScale = Math.max(prev - 0.25, 0.05); // Reduced min zoom to 0.05x for overview
+      console.log("Zooming out:", { from: prev, to: newScale });
+      return newScale;
+    });
   };
+
+  // Wheel zoom functionality for enhanced user experience
+  const handleWheel = useCallback((e: WheelEvent) => {
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? -0.1 : 0.1;
+      setScale(prev => {
+        const newScale = Math.max(0.05, Math.min(10, prev + delta));
+        console.log("Wheel zoom:", { from: prev, to: newScale, delta });
+        return newScale;
+      });
+    }
+  }, []);
+
+  // Add wheel zoom event listener
+  useEffect(() => {
+    const container = pdfContainerRef.current;
+    if (container) {
+      container.addEventListener('wheel', handleWheel, { passive: false });
+      return () => {
+        container.removeEventListener('wheel', handleWheel);
+      };
+    }
+  }, [handleWheel]);
 
   const nextPage = () => {
     if (currentPage < totalPages) {
@@ -435,9 +515,25 @@ export default function PDFViewerPage() {
     const pin = pins.find(p => p.id === pinId);
     if (!pin || !canvasRef.current) return;
 
-    const rect = canvasRef.current.getBoundingClientRect();
-    const offsetX = e.clientX - rect.left - pin.x;
-    const offsetY = e.clientY - rect.top - pin.y;
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    
+    // Calculate offset accounting for canvas scaling
+    const scaleFactorX = canvas.width / rect.width;
+    const scaleFactorY = canvas.height / rect.height;
+    
+    const screenX = (e.clientX - rect.left) * scaleFactorX;
+    const screenY = (e.clientY - rect.top) * scaleFactorY;
+    
+    const offsetX = screenX - pin.x;
+    const offsetY = screenY - pin.y;
+    
+    console.log("Drag start:", { 
+      pinId, 
+      pinPos: { x: pin.x, y: pin.y },
+      screenPos: { x: screenX, y: screenY },
+      offset: { x: offsetX, y: offsetY }
+    });
     
     setDraggedPin(pinId);
     setIsDragging(true);
@@ -447,15 +543,32 @@ export default function PDFViewerPage() {
   const handlePinDrag = (e: React.MouseEvent) => {
     if (!isDragging || !draggedPin || !canvasRef.current) return;
 
-    const rect = canvasRef.current.getBoundingClientRect();
-    const newX = e.clientX - rect.left - dragOffset.x;
-    const newY = e.clientY - rect.top - dragOffset.y;
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    
+    // Convert screen coordinates to canvas coordinates
+    const scaleFactorX = canvas.width / rect.width;
+    const scaleFactorY = canvas.height / rect.height;
+    
+    const screenX = (e.clientX - rect.left) * scaleFactorX;
+    const screenY = (e.clientY - rect.top) * scaleFactorY;
+    
+    const newX = screenX - dragOffset.x;
+    const newY = screenY - dragOffset.y;
 
-    const constrainedX = Math.max(0, Math.min(newX, canvasRef.current.width));
-    const constrainedY = Math.max(0, Math.min(newY, canvasRef.current.height));
+    // Constrain to canvas bounds
+    const constrainedX = Math.max(0, Math.min(newX, canvas.width));
+    const constrainedY = Math.max(0, Math.min(newY, canvas.height));
 
-    const newRelativeX = constrainedX / canvasRef.current.width;
-    const newRelativeY = constrainedY / canvasRef.current.height;
+    // Calculate new relative position
+    const newRelativeX = constrainedX / canvas.width;
+    const newRelativeY = constrainedY / canvas.height;
+
+    console.log("Dragging:", {
+      screen: { x: screenX, y: screenY },
+      canvas: { x: constrainedX, y: constrainedY },
+      relative: { x: newRelativeX, y: newRelativeY }
+    });
 
     setPins(prev => prev.map(pin => 
       pin.id === draggedPin 
@@ -619,6 +732,11 @@ export default function PDFViewerPage() {
         {/* PDF Container */}
         <div 
           className="flex-1 overflow-auto p-4 relative"
+          style={{ 
+            scrollBehavior: 'smooth',
+            overflowX: 'auto',
+            overflowY: 'auto'
+          }}
           onMouseEnter={() => setHovering(true)}
           onMouseLeave={() => setHovering(false)}
           onMouseMove={(e) => {
@@ -642,10 +760,15 @@ export default function PDFViewerPage() {
             </div>
           )}
 
-          <div className="flex justify-center">
+          {/* Unrestricted scrollable container for zoomed content */}
+          <div className="inline-block min-w-full">
             <div 
               ref={pdfContainerRef}
-              className="relative cursor-crosshair"
+              className="relative cursor-crosshair inline-block"
+              style={{
+                minWidth: 'fit-content',
+                width: 'max-content'
+              }}
               onClick={handleCanvasClick}
             >
               {/* Pins for current page */}
