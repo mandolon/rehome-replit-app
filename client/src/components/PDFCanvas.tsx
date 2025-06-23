@@ -36,6 +36,42 @@ const PDFCanvas = forwardRef<PDFCanvasHandle, PDFCanvasProps>(({
   const isPanning = useRef(false);
   const lastPanPoint = useRef({ x: 0, y: 0 });
 
+  // Global mouse event handlers for smooth panning
+  useEffect(() => {
+    const handleGlobalMouseMove = (e: MouseEvent) => {
+      if (isPanning.current && containerRef.current) {
+        e.preventDefault();
+        
+        const deltaX = e.clientX - lastPanPoint.current.x;
+        const deltaY = e.clientY - lastPanPoint.current.y;
+        
+        // Apply panning to scroll position for full directional movement
+        containerRef.current.scrollLeft -= deltaX;
+        containerRef.current.scrollTop -= deltaY;
+        
+        lastPanPoint.current = { x: e.clientX, y: e.clientY };
+      }
+    };
+
+    const handleGlobalMouseUp = (e: MouseEvent) => {
+      if (e.button === 1 && isPanning.current) { // Middle mouse button
+        isPanning.current = false;
+        if (containerRef.current) {
+          containerRef.current.style.cursor = hovering ? 'crosshair' : 'default';
+        }
+        document.body.style.userSelect = '';
+      }
+    };
+
+    document.addEventListener('mousemove', handleGlobalMouseMove);
+    document.addEventListener('mouseup', handleGlobalMouseUp);
+
+    return () => {
+      document.removeEventListener('mousemove', handleGlobalMouseMove);
+      document.removeEventListener('mouseup', handleGlobalMouseUp);
+    };
+  }, [hovering]);
+
   useImperativeHandle(ref, () => ({
     getCanvasElement: () => canvasRef.current,
     getContainerElement: () => containerRef.current
@@ -125,14 +161,19 @@ const PDFCanvas = forwardRef<PDFCanvasHandle, PDFCanvasProps>(({
       if (containerRef.current) {
         containerRef.current.style.cursor = 'grabbing';
       }
+      // Prevent default to avoid browser's auto-scroll behavior
+      document.body.style.userSelect = 'none';
     }
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (isPanning.current && containerRef.current) {
+      e.preventDefault();
+      
       const deltaX = e.clientX - lastPanPoint.current.x;
       const deltaY = e.clientY - lastPanPoint.current.y;
       
+      // Apply panning to scroll position for full directional movement
       containerRef.current.scrollLeft -= deltaX;
       containerRef.current.scrollTop -= deltaY;
       
@@ -146,6 +187,7 @@ const PDFCanvas = forwardRef<PDFCanvasHandle, PDFCanvasProps>(({
       if (containerRef.current) {
         containerRef.current.style.cursor = hovering ? 'crosshair' : 'default';
       }
+      document.body.style.userSelect = '';
     }
   };
 
