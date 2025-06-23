@@ -425,18 +425,12 @@ export default function PDFViewerPage() {
     // Don't handle if we're already dragging a pin
     if (isDragging) return;
     
-    // Right-click drag for panning when zoomed over 100%
+    // Only right-click drag for panning when zoomed over 100%
     if (e.button === 2 && scale > 1.0) {
       e.preventDefault();
       setIsPanning(true);
       setPanStart({ x: e.clientX - panOffset.x, y: e.clientY - panOffset.y });
       return;
-    }
-    
-    // Left-click drag for panning when zoomed over 100% (as fallback)
-    if (e.button === 0 && scale > 1.0) {
-      setIsPanning(true);
-      setPanStart({ x: e.clientX - panOffset.x, y: e.clientY - panOffset.y });
     }
   };
 
@@ -474,7 +468,10 @@ export default function PDFViewerPage() {
 
   const zoomIn = () => setScale(prev => Math.min(prev + 0.25, 2.0));
   const zoomOut = () => setScale(prev => Math.max(prev - 0.25, 0.2));
-  const resetZoom = () => setScale(1.0);
+  const resetZoom = () => {
+    setScale(1.0);
+    setPanOffset({ x: 0, y: 0 });
+  };
 
   const nextPage = () => {
     if (currentPage < totalPages) {
@@ -657,94 +654,98 @@ export default function PDFViewerPage() {
             </div>
           )}
 
-          <div className="flex justify-center items-center h-full p-8 overflow-hidden">
+          <div className="flex justify-center items-center h-full p-8 overflow-hidden relative">
             <div 
-              ref={pdfContainerRef}
-              className="relative"
+              className="fixed-container w-full h-full max-w-full max-h-full overflow-hidden relative"
               onClick={handleClick}
               onMouseDown={handleMouseDown}
               onContextMenu={handleRightClick}
               style={{ 
-                cursor: isPanning ? 'grabbing' : scale > 1.0 ? 'grab' : 'crosshair',
-                transform: `translate(${panOffset.x}px, ${panOffset.y}px)`,
-                maxWidth: 'calc(100vw - 400px)', // Account for sidebar
-                maxHeight: 'calc(100vh - 120px)', // Account for toolbar
-                overflow: 'hidden'
+                cursor: isPanning ? 'grabbing' : scale > 1.0 ? 'grab' : 'crosshair'
               }}
             >
-              {/* Pins for current page - only show when zoom <= 100% */}
-              {shouldShowMarkers() && getCurrentPagePins().map((pin) => (
-                <div
-                  key={pin.id}
-                  className="absolute z-10 cursor-pointer transform -translate-x-1/2 -translate-y-1/2"
-                  style={{ 
-                    left: pin.x * scale, 
-                    top: pin.y * scale 
-                  }}
-                  onMouseDown={(e) => handlePinDragStart(e, pin.id)}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handlePinClick(pin.commentId);
-                  }}
-                >
+              <div
+                ref={pdfContainerRef}
+                className="pdf-content absolute"
+                style={{ 
+                  transform: `translate(${panOffset.x}px, ${panOffset.y}px)`,
+                  transformOrigin: 'center center'
+                }}
+              >
+                {/* Pins for current page - only show when zoom <= 100% */}
+                {shouldShowMarkers() && getCurrentPagePins().map((pin) => (
                   <div
-                    className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-white hover:scale-110 transition-transform"
-                    style={{ backgroundColor: pin.user.color }}
-                  >
-                    {pin.number}
-                  </div>
-                </div>
-              ))}
-
-              {/* Comment box */}
-              {showCommentBox && pendingComment && (
-                <div
-                  data-comment-box
-                  className="absolute z-20 bg-white border shadow-lg rounded-lg p-3 min-w-[250px]"
-                  style={{ 
-                    left: pendingComment.x * scale + 20, 
-                    top: pendingComment.y * scale,
-                    transform: 'translateY(-50%)'
-                  }}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <Textarea
-                    ref={commentBoxRef}
-                    placeholder="Enter your comment..."
-                    value={commentText}
-                    onChange={(e) => setCommentText(e.target.value)}
-                    className="min-h-[80px] mb-2"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        if (commentText.trim()) {
-                          handleSaveComment();
-                        }
-                      }
+                    key={pin.id}
+                    className="absolute z-10 cursor-pointer transform -translate-x-1/2 -translate-y-1/2"
+                    style={{ 
+                      left: pin.x * scale, 
+                      top: pin.y * scale 
                     }}
-                  />
-                  <div className="flex gap-2">
-                    <Button 
-                      size="sm" 
-                      onClick={handleSaveComment}
-                      disabled={!commentText.trim()}
+                    onMouseDown={(e) => handlePinDragStart(e, pin.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handlePinClick(pin.commentId);
+                    }}
+                  >
+                    <div
+                      className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-white hover:scale-110 transition-transform"
+                      style={{ backgroundColor: pin.user.color }}
                     >
-                      Save
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      onClick={() => {
-                        setShowCommentBox(false);
-                        setPendingComment(null);
-                        setCommentText("");
-                      }}
-                    >
-                      Cancel
-                    </Button>
+                      {pin.number}
+                    </div>
                   </div>
-                </div>
-              )}
+                ))}
+
+                {/* Comment box */}
+                {showCommentBox && pendingComment && (
+                  <div
+                    data-comment-box
+                    className="absolute z-20 bg-white border shadow-lg rounded-lg p-3 min-w-[250px]"
+                    style={{ 
+                      left: pendingComment.x * scale + 20, 
+                      top: pendingComment.y * scale,
+                      transform: 'translateY(-50%)'
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Textarea
+                      ref={commentBoxRef}
+                      placeholder="Enter your comment..."
+                      value={commentText}
+                      onChange={(e) => setCommentText(e.target.value)}
+                      className="min-h-[80px] mb-2"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          if (commentText.trim()) {
+                            handleSaveComment();
+                          }
+                        }
+                      }}
+                    />
+                    <div className="flex gap-2">
+                      <Button 
+                        size="sm" 
+                        onClick={handleSaveComment}
+                        disabled={!commentText.trim()}
+                      >
+                        Save
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={() => {
+                          setShowCommentBox(false);
+                          setPendingComment(null);
+                          setCommentText("");
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
