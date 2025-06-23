@@ -370,60 +370,59 @@ export default function PDFViewerPage() {
   };
 
   const fitToScreen = () => {
-    console.log("Fit to screen function called");
+    console.log("🎯 fitToScreen() called");
     
     const canvas = document.querySelector('.pdf-canvas') as HTMLCanvasElement;
     const container = document.getElementById('pdf-viewer-container');
-    const pageContainer = document.querySelector('.pdf-page-container') as HTMLElement;
     
-    if (!canvas || !container || !pageContainer) {
-      console.log("Canvas, container, or page container not found");
+    if (!canvas || !container) {
+      console.log("❌ Canvas or container not found");
       return;
     }
     
-    // Reset any previous transforms
+    // Reset any previous transforms first
     canvas.style.transform = '';
     canvas.style.transformOrigin = 'top left';
-    pageContainer.style.width = '';
-    pageContainer.style.height = '';
     
-    // Get container dimensions using getBoundingClientRect
+    // Force a reflow to ensure we get accurate dimensions
+    canvas.offsetHeight;
+    
+    // Get container visible dimensions using getBoundingClientRect
     const containerRect = container.getBoundingClientRect();
-    const containerWidth = containerRect.width - 64; // Account for padding (32px each side)
-    const containerHeight = containerRect.height - 64;
+    const availableWidth = containerRect.width - 64; // Account for padding
+    const availableHeight = containerRect.height - 64;
     
-    // Get canvas natural dimensions
+    // Get canvas natural dimensions (before any scaling)
+    const canvasRect = canvas.getBoundingClientRect();
     const canvasWidth = canvas.offsetWidth;
     const canvasHeight = canvas.offsetHeight;
     
-    console.log("Container dimensions:", { containerWidth, containerHeight });
-    console.log("Canvas dimensions:", { canvasWidth, canvasHeight });
+    console.log("📐 Available space:", { availableWidth, availableHeight });
+    console.log("📐 Canvas natural size:", { canvasWidth, canvasHeight });
     
-    if (canvasWidth === 0 || canvasHeight === 0) {
-      console.log("Canvas has no dimensions");
+    if (canvasWidth === 0 || canvasHeight === 0 || availableWidth <= 0 || availableHeight <= 0) {
+      console.log("❌ Invalid dimensions");
       return;
     }
     
-    // Calculate scale factors to fit within container
-    const scaleX = containerWidth / canvasWidth;
-    const scaleY = containerHeight / canvasHeight;
-    const fitScale = Math.min(scaleX, scaleY);
+    // Calculate scale to fit both width and height within container
+    const scaleX = availableWidth / canvasWidth;
+    const scaleY = availableHeight / canvasHeight;
+    const fitScale = Math.min(scaleX, scaleY); // Use the smaller scale to prevent overflow
     
-    console.log("Scale factors:", { scaleX, scaleY, fitScale });
+    console.log("📏 Scale calculation:", { scaleX, scaleY, fitScale });
     
-    // Apply CSS transform to scale the canvas
+    // Apply the transform
     canvas.style.transform = `scale(${fitScale})`;
     canvas.style.transformOrigin = 'top left';
     
-    // Update the page container dimensions to match scaled canvas
-    const scaledWidth = canvasWidth * fitScale;
-    const scaledHeight = canvasHeight * fitScale;
+    // Calculate final scaled dimensions for verification
+    const finalWidth = canvasWidth * fitScale;
+    const finalHeight = canvasHeight * fitScale;
     
-    pageContainer.style.width = `${scaledWidth}px`;
-    pageContainer.style.height = `${scaledHeight}px`;
-    
-    console.log("Fit to screen completed with scale:", fitScale);
-    console.log("Scaled dimensions:", { scaledWidth, scaledHeight });
+    console.log("✅ Applied scale:", fitScale);
+    console.log("📊 Final dimensions:", { finalWidth, finalHeight });
+    console.log("🔍 Fits in container:", finalWidth <= availableWidth && finalHeight <= availableHeight);
   };
 
   const resetZoom = () => {
@@ -576,7 +575,7 @@ export default function PDFViewerPage() {
       {/* Main Content Area */}
       <div className="flex flex-1 pt-16"> {/* pt-16 to account for fixed header */}
         {/* Main PDF Viewer */}
-        <div className={`flex-1 flex flex-col ${sidebarOpen ? 'pr-80' : ''} transition-all duration-200`}>
+        <div className="flex-1 flex flex-col">
           {/* PDF Container */}
           <div 
             id="pdf-viewer-container"
@@ -617,9 +616,9 @@ export default function PDFViewerPage() {
           </div>
         </div>
 
-        {/* Fixed Right Sidebar */}
+        {/* Right Sidebar */}
         {sidebarOpen && (
-          <div className="fixed top-16 right-0 bottom-0 w-80 bg-white dark:bg-gray-800 border-l shadow-lg z-40 flex flex-col">
+          <div id="comment-sidebar" className="w-80 bg-white dark:bg-gray-800 border-l shadow-lg flex flex-col">
             <div className="p-4 border-b">
               <div className="flex items-center gap-2">
                 <MessageSquare className="h-5 w-5" />
