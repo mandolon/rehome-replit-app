@@ -17,7 +17,6 @@ import {
   Eye,
   EyeOff,
   Upload,
-  Edit,
   Trash,
   GripVertical
 } from "lucide-react";
@@ -70,13 +69,19 @@ const CURRENT_USER: User = {
 export default function PDFViewerPage() {
   const { toast } = useToast();
   
-  // Core state
+  // Core PDF state
   const [pdfDoc, setPdfDoc] = useState<pdfjsLib.PDFDocumentProxy | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [scale, setScale] = useState(1.0);
   const [pdfDimensions, setPdfDimensions] = useState({ width: 0, height: 0 });
+  
+  // Viewport and panning state
+  const [viewportOffset, setViewportOffset] = useState({ x: 0, y: 0 });
+  const [isPanning, setIsPanning] = useState(false);
+  const [panStart, setPanStart] = useState({ x: 0, y: 0 });
+  const [lastPanPoint, setLastPanPoint] = useState({ x: 0, y: 0 });
   
   // UI state
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -123,6 +128,7 @@ export default function PDFViewerPage() {
       setCurrentPage(1);
       setPins([]);
       setComments([]);
+      setViewportOffset({ x: 0, y: 0 });
       setIsLoading(false);
     } catch (error) {
       console.error("Error loading PDF:", error);
@@ -150,6 +156,7 @@ export default function PDFViewerPage() {
       const fitScale = Math.min(scaleByHeight, scaleByWidth);
       
       setScale(fitScale);
+      setViewportOffset({ x: 0, y: 0 }); // Reset offset when auto-fitting
     } catch (error) {
       console.error("Error auto-fitting PDF:", error);
     }
@@ -176,7 +183,9 @@ export default function PDFViewerPage() {
 
       canvas.height = viewport.height;
       canvas.width = viewport.width;
-      canvas.className = "border shadow-lg bg-white";
+      canvas.className = "border shadow-lg bg-white block";
+      canvas.style.transform = `translate(${viewportOffset.x}px, ${viewportOffset.y}px)`;
+      canvas.style.cursor = scale > 1 ? 'grab' : 'crosshair';
       
       pdfContainerRef.current.appendChild(canvas);
       canvasRef.current = canvas;
@@ -200,23 +209,76 @@ export default function PDFViewerPage() {
     setPins(prevPins => 
       prevPins.map(pin => ({
         ...pin,
-        x: pin.relativeX * pdfDimensions.width,
-        y: pin.relativeY * pdfDimensions.height
+        x: pin.relativeX * pdfDimensions.width + viewportOffset.x,
+        y: pin.relativeY * pdfDimensions.height + viewportOffset.y
       }))
     );
 
     setComments(prevComments =>
       prevComments.map(comment => ({
         ...comment,
-        x: comment.relativeX * pdfDimensions.width,
-        y: comment.relativeY * pdfDimensions.height
+        x: comment.relativeX * pdfDimensions.width + viewportOffset.x,
+        y: comment.relativeY * pdfDimensions.height + viewportOffset.y
       }))
     );
-  }, [pdfDimensions]);
+  }, [pdfDimensions, viewportOffset]);
 
   // Zoom controls
-  const zoomIn = () => setScale(prev => Math.min(prev + 0.25, 5));
-  const zoomOut = () => setScale(prev => Math.max(prev - 0.25, 0.1));
+  const zoomIn = () => {
+    setScale(prev => {
+      const newScale = Math.min(prev + 0.25, 5);
+      return newScale;
+    });
+  };
+
+  const zoomOut = () => {
+    setScale(prev => {
+      const newScale = Math.max(prev - 0.25, 0.1);
+      // Reset offset if zooming back to fit level
+      if (newScale <= 1) {
+        setViewportOffset({ x: 0, y: 0 });
+      }
+      return newScale;
+    });
+  };
+
+  // Panning functionality
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (scale > 1 && !activeComment && !draggedPin) {
+      setIsPanning(true);
+      setPanStart({ x: e.clientX, y: e.clientY });
+      setLastPanPoint({ x: e.clientX, y: e.clientY });
+      if (canvasRef.current) {
+        canvasRef.current.style.cursor = 'grabbing';
+      }
+    }
+  };
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    setMousePosition({ x: e.clientX, y: e.clientY });
+
+    if (isPanning && scale > 1) {
+      const deltaX = e.clientX - lastPanPoint.x;
+      const deltaY = e.clientY - lastPanPoint.y;
+      
+      setViewportOffset(prev => ({
+        x: prev.x + deltaX,
+        y: prev.y + deltaY
+      }));
+      
+      setLastPanPoint({ x: e.clientX, y: e.clientY });
+    } else if (isDragging && draggedPin) {
+      handlePinDrag(e);
+    }
+  }, [isPanning, isDragging, draggedPin, scale, lastPanPoint]);
+
+  const handleMouseUp = () => {
+    setIsPanning(false);
+    if (canvasRef.current && scale > 1) {
+      canvasRef.current.style.cursor = 'grab';
+    }
+    handlePinDragEnd();
+  };
 
   // Page navigation
   const nextPage = () => {
@@ -233,17 +295,20 @@ export default function PDFViewerPage() {
 
   // Comment system
   const handleCanvasClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!canvasRef.current || draggedPin || activeComment) return;
+    // Only allow adding comments when not panning and scale <= 1
+    if (scale > 1 || isPanning || draggedPin || activeComment) return;
 
     const canvas = canvasRef.current;
+    if (!canvas) return;
+
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    if (x < 0 || y < 0 || x > canvas.width || y > canvas.height) return;
+    if (x < 0 || y < 0 || x > rect.width || y > rect.height) return;
 
-    const relativeX = x / canvas.width;
-    const relativeY = y / canvas.height;
+    const relativeX = x / pdfDimensions.width;
+    const relativeY = y / pdfDimensions.height;
     
     const commentId = `comment-${Date.now()}`;
     const pinId = `pin-${Date.now()}`;
@@ -251,8 +316,8 @@ export default function PDFViewerPage() {
 
     const newPin: Pin = {
       id: pinId,
-      x,
-      y,
+      x: x + viewportOffset.x,
+      y: y + viewportOffset.y,
       pageNumber: currentPage,
       user: CURRENT_USER,
       number: pinNumber,
@@ -327,13 +392,15 @@ export default function PDFViewerPage() {
 
   // Drag system
   const handlePinDragStart = (e: React.MouseEvent, pinId: string) => {
+    if (scale > 1) return; // Disable dragging when zoomed
+    
     e.stopPropagation();
     const pin = pins.find(p => p.id === pinId);
     if (!pin || !canvasRef.current) return;
 
     const rect = canvasRef.current.getBoundingClientRect();
-    const offsetX = e.clientX - rect.left - pin.x;
-    const offsetY = e.clientY - rect.top - pin.y;
+    const offsetX = e.clientX - rect.left - (pin.x - viewportOffset.x);
+    const offsetY = e.clientY - rect.top - (pin.y - viewportOffset.y);
     
     setDraggedPin(pinId);
     setIsDragging(true);
@@ -341,27 +408,39 @@ export default function PDFViewerPage() {
   };
 
   const handlePinDrag = (e: React.MouseEvent) => {
-    if (!isDragging || !draggedPin || !canvasRef.current) return;
+    if (!isDragging || !draggedPin || !canvasRef.current || scale > 1) return;
 
     const rect = canvasRef.current.getBoundingClientRect();
     const newX = e.clientX - rect.left - dragOffset.x;
     const newY = e.clientY - rect.top - dragOffset.y;
 
-    const constrainedX = Math.max(0, Math.min(newX, canvasRef.current.width));
-    const constrainedY = Math.max(0, Math.min(newY, canvasRef.current.height));
+    const constrainedX = Math.max(0, Math.min(newX, pdfDimensions.width));
+    const constrainedY = Math.max(0, Math.min(newY, pdfDimensions.height));
 
-    const newRelativeX = constrainedX / canvasRef.current.width;
-    const newRelativeY = constrainedY / canvasRef.current.height;
+    const newRelativeX = constrainedX / pdfDimensions.width;
+    const newRelativeY = constrainedY / pdfDimensions.height;
 
     setPins(prev => prev.map(pin => 
       pin.id === draggedPin 
-        ? { ...pin, x: constrainedX, y: constrainedY, relativeX: newRelativeX, relativeY: newRelativeY } 
+        ? { 
+            ...pin, 
+            x: constrainedX + viewportOffset.x, 
+            y: constrainedY + viewportOffset.y, 
+            relativeX: newRelativeX, 
+            relativeY: newRelativeY 
+          } 
         : pin
     ));
     
     setComments(prev => prev.map(comment => 
       comment.id.includes(draggedPin.split('-')[1]) 
-        ? { ...comment, x: constrainedX, y: constrainedY, relativeX: newRelativeX, relativeY: newRelativeY } 
+        ? { 
+            ...comment, 
+            x: constrainedX + viewportOffset.x, 
+            y: constrainedY + viewportOffset.y, 
+            relativeX: newRelativeX, 
+            relativeY: newRelativeY 
+          } 
         : comment
     ));
   };
@@ -425,10 +504,6 @@ export default function PDFViewerPage() {
   };
 
   // Utility functions
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    setMousePosition({ x: e.clientX, y: e.clientY });
-  }, []);
-
   const getCurrentPageComments = () => {
     return comments.filter(comment => comment.pageNumber === currentPage);
   };
@@ -441,6 +516,9 @@ export default function PDFViewerPage() {
     return date.toLocaleDateString() + " " + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
+  // Show markers only when scale <= 1
+  const shouldShowMarkers = scale <= 1;
+
   // Effects
   useEffect(() => {
     loadPDF();
@@ -450,7 +528,7 @@ export default function PDFViewerPage() {
     if (pdfDoc && currentPage <= totalPages) {
       renderPage(currentPage);
     }
-  }, [pdfDoc, currentPage, scale]);
+  }, [pdfDoc, currentPage, scale, viewportOffset]);
 
   useEffect(() => {
     if (uploadedPdfUrl) {
@@ -466,7 +544,7 @@ export default function PDFViewerPage() {
 
   useEffect(() => {
     updatePinPositions();
-  }, [pdfDimensions, updatePinPositions]);
+  }, [pdfDimensions, viewportOffset, updatePinPositions]);
 
   // Handle clicks outside to close comment boxes
   useEffect(() => {
@@ -477,7 +555,7 @@ export default function PDFViewerPage() {
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
 
-        if (x < 0 || y < 0 || x > canvas.width || y > canvas.height) {
+        if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
           cancelComment();
         }
       }
@@ -595,19 +673,12 @@ export default function PDFViewerPage() {
         {/* PDF Container */}
         <div 
           ref={viewportRef}
-          className="flex-1 overflow-auto p-4 relative"
-          onMouseEnter={() => setHovering(true)}
-          onMouseLeave={() => setHovering(false)}
-          onMouseMove={(e) => {
-            handleMouseMove(e);
-            if (isDragging) {
-              handlePinDrag(e);
-            }
-          }}
-          onMouseUp={handlePinDragEnd}
+          className="flex-1 overflow-hidden relative"
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
         >
           {/* Hover instruction */}
-          {hovering && !activeComment && !isDragging && (
+          {hovering && !activeComment && !isDragging && !isPanning && scale <= 1 && (
             <div 
               className="fixed bg-black/75 text-white px-2 py-1 rounded text-xs z-50 pointer-events-none"
               style={{ 
@@ -619,19 +690,41 @@ export default function PDFViewerPage() {
             </div>
           )}
 
-          <div className="flex justify-center">
+          {scale > 1 && hovering && !isPanning && (
+            <div 
+              className="fixed bg-black/75 text-white px-2 py-1 rounded text-xs z-50 pointer-events-none"
+              style={{ 
+                left: mousePosition.x + 10, 
+                top: mousePosition.y - 25
+              }}
+            >
+              Click and drag to pan
+            </div>
+          )}
+
+          <div 
+            className="w-full h-full flex items-center justify-center p-4"
+            onMouseEnter={() => setHovering(true)}
+            onMouseLeave={() => setHovering(false)}
+            onMouseDown={handleMouseDown}
+          >
             <div 
               ref={pdfContainerRef}
-              className="relative cursor-crosshair"
+              className="relative"
+              style={{
+                maxWidth: '100%',
+                maxHeight: '100%',
+                overflow: 'visible'
+              }}
               onClick={handleCanvasClick}
             >
-              {/* Pins for current page */}
-              {getCurrentPagePins().map((pin) => (
+              {/* Pins for current page - only show when scale <= 1 */}
+              {shouldShowMarkers && getCurrentPagePins().map((pin) => (
                 <Popover key={pin.id} open={activeComment === `comment-${pin.id.split('-')[1]}`}>
                   <PopoverTrigger asChild>
                     <div
                       className="absolute z-10 cursor-move transform -translate-x-1/2 -translate-y-1/2 hover:scale-110 transition-transform"
-                      style={{ left: pin.x, top: pin.y }}
+                      style={{ left: pin.x - viewportOffset.x, top: pin.y - viewportOffset.y }}
                       onMouseDown={(e) => handlePinDragStart(e, pin.id)}
                       onClick={(e) => {
                         e.stopPropagation();
