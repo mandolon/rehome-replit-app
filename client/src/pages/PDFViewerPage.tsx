@@ -596,9 +596,13 @@ export default function PDFViewerPage() {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col">
-        {/* Toolbar */}
-        <div id="toolbar" className="bg-white dark:bg-gray-800 border-b p-3 shadow-sm">
-          <div className="flex items-center justify-between">
+        {/* Toolbar Container */}
+        <div 
+          id="toolbar" 
+          className="bg-white dark:bg-gray-800 border-b shadow-sm"
+          style={{ height: '60px', minHeight: '60px', maxHeight: '60px' }}
+        >
+          <div className="h-full px-4 py-2 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Button
                 variant="outline"
@@ -694,41 +698,44 @@ export default function PDFViewerPage() {
           </div>
         </div>
 
-        {/* PDF Viewer Container */}
+        {/* Canvas Container */}
         <div 
           id="pdf-viewer-container"
-          className="flex-1 overflow-auto p-8 relative"
+          className="flex-1 overflow-auto relative"
+          style={{ height: 'calc(100vh - 60px)' }}
           onMouseEnter={() => setHovering(true)}
           onMouseLeave={() => setHovering(false)}
         >
-          {/* Hover instruction */}
-          {hovering && (
-            <div className="absolute top-4 left-4 bg-black text-white px-3 py-2 rounded-lg text-sm z-10 pointer-events-none">
-              Click to add comment
-            </div>
-          )}
+          <div className="p-8 h-full">
+            {/* Hover instruction */}
+            {hovering && (
+              <div className="absolute top-4 left-4 bg-black text-white px-3 py-2 rounded-lg text-sm z-10 pointer-events-none">
+                Click to add comment
+              </div>
+            )}
 
-          <div className="flex justify-center">
-            <div 
-              ref={pdfContainerRef}
-              className="pdf-page-container relative cursor-crosshair"
-              onClick={handleCanvasClick}
-            >
-              {/* Pins for current page */}
-              {getCurrentPagePins().map((pin) => (
-                <div
-                  key={pin.id}
-                  className="absolute z-10 cursor-pointer transform -translate-x-1/2 -translate-y-1/2"
-                  style={{ left: pin.x, top: pin.y }}
-                >
+            <div className="flex justify-center h-full">
+              <div 
+                ref={pdfContainerRef}
+                className="pdf-page-container relative cursor-crosshair"
+                onClick={handleCanvasClick}
+              >
+                {/* Pins for current page */}
+                {getCurrentPagePins().map((pin) => (
                   <div
-                    className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-white hover:scale-110 transition-transform"
-                    style={{ backgroundColor: pin.user.color }}
+                    key={pin.id}
+                    className="absolute z-10 cursor-pointer transform -translate-x-1/2 -translate-y-1/2"
+                    style={{ left: pin.x, top: pin.y }}
                   >
-                    {pin.number}
+                    <div
+                      className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-white hover:scale-110 transition-transform"
+                      style={{ backgroundColor: pin.user.color }}
+                    >
+                      {pin.number}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>
