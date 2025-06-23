@@ -1,0 +1,306 @@
+ Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+ App component is rendering, current path: /sandbox/pdf-viewer
+ 🚀 Initial PDF load useEffect triggered
+ 🚀 Starting PDF loading process
+ 📂 Current PDF URL: https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf
+ 🔄 Setting loading state to true
+ 📋 Creating PDF.js loading task with URL: https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf
+ ⏳ Waiting for PDF document to load...
+ 🎨 Render page useEffect triggered: Object
+ 📤 Upload URL useEffect triggered: Object
+ 📊 Current PDF URL changed: Object
+ ✅ PDF document loaded successfully!
+ 📊 PDF Details: Object
+ 🗑️ Clearing existing pins and comments for new PDF
+ ✅ PDF loading complete, setting loading state to false
+ 🎨 Render page useEffect triggered: Object
+ 🎨 Starting to render page 1 with scale: 1.3
+ 📏 Before Page Render - Container Dimensions: Object
+ 📄 Getting page 1 from PDF document
+ ✅ Page 1 retrieved successfully
+ 📏 Before Fit Scale Calculation - Container Dimensions: Object
+ 📏 Available space calculation: Object
+ 📐 Calculated fit scale: Object
+ 📏 Updated scale to fit: 0.8984217171717171
+ 🎨 Render page useEffect triggered: Object
+ 🎨 Starting to render page 1 with scale: 0.8984217171717171
+ 📏 Before Page Render - Container Dimensions: Object
+ 📄 Getting page 1 from PDF document
+ ✅ Page 1 retrieved successfully
+ 📏 Before Fit Scale Calculation - Container Dimensions: Object
+ 📏 Available space calculation: Object
+ 📐 Calculated fit scale: Object
+ 📐 Creating viewport with scale 0.8984217171717171
+ 📐 Viewport dimensions: Object
+ 🖼️ Creating new canvas element
+ 🔗 Appending canvas to container
+ 🖼️ After Canvas Creation - Canvas Dimensions: Object
+ 🎨 Starting to render page 1 to canvas
+ ✅ Page 1 rendered successfully to canvas
+ 🖼️ After Page Render - Canvas Dimensions: Object
+ 📏 After Page Render Complete - Container Dimensions: Object
+ 📏 Post-Render Overflow Check - Container Dimensions: Object
+ 📐 Fit To Page triggered
+ 📏 Before Fit Scale Calculation - Container Dimensions: Object
+ 📏 Available space calculation: Object
+ 📐 Calculated fit scale: Object
+ 📐 Setting fit scale: 0.8984217171717171
+ 🔍 Zoom In triggered: Object
+ 📏 After Zoom In - Container Dimensions: Object
+ 🎨 Render page useEffect triggered: Object
+ 🎨 Starting to render page 1 with scale: 1.148421717171717
+ 📏 Before Page Render - Container Dimensions: Object
+ 📄 Getting page 1 from PDF document
+ ✅ Page 1 retrieved successfully
+ 🗑️ Removing existing canvas
+ 🖼️ Before Canvas Removal - Canvas Dimensions: Object
+ 📐 Creating viewport with scale 1.148421717171717
+ 📐 Viewport dimensions: Object
+ 🖼️ Creating new canvas element
+ 🔗 Appending canvas to container
+ 🖼️ After Canvas Creation - Canvas Dimensions: Object
+ 🎨 Starting to render page 1 to canvas
+ ✅ Page 1 rendered successfully to canvas
+ 🖼️ After Page Render - Canvas Dimensions: Object
+ 📏 After Page Render Complete - Container Dimensions: Object
+ 📏 Post-Render Overflow Check - Container Dimensions: Object
+ 🔍 Zoom In triggered: Object
+ 📏 After Zoom In - Container Dimensions: Object
+ 🎨 Render page useEffect triggered: Object
+ 🎨 Starting to render page 1 with scale: 1.398421717171717
+ 📏 Before Page Render - Container Dimensions: Object
+ 📄 Getting page 1 from PDF document
+ ✅ Page 1 retrieved successfully
+ 🗑️ Removing existing canvas
+ 🖼️ Before Canvas Removal - Canvas Dimensions: Object
+ 📐 Creating viewport with scale 1.398421717171717
+ 📐 Viewport dimensions: Object
+ 🖼️ Creating new canvas element
+ 🔗 Appending canvas to container
+ 🖼️ After Canvas Creation - Canvas Dimensions: Object
+ 🎨 Starting to render page 1 to canvas
+ ✅ Page 1 rendered successfully to canvas
+ 🖼️ After Page Render - Canvas Dimensions: Object
+ 📏 After Page Render Complete - Container Dimensions: Object
+ 📏 Post-Render Overflow Check - Container Dimensions: Object
+ 🔍 Zoom In triggered: Object
+ 📏 After Zoom In - Container Dimensions: Object
+ 🎨 Render page useEffect triggered: Object
+ 🎨 Starting to render page 1 with scale: 1.648421717171717
+ 📏 Before Page Render - Container Dimensions: Object
+ 📄 Getting page 1 from PDF document
+ ✅ Page 1 retrieved successfully
+ 🗑️ Removing existing canvas
+ 🖼️ Before Canvas Removal - Canvas Dimensions: Object
+ 📐 Creating viewport with scale 1.648421717171717
+ 📐 Viewport dimensions: Object
+ 🖼️ Creating new canvas element
+ 🔗 Appending canvas to container
+ 🖼️ After Canvas Creation - Canvas Dimensions: Object
+ 🎨 Starting to render page 1 to canvas
+ ✅ Page 1 rendered successfully to canvas
+ 🖼️ After Page Render - Canvas Dimensions: Object
+ 📏 After Page Render Complete - Container Dimensions: Object
+ 📏 Post-Render Overflow Check - Container Dimensions: Object
+ 🔍 Zoom In triggered: Object
+ 📏 After Zoom In - Container Dimensions: Object
+ 🎨 Render page useEffect triggered: Object
+ 🎨 Starting to render page 1 with scale: 1.898421717171717
+ 📏 Before Page Render - Container Dimensions: Object
+ 📄 Getting page 1 from PDF document
+ ✅ Page 1 retrieved successfully
+ 🗑️ Removing existing canvas
+ 🖼️ Before Canvas Removal - Canvas Dimensions: Object
+ 📐 Creating viewport with scale 1.898421717171717
+ 📐 Viewport dimensions: Object
+ 🖼️ Creating new canvas element
+ 🔗 Appending canvas to container
+ 🖼️ After Canvas Creation - Canvas Dimensions: Object
+ 🎨 Starting to render page 1 to canvas
+ ✅ Page 1 rendered successfully to canvas
+ 🖼️ After Page Render - Canvas Dimensions: Object
+ 📏 After Page Render Complete - Container Dimensions: Object
+ 📏 Post-Render Overflow Check - Container Dimensions: Object
+ 🔍 Zoom In triggered: Object
+ 📏 After Zoom In - Container Dimensions: Object
+ 🎨 Render page useEffect triggered: Object
+ 🎨 Starting to render page 1 with scale: 2.148421717171717
+ 📏 Before Page Render - Container Dimensions: Object
+ 📄 Getting page 1 from PDF document
+ ✅ Page 1 retrieved successfully
+ 🗑️ Removing existing canvas
+ 🖼️ Before Canvas Removal - Canvas Dimensions: Object
+ 📐 Creating viewport with scale 2.148421717171717
+ 📐 Viewport dimensions: Object
+ 🖼️ Creating new canvas element
+ 🔗 Appending canvas to container
+ 🖼️ After Canvas Creation - Canvas Dimensions: Object
+ 🎨 Starting to render page 1 to canvas
+ ✅ Page 1 rendered successfully to canvas
+ 🖼️ After Page Render - Canvas Dimensions: Object
+ 📏 After Page Render Complete - Container Dimensions: Object
+ 📏 Post-Render Overflow Check - Container Dimensions: Object
+ 🔄 PDF upload process started
+ 📄 File selected: Object
+ ✅ Valid PDF file detected, creating object URL
+ 🔗 Object URL created: blob:https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/424a3f02-e5bd-40ab-9fd1-8ab4a278e017
+ 📊 State updated - uploadedPdfUrl: blob:https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/424a3f02-e5bd-40ab-9fd1-8ab4a278e017
+ 📊 State updated - uploadedFileName: CD_2630 S Street - 6.22.25.pdf
+ 📤 Upload URL useEffect triggered: Object
+ 🔄 Triggering loadPDF due to uploaded PDF URL change
+ 🚀 Starting PDF loading process
+ 📂 Current PDF URL: blob:https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/424a3f02-e5bd-40ab-9fd1-8ab4a278e017
+ 🔄 Setting loading state to true
+ 📋 Creating PDF.js loading task with URL: blob:https://b22a1f42-eb3a-4f6e-9bf0-6eabe5ddb16e-00-3fgx173bsta7s.worf.replit.dev/424a3f02-e5bd-40ab-9fd1-8ab4a278e017
+ ⏳ Waiting for PDF document to load...
+ 📊 Current PDF URL changed: Object
+ ✅ PDF document loaded successfully!
+ 📊 PDF Details: Object
+ 🗑️ Clearing existing pins and comments for new PDF
+ ✅ PDF loading complete, setting loading state to false
+ 🎨 Render page useEffect triggered: Object
+ 🎨 Starting to render page 1 with scale: 2.148421717171717
+ 📏 Before Page Render - Container Dimensions: Object
+ 📄 Getting page 1 from PDF document
+ ✅ Page 1 retrieved successfully
+ 🗑️ Removing existing canvas
+ 🖼️ Before Canvas Removal - Canvas Dimensions: Object
+ 📐 Creating viewport with scale 2.148421717171717
+ 📐 Viewport dimensions: Object
+ 🖼️ Creating new canvas element
+ 🔗 Appending canvas to container
+ 🖼️ After Canvas Creation - Canvas Dimensions: Object
+ 🎨 Starting to render page 1 to canvas
+ ✅ Page 1 rendered successfully to canvas
+ 🖼️ After Page Render - Canvas Dimensions: Object
+ 📏 After Page Render Complete - Container Dimensions: Object
+ 📏 Post-Render Overflow Check - Container Dimensions: Object
+ 📐 Fit To Page triggered
+ 📏 Before Fit Scale Calculation - Container Dimensions: Object
+ 📏 Available space calculation: Object
+ 📐 Calculated fit scale: Object
+ 📐 Setting fit scale: 0.5330864800347221
+ 🎨 Render page useEffect triggered: Object
+ 🎨 Starting to render page 1 with scale: 0.5330864800347221
+ 📏 Before Page Render - Container Dimensions: Object
+ 📄 Getting page 1 from PDF document
+ ✅ Page 1 retrieved successfully
+ 📏 Before Fit Scale Calculation - Container Dimensions: Object
+PDFViewerPage.tsx:254 📏 Available space calculation: Object
+PDFViewerPage.tsx:270 📐 Calculated fit scale: Object
+PDFViewerPage.tsx:353 🗑️ Removing existing canvas
+PDFViewerPage.tsx:289 🖼️ Before Canvas Removal - Canvas Dimensions: Object
+PDFViewerPage.tsx:359 📐 Creating viewport with scale 0.5330864800347221
+PDFViewerPage.tsx:361 📐 Viewport dimensions: Object
+PDFViewerPage.tsx:368 🖼️ Creating new canvas element
+PDFViewerPage.tsx:384 🔗 Appending canvas to container
+PDFViewerPage.tsx:289 🖼️ After Canvas Creation - Canvas Dimensions: Object
+PDFViewerPage.tsx:395 🎨 Starting to render page 1 to canvas
+PDFViewerPage.tsx:397 ✅ Page 1 rendered successfully to canvas
+PDFViewerPage.tsx:289 🖼️ After Page Render - Canvas Dimensions: Object
+PDFViewerPage.tsx:199 📏 After Page Render Complete - Container Dimensions: Object
+PDFViewerPage.tsx:199 📏 Post-Render Overflow Check - Container Dimensions: Object
+PDFViewerPage.tsx:548 🔍 Zoom Out triggered: Object
+PDFViewerPage.tsx:199 📏 After Zoom Out - Container Dimensions: Object
+PDFViewerPage.tsx:116 🎨 Render page useEffect triggered: Object
+PDFViewerPage.tsx:319 🎨 Starting to render page 1 with scale: 0.5
+PDFViewerPage.tsx:199 📏 Before Page Render - Container Dimensions: Object
+PDFViewerPage.tsx:334 📄 Getting page 1 from PDF document
+PDFViewerPage.tsx:338 ✅ Page 1 retrieved successfully
+PDFViewerPage.tsx:353 🗑️ Removing existing canvas
+PDFViewerPage.tsx:289 🖼️ Before Canvas Removal - Canvas Dimensions: Object
+PDFViewerPage.tsx:359 📐 Creating viewport with scale 0.5
+PDFViewerPage.tsx:361 📐 Viewport dimensions: Object
+PDFViewerPage.tsx:368 🖼️ Creating new canvas element
+PDFViewerPage.tsx:384 🔗 Appending canvas to container
+PDFViewerPage.tsx:289 🖼️ After Canvas Creation - Canvas Dimensions: Object
+PDFViewerPage.tsx:395 🎨 Starting to render page 1 to canvas
+PDFViewerPage.tsx:397 ✅ Page 1 rendered successfully to canvas
+PDFViewerPage.tsx:289 🖼️ After Page Render - Canvas Dimensions: Object
+PDFViewerPage.tsx:199 📏 After Page Render Complete - Container Dimensions: Object
+PDFViewerPage.tsx:199 📏 Post-Render Overflow Check - Container Dimensions: Object
+PDFViewerPage.tsx:548 🔍 Zoom Out triggered: Object
+PDFViewerPage.tsx:199 📏 After Zoom Out - Container Dimensions: Object
+PDFViewerPage.tsx:548 🔍 Zoom Out triggered: Object
+PDFViewerPage.tsx:199 📏 After Zoom Out - Container Dimensions: Object
+PDFViewerPage.tsx:536 🔍 Zoom In triggered: Object
+PDFViewerPage.tsx:199 📏 After Zoom In - Container Dimensions: Object
+PDFViewerPage.tsx:116 🎨 Render page useEffect triggered: Object
+PDFViewerPage.tsx:319 🎨 Starting to render page 1 with scale: 0.75
+PDFViewerPage.tsx:199 📏 Before Page Render - Container Dimensions: Object
+PDFViewerPage.tsx:334 📄 Getting page 1 from PDF document
+PDFViewerPage.tsx:338 ✅ Page 1 retrieved successfully
+PDFViewerPage.tsx:353 🗑️ Removing existing canvas
+PDFViewerPage.tsx:289 🖼️ Before Canvas Removal - Canvas Dimensions: Object
+PDFViewerPage.tsx:359 📐 Creating viewport with scale 0.75
+PDFViewerPage.tsx:361 📐 Viewport dimensions: Object
+PDFViewerPage.tsx:368 🖼️ Creating new canvas element
+PDFViewerPage.tsx:384 🔗 Appending canvas to container
+PDFViewerPage.tsx:289 🖼️ After Canvas Creation - Canvas Dimensions: Object
+PDFViewerPage.tsx:395 🎨 Starting to render page 1 to canvas
+PDFViewerPage.tsx:397 ✅ Page 1 rendered successfully to canvas
+PDFViewerPage.tsx:289 🖼️ After Page Render - Canvas Dimensions: Object
+PDFViewerPage.tsx:199 📏 After Page Render Complete - Container Dimensions: Object
+PDFViewerPage.tsx:199 📏 Post-Render Overflow Check - Container Dimensions: Object
+PDFViewerPage.tsx:536 🔍 Zoom In triggered: Object
+PDFViewerPage.tsx:199 📏 After Zoom In - Container Dimensions: Object
+PDFViewerPage.tsx:116 🎨 Render page useEffect triggered: Object
+PDFViewerPage.tsx:319 🎨 Starting to render page 1 with scale: 1
+PDFViewerPage.tsx:199 📏 Before Page Render - Container Dimensions: Object
+PDFViewerPage.tsx:334 📄 Getting page 1 from PDF document
+PDFViewerPage.tsx:338 ✅ Page 1 retrieved successfully
+PDFViewerPage.tsx:353 🗑️ Removing existing canvas
+PDFViewerPage.tsx:289 🖼️ Before Canvas Removal - Canvas Dimensions: Object
+PDFViewerPage.tsx:359 📐 Creating viewport with scale 1
+PDFViewerPage.tsx:361 📐 Viewport dimensions: Object
+PDFViewerPage.tsx:368 🖼️ Creating new canvas element
+PDFViewerPage.tsx:384 🔗 Appending canvas to container
+PDFViewerPage.tsx:289 🖼️ After Canvas Creation - Canvas Dimensions: Object
+PDFViewerPage.tsx:395 🎨 Starting to render page 1 to canvas
+PDFViewerPage.tsx:397 ✅ Page 1 rendered successfully to canvas
+PDFViewerPage.tsx:289 🖼️ After Page Render - Canvas Dimensions: Object
+PDFViewerPage.tsx:199 📏 After Page Render Complete - Container Dimensions: Object
+PDFViewerPage.tsx:199 📏 Post-Render Overflow Check - Container Dimensions: Object
+PDFViewerPage.tsx:536 🔍 Zoom In triggered: Object
+PDFViewerPage.tsx:199 📏 After Zoom In - Container Dimensions: Object
+PDFViewerPage.tsx:116 🎨 Render page useEffect triggered: Object
+PDFViewerPage.tsx:319 🎨 Starting to render page 1 with scale: 1.25
+PDFViewerPage.tsx:199 📏 Before Page Render - Container Dimensions: Object
+PDFViewerPage.tsx:334 📄 Getting page 1 from PDF document
+PDFViewerPage.tsx:338 ✅ Page 1 retrieved successfully
+PDFViewerPage.tsx:353 🗑️ Removing existing canvas
+PDFViewerPage.tsx:289 🖼️ Before Canvas Removal - Canvas Dimensions: Object
+PDFViewerPage.tsx:359 📐 Creating viewport with scale 1.25
+PDFViewerPage.tsx:361 📐 Viewport dimensions: Object
+PDFViewerPage.tsx:368 🖼️ Creating new canvas element
+PDFViewerPage.tsx:384 🔗 Appending canvas to container
+PDFViewerPage.tsx:289 🖼️ After Canvas Creation - Canvas Dimensions: Object
+PDFViewerPage.tsx:395 🎨 Starting to render page 1 to canvas
+PDFViewerPage.tsx:397 ✅ Page 1 rendered successfully to canvas
+PDFViewerPage.tsx:289 🖼️ After Page Render - Canvas Dimensions: Object
+PDFViewerPage.tsx:199 📏 After Page Render Complete - Container Dimensions: Object
+PDFViewerPage.tsx:199 📏 Post-Render Overflow Check - Container Dimensions: Object
+PDFViewerPage.tsx:536 🔍 Zoom In triggered: Object
+PDFViewerPage.tsx:199 📏 After Zoom In - Container Dimensions: Object
+PDFViewerPage.tsx:116 🎨 Render page useEffect triggered: Object
+PDFViewerPage.tsx:319 🎨 Starting to render page 1 with scale: 1.5
+PDFViewerPage.tsx:199 📏 Before Page Render - Container Dimensions: Object
+PDFViewerPage.tsx:334 📄 Getting page 1 from PDF document
+PDFViewerPage.tsx:338 ✅ Page 1 retrieved successfully
+PDFViewerPage.tsx:353 🗑️ Removing existing canvas
+PDFViewerPage.tsx:289 🖼️ Before Canvas Removal - Canvas Dimensions: Object
+PDFViewerPage.tsx:359 📐 Creating viewport with scale 1.5
+PDFViewerPage.tsx:361 📐 Viewport dimensions: Object
+PDFViewerPage.tsx:368 🖼️ Creating new canvas element
+PDFViewerPage.tsx:384 🔗 Appending canvas to container
+PDFViewerPage.tsx:289 🖼️ After Canvas Creation - Canvas Dimensions: Object
+PDFViewerPage.tsx:395 🎨 Starting to render page 1 to canvas
+PDFViewerPage.tsx:397 ✅ Page 1 rendered successfully to canvas
+PDFViewerPage.tsx:289 🖼️ After Page Render - Canvas Dimensions: Object
+PDFViewerPage.tsx:199 📏 After Page Render Complete - Container Dimensions: Object
+PDFViewerPage.tsx:199 📏 Post-Render Overflow Check - Container Dimensions: Object
+[NEW] Explain Console errors by using Copilot in Edge: click
+         
+         to explain an error. 
+        Learn more
+        Don't show again

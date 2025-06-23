@@ -482,38 +482,20 @@ export default function PDFViewerPage() {
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("🔄 PDF upload process started");
     const file = event.target.files?.[0];
     
-    if (!file) {
-      console.log("❌ No file selected");
-      return;
-    }
-    
-    console.log("📄 File selected:", {
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      lastModified: file.lastModified
-    });
+    if (!file) return;
     
     if (file && file.type === 'application/pdf') {
-      console.log("✅ Valid PDF file detected, creating object URL");
       const fileUrl = URL.createObjectURL(file);
-      console.log("🔗 Object URL created:", fileUrl);
-      
       setUploadedPdfUrl(fileUrl);
       setUploadedFileName(file.name);
-      
-      console.log("📊 State updated - uploadedPdfUrl:", fileUrl);
-      console.log("📊 State updated - uploadedFileName:", file.name);
       
       toast({
         title: "PDF Uploaded Successfully",
         description: `${file.name} has been loaded for viewing.`,
       });
     } else {
-      console.log("❌ Invalid file type:", file.type);
       toast({
         title: "Invalid File Type",
         description: "Please select a valid PDF file.",
