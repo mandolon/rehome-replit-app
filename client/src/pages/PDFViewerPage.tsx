@@ -16,7 +16,6 @@ import {
   ChevronRight,
   Eye,
   EyeOff,
-  Reply,
   Upload,
   Edit,
   Trash,
@@ -24,7 +23,7 @@ import {
 } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
 
-// Configure PDF.js worker - use local worker file
+// Configure PDF.js worker - use local worker file to prevent external URL issues
 pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
 
 interface User {
@@ -40,17 +39,9 @@ interface Comment {
   pageNumber: number;
   text: string;
   user: User;
-  replies: Reply[];
   timestamp: Date;
   relativeX: number;
   relativeY: number;
-}
-
-interface Reply {
-  id: string;
-  text: string;
-  user: User;
-  timestamp: Date;
 }
 
 interface Pin {
@@ -64,19 +55,12 @@ interface Pin {
   relativeY: number;
 }
 
-// Predefined user colors
+// User color palette
 const USER_COLORS = [
-  "#ec4899", // pink
-  "#3b82f6", // blue
-  "#22c55e", // green
-  "#a855f7", // purple
-  "#f59e0b", // amber
-  "#ef4444", // red
-  "#06b6d4", // cyan
-  "#8b5cf6", // violet
+  "#ec4899", "#3b82f6", "#22c55e", "#a855f7", 
+  "#f59e0b", "#ef4444", "#06b6d4", "#8b5cf6"
 ];
 
-// Mock current user - in real app this would come from auth
 const CURRENT_USER: User = {
   id: "user-1",
   name: "Current User",
@@ -85,198 +69,55 @@ const CURRENT_USER: User = {
 
 export default function PDFViewerPage() {
   const { toast } = useToast();
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [pins, setPins] = useState<Pin[]>([]);
-  const [hovering, setHovering] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [sidebarWidth, setSidebarWidth] = useState(320);
-  const [scale, setScale] = useState(1.0);
-  const [pdfDimensions, setPdfDimensions] = useState({ width: 0, height: 0 });
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
+  
+  // Core state
   const [pdfDoc, setPdfDoc] = useState<pdfjsLib.PDFDocumentProxy | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [scale, setScale] = useState(1.0);
+  const [pdfDimensions, setPdfDimensions] = useState({ width: 0, height: 0 });
+  
+  // UI state
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarWidth, setSidebarWidth] = useState(320);
+  const [hovering, setHovering] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  
+  // Comment system state
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [pins, setPins] = useState<Pin[]>([]);
   const [activeComment, setActiveComment] = useState<string | null>(null);
   const [commentText, setCommentText] = useState("");
-  const [replyText, setReplyText] = useState("");
-  const [replyingTo, setReplyingTo] = useState<string | null>(null);
-  const [uploadedPdfUrl, setUploadedPdfUrl] = useState<string | null>(null);
-  const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
-  const [editingComment, setEditingComment] = useState<string | null>(null);
-  const [draggedPin, setDraggedPin] = useState<string | null>(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [highlightedComment, setHighlightedComment] = useState<string | null>(null);
+  
+  // Drag system state
+  const [draggedPin, setDraggedPin] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   
+  // File handling state
+  const [uploadedPdfUrl, setUploadedPdfUrl] = useState<string | null>(null);
+  const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+  
+  // Refs
   const pdfContainerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const pageRef = useRef<pdfjsLib.PDFPageProxy | null>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
-  const resizeRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
 
-  // Sample PDF URL - using Mozilla's sample PDF
+  // Default PDF for demo
   const PDF_URL = "https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf";
-
-  // Use uploaded PDF URL if available, otherwise use default
   const currentPdfUrl = uploadedPdfUrl || PDF_URL;
 
-  // Enhanced marker positioning system for perfect anchoring
-  const updatePinPositions = useCallback(() => {
-    if (!canvasRef.current || pdfDimensions.width === 0 || pdfDimensions.height === 0) {
-      console.log("Skipping pin position update - invalid dimensions", { 
-        canvas: !!canvasRef.current, 
-        dimensions: pdfDimensions 
-      });
-      return;
-    }
-
-    console.log("Updating pin positions based on PDF dimensions:", pdfDimensions);
-
-    setPins(prevPins => 
-      prevPins.map(pin => {
-        const newX = pin.relativeX * pdfDimensions.width;
-        const newY = pin.relativeY * pdfDimensions.height;
-        console.log(`Pin ${pin.id}: relative(${pin.relativeX}, ${pin.relativeY}) -> absolute(${newX}, ${newY})`);
-        return {
-          ...pin,
-          x: newX,
-          y: newY
-        };
-      })
-    );
-
-    setComments(prevComments =>
-      prevComments.map(comment => {
-        const newX = comment.relativeX * pdfDimensions.width;
-        const newY = comment.relativeY * pdfDimensions.height;
-        console.log(`Comment ${comment.id}: relative(${comment.relativeX}, ${comment.relativeY}) -> absolute(${newX}, ${newY})`);
-        return {
-          ...comment,
-          x: newX,
-          y: newY
-        };
-      })
-    );
-  }, [pdfDimensions]);
-
-  const autoFitToContainer = useCallback(async () => {
-    if (!pdfDoc || !viewportRef.current) return;
-    
-    try {
-      const page = await pdfDoc.getPage(1);
-      const viewport = page.getViewport({ scale: 1 });
-      
-      // Get stable viewport dimensions
-      const containerHeight = viewportRef.current.clientHeight - 80;
-      const containerWidth = viewportRef.current.clientWidth - 80;
-      
-      // Calculate scale to fit PDF within stable container bounds
-      const scaleByHeight = containerHeight / viewport.height;
-      const scaleByWidth = containerWidth / viewport.width;
-      const fitScale = Math.min(scaleByHeight, scaleByWidth, 1.0);
-      
-      console.log("Auto-fitting PDF to container:", { 
-        containerHeight, 
-        containerWidth, 
-        pdfHeight: viewport.height,
-        pdfWidth: viewport.width,
-        fitScale 
-      });
-      
-      setScale(fitScale);
-    } catch (error) {
-      console.error("Error auto-fitting PDF:", error);
-    }
-  }, [pdfDoc]);
-
-  // Effects
-  useEffect(() => {
-    console.log("Initial PDF load useEffect triggered");
-    loadPDF();
-  }, []);
-
-  useEffect(() => {
-    console.log("Render page useEffect triggered:", { pdfDoc: !!pdfDoc, currentPage, totalPages, scale });
-    if (pdfDoc && currentPage <= totalPages) {
-      renderPage(currentPage);
-    }
-  }, [pdfDoc, currentPage, scale]);
-
-  useEffect(() => {
-    console.log("Upload URL useEffect triggered:", { uploadedPdfUrl });
-    if (uploadedPdfUrl) {
-      console.log("Triggering loadPDF due to uploaded PDF URL change");
-      loadPDF();
-    }
-  }, [uploadedPdfUrl]);
-
-  useEffect(() => {
-    if (pdfDoc && viewportRef.current) {
-      autoFitToContainer();
-    }
-  }, [pdfDoc, autoFitToContainer]);
-
-  useEffect(() => {
-    updatePinPositions();
-  }, [pdfDimensions, updatePinPositions]);
-
-  // Handle clicks outside PDF area to close comment boxes
-  const handleOutsideClick = useCallback((e: MouseEvent) => {
-    if (activeComment && canvasRef.current) {
-      const canvas = canvasRef.current;
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-
-      if (x < 0 || y < 0 || x > canvas.width || y > canvas.height) {
-        cancelComment();
-      }
-    }
-  }, [activeComment]);
-
-  useEffect(() => {
-    document.addEventListener('click', handleOutsideClick);
-    return () => {
-      document.removeEventListener('click', handleOutsideClick);
-    };
-  }, [handleOutsideClick]);
-
-  // Wheel zoom functionality for enhanced user experience
-  const handleWheel = useCallback((e: WheelEvent) => {
-    if (e.ctrlKey || e.metaKey) {
-      e.preventDefault();
-      const delta = e.deltaY > 0 ? -0.1 : 0.1;
-      setScale(prev => {
-        const newScale = Math.max(0.05, Math.min(10, prev + delta));
-        console.log("Wheel zoom:", { from: prev, to: newScale, delta });
-        return newScale;
-      });
-    }
-  }, []);
-
-  // Add wheel zoom event listener
-  useEffect(() => {
-    const container = viewportRef.current;
-    if (container) {
-      container.addEventListener('wheel', handleWheel, { passive: false });
-      return () => {
-        container.removeEventListener('wheel', handleWheel);
-      };
-    }
-  }, [handleWheel]);
-
-  // Main functions
+  // Core PDF functions
   const loadPDF = async () => {
     try {
-      console.log("Starting PDF loading process");
       setIsLoading(true);
-      
       const loadingTask = pdfjsLib.getDocument(currentPdfUrl);
       const pdf = await loadingTask.promise;
       
-      console.log("PDF document loaded successfully!");
       setPdfDoc(pdf);
       setTotalPages(pdf.numPages);
       setCurrentPage(1);
@@ -294,9 +135,27 @@ export default function PDFViewerPage() {
     }
   };
 
-  const renderPage = async (pageNum: number) => {
-    console.log(`Starting to render page ${pageNum} at scale ${scale}`);
+  const autoFitToHeight = useCallback(async () => {
+    if (!pdfDoc || !viewportRef.current) return;
     
+    try {
+      const page = await pdfDoc.getPage(1);
+      const viewport = page.getViewport({ scale: 1 });
+      const containerHeight = viewportRef.current.clientHeight - 80;
+      const containerWidth = viewportRef.current.clientWidth - 80;
+      
+      // Scale to fit height, with width as secondary constraint
+      const scaleByHeight = containerHeight / viewport.height;
+      const scaleByWidth = containerWidth / viewport.width;
+      const fitScale = Math.min(scaleByHeight, scaleByWidth);
+      
+      setScale(fitScale);
+    } catch (error) {
+      console.error("Error auto-fitting PDF:", error);
+    }
+  }, [pdfDoc]);
+
+  const renderPage = async (pageNum: number) => {
     if (!pdfDoc || !pdfContainerRef.current) return;
 
     try {
@@ -308,8 +167,6 @@ export default function PDFViewerPage() {
       }
 
       const viewport = page.getViewport({ scale });
-      console.log("Viewport dimensions:", { width: viewport.width, height: viewport.height, scale });
-      
       setPdfDimensions({ width: viewport.width, height: viewport.height });
 
       const canvas = document.createElement("canvas");
@@ -317,12 +174,9 @@ export default function PDFViewerPage() {
       
       if (!context) return;
 
-      // Set canvas dimensions to match viewport exactly
       canvas.height = viewport.height;
       canvas.width = viewport.width;
-      
-      // Apply contained styling that prevents overflow
-      canvas.className = "border shadow-lg bg-white max-w-full max-h-full object-contain";
+      canvas.className = "border shadow-lg bg-white";
       
       pdfContainerRef.current.appendChild(canvas);
       canvasRef.current = canvas;
@@ -333,51 +187,63 @@ export default function PDFViewerPage() {
       };
 
       await page.render(renderContext).promise;
-      console.log(`Page ${pageNum} rendered successfully with contained dimensions`);
-      
-      // Update pin positions after rendering is complete
-      setTimeout(() => {
-        updatePinPositions();
-      }, 50);
-      
+      updatePinPositions();
     } catch (error) {
       console.error(`Error rendering page ${pageNum}:`, error);
     }
   };
 
+  // Pin positioning system
+  const updatePinPositions = useCallback(() => {
+    if (!canvasRef.current || pdfDimensions.width === 0) return;
+
+    setPins(prevPins => 
+      prevPins.map(pin => ({
+        ...pin,
+        x: pin.relativeX * pdfDimensions.width,
+        y: pin.relativeY * pdfDimensions.height
+      }))
+    );
+
+    setComments(prevComments =>
+      prevComments.map(comment => ({
+        ...comment,
+        x: comment.relativeX * pdfDimensions.width,
+        y: comment.relativeY * pdfDimensions.height
+      }))
+    );
+  }, [pdfDimensions]);
+
+  // Zoom controls
+  const zoomIn = () => setScale(prev => Math.min(prev + 0.25, 5));
+  const zoomOut = () => setScale(prev => Math.max(prev - 0.25, 0.1));
+
+  // Page navigation
+  const nextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  // Comment system
   const handleCanvasClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!canvasRef.current || draggedPin || activeComment) return;
 
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
-    
-    // Calculate click position relative to the canvas
-    const clickX = e.clientX - rect.left;
-    const clickY = e.clientY - rect.top;
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
 
-    // Ensure click is within canvas bounds
-    if (clickX < 0 || clickY < 0 || clickX > rect.width || clickY > rect.height) {
-      return;
-    }
+    if (x < 0 || y < 0 || x > canvas.width || y > canvas.height) return;
 
-    // Convert screen coordinates to canvas coordinates accounting for any scaling
-    const scaleFactorX = canvas.width / rect.width;
-    const scaleFactorY = canvas.height / rect.height;
-    
-    const canvasX = clickX * scaleFactorX;
-    const canvasY = clickY * scaleFactorY;
-
-    // Calculate relative position (0-1) based on actual canvas dimensions
-    const relativeX = canvasX / canvas.width;
-    const relativeY = canvasY / canvas.height;
-
-    console.log("Enhanced click handling:", { 
-      screen: { x: clickX, y: clickY },
-      canvas: { x: canvasX, y: canvasY, width: canvas.width, height: canvas.height },
-      relative: { x: relativeX, y: relativeY },
-      scale: scale,
-      page: currentPage 
-    });
+    const relativeX = x / canvas.width;
+    const relativeY = y / canvas.height;
     
     const commentId = `comment-${Date.now()}`;
     const pinId = `pin-${Date.now()}`;
@@ -385,8 +251,8 @@ export default function PDFViewerPage() {
 
     const newPin: Pin = {
       id: pinId,
-      x: canvasX,
-      y: canvasY,
+      x,
+      y,
       pageNumber: currentPage,
       user: CURRENT_USER,
       number: pinNumber,
@@ -401,65 +267,6 @@ export default function PDFViewerPage() {
   const getNextPinNumber = () => {
     const currentPagePins = pins.filter(p => p.pageNumber === currentPage);
     return currentPagePins.length + 1;
-  };
-
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    
-    if (!file) return;
-    
-    if (file && file.type === 'application/pdf') {
-      const fileUrl = URL.createObjectURL(file);
-      setUploadedPdfUrl(fileUrl);
-      setUploadedFileName(file.name);
-      
-      toast({
-        title: "PDF Uploaded Successfully",
-        description: `${file.name} has been loaded for viewing.`,
-      });
-    } else {
-      toast({
-        title: "Invalid File Type",
-        description: "Please select a valid PDF file.",
-        variant: "destructive",
-      });
-    }
-    event.target.value = '';
-  };
-
-  const downloadPDF = () => {
-    const link = document.createElement("a");
-    link.href = currentPdfUrl;
-    link.download = uploadedFileName || "document.pdf";
-    link.click();
-  };
-
-  const zoomIn = () => {
-    setScale(prev => {
-      const newScale = Math.min(prev + 0.25, 10);
-      console.log("Zooming in:", { from: prev, to: newScale });
-      return newScale;
-    });
-  };
-
-  const zoomOut = () => {
-    setScale(prev => {
-      const newScale = Math.max(prev - 0.25, 0.05);
-      console.log("Zooming out:", { from: prev, to: newScale });
-      return newScale;
-    });
-  };
-
-  const nextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const prevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
   };
 
   const saveComment = () => {
@@ -477,7 +284,6 @@ export default function PDFViewerPage() {
       pageNumber: relatedPin.pageNumber,
       text: commentText,
       user: CURRENT_USER,
-      replies: [],
       timestamp: new Date(),
       relativeX: relatedPin.relativeX,
       relativeY: relatedPin.relativeY,
@@ -503,38 +309,31 @@ export default function PDFViewerPage() {
   };
 
   const renumberPins = () => {
+    const pageNumber = currentPage;
+    const currentPagePins = pins.filter(p => p.pageNumber === pageNumber);
+    
+    currentPagePins.sort((a, b) => a.number - b.number);
+    
     const updatedPins = pins.map(pin => {
-      const samePagePins = pins.filter(p => p.pageNumber === pin.pageNumber && p.id !== pin.id);
-      const smallerNumbers = samePagePins.filter(p => p.number < pin.number);
-      return { ...pin, number: smallerNumbers.length + 1 };
+      if (pin.pageNumber === pageNumber) {
+        const index = currentPagePins.findIndex(p => p.id === pin.id);
+        return { ...pin, number: index + 1 };
+      }
+      return pin;
     });
+    
     setPins(updatedPins);
   };
 
+  // Drag system
   const handlePinDragStart = (e: React.MouseEvent, pinId: string) => {
     e.stopPropagation();
     const pin = pins.find(p => p.id === pinId);
     if (!pin || !canvasRef.current) return;
 
-    const canvas = canvasRef.current;
-    const rect = canvas.getBoundingClientRect();
-    
-    // Calculate offset accounting for canvas scaling
-    const scaleFactorX = canvas.width / rect.width;
-    const scaleFactorY = canvas.height / rect.height;
-    
-    const screenX = (e.clientX - rect.left) * scaleFactorX;
-    const screenY = (e.clientY - rect.top) * scaleFactorY;
-    
-    const offsetX = screenX - pin.x;
-    const offsetY = screenY - pin.y;
-    
-    console.log("Drag start:", { 
-      pinId, 
-      pinPos: { x: pin.x, y: pin.y },
-      screenPos: { x: screenX, y: screenY },
-      offset: { x: offsetX, y: offsetY }
-    });
+    const rect = canvasRef.current.getBoundingClientRect();
+    const offsetX = e.clientX - rect.left - pin.x;
+    const offsetY = e.clientY - rect.top - pin.y;
     
     setDraggedPin(pinId);
     setIsDragging(true);
@@ -544,32 +343,15 @@ export default function PDFViewerPage() {
   const handlePinDrag = (e: React.MouseEvent) => {
     if (!isDragging || !draggedPin || !canvasRef.current) return;
 
-    const canvas = canvasRef.current;
-    const rect = canvas.getBoundingClientRect();
-    
-    // Convert screen coordinates to canvas coordinates
-    const scaleFactorX = canvas.width / rect.width;
-    const scaleFactorY = canvas.height / rect.height;
-    
-    const screenX = (e.clientX - rect.left) * scaleFactorX;
-    const screenY = (e.clientY - rect.top) * scaleFactorY;
-    
-    const newX = screenX - dragOffset.x;
-    const newY = screenY - dragOffset.y;
+    const rect = canvasRef.current.getBoundingClientRect();
+    const newX = e.clientX - rect.left - dragOffset.x;
+    const newY = e.clientY - rect.top - dragOffset.y;
 
-    // Constrain to canvas bounds
-    const constrainedX = Math.max(0, Math.min(newX, canvas.width));
-    const constrainedY = Math.max(0, Math.min(newY, canvas.height));
+    const constrainedX = Math.max(0, Math.min(newX, canvasRef.current.width));
+    const constrainedY = Math.max(0, Math.min(newY, canvasRef.current.height));
 
-    // Calculate new relative position
-    const newRelativeX = constrainedX / canvas.width;
-    const newRelativeY = constrainedY / canvas.height;
-
-    console.log("Dragging:", {
-      screen: { x: screenX, y: screenY },
-      canvas: { x: constrainedX, y: constrainedY },
-      relative: { x: newRelativeX, y: newRelativeY }
-    });
+    const newRelativeX = constrainedX / canvasRef.current.width;
+    const newRelativeY = constrainedY / canvasRef.current.height;
 
     setPins(prev => prev.map(pin => 
       pin.id === draggedPin 
@@ -590,22 +372,39 @@ export default function PDFViewerPage() {
     setDragOffset({ x: 0, y: 0 });
   };
 
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    setMousePosition({ x: e.clientX, y: e.clientY });
-  }, []);
-
-  const getCurrentPageComments = () => {
-    return comments.filter(comment => comment.pageNumber === currentPage);
+  // File upload
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    
+    if (!file) return;
+    
+    if (file.type === 'application/pdf') {
+      const fileUrl = URL.createObjectURL(file);
+      setUploadedPdfUrl(fileUrl);
+      setUploadedFileName(file.name);
+      
+      toast({
+        title: "PDF Uploaded Successfully",
+        description: `${file.name} has been loaded for viewing.`,
+      });
+    } else {
+      toast({
+        title: "Invalid File Type",
+        description: "Please select a valid PDF file.",
+        variant: "destructive",
+      });
+    }
+    event.target.value = '';
   };
 
-  const getCurrentPagePins = () => {
-    return pins.filter(pin => pin.pageNumber === currentPage);
+  const downloadPDF = () => {
+    const link = document.createElement("a");
+    link.href = currentPdfUrl;
+    link.download = uploadedFileName || "document.pdf";
+    link.click();
   };
 
-  const formatTimestamp = (date: Date) => {
-    return date.toLocaleDateString() + " " + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  };
-
+  // Sidebar resize
   const handleResizeStart = (e: React.MouseEvent) => {
     e.preventDefault();
     const startX = e.clientX;
@@ -624,6 +423,69 @@ export default function PDFViewerPage() {
     document.addEventListener('mousemove', handleResize);
     document.addEventListener('mouseup', handleResizeEnd);
   };
+
+  // Utility functions
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    setMousePosition({ x: e.clientX, y: e.clientY });
+  }, []);
+
+  const getCurrentPageComments = () => {
+    return comments.filter(comment => comment.pageNumber === currentPage);
+  };
+
+  const getCurrentPagePins = () => {
+    return pins.filter(pin => pin.pageNumber === currentPage);
+  };
+
+  const formatTimestamp = (date: Date) => {
+    return date.toLocaleDateString() + " " + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  // Effects
+  useEffect(() => {
+    loadPDF();
+  }, []);
+
+  useEffect(() => {
+    if (pdfDoc && currentPage <= totalPages) {
+      renderPage(currentPage);
+    }
+  }, [pdfDoc, currentPage, scale]);
+
+  useEffect(() => {
+    if (uploadedPdfUrl) {
+      loadPDF();
+    }
+  }, [uploadedPdfUrl]);
+
+  useEffect(() => {
+    if (pdfDoc && viewportRef.current) {
+      autoFitToHeight();
+    }
+  }, [pdfDoc, autoFitToHeight]);
+
+  useEffect(() => {
+    updatePinPositions();
+  }, [pdfDimensions, updatePinPositions]);
+
+  // Handle clicks outside to close comment boxes
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (activeComment && canvasRef.current) {
+        const canvas = canvasRef.current;
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        if (x < 0 || y < 0 || x > canvas.width || y > canvas.height) {
+          cancelComment();
+        }
+      }
+    };
+
+    document.addEventListener('click', handleOutsideClick);
+    return () => document.removeEventListener('click', handleOutsideClick);
+  }, [activeComment]);
 
   if (isLoading) {
     return (
@@ -730,12 +592,19 @@ export default function PDFViewerPage() {
           </div>
         </div>
 
-        {/* PDF Viewport Container - Fixed Size */}
+        {/* PDF Container */}
         <div 
           ref={viewportRef}
-          className="flex-1 relative overflow-hidden"
+          className="flex-1 overflow-auto p-4 relative"
           onMouseEnter={() => setHovering(true)}
           onMouseLeave={() => setHovering(false)}
+          onMouseMove={(e) => {
+            handleMouseMove(e);
+            if (isDragging) {
+              handlePinDrag(e);
+            }
+          }}
+          onMouseUp={handlePinDragEnd}
         >
           {/* Hover instruction */}
           {hovering && !activeComment && !isDragging && (
@@ -746,94 +615,78 @@ export default function PDFViewerPage() {
                 top: mousePosition.y - 25
               }}
             >
-              Click to add comment (Ctrl+scroll to zoom)
+              Click to add comment
             </div>
           )}
 
-          {/* Scrollable viewport for PDF content */}
-          <div 
-            className="w-full h-full overflow-auto p-4"
-            style={{ 
-              scrollBehavior: 'smooth'
-            }}
-            onMouseMove={(e) => {
-              handleMouseMove(e);
-              if (isDragging) {
-                handlePinDrag(e);
-              }
-            }}
-            onMouseUp={handlePinDragEnd}
-          >
-            {/* Centered PDF container */}
-            <div className="flex justify-center items-start min-h-full">
-              <div 
-                ref={pdfContainerRef}
-                className="relative cursor-crosshair"
-                onClick={handleCanvasClick}
-              >
-                {/* Pins for current page */}
-                {getCurrentPagePins().map((pin) => (
-                  <Popover key={pin.id} open={activeComment === `comment-${pin.id.split('-')[1]}`}>
-                    <PopoverTrigger asChild>
+          <div className="flex justify-center">
+            <div 
+              ref={pdfContainerRef}
+              className="relative cursor-crosshair"
+              onClick={handleCanvasClick}
+            >
+              {/* Pins for current page */}
+              {getCurrentPagePins().map((pin) => (
+                <Popover key={pin.id} open={activeComment === `comment-${pin.id.split('-')[1]}`}>
+                  <PopoverTrigger asChild>
+                    <div
+                      className="absolute z-10 cursor-move transform -translate-x-1/2 -translate-y-1/2 hover:scale-110 transition-transform"
+                      style={{ left: pin.x, top: pin.y }}
+                      onMouseDown={(e) => handlePinDragStart(e, pin.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (!isDragging) {
+                          const commentId = comments.find(c => 
+                            c.x === pin.x && c.y === pin.y && c.pageNumber === pin.pageNumber
+                          )?.id;
+                          if (commentId) {
+                            setHighlightedComment(commentId);
+                          }
+                        }
+                      }}
+                    >
                       <div
-                        className="absolute z-10 cursor-move transform -translate-x-1/2 -translate-y-1/2 hover:scale-110 transition-transform"
-                        style={{ left: pin.x, top: pin.y }}
-                        onMouseDown={(e) => handlePinDragStart(e, pin.id)}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (!isDragging) {
-                            const commentId = comments.find(c => 
-                              c.x === pin.x && c.y === pin.y && c.pageNumber === pin.pageNumber
-                            )?.id;
-                            if (commentId) {
-                              setHighlightedComment(commentId);
-                            }
+                        className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-white"
+                        style={{ backgroundColor: pin.user.color }}
+                      >
+                        {pin.number}
+                      </div>
+                    </div>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-80 p-3">
+                    <div className="space-y-3">
+                      <Textarea
+                        placeholder="Enter your comment..."
+                        value={commentText}
+                        onChange={(e) => setCommentText(e.target.value)}
+                        className="min-h-[80px] text-sm"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            saveComment();
+                          }
+                          if (e.key === 'Escape') {
+                            cancelComment();
                           }
                         }}
-                      >
-                        <div
-                          className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-white"
-                          style={{ backgroundColor: pin.user.color }}
+                        autoFocus
+                      />
+                      <div className="flex justify-end gap-2">
+                        <Button size="sm" variant="outline" onClick={cancelComment}>
+                          Cancel
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          onClick={saveComment}
+                          disabled={!commentText.trim()}
                         >
-                          {pin.number}
-                        </div>
+                          Save Comment
+                        </Button>
                       </div>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-80 p-3">
-                      <div className="space-y-3">
-                        <Textarea
-                          placeholder="Enter your comment..."
-                          value={commentText}
-                          onChange={(e) => setCommentText(e.target.value)}
-                          className="min-h-[80px] text-sm"
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' && !e.shiftKey) {
-                              e.preventDefault();
-                              saveComment();
-                            }
-                            if (e.key === 'Escape') {
-                              cancelComment();
-                            }
-                          }}
-                          autoFocus
-                        />
-                        <div className="flex justify-end gap-2">
-                          <Button size="sm" variant="outline" onClick={cancelComment}>
-                            Cancel
-                          </Button>
-                          <Button 
-                            size="sm" 
-                            onClick={saveComment}
-                            disabled={!commentText.trim()}
-                          >
-                            Save Comment
-                          </Button>
-                        </div>
-                      </div>
-                    </PopoverContent>
-                  </Popover>
-                ))}
-              </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              ))}
             </div>
           </div>
         </div>
@@ -848,7 +701,6 @@ export default function PDFViewerPage() {
         >
           {/* Resize handle */}
           <div
-            ref={resizeRef}
             className="absolute left-0 top-0 w-1 h-full bg-gray-300 dark:bg-gray-600 cursor-col-resize hover:bg-blue-500 transition-colors"
             onMouseDown={handleResizeStart}
           >
@@ -857,7 +709,7 @@ export default function PDFViewerPage() {
             </div>
           </div>
 
-          <div className="p-3 border-b">
+          <div className="p-2 border-b">
             <div className="flex items-center gap-2">
               <MessageSquare className="h-4 w-4" />
               <h2 className="text-sm font-semibold">Comments</h2>
@@ -865,7 +717,7 @@ export default function PDFViewerPage() {
             </div>
           </div>
           
-          <ScrollArea className="h-full p-3">
+          <ScrollArea className="h-full p-2">
             {getCurrentPageComments().length === 0 ? (
               <div className="text-center text-gray-500 mt-8">
                 <MessageSquare className="h-8 w-8 mx-auto mb-3 opacity-50" />
@@ -882,12 +734,13 @@ export default function PDFViewerPage() {
                   return (
                     <Card 
                       key={comment.id} 
-                      className={`border-l-4 transition-colors ${
+                      className={`border-l-4 transition-colors cursor-pointer ${
                         highlightedComment === comment.id ? 'bg-blue-50 dark:bg-blue-900/20' : ''
                       }`}
                       style={{ borderLeftColor: comment.user.color }}
+                      onClick={() => setHighlightedComment(comment.id)}
                     >
-                      <CardHeader className="pb-1 px-3 pt-2">
+                      <CardHeader className="pb-1 px-2 pt-2">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <div 
@@ -898,27 +751,20 @@ export default function PDFViewerPage() {
                             </div>
                             <CardTitle className="text-xs">{comment.user.name}</CardTitle>
                           </div>
-                          <div className="flex items-center gap-1">
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              className="h-6 w-6 p-0"
-                              onClick={() => setEditingComment(comment.id)}
-                            >
-                              <Edit className="h-3 w-3" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              className="h-6 w-6 p-0 text-red-500 hover:text-red-700"
-                              onClick={() => deleteComment(comment.id)}
-                            >
-                              <Trash className="h-3 w-3" />
-                            </Button>
-                          </div>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-6 w-6 p-0 text-red-500 hover:text-red-700"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              deleteComment(comment.id);
+                            }}
+                          >
+                            <Trash className="h-3 w-3" />
+                          </Button>
                         </div>
                       </CardHeader>
-                      <CardContent className="pt-0 px-3 pb-2">
+                      <CardContent className="pt-0 px-2 pb-2">
                         <p className="text-xs mb-1">{comment.text}</p>
                         <p className="text-xs text-gray-500">
                           {formatTimestamp(comment.timestamp)}
