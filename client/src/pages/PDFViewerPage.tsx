@@ -147,12 +147,59 @@ export default function PDFViewerPage() {
     console.log("📊 Current PDF URL changed:", { currentPdfUrl, uploadedPdfUrl });
   }, [currentPdfUrl]);
 
+  const updatePinPositions = useCallback(() => {
+    if (!canvasRef.current || pdfDimensions.width === 0) return;
+
+    setPins(prevPins => 
+      prevPins.map(pin => ({
+        ...pin,
+        x: pin.relativeX * pdfDimensions.width,
+        y: pin.relativeY * pdfDimensions.height
+      }))
+    );
+
+    setComments(prevComments =>
+      prevComments.map(comment => ({
+        ...comment,
+        x: comment.relativeX * pdfDimensions.width,
+        y: comment.relativeY * pdfDimensions.height
+      }))
+    );
+  }, [pdfDimensions]);
+
+  const autoFitToHeight = useCallback(async () => {
+    if (!pdfDoc || !pdfContainerRef.current) return;
+    
+    try {
+      const page = await pdfDoc.getPage(1);
+      const viewport = page.getViewport({ scale: 1 });
+      const containerHeight = pdfContainerRef.current.clientHeight - 40; // Account for padding
+      const containerWidth = pdfContainerRef.current.clientWidth - 40;
+      
+      // Calculate scale to fit both height and width, maintaining aspect ratio
+      const scaleByHeight = containerHeight / viewport.height;
+      const scaleByWidth = containerWidth / viewport.width;
+      const newScale = Math.min(scaleByHeight, scaleByWidth, 2); // Cap at 2x scale
+      
+      console.log("📐 Auto-fitting PDF:", { 
+        containerHeight, 
+        containerWidth, 
+        pdfHeight: viewport.height,
+        pdfWidth: viewport.width,
+        newScale 
+      });
+      setScale(newScale);
+    } catch (error) {
+      console.error("❌ Error auto-fitting PDF:", error);
+    }
+  }, [pdfDoc]);
+
   // Auto-fit PDF to viewer height
   useEffect(() => {
     if (pdfDoc && pdfContainerRef.current) {
       autoFitToHeight();
     }
-  }, [pdfDoc, pdfContainerRef.current]);
+  }, [pdfDoc, pdfContainerRef.current, autoFitToHeight]);
 
   // Update pin positions when PDF dimensions change due to zoom
   useEffect(() => {
@@ -208,53 +255,6 @@ export default function PDFViewerPage() {
       });
     }
   };
-
-  const updatePinPositions = useCallback(() => {
-    if (!canvasRef.current || pdfDimensions.width === 0) return;
-
-    setPins(prevPins => 
-      prevPins.map(pin => ({
-        ...pin,
-        x: pin.relativeX * pdfDimensions.width,
-        y: pin.relativeY * pdfDimensions.height
-      }))
-    );
-
-    setComments(prevComments =>
-      prevComments.map(comment => ({
-        ...comment,
-        x: comment.relativeX * pdfDimensions.width,
-        y: comment.relativeY * pdfDimensions.height
-      }))
-    );
-  }, [pdfDimensions]);
-
-  const autoFitToHeight = useCallback(async () => {
-    if (!pdfDoc || !pdfContainerRef.current) return;
-    
-    try {
-      const page = await pdfDoc.getPage(1);
-      const viewport = page.getViewport({ scale: 1 });
-      const containerHeight = pdfContainerRef.current.clientHeight - 40; // Account for padding
-      const containerWidth = pdfContainerRef.current.clientWidth - 40;
-      
-      // Calculate scale to fit both height and width, maintaining aspect ratio
-      const scaleByHeight = containerHeight / viewport.height;
-      const scaleByWidth = containerWidth / viewport.width;
-      const newScale = Math.min(scaleByHeight, scaleByWidth, 2); // Cap at 2x scale
-      
-      console.log("📐 Auto-fitting PDF:", { 
-        containerHeight, 
-        containerWidth, 
-        pdfHeight: viewport.height,
-        pdfWidth: viewport.width,
-        newScale 
-      });
-      setScale(newScale);
-    } catch (error) {
-      console.error("❌ Error auto-fitting PDF:", error);
-    }
-  }, [pdfDoc]);
 
   const renderPage = async (pageNum: number) => {
     console.log(`🎨 Starting to render page ${pageNum}`);
