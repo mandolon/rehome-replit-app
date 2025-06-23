@@ -101,6 +101,7 @@ export default function PDFViewerPage() {
   const [popoverText, setPopoverText] = useState("");
   const [cursorPosition, setCursorPosition] = useState<{ x: number; y: number } | null>(null);
   const [canvasHovering, setCanvasHovering] = useState(false);
+  const [tempPin, setTempPin] = useState<Pin | null>(null);
   
   const pdfCanvasRef = useRef<PDFCanvasHandle>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -217,6 +218,10 @@ export default function PDFViewerPage() {
   const handleCanvasClick = (x: number, y: number) => {
     console.log('Canvas clicked:', { x, y, canvasHovering, currentPage });
     
+    // Create temporary pin immediately
+    const tempPinData = createTemporaryPin(x, y);
+    setTempPin(tempPinData);
+    
     setPopoverComment({ x, y, pageNumber: currentPage });
     setPopoverText("");
     console.log('Popover comment set:', { x, y });
@@ -261,11 +266,33 @@ export default function PDFViewerPage() {
     setComments([...comments, newComment]);
     setPopoverText("");
     setPopoverComment(null);
+    setTempPin(null); // Clear temporary pin after adding permanent one
+    
+    console.log('Added pin and comment:', { pin: newPin, comment: newComment });
+  };
+
+  const createTemporaryPin = (x: number, y: number) => {
+    // Create a temporary pin when clicking, even before adding comment
+    const tempPinId = `temp-pin-${Date.now()}`;
+    const pinNumber = pins.filter(p => p.pageNumber === currentPage).length + 1;
+    
+    const tempPin: Pin = {
+      id: tempPinId,
+      x,
+      y,
+      pageNumber: currentPage,
+      user: CURRENT_USER,
+      number: pinNumber,
+    };
+    
+    // Store the temporary pin separately so we can remove it if comment is cancelled
+    return tempPin;
   };
 
   const cancelPopoverComment = () => {
     setPopoverComment(null);
     setPopoverText("");
+    setTempPin(null); // Remove temporary pin when cancelling
   };
 
   const addComment = () => {
@@ -434,7 +461,12 @@ export default function PDFViewerPage() {
   };
 
   const getCurrentPagePins = () => {
-    return pins.filter(pin => pin.pageNumber === currentPage);
+    const currentPins = pins.filter(pin => pin.pageNumber === currentPage);
+    // Include temporary pin if it exists and is on current page
+    if (tempPin && tempPin.pageNumber === currentPage) {
+      return [...currentPins, tempPin];
+    }
+    return currentPins;
   };
 
   if (isLoading) {
