@@ -9,6 +9,8 @@
   padding: 2rem;
   overflow: auto;
   background: #f8f9fa;
+  /* Ensure scrollbars are visible within the container */
+  box-sizing: border-box;
 }
 
 .pdf-canvas-wrapper {

@@ -322,11 +322,11 @@ export default function PDFViewerPage() {
         onFileUpload={handleFileUpload}
       />
 
-      {/* Main PDF Viewer - with top padding for fixed toolbar */}
-      <div className={`flex flex-col h-full pt-16 transition-all duration-200 ${sidebarOpen ? 'mr-80' : 'mr-0'}`}>
-        {/* PDF Container */}
+      {/* Main PDF Viewer - with constrained boundaries */}
+      <div className={`fixed top-16 bottom-0 left-0 transition-all duration-200 ${sidebarOpen ? 'right-80' : 'right-0'}`}>
+        {/* PDF Container with internal scrolling */}
         <div 
-          className="flex-1 relative"
+          className="w-full h-full overflow-hidden"
           onMouseEnter={() => setHovering(true)}
           onMouseLeave={() => setHovering(false)}
         >
