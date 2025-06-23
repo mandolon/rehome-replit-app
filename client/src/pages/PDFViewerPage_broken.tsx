@@ -160,28 +160,34 @@ export default function PDFViewerPage() {
     );
   }, [pdfDimensions]);
 
-  const autoFitToHeight = useCallback(async () => {
+  const autoFitToContainer = useCallback(async () => {
     if (!pdfDoc || !pdfContainerRef.current) return;
     
     try {
       const page = await pdfDoc.getPage(1);
       const viewport = page.getViewport({ scale: 1 });
-      const containerHeight = pdfContainerRef.current.clientHeight - 40;
-      const containerWidth = pdfContainerRef.current.clientWidth - 40;
       
-      // For auto-fit, still use the minimum scale to fit content
+      // Get actual container dimensions (stable viewport area)
+      const containerElement = pdfContainerRef.current.parentElement;
+      if (!containerElement) return;
+      
+      const containerHeight = containerElement.clientHeight - 80; // Account for padding and toolbar
+      const containerWidth = containerElement.clientWidth - 80;
+      
+      // Calculate scale to fit PDF within stable container bounds
       const scaleByHeight = containerHeight / viewport.height;
       const scaleByWidth = containerWidth / viewport.width;
-      const newScale = Math.min(scaleByHeight, scaleByWidth, 1.5); // Reduced cap for better initial fit
+      const fitScale = Math.min(scaleByHeight, scaleByWidth, 1.0); // Cap at 1.0 for initial fit
       
-      console.log("Auto-fitting PDF:", { 
+      console.log("Auto-fitting PDF to container:", { 
         containerHeight, 
         containerWidth, 
         pdfHeight: viewport.height,
         pdfWidth: viewport.width,
-        newScale 
+        fitScale 
       });
-      setScale(newScale);
+      
+      setScale(fitScale);
     } catch (error) {
       console.error("Error auto-fitting PDF:", error);
     }
@@ -210,9 +216,9 @@ export default function PDFViewerPage() {
 
   useEffect(() => {
     if (pdfDoc && pdfContainerRef.current) {
-      autoFitToHeight();
+      autoFitToContainer();
     }
-  }, [pdfDoc, pdfContainerRef.current, autoFitToHeight]);
+  }, [pdfDoc, pdfContainerRef.current, autoFitToContainer]);
 
   useEffect(() => {
     updatePinPositions();
@@ -238,6 +244,30 @@ export default function PDFViewerPage() {
       document.removeEventListener('click', handleOutsideClick);
     };
   }, [handleOutsideClick]);
+
+  // Wheel zoom functionality for enhanced user experience
+  const handleWheel = useCallback((e: WheelEvent) => {
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? -0.1 : 0.1;
+      setScale(prev => {
+        const newScale = Math.max(0.05, Math.min(10, prev + delta));
+        console.log("Wheel zoom:", { from: prev, to: newScale, delta });
+        return newScale;
+      });
+    }
+  }, []);
+
+  // Add wheel zoom event listener
+  useEffect(() => {
+    const container = pdfContainerRef.current;
+    if (container) {
+      container.addEventListener('wheel', handleWheel, { passive: false });
+      return () => {
+        container.removeEventListener('wheel', handleWheel);
+      };
+    }
+  }, [handleWheel]);
 
   // Main functions
   const loadPDF = async () => {
@@ -293,11 +323,11 @@ export default function PDFViewerPage() {
       canvas.height = viewport.height;
       canvas.width = viewport.width;
       
-      // Remove width restrictions to allow zooming beyond container width
-      canvas.className = "border shadow-lg bg-white";
-      canvas.style.maxWidth = "none"; // Remove max-width restriction
-      canvas.style.width = `${viewport.width}px`;
-      canvas.style.height = `${viewport.height}px`;
+      // Apply stable styling for contained rendering
+      canvas.className = "border shadow-lg bg-white block mx-auto";
+      canvas.style.maxWidth = "100%";
+      canvas.style.maxHeight = "100%";
+      canvas.style.objectFit = "contain";
       
       pdfContainerRef.current.appendChild(canvas);
       canvasRef.current = canvas;
@@ -424,30 +454,6 @@ export default function PDFViewerPage() {
       return newScale;
     });
   };
-
-  // Wheel zoom functionality for enhanced user experience
-  const handleWheel = useCallback((e: WheelEvent) => {
-    if (e.ctrlKey || e.metaKey) {
-      e.preventDefault();
-      const delta = e.deltaY > 0 ? -0.1 : 0.1;
-      setScale(prev => {
-        const newScale = Math.max(0.05, Math.min(10, prev + delta));
-        console.log("Wheel zoom:", { from: prev, to: newScale, delta });
-        return newScale;
-      });
-    }
-  }, []);
-
-  // Add wheel zoom event listener
-  useEffect(() => {
-    const container = pdfContainerRef.current;
-    if (container) {
-      container.addEventListener('wheel', handleWheel, { passive: false });
-      return () => {
-        container.removeEventListener('wheel', handleWheel);
-      };
-    }
-  }, [handleWheel]);
 
   const nextPage = () => {
     if (currentPage < totalPages) {
@@ -731,21 +737,9 @@ export default function PDFViewerPage() {
 
         {/* PDF Container */}
         <div 
-          className="flex-1 overflow-auto p-4 relative"
-          style={{ 
-            scrollBehavior: 'smooth',
-            overflowX: 'auto',
-            overflowY: 'auto'
-          }}
+          className="flex-1 relative overflow-hidden"
           onMouseEnter={() => setHovering(true)}
           onMouseLeave={() => setHovering(false)}
-          onMouseMove={(e) => {
-            handleMouseMove(e);
-            if (isDragging) {
-              handlePinDrag(e);
-            }
-          }}
-          onMouseUp={handlePinDragEnd}
         >
           {/* Hover instruction */}
           {hovering && !activeComment && !isDragging && (
@@ -760,79 +754,94 @@ export default function PDFViewerPage() {
             </div>
           )}
 
-          {/* Unrestricted scrollable container for zoomed content */}
-          <div className="inline-block min-w-full">
-            <div 
-              ref={pdfContainerRef}
-              className="relative cursor-crosshair inline-block"
-              style={{
-                minWidth: 'fit-content',
-                width: 'max-content'
-              }}
-              onClick={handleCanvasClick}
-            >
-              {/* Pins for current page */}
-              {getCurrentPagePins().map((pin) => (
-                <Popover key={pin.id} open={activeComment === `comment-${pin.id.split('-')[1]}`}>
-                  <PopoverTrigger asChild>
-                    <div
-                      className="absolute z-10 cursor-move transform -translate-x-1/2 -translate-y-1/2 hover:scale-110 transition-transform"
-                      style={{ left: pin.x, top: pin.y }}
-                      onMouseDown={(e) => handlePinDragStart(e, pin.id)}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (!isDragging) {
-                          const commentId = comments.find(c => 
-                            c.x === pin.x && c.y === pin.y && c.pageNumber === pin.pageNumber
-                          )?.id;
-                          if (commentId) {
-                            setHighlightedComment(commentId);
-                          }
-                        }
-                      }}
-                    >
+          {/* Stable scrollable viewport */}
+          <div 
+            className="w-full h-full overflow-auto p-4"
+            style={{ 
+              scrollBehavior: 'smooth'
+            }}
+            onMouseMove={(e) => {
+              handleMouseMove(e);
+              if (isDragging) {
+                handlePinDrag(e);
+              }
+            }}
+            onMouseUp={handlePinDragEnd}
+          >
+            {/* Centered PDF container with stable dimensions */}
+            <div className="flex justify-center items-start min-h-full">
+              <div 
+                ref={pdfContainerRef}
+                className="relative cursor-crosshair"
+                style={{
+                  maxWidth: '100%',
+                  maxHeight: '100%'
+                }}
+                onClick={handleCanvasClick}
+              >
+                {/* Pins for current page */}
+                {getCurrentPagePins().map((pin) => (
+                  <Popover key={pin.id} open={activeComment === `comment-${pin.id.split('-')[1]}`}>
+                    <PopoverTrigger asChild>
                       <div
-                        className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-white"
-                        style={{ backgroundColor: pin.user.color }}
-                      >
-                        {pin.number}
-                      </div>
-                    </div>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-80 p-3">
-                    <div className="space-y-3">
-                      <Textarea
-                        placeholder="Enter your comment..."
-                        value={commentText}
-                        onChange={(e) => setCommentText(e.target.value)}
-                        className="min-h-[80px] text-sm"
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' && !e.shiftKey) {
-                            e.preventDefault();
-                            saveComment();
-                          }
-                          if (e.key === 'Escape') {
-                            cancelComment();
+                        className="absolute z-10 cursor-move transform -translate-x-1/2 -translate-y-1/2 hover:scale-110 transition-transform"
+                        style={{ left: pin.x, top: pin.y }}
+                        onMouseDown={(e) => handlePinDragStart(e, pin.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (!isDragging) {
+                            const commentId = comments.find(c => 
+                              c.x === pin.x && c.y === pin.y && c.pageNumber === pin.pageNumber
+                            )?.id;
+                            if (commentId) {
+                              setHighlightedComment(commentId);
+                            }
                           }
                         }}
-                        autoFocus
-                      />
-                      <div className="flex justify-end gap-2">
-                        <Button size="sm" variant="outline" onClick={cancelComment}>
-                          Cancel
-                        </Button>
-                        <Button 
-                          size="sm" 
-                          onClick={saveComment}
-                          disabled={!commentText.trim()}
+                      >
+                        <div
+                          className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-white"
+                          style={{ backgroundColor: pin.user.color }}
                         >
-                          Save Comment
-                        </Button>
+                          {pin.number}
+                        </div>
                       </div>
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              ))}
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80 p-3">
+                      <div className="space-y-3">
+                        <Textarea
+                          placeholder="Enter your comment..."
+                          value={commentText}
+                          onChange={(e) => setCommentText(e.target.value)}
+                          className="min-h-[80px] text-sm"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                              e.preventDefault();
+                              saveComment();
+                            }
+                            if (e.key === 'Escape') {
+                              cancelComment();
+                            }
+                          }}
+                          autoFocus
+                        />
+                        <div className="flex justify-end gap-2">
+                          <Button size="sm" variant="outline" onClick={cancelComment}>
+                            Cancel
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            onClick={saveComment}
+                            disabled={!commentText.trim()}
+                          >
+                            Save Comment
+                          </Button>
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                ))}
+              </div>
             </div>
           </div>
         </div>
