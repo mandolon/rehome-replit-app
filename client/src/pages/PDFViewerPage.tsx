@@ -86,6 +86,7 @@ export default function PDFViewerPage() {
   const [hovering, setHovering] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [scale, setScale] = useState(1.2);
+  const [fitToHeight, setFitToHeight] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [pdfDoc, setPdfDoc] = useState<pdfjsLib.PDFDocumentProxy | null>(null);
@@ -121,6 +122,25 @@ export default function PDFViewerPage() {
     console.log("📊 Current PDF URL changed:", { currentPdfUrl, uploadedPdfUrl });
   }, [currentPdfUrl]);
 
+  const calculateFitToHeightScale = async () => {
+    if (!pdfDoc || !pdfCanvasRef.current) return 1.2;
+    
+    try {
+      const page = await pdfDoc.getPage(currentPage);
+      const viewport = page.getViewport({ scale: 1 });
+      
+      // Get container dimensions (accounting for padding and margins)
+      const containerHeight = window.innerHeight - 64 - 64; // toolbar height + padding
+      const availableHeight = containerHeight - 32; // extra padding
+      
+      const fitScale = availableHeight / viewport.height;
+      return Math.max(0.1, fitScale); // Minimum scale of 0.1
+    } catch (error) {
+      console.error("Error calculating fit-to-height scale:", error);
+      return 1.2;
+    }
+  };
+
   const loadPDF = async () => {
     try {
       console.log("🚀 Starting PDF loading process");
@@ -152,6 +172,14 @@ export default function PDFViewerPage() {
       
       console.log("✅ PDF loading complete, setting loading state to false");
       setIsLoading(false);
+      
+      // Auto-fit to height for new PDFs
+      if (fitToHeight) {
+        setTimeout(async () => {
+          const fitScale = await calculateFitToHeightScale();
+          setScale(fitScale);
+        }, 100);
+      }
     } catch (error) {
       console.error("❌ Error loading PDF:", error);
       console.error("❌ PDF URL that failed:", currentPdfUrl);
@@ -273,11 +301,19 @@ export default function PDFViewerPage() {
   };
 
   const zoomIn = () => {
+    setFitToHeight(false);
     setScale(prev => Math.min(prev + 0.25, 3));
   };
 
   const zoomOut = () => {
+    setFitToHeight(false);
     setScale(prev => Math.max(prev - 0.25, 0.5));
+  };
+
+  const handleFitToHeight = async () => {
+    setFitToHeight(true);
+    const fitScale = await calculateFitToHeightScale();
+    setScale(fitScale);
   };
 
   const nextPage = () => {
@@ -318,6 +354,7 @@ export default function PDFViewerPage() {
         scale={scale}
         onZoomIn={zoomIn}
         onZoomOut={zoomOut}
+        onFitToHeight={handleFitToHeight}
         onDownload={downloadPDF}
         onFileUpload={handleFileUpload}
       />

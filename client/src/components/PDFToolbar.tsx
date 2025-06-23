@@ -9,7 +9,8 @@ import {
   ChevronRight,
   Eye,
   EyeOff,
-  Upload
+  Upload,
+  Maximize2
 } from "lucide-react";
 
 interface PDFToolbarProps {
@@ -23,6 +24,7 @@ interface PDFToolbarProps {
   scale: number;
   onZoomIn: () => void;
   onZoomOut: () => void;
+  onFitToHeight: () => void;
   onDownload: () => void;
   onFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
@@ -38,6 +40,7 @@ export default function PDFToolbar({
   scale,
   onZoomIn,
   onZoomOut,
+  onFitToHeight,
   onDownload,
   onFileUpload
 }: PDFToolbarProps) {
@@ -123,6 +126,9 @@ export default function PDFToolbar({
           </span>
           <Button variant="outline" size="sm" onClick={onZoomIn}>
             <ZoomIn className="h-4 w-4" />
+          </Button>
+          <Button variant="outline" size="sm" onClick={onFitToHeight} title="Fit to height">
+            <Maximize2 className="h-4 w-4" />
           </Button>
           
           <Separator orientation="vertical" className="h-6" />
