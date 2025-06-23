@@ -1,4 +1,4 @@
-import { useRef, useEffect, forwardRef, useImperativeHandle } from "react";
+import { useRef, useEffect, forwardRef, useImperativeHandle, useState } from "react";
 import * as pdfjsLib from "pdfjs-dist";
 import "./PDFCanvas.css";
 
@@ -33,6 +33,9 @@ const PDFCanvas = forwardRef<PDFCanvasHandle, PDFCanvasProps>(({
 }, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [isPanning, setIsPanning] = useState(false);
+  const [panStart, setPanStart] = useState({ x: 0, y: 0 });
+  const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
 
   useImperativeHandle(ref, () => ({
     getCanvasElement: () => canvasRef.current,
@@ -115,13 +118,53 @@ const PDFCanvas = forwardRef<PDFCanvasHandle, PDFCanvasProps>(({
     }
   }, [pdfDoc, currentPage, scale]);
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  // Reset pan offset when changing pages or loading new PDF
+  useEffect(() => {
+    setPanOffset({ x: 0, y: 0 });
+    setIsPanning(false);
+  }, [currentPage, pdfDoc]);
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.button !== 0) return; // Only left mouse button
+    
+    // Check if we're clicking on a pin to avoid interference
+    const target = e.target as HTMLElement;
+    if (target.closest('.pdf-pin')) return;
+    
+    setIsPanning(true);
+    setPanStart({ x: e.clientX - panOffset.x, y: e.clientY - panOffset.y });
+    e.preventDefault();
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isPanning) return;
+    
+    const newPanOffset = {
+      x: e.clientX - panStart.x,
+      y: e.clientY - panStart.y
+    };
+    setPanOffset(newPanOffset);
+    e.preventDefault();
+  };
+
+  const handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isPanning) {
+      setIsPanning(false);
+      e.preventDefault();
+      return;
+    }
+    
+    // Only trigger click for comment placement if we weren't panning
     if (!canvasRef.current) return;
 
     const rect = canvasRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const x = e.clientX - rect.left - panOffset.x;
+    const y = e.clientY - rect.top - panOffset.y;
     onCanvasClick(x, y);
+  };
+
+  const handleMouseLeave = () => {
+    setIsPanning(false);
   };
 
   const getCurrentPagePins = () => {
@@ -140,7 +183,14 @@ const PDFCanvas = forwardRef<PDFCanvasHandle, PDFCanvasProps>(({
       <div
         ref={containerRef}
         className="pdf-canvas-wrapper"
-        onClick={handleClick}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseLeave}
+        style={{
+          transform: `translate(${panOffset.x}px, ${panOffset.y}px)`,
+          cursor: isPanning ? 'grabbing' : 'grab'
+        }}
       >
         {/* Pins for current page */}
         {getCurrentPagePins().map((pin) => (

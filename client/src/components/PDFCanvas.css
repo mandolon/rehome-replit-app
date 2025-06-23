@@ -21,6 +21,12 @@
   border-radius: 8px;
   overflow: hidden;
   display: inline-block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.pdf-canvas-wrapper:active {
+  cursor: grabbing;
 }
 
 .pdf-canvas {
