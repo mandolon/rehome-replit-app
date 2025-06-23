@@ -225,11 +225,29 @@ export default function PDFViewerPage() {
       setTotalPages(pdf.numPages);
       setCurrentPage(1);
       
-      // Calculate and apply fit-to-height scale immediately
-      const fitScale = await calculateFitToHeightScale(pdf);
-      console.log("📏 Applying initial fit scale:", fitScale);
-      setScale(fitScale);
-      setFitToHeight(true);
+      // Calculate fit-to-height scale directly without dependency
+      try {
+        const page = await pdf.getPage(1);
+        const viewport = page.getViewport({ scale: 1 });
+        
+        const windowHeight = window.innerHeight;
+        const toolbarHeight = 80;
+        const padding = 40;
+        const extraPadding = 60;
+        const containerHeight = windowHeight - toolbarHeight - padding;
+        const availableHeight = Math.max(400, containerHeight - extraPadding);
+        
+        const fitScale = availableHeight / viewport.height;
+        const clampedScale = Math.max(0.3, Math.min(3.0, fitScale));
+        
+        console.log("📏 Applying initial fit scale:", clampedScale);
+        setScale(clampedScale);
+        setFitToHeight(true);
+      } catch (scaleError) {
+        console.error("❌ Error calculating initial scale:", scaleError);
+        setScale(1.2);
+        setFitToHeight(true);
+      }
       
       // Clear existing comments and pins
       setPins([]);
@@ -247,7 +265,7 @@ export default function PDFViewerPage() {
         variant: "destructive",
       });
     }
-  }, [currentPdfUrl, calculateFitToHeightScale, toast]);
+  }, [currentPdfUrl, toast]);
 
 
 
@@ -573,7 +591,7 @@ export default function PDFViewerPage() {
   // Load PDF when component mounts or URL changes
   useEffect(() => {
     loadPDF();
-  }, [loadPDF]);
+  }, [currentPdfUrl]);
 
   if (isLoading) {
     return (
