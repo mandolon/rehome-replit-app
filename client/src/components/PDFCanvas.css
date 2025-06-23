@@ -21,8 +21,6 @@
   border-radius: 8px;
   overflow: hidden;
   display: inline-block;
-  min-width: 100%;
-  min-height: 100%;
 }
 
 .pdf-canvas {
