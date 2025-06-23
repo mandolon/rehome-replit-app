@@ -301,6 +301,7 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
           <input
             type="checkbox"
             checked={isChecked}
+            disabled={isExistingNewPair && isOtherChecked}
             onChange={(e) => {
               const checked = e.target.checked;
               if (isExistingNewPair) {
@@ -312,7 +313,7 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
                 updateRowData(row.id, column.key, checked);
               }
             }}
-            className={`w-4 h-4 ${isHalfTone ? 'opacity-40' : ''}`}
+            className={`w-4 h-4 ${isHalfTone ? 'opacity-40' : ''} ${isExistingNewPair && isOtherChecked ? 'cursor-not-allowed opacity-50' : ''}`}
             style={isHalfTone ? { filter: 'contrast(0.5)' } : {}}
             data-row={rowIndex}
             data-column={column.key}
