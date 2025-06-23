@@ -286,7 +286,8 @@ export default function PDFViewerPage() {
   };
 
   const handleClick = (e: React.MouseEvent) => {
-    if (e.button !== 0) return; // Only handle left clicks
+    // Only add comments on left-click when not panning and zoom <= 100%
+    if (e.button !== 0 || isPanning || isDragging || scale > 1.0) return;
     
     if (!canvasRef.current) return;
     
@@ -302,6 +303,12 @@ export default function PDFViewerPage() {
     setTimeout(() => {
       commentBoxRef.current?.focus();
     }, 100);
+  };
+
+  const handleRightClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    // Right-click is only for context menu prevention when not zoomed
+    // Actual right-click panning is handled in handleMouseDown
   };
 
   const handleSaveComment = () => {
@@ -414,11 +421,23 @@ export default function PDFViewerPage() {
     }
   }, [isDragging, handlePinDragMove, handlePinDragEnd]);
 
-  const handlePanStart = (e: React.MouseEvent) => {
-    if (scale <= 1.0 || e.button !== 0) return;
+  const handleMouseDown = (e: React.MouseEvent) => {
+    // Don't handle if we're already dragging a pin
+    if (isDragging) return;
     
-    setIsPanning(true);
-    setPanStart({ x: e.clientX - panOffset.x, y: e.clientY - panOffset.y });
+    // Right-click drag for panning when zoomed over 100%
+    if (e.button === 2 && scale > 1.0) {
+      e.preventDefault();
+      setIsPanning(true);
+      setPanStart({ x: e.clientX - panOffset.x, y: e.clientY - panOffset.y });
+      return;
+    }
+    
+    // Left-click drag for panning when zoomed over 100% (as fallback)
+    if (e.button === 0 && scale > 1.0) {
+      setIsPanning(true);
+      setPanStart({ x: e.clientX - panOffset.x, y: e.clientY - panOffset.y });
+    }
   };
 
   const handlePanMove = useCallback((e: MouseEvent) => {
@@ -643,7 +662,8 @@ export default function PDFViewerPage() {
               ref={pdfContainerRef}
               className="relative"
               onClick={handleClick}
-              onMouseDown={handlePanStart}
+              onMouseDown={handleMouseDown}
+              onContextMenu={handleRightClick}
               style={{ 
                 cursor: isPanning ? 'grabbing' : scale > 1.0 ? 'grab' : 'crosshair',
                 transform: `translate(${panOffset.x}px, ${panOffset.y}px)`,
