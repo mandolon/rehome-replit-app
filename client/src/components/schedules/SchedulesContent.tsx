@@ -189,7 +189,7 @@ const SchedulesContent = () => {
       height: "7'-0\"",
       material: 'Wood',
       existing: false,
-      new: true,
+      new: false,
       manufacturer: 'Marvin',
       finish: 'Mahogany',
       comments: ''

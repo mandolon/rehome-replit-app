@@ -201,13 +201,50 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
         }
       }, 10);
     } else if (e.key === 'Enter') {
+      e.preventDefault();
+      
+      // If in edit mode, save and move to next field
+      if (isInEditMode && isInputColumn) {
+        // Apply dimension formatting if needed
+        const currentValue = (e.target as HTMLInputElement).value;
+        const currentColumn = columns.find(col => col.key === column);
+        if (currentColumn && (currentColumn.key === 'width' || currentColumn.key === 'height')) {
+          const formatDimension = (value: string) => {
+            const cleanValue = value.trim();
+            let match = cleanValue.match(/^(\d+)\s+(\d+)$/);
+            if (match) {
+              return `${match[1]}'-${match[2]}"`;
+            }
+            match = cleanValue.match(/^(\d+)$/);
+            if (match) {
+              return `${match[1]}'-0"`;
+            }
+            match = cleanValue.match(/^(\d+)\.(\d+)$/);
+            if (match) {
+              const wholeFeet = match[1];
+              const decimal = parseFloat('0.' + match[2]);
+              const inches = Math.round(decimal * 12);
+              return `${wholeFeet}'-${inches}"`;
+            }
+            return value;
+          };
+          const formattedValue = formatDimension(currentValue);
+          if (formattedValue !== currentValue) {
+            updateRowData(rowId, column, formattedValue);
+          }
+        }
+        
+        setEditingCell(null);
+        moveToNextField(currentIndex, column);
+        return;
+      }
+      
       // For dropdowns and values, activate the cell
       if (isSelectColumn || isInputColumn) {
         setEditingCell(cellKey);
         return;
       }
       
-      e.preventDefault();
       const currentColumnIndex = columns.findIndex(col => col.key === column);
       const isLastColumn = currentColumnIndex === columns.length - 1;
       
@@ -268,14 +305,10 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
             onChange={(e) => {
               const checked = e.target.checked;
               if (isExistingNewPair) {
-                if (checked) {
-                  // If checking this box, uncheck the other
-                  updateRowData(row.id, otherKey, false);
-                  updateRowData(row.id, column.key, true);
-                } else {
-                  // If unchecking this box, just uncheck it
-                  updateRowData(row.id, column.key, false);
-                }
+                // Always uncheck the other box first
+                updateRowData(row.id, otherKey, false);
+                // Then set this box to the checked state
+                updateRowData(row.id, column.key, checked);
               } else {
                 updateRowData(row.id, column.key, checked);
               }
