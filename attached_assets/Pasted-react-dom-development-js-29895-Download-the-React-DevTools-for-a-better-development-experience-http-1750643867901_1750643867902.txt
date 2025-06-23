@@ -1,0 +1,20 @@
+react-dom.development.js:29895 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+AppLayout.tsx:35 Sidebar resize: 13.1485355649
+App.tsx:54 App component is rendering, current path: /schedules
+SidebarHeader.tsx:20 SidebarHeader - currentUser: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+ProjectItem.tsx:36 ProjectItem - Checking if active: Object
+resizable-table.tsx:251 Enter pressed on dropdown, attempting to open...
+resizable-table.tsx:257 Cell element found: <button type=​"button" role=​"combobox" aria-controls=​"radix-:​rm:​" aria-expanded=​"false" aria-autocomplete=​"none" dir=​"ltr" data-state=​"closed" data-replit-metadata=​"client/​src/​components/​ui/​resizable-table.tsx:​464:​10" data-component-name=​"SelectTrigger" class=​"flex items-center justify-between rounded-md border-input py-2 text-sm ring-offset-background placeholder:​text-muted-foreground focus:​outline-none focus:​ring-2 focus:​ring-ring focus:​ring-offset-2 disabled:​cursor-not-allowed disabled:​opacity-50 [&>span]​:​line-clamp-1 h-6 border-0 shadow-none bg-transparent focus:​bg-muted/​30 px-0 w-full" data-row=​"0" data-column=​"style" style=​"font-size:​ 0.75rem;​">​…​</button>​flex
+resizable-table.tsx:269 Select trigger found: null
+resizable-table.tsx:251 Enter pressed on dropdown, attempting to open...
+resizable-table.tsx:257 Cell element found: <button type=​"button" role=​"combobox" aria-controls=​"radix-:​rm:​" aria-expanded=​"false" aria-autocomplete=​"none" dir=​"ltr" data-state=​"closed" data-replit-metadata=​"client/​src/​components/​ui/​resizable-table.tsx:​464:​10" data-component-name=​"SelectTrigger" class=​"flex items-center justify-between rounded-md border-input py-2 text-sm ring-offset-background placeholder:​text-muted-foreground focus:​outline-none focus:​ring-2 focus:​ring-ring focus:​ring-offset-2 disabled:​cursor-not-allowed disabled:​opacity-50 [&>span]​:​line-clamp-1 h-6 border-0 shadow-none bg-transparent focus:​bg-muted/​30 px-0 w-full" data-row=​"0" data-column=​"style" style=​"font-size:​ 0.75rem;​">​…​</button>​flex
+resizable-table.tsx:269 Select trigger found: null
+[NEW] Explain Console errors by using Copilot in Edge: click
+         
+         to explain an error. 
+        Learn more
+        Don't show again
