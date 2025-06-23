@@ -10,7 +10,7 @@ export interface TableColumn {
   width: number;
   minWidth?: number;
   maxWidth?: number;
-  type: 'input' | 'select' | 'custom';
+  type: 'input' | 'select' | 'custom' | 'checkbox';
   options?: string[] | ((rowData: any) => string[]);
   placeholder?: string;
   allowCustomInput?: boolean;
@@ -180,6 +180,30 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
   const renderCell = (row: TableRow, column: TableColumn, rowIndex: number) => {
     const cellKey = `${row.id}-${column.key}`;
     const isCustomInput = customInputs[cellKey] === 'custom';
+
+    if (column.type === 'checkbox') {
+      return (
+        <div className="flex items-center justify-center">
+          <input
+            type="checkbox"
+            checked={!!row[column.key]}
+            onChange={(e) => {
+              const checked = e.target.checked;
+              // For mutually exclusive checkboxes (existing/new), uncheck the other
+              if (checked && (column.key === 'existing' || column.key === 'new')) {
+                const otherKey = column.key === 'existing' ? 'new' : 'existing';
+                updateRowData(row.id, otherKey, false);
+              }
+              updateRowData(row.id, column.key, checked);
+            }}
+            className="w-4 h-4"
+            data-row={rowIndex}
+            data-column={column.key}
+            onKeyDown={(e) => handleKeyDown(e, row.id, rowIndex, column.key)}
+          />
+        </div>
+      );
+    }
 
     if (column.type === 'select' && !isCustomInput) {
       const options = typeof column.options === 'function' 

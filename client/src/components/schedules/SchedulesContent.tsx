@@ -37,6 +37,8 @@ interface ScheduleItem {
   function?: string;
   swing?: string;
   panel?: string;
+  existing?: boolean;
+  new?: boolean;
 }
 
 interface RoomCardProps {
@@ -178,14 +180,16 @@ const SchedulesContent = () => {
       room: 'Kitchen',
       type: 'door',
       number: 'D-1',
-      style: 'Exterior',
-      function: '',
-      swing: '',
+      style: 'A',
+      function: 'Exterior',
+      swing: 'Right',
       doorType: 'Single',
-      panel: '',
+      panel: '1',
       width: "3'-0\"",
       height: "7'-0\"",
       material: 'Wood',
+      existing: false,
+      new: true,
       manufacturer: 'Marvin',
       finish: 'Mahogany',
       comments: ''
@@ -411,8 +415,8 @@ const SchedulesContent = () => {
           minWidth: 80,
           maxWidth: 120,
           type: 'select',
-          options: ['Exterior', 'Interior'],
-          placeholder: 'Exterior'
+          options: ['A', 'B', 'C', 'D', 'E', 'F'],
+          placeholder: 'A'
         },
         {
           key: 'function',
@@ -420,8 +424,9 @@ const SchedulesContent = () => {
           width: 100,
           minWidth: 80,
           maxWidth: 120,
-          type: 'input',
-          placeholder: 'Function'
+          type: 'select',
+          options: ['Interior', 'Exterior'],
+          placeholder: 'Interior'
         },
         {
           key: 'swing',
@@ -429,8 +434,9 @@ const SchedulesContent = () => {
           width: 100,
           minWidth: 80,
           maxWidth: 120,
-          type: 'input',
-          placeholder: 'Swing'
+          type: 'select',
+          options: ['Left', 'Right', 'Left Hand', 'Right Hand', 'LH', 'RH'],
+          placeholder: 'Left'
         },
         {
           key: 'doorType',
@@ -448,8 +454,9 @@ const SchedulesContent = () => {
           width: 80,
           minWidth: 70,
           maxWidth: 100,
-          type: 'input',
-          placeholder: 'Panel'
+          type: 'select',
+          options: ['1', '2', '3', '4', '5', '6', 'Solid', 'Glass', 'Louvered'],
+          placeholder: '1'
         },
         {
           key: 'width',
@@ -475,8 +482,27 @@ const SchedulesContent = () => {
           width: 100,
           minWidth: 80,
           maxWidth: 120,
-          type: 'input',
-          placeholder: 'Material'
+          type: 'select',
+          options: ['Wood', 'Steel', 'Fiberglass', 'Aluminum', 'Composite', 'Glass', 'PVC'],
+          placeholder: 'Wood'
+        },
+        {
+          key: 'existing',
+          title: 'Existing',
+          width: 80,
+          minWidth: 70,
+          maxWidth: 100,
+          type: 'checkbox',
+          placeholder: ''
+        },
+        {
+          key: 'new',
+          title: 'New',
+          width: 80,
+          minWidth: 70,
+          maxWidth: 100,
+          type: 'checkbox',
+          placeholder: ''
         },
         {
           key: 'manufacturer',
