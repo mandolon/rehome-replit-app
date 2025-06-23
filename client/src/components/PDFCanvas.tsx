@@ -10,10 +10,13 @@ interface PDFCanvasProps {
   hovering: boolean;
   onHoverChange: (hovering: boolean) => void;
   onCursorMove: (x: number, y: number) => void;
+  onPinDrag: (pinId: string, xPercent: number, yPercent: number) => void;
   pins: Array<{
     id: string;
     x: number;
     y: number;
+    xPercent: number;
+    yPercent: number;
     pageNumber: number;
     user: { color: string };
     number: number;
@@ -33,12 +36,15 @@ const PDFCanvas = forwardRef<PDFCanvasHandle, PDFCanvasProps>(({
   hovering,
   onHoverChange,
   onCursorMove,
+  onPinDrag,
   pins
 }, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const isPanning = useRef(false);
   const lastPanPoint = useRef({ x: 0, y: 0 });
+  const isDraggingPin = useRef(false);
+  const draggedPinId = useRef<string | null>(null);
 
   useImperativeHandle(ref, () => ({
     getCanvasElement: () => canvasRef.current,

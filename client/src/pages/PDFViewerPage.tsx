@@ -37,6 +37,8 @@ interface Comment {
   id: string;
   x: number;
   y: number;
+  xPercent: number;
+  yPercent: number;
   pageNumber: number;
   text: string;
   user: User;
@@ -55,6 +57,8 @@ interface Pin {
   id: string;
   x: number;
   y: number;
+  xPercent: number;
+  yPercent: number;
   pageNumber: number;
   user: User;
   number: number;
@@ -228,7 +232,7 @@ export default function PDFViewerPage() {
   };
 
   const addPopoverComment = () => {
-    if (!popoverComment || !popoverText.trim()) return;
+    if (!popoverComment || !popoverText.trim() || !pdfCanvasRef.current) return;
 
     const commentId = `comment-${Date.now()}`;
     const pinId = `pin-${Date.now()}`;
@@ -242,10 +246,17 @@ export default function PDFViewerPage() {
     
     const pinNumber = allPinsSorted.length + 1;
 
+    // Calculate percentage coordinates
+    const canvas = pdfCanvasRef.current?.getCanvasElement();
+    const xPercent = canvas ? (popoverComment.x / canvas.width) * 100 : 0;
+    const yPercent = canvas ? (popoverComment.y / canvas.height) * 100 : 0;
+
     const newPin: Pin = {
       id: pinId,
       x: popoverComment.x,
       y: popoverComment.y,
+      xPercent,
+      yPercent,
       pageNumber: popoverComment.pageNumber,
       user: CURRENT_USER,
       number: pinNumber,
@@ -255,6 +266,8 @@ export default function PDFViewerPage() {
       id: commentId,
       x: popoverComment.x,
       y: popoverComment.y,
+      xPercent,
+      yPercent,
       pageNumber: popoverComment.pageNumber,
       text: popoverText,
       user: CURRENT_USER,
@@ -276,10 +289,17 @@ export default function PDFViewerPage() {
     const tempPinId = `temp-pin-${Date.now()}`;
     const pinNumber = pins.filter(p => p.pageNumber === currentPage).length + 1;
     
+    // Calculate percentage coordinates
+    const canvas = pdfCanvasRef.current?.getCanvasElement();
+    const xPercent = canvas ? (x / canvas.width) * 100 : 0;
+    const yPercent = canvas ? (y / canvas.height) * 100 : 0;
+    
     const tempPin: Pin = {
       id: tempPinId,
       x,
       y,
+      xPercent,
+      yPercent,
       pageNumber: currentPage,
       user: CURRENT_USER,
       number: pinNumber,
@@ -302,10 +322,17 @@ export default function PDFViewerPage() {
     const pinId = `pin-${Date.now()}`;
     const pinNumber = pins.filter(p => p.pageNumber === currentPage).length + 1;
 
+    // Calculate percentage coordinates
+    const canvas = pdfCanvasRef.current?.getCanvasElement();
+    const xPercent = canvas ? (pendingPin.x / canvas.width) * 100 : 0;
+    const yPercent = canvas ? (pendingPin.y / canvas.height) * 100 : 0;
+
     const newPin: Pin = {
       id: pinId,
       x: pendingPin.x,
       y: pendingPin.y,
+      xPercent,
+      yPercent,
       pageNumber: pendingPin.pageNumber,
       user: CURRENT_USER,
       number: pinNumber,
@@ -315,6 +342,8 @@ export default function PDFViewerPage() {
       id: commentId,
       x: pendingPin.x,
       y: pendingPin.y,
+      xPercent,
+      yPercent,
       pageNumber: pendingPin.pageNumber,
       text: commentText,
       user: CURRENT_USER,
@@ -380,6 +409,46 @@ export default function PDFViewerPage() {
 
   const highlightComment = (commentId: string) => {
     setHighlightedComment(highlightedComment === commentId ? null : commentId);
+  };
+
+  const handlePinDrag = (pinId: string, xPercent: number, yPercent: number) => {
+    // Update pin positions using percentage coordinates
+    setPins(pins.map(pin => {
+      if (pin.id === pinId) {
+        // Calculate new pixel coordinates from percentages
+        const canvas = pdfCanvasRef.current?.getCanvasElement();
+        const newX = canvas ? (xPercent / 100) * canvas.width : pin.x;
+        const newY = canvas ? (yPercent / 100) * canvas.height : pin.y;
+        
+        return {
+          ...pin,
+          x: newX,
+          y: newY,
+          xPercent,
+          yPercent,
+        };
+      }
+      return pin;
+    }));
+
+    // Update corresponding comments
+    setComments(comments.map(comment => {
+      const associatedPin = pins.find(p => p.id === pinId);
+      if (associatedPin && comment.x === associatedPin.x && comment.y === associatedPin.y && comment.pageNumber === associatedPin.pageNumber) {
+        const canvas = pdfCanvasRef.current?.getCanvasElement();
+        const newX = canvas ? (xPercent / 100) * canvas.width : comment.x;
+        const newY = canvas ? (yPercent / 100) * canvas.height : comment.y;
+        
+        return {
+          ...comment,
+          x: newX,
+          y: newY,
+          xPercent,
+          yPercent,
+        };
+      }
+      return comment;
+    }));
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
