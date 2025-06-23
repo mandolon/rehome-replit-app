@@ -124,8 +124,21 @@ const PDFCanvas = forwardRef<PDFCanvasHandle, PDFCanvasProps>(({
   };
 
   useEffect(() => {
+    console.log("🎨 PDFCanvas useEffect triggered:", {
+      pdfDoc: !!pdfDoc,
+      currentPage,
+      scale,
+      timestamp: new Date().toISOString()
+    });
+    
     if (pdfDoc && currentPage) {
+      console.log("🎯 Calling renderPage with scale:", scale);
       renderPage();
+    } else {
+      console.log("❌ Not rendering page - missing requirements:", {
+        hasPdfDoc: !!pdfDoc,
+        currentPage
+      });
     }
   }, [pdfDoc, currentPage, scale]);
 
