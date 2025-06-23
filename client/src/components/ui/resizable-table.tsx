@@ -260,10 +260,23 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
       
       // For dropdowns - open dropdown
       if (isSelectColumn) {
-        const selectTrigger = document.querySelector(`[data-row="${currentIndex}"][data-column="${column}"] button`) as HTMLElement;
-        if (selectTrigger) {
-          selectTrigger.click();
-        }
+        // Find the select trigger using multiple selectors
+        setTimeout(() => {
+          let selectTrigger = document.querySelector(`[data-row="${currentIndex}"][data-column="${column}"] button[role="combobox"]`) as HTMLElement;
+          if (!selectTrigger) {
+            selectTrigger = document.querySelector(`[data-row="${currentIndex}"][data-column="${column}"] [data-radix-collection-item]`) as HTMLElement;
+          }
+          if (!selectTrigger) {
+            selectTrigger = document.querySelector(`[data-row="${currentIndex}"][data-column="${column}"] button`) as HTMLElement;
+          }
+          if (selectTrigger) {
+            selectTrigger.focus();
+            selectTrigger.click();
+            // Trigger a space or enter event to open the dropdown
+            const event = new KeyboardEvent('keydown', { key: ' ', code: 'Space' });
+            selectTrigger.dispatchEvent(event);
+          }
+        }, 10);
         return;
       }
       
