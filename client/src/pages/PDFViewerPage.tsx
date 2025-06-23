@@ -220,7 +220,7 @@ export default function PDFViewerPage() {
 
       canvas.height = viewport.height;
       canvas.width = viewport.width;
-      canvas.className = "border shadow-lg bg-white";
+      canvas.className = "pdf-canvas border shadow-lg bg-white";
       
       console.log("🔗 Appending canvas to container");
       pdfContainerRef.current.appendChild(canvas);
@@ -369,19 +369,82 @@ export default function PDFViewerPage() {
     setScale(prev => Math.max(prev - 0.25, 0.5));
   };
 
-  const fitToPage = () => {
-    if (!canvasRef.current || !pdfContainerRef.current) return;
+  const fitToScreen = () => {
+    console.log("🎯 Fit to screen function called");
     
-    const container = pdfContainerRef.current;
-    const containerWidth = container.clientWidth - 40; // Account for padding
-    const containerHeight = container.clientHeight - 40;
+    const canvas = document.querySelector('.pdf-canvas') as HTMLCanvasElement;
+    const container = document.getElementById('pdf-viewer-container');
     
-    if (pageRef.current) {
-      const viewport = pageRef.current.getViewport({ scale: 1 });
-      const scaleX = containerWidth / viewport.width;
-      const scaleY = containerHeight / viewport.height;
-      const newScale = Math.min(scaleX, scaleY, 2); // Cap at 2x zoom
-      setScale(newScale);
+    if (!canvas || !container) {
+      console.log("❌ Canvas or container not found using selectors");
+      return;
+    }
+    
+    // Reset any previous transforms and styles
+    canvas.style.transform = '';
+    canvas.style.transformOrigin = 'top left';
+    
+    // Reset parent container styles
+    const canvasParent = canvas.parentElement;
+    if (canvasParent) {
+      canvasParent.style.display = '';
+      canvasParent.style.justifyContent = '';
+      canvasParent.style.alignItems = '';
+      canvasParent.style.minHeight = '';
+    }
+    
+    // Get container dimensions (excluding padding)
+    const containerRect = container.getBoundingClientRect();
+    const containerWidth = containerRect.width - 64; // Account for 32px padding on each side (p-8)
+    const containerHeight = containerRect.height - 64;
+    
+    // Get canvas natural dimensions (account for device pixel ratio)
+    const canvasWidth = canvas.offsetWidth;
+    const canvasHeight = canvas.offsetHeight;
+    
+    console.log("📐 Container dimensions:", { containerWidth, containerHeight });
+    console.log("📐 Canvas dimensions:", { canvasWidth, canvasHeight });
+    
+    if (canvasWidth === 0 || canvasHeight === 0) {
+      console.log("❌ Canvas has no dimensions");
+      return;
+    }
+    
+    // Calculate scale factors
+    const scaleX = containerWidth / canvasWidth;
+    const scaleY = containerHeight / canvasHeight;
+    const fitScale = Math.min(scaleX, scaleY, 1); // Don't scale up beyond 100%
+    
+    console.log("📏 Scale factors:", { scaleX, scaleY, fitScale });
+    
+    // Apply transform to scale the canvas
+    canvas.style.transform = `scale(${fitScale})`;
+    canvas.style.transformOrigin = 'center center';
+    
+    // Center the canvas in the container
+    if (canvasParent) {
+      canvasParent.style.display = 'flex';
+      canvasParent.style.justifyContent = 'center';
+      canvasParent.style.alignItems = 'center';
+      canvasParent.style.minHeight = `${containerHeight}px`;
+    }
+    
+    console.log("✅ Fit to screen completed with scale:", fitScale);
+  };
+
+  const resetZoom = () => {
+    const canvas = document.querySelector('.pdf-canvas') as HTMLCanvasElement;
+    if (canvas) {
+      canvas.style.transform = '';
+      canvas.style.transformOrigin = '';
+      
+      const canvasParent = canvas.parentElement;
+      if (canvasParent) {
+        canvasParent.style.display = '';
+        canvasParent.style.justifyContent = '';
+        canvasParent.style.alignItems = '';
+        canvasParent.style.minHeight = '';
+      }
     }
   };
 
@@ -502,7 +565,7 @@ export default function PDFViewerPage() {
             <Button variant="outline" size="sm" onClick={zoomIn}>
               <ZoomIn className="h-4 w-4" />
             </Button>
-            <Button variant="outline" size="sm" onClick={fitToPage}>
+            <Button variant="outline" size="sm" onClick={fitToScreen}>
               <Maximize className="h-4 w-4" />
               Fit
             </Button>
@@ -523,6 +586,7 @@ export default function PDFViewerPage() {
         <div className={`flex-1 flex flex-col ${sidebarOpen ? 'pr-80' : ''} transition-all duration-200`}>
           {/* PDF Container */}
           <div 
+            id="pdf-viewer-container"
             className="flex-1 overflow-auto p-8 relative"
             onMouseEnter={() => setHovering(true)}
             onMouseLeave={() => setHovering(false)}
