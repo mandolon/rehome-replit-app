@@ -152,14 +152,19 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
     
     const existingNumbers = data
       .map(row => row[autoNumberField])
-      .filter(num => num && num.startsWith(numberPrefix))
+      .filter((num): num is string => Boolean(num && num.startsWith(numberPrefix)))
       .map(num => {
         const match = num.match(new RegExp(`^${numberPrefix}-(\\d+)$`));
         return match ? parseInt(match[1]) : 0;
       })
-      .filter(num => !isNaN(num));
+      .filter(num => !isNaN(num) && num > 0);
     
-    const maxNumber = existingNumbers.length > 0 ? Math.max(...existingNumbers) : 0;
+    if (existingNumbers.length === 0) {
+      return `${numberPrefix}-1`;
+    }
+    
+    // Find the highest number and add 1
+    const maxNumber = Math.max(...existingNumbers);
     return `${numberPrefix}-${maxNumber + 1}`;
   };
 
@@ -245,7 +250,8 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
       if (!isInEditMode) {
         // For checkboxes, toggle the value directly
         if (currentColumn?.type === 'checkbox') {
-          const currentValue = !!row[column];
+          const currentRow = data[currentIndex];
+          const currentValue = !!currentRow[column];
           const newValue = !currentValue;
           
           if (column === 'existing' || column === 'new') {

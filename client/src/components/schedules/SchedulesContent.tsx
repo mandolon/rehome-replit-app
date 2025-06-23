@@ -627,10 +627,15 @@ const SchedulesContent = () => {
           const match = num.match(new RegExp(`^${prefix}-(\\d+)$`));
           return match ? parseInt(match[1]) : 0;
         })
-        .filter(num => !isNaN(num));
+        .filter(num => !isNaN(num) && num > 0);
       
-      const maxNumber = existingNumbers.length > 0 ? Math.max(...existingNumbers) : 0;
-      autoNumber = `${prefix}-${maxNumber + 1}`;
+      if (existingNumbers.length === 0) {
+        autoNumber = `${prefix}-1`;
+      } else {
+        // Find the highest number and add 1
+        const maxNumber = Math.max(...existingNumbers);
+        autoNumber = `${prefix}-${maxNumber + 1}`;
+      }
     }
     
     const newItem: ScheduleItem = {
