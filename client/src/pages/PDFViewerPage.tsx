@@ -1,11 +1,10 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { 
   ZoomIn, 
@@ -16,8 +15,10 @@ import {
   ChevronRight,
   Eye,
   EyeOff,
-  Reply,
-  Upload
+  Upload,
+  Edit3,
+  Trash2,
+  GripVertical
 } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
 
@@ -37,15 +38,8 @@ interface Comment {
   pageNumber: number;
   text: string;
   user: User;
-  replies: Reply[];
   timestamp: Date;
-}
-
-interface Reply {
-  id: string;
-  text: string;
-  user: User;
-  timestamp: Date;
+  number: number;
 }
 
 interface Pin {
@@ -55,6 +49,7 @@ interface Pin {
   pageNumber: number;
   user: User;
   number: number;
+  commentId: string;
 }
 
 // Predefined user colors
