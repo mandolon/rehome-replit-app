@@ -465,7 +465,8 @@ export default function PDFViewerPage() {
       <div className={`fixed top-16 bottom-0 left-0 transition-all duration-200 ${sidebarOpen ? 'right-80' : 'right-0'}`}>
         {/* PDF Container with internal scrolling */}
         <div 
-          className="w-full h-full overflow-hidden relative"
+          className="w-full h-full overflow-auto relative"
+          style={{ maxHeight: 'calc(100vh - 4rem)' }}
           onMouseEnter={() => setHovering(true)}
           onMouseLeave={() => setHovering(false)}
         >

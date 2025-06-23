@@ -6,11 +6,11 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 2rem;
+  padding: 1rem;
   overflow: auto;
   background: #f8f9fa;
-  /* Ensure scrollbars are visible within the container */
   box-sizing: border-box;
+  max-height: 100vh;
 }
 
 .pdf-canvas-wrapper {
