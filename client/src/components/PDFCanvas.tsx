@@ -33,6 +33,8 @@ const PDFCanvas = forwardRef<PDFCanvasHandle, PDFCanvasProps>(({
 }, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const isPanning = useRef(false);
+  const lastPanPoint = useRef({ x: 0, y: 0 });
 
   useImperativeHandle(ref, () => ({
     getCanvasElement: () => canvasRef.current,
@@ -115,8 +117,40 @@ const PDFCanvas = forwardRef<PDFCanvasHandle, PDFCanvasProps>(({
     }
   }, [pdfDoc, currentPage, scale]);
 
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.button === 1) { // Middle mouse button
+      e.preventDefault();
+      isPanning.current = true;
+      lastPanPoint.current = { x: e.clientX, y: e.clientY };
+      if (containerRef.current) {
+        containerRef.current.style.cursor = 'grabbing';
+      }
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isPanning.current && containerRef.current) {
+      const deltaX = e.clientX - lastPanPoint.current.x;
+      const deltaY = e.clientY - lastPanPoint.current.y;
+      
+      containerRef.current.scrollLeft -= deltaX;
+      containerRef.current.scrollTop -= deltaY;
+      
+      lastPanPoint.current = { x: e.clientX, y: e.clientY };
+    }
+  };
+
+  const handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.button === 1) { // Middle mouse button
+      isPanning.current = false;
+      if (containerRef.current) {
+        containerRef.current.style.cursor = hovering ? 'crosshair' : 'default';
+      }
+    }
+  };
+
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!canvasRef.current) return;
+    if (!canvasRef.current || isPanning.current) return;
 
     const rect = canvasRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -141,6 +175,15 @@ const PDFCanvas = forwardRef<PDFCanvasHandle, PDFCanvasProps>(({
         ref={containerRef}
         className="pdf-canvas-wrapper"
         onClick={handleClick}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={() => {
+          isPanning.current = false;
+          if (containerRef.current) {
+            containerRef.current.style.cursor = hovering ? 'crosshair' : 'default';
+          }
+        }}
       >
         {/* Pins for current page */}
         {getCurrentPagePins().map((pin) => (

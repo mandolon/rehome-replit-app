@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Reply } from "lucide-react";
+import { MessageSquare, Reply, Edit2, Trash2, Check, X } from "lucide-react";
 
 interface User {
   id: string;
@@ -46,6 +46,10 @@ interface PDFCommentsProps {
   pins: Pin[];
   currentPage: number;
   onAddReply: (commentId: string, replyText: string) => void;
+  onEditComment: (commentId: string, newText: string) => void;
+  onDeleteComment: (commentId: string) => void;
+  onHighlightComment: (commentId: string) => void;
+  highlightedComment: string | null;
 }
 
 export default function PDFComments({
@@ -53,10 +57,23 @@ export default function PDFComments({
   comments,
   pins,
   currentPage,
-  onAddReply
+  onAddReply,
+  onEditComment,
+  onDeleteComment,
+  onHighlightComment,
+  highlightedComment
 }: PDFCommentsProps) {
   const [replyText, setReplyText] = useState("");
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [editingComment, setEditingComment] = useState<string | null>(null);
+  const [editText, setEditText] = useState("");
+  const editTextareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (editingComment && editTextareaRef.current) {
+      editTextareaRef.current.focus();
+    }
+  }, [editingComment]);
 
   if (!isOpen) return null;
 
