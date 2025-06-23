@@ -387,10 +387,9 @@ export default function PDFViewerPage() {
 
       canvas.height = viewport.height;
       canvas.width = viewport.width;
-      canvas.className = "border shadow-lg bg-white";
-      canvas.style.maxWidth = "100%";
-      canvas.style.maxHeight = "100%";
-      canvas.style.objectFit = "contain";
+      canvas.className = "shadow-lg bg-white";
+      // Remove maxWidth/maxHeight constraints to allow proper zoom
+      canvas.style.display = "block";
       // Add red border for debugging canvas boundaries
       canvas.style.border = "2px solid red";
       canvas.style.boxSizing = "border-box";
@@ -414,6 +413,7 @@ export default function PDFViewerPage() {
       logContainerDimensions("After Page Render Complete");
       
       // Detailed zoom progression analysis
+      const containerElement = pdfContainerRef.current.parentElement; // Scrollable container
       const analysisData = {
         zoomLevel: Math.round(currentScale * 100) + '%',
         canvasDimensions: {
@@ -426,20 +426,35 @@ export default function PDFViewerPage() {
           width: pdfContainerRef.current.getBoundingClientRect().width,
           height: pdfContainerRef.current.getBoundingClientRect().height
         },
+        scrollContainerDimensions: containerElement ? {
+          width: containerElement.getBoundingClientRect().width,
+          height: containerElement.getBoundingClientRect().height,
+          scrollWidth: containerElement.scrollWidth,
+          scrollHeight: containerElement.scrollHeight,
+          hasHorizontalScroll: containerElement.scrollWidth > containerElement.clientWidth,
+          hasVerticalScroll: containerElement.scrollHeight > containerElement.clientHeight
+        } : null,
         scale: currentScale,
-        isCanvasSmallerThanContainer: canvas.getBoundingClientRect().width < pdfContainerRef.current.getBoundingClientRect().width,
-        shouldHaveScrollbars: canvas.getBoundingClientRect().width > pdfContainerRef.current.getBoundingClientRect().width
+        isCanvasLargerThanScrollContainer: containerElement ? 
+          canvas.getBoundingClientRect().width > containerElement.getBoundingClientRect().width : false,
+        cssConstraints: {
+          maxWidth: canvas.style.maxWidth,
+          maxHeight: canvas.style.maxHeight,
+          width: canvas.style.width,
+          height: canvas.style.height,
+          objectFit: canvas.style.objectFit
+        }
       };
       
       console.log("🔍 ZOOM PROGRESSION ANALYSIS:", analysisData);
       
-      // Check for potential layout issues
-      if (analysisData.canvasDimensions.displayWidth < 100) {
-        console.warn("⚠️ WARNING: Canvas display width is very small:", analysisData.canvasDimensions.displayWidth);
+      // Check for layout issues
+      if (analysisData.canvasDimensions.displayWidth < analysisData.canvasDimensions.actualWidth) {
+        console.warn("⚠️ WARNING: Canvas display width is smaller than actual width - CSS constraints are active");
       }
       
-      if (analysisData.isCanvasSmallerThanContainer && currentScale > 1) {
-        console.warn("⚠️ WARNING: Canvas is smaller than container at scale > 1. This suggests CSS constraints are limiting growth.");
+      if (currentScale > 1 && !analysisData.isCanvasLargerThanScrollContainer) {
+        console.warn("⚠️ WARNING: At scale > 1, canvas should be larger than scroll container to enable zoom behavior");
       }
       
       // Check for overflow after rendering
@@ -868,7 +883,7 @@ export default function PDFViewerPage() {
           className="flex-1 overflow-auto relative"
           onMouseEnter={() => setHovering(true)}
           onMouseLeave={() => setHovering(false)}
-          style={{ maxHeight: 'calc(100vh - 80px)' }} // Prevent vertical overflow
+          style={{ maxHeight: 'calc(100vh - 80px)' }}
         >
           {/* Hover instruction */}
           {hovering && (
@@ -877,17 +892,14 @@ export default function PDFViewerPage() {
             </div>
           )}
 
-          <div className="flex justify-center items-start min-h-full p-4" style={{ minHeight: 'calc(100vh - 120px)' }}>
+          <div className="flex justify-center items-start min-h-full p-4">
             <div 
               ref={pdfContainerRef}
               className="relative cursor-crosshair"
               onClick={handleCanvasClick}
               style={{ 
-                maxWidth: '100%',
-                maxHeight: '100%',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center'
+                display: 'inline-block',
+                position: 'relative'
               }}
             >
               {/* Pins for current page */}
