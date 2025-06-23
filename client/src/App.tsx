@@ -29,7 +29,7 @@ import ClientDashboard from "./pages/ClientDashboard";
 import AdminHelpPage from "./pages/AdminHelpPage";
 import TeamHelpPage from "./pages/TeamHelpPage";
 import ClientHelpPage from "./pages/ClientHelpPage";
-import PDFViewerPage from "./pages/PDFViewerPageNew";
+import PDFViewerPage from "./pages/PDFViewerPage";
 import { SidebarProvider } from "./contexts/SidebarContext";
 import { ProjectDataProvider } from "./contexts/ProjectDataContext";
 import { UserProvider } from "./contexts/UserContext";

@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
 import { 
@@ -20,7 +21,9 @@ import {
   Upload,
   X,
   Edit3,
-  Trash2
+  Trash2,
+  Move,
+  GripVertical
 } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
 
@@ -81,13 +84,7 @@ const CURRENT_USER: User = {
   color: USER_COLORS[0],
 };
 
-interface PDFViewerProps {
-  isOpen?: boolean;
-  onClose?: () => void;
-  initialPdfUrl?: string;
-}
-
-export default function PDFViewerPage({ isOpen = true, onClose, initialPdfUrl }: PDFViewerProps) {
+export default function PDFViewerPage() {
   const { toast } = useToast();
   const [comments, setComments] = useState<Comment[]>([]);
   const [pins, setPins] = useState<Pin[]>([]);
@@ -98,7 +95,7 @@ export default function PDFViewerPage({ isOpen = true, onClose, initialPdfUrl }:
   const [totalPages, setTotalPages] = useState(0);
   const [pdfDoc, setPdfDoc] = useState<pdfjsLib.PDFDocumentProxy | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [showPopover, setShowPopover] = useState<string | null>(null);
+  const [showCommentDialog, setShowCommentDialog] = useState(false);
   const [pendingPin, setPendingPin] = useState<{ x: number; y: number; pageNumber: number } | null>(null);
   const [commentText, setCommentText] = useState("");
   const [replyText, setReplyText] = useState("");
@@ -107,16 +104,18 @@ export default function PDFViewerPage({ isOpen = true, onClose, initialPdfUrl }:
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
   const [sidebarWidth, setSidebarWidth] = useState(320);
   const [isResizing, setIsResizing] = useState(false);
+  const [showPopover, setShowPopover] = useState<string | null>(null);
   const [activeCommentId, setActiveCommentId] = useState<string | null>(null);
   const [draggedPin, setDraggedPin] = useState<string | null>(null);
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+  const [isViewerOpen, setIsViewerOpen] = useState(true);
   
   const pdfContainerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const pageRef = useRef<pdfjsLib.PDFPageProxy | null>(null);
 
   // Sample PDF URL - using Mozilla's sample PDF
-  const PDF_URL = initialPdfUrl || "https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf";
+  const PDF_URL = "https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf";
 
   // Use uploaded PDF URL if available, otherwise use default
   const currentPdfUrl = uploadedPdfUrl || PDF_URL;
@@ -217,12 +216,12 @@ export default function PDFViewerPage({ isOpen = true, onClose, initialPdfUrl }:
       }
 
       // Calculate scale to fit height
-      const containerHeight = pdfContainerRef.current.clientHeight - 64;
+      const containerHeight = pdfContainerRef.current.clientHeight - 64; // Account for padding
       const pageViewport = page.getViewport({ scale: 1 });
       const fitScale = containerHeight / pageViewport.height;
-      const finalScale = Math.min(fitScale, scale);
+      const finalScale = Math.min(fitScale, scale); // Don't exceed user's zoom
 
-      console.log(`📐 Creating viewport with scale ${finalScale}`);
+      console.log(`📐 Creating viewport with scale ${finalScale} (fit: ${fitScale}, user: ${scale})`);
       const viewport = page.getViewport({ scale: finalScale });
       console.log("📐 Viewport dimensions:", {
         width: viewport.width,
@@ -503,7 +502,7 @@ export default function PDFViewerPage({ isOpen = true, onClose, initialPdfUrl }:
     return date.toLocaleDateString() + " " + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  if (!isOpen) {
+  if (!isViewerOpen) {
     return null;
   }
 
@@ -524,7 +523,7 @@ export default function PDFViewerPage({ isOpen = true, onClose, initialPdfUrl }:
         <Button
           variant="ghost"
           size="sm"
-          onClick={onClose}
+          onClick={() => setIsViewerOpen(false)}
           className="absolute top-4 right-4 z-10 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg"
         >
           <X className="h-4 w-4" />
@@ -652,23 +651,32 @@ export default function PDFViewerPage({ isOpen = true, onClose, initialPdfUrl }:
               >
                 {/* Pins for current page */}
                 {getCurrentPagePins().map((pin) => (
-                  <div
-                    key={pin.id}
-                    className="absolute z-10 cursor-move transform -translate-x-1/2 -translate-y-1/2"
-                    style={{ left: pin.x, top: pin.y }}
-                    onMouseDown={(e) => handlePinMouseDown(pin.id, e)}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      highlightComment(pin.id);
-                    }}
-                  >
-                    <div
-                      className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-white hover:scale-110 transition-transform"
-                      style={{ backgroundColor: pin.user.color }}
-                    >
-                      {pin.number}
-                    </div>
-                  </div>
+                  <Popover key={pin.id} open={showPopover === pin.id} onOpenChange={(open) => !open && setShowPopover(null)}>
+                    <PopoverTrigger asChild>
+                      <div
+                        className="absolute z-10 cursor-move transform -translate-x-1/2 -translate-y-1/2"
+                        style={{ left: pin.x, top: pin.y }}
+                        onMouseDown={(e) => handlePinMouseDown(pin.id, e)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          highlightComment(pin.id);
+                        }}
+                      >
+                        <div
+                          className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-white hover:scale-110 transition-transform"
+                          style={{ backgroundColor: pin.user.color }}
+                        >
+                          {pin.number}
+                        </div>
+                      </div>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80 p-3">
+                      <CommentPopover
+                        onSave={addComment}
+                        onCancel={() => setShowPopover(null)}
+                      />
+                    </PopoverContent>
+                  </Popover>
                 ))}
 
                 {/* New comment popover */}
@@ -940,6 +948,179 @@ function CommentPopover({ onSave, onCancel }: CommentPopoverProps) {
           Save Comment
         </Button>
       </div>
+    </div>
+  );
+}
+
+      {/* Main PDF Viewer */}
+      <div className="flex-1 flex flex-col">
+        {/* Toolbar */}
+        <div className="bg-white dark:bg-gray-800 border-b p-3 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+              >
+                {sidebarOpen ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                {sidebarOpen ? "Hide" : "Show"} Comments
+              </Button>
+              
+              <Separator orientation="vertical" className="h-6" />
+              
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={prevPage}
+                  disabled={currentPage <= 1}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <span className="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded">
+                  {currentPage} / {totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={nextPage}
+                  disabled={currentPage >= totalPages}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+
+              <Separator orientation="vertical" className="h-6" />
+
+              {/* Document Title */}
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                <span className="font-medium">
+                  {uploadedFileName || "Sample Document"}
+                </span>
+                {uploadedFileName && (
+                  <Badge variant="secondary" className="text-xs">
+                    Uploaded
+                  </Badge>
+                )}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <input
+                  type="file"
+                  accept=".pdf"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                  id="pdf-upload"
+                />
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => document.getElementById('pdf-upload')?.click()}
+                  className="flex items-center gap-2"
+                >
+                  <Upload className="h-4 w-4" />
+                  Upload PDF
+                </Button>
+              </div>
+              
+              <Separator orientation="vertical" className="h-6" />
+              
+              <Button variant="outline" size="sm" onClick={zoomOut}>
+                <ZoomOut className="h-4 w-4" />
+              </Button>
+              <span className="px-2 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded min-w-[60px] text-center">
+                {Math.round(scale * 100)}%
+              </span>
+              <Button variant="outline" size="sm" onClick={zoomIn}>
+                <ZoomIn className="h-4 w-4" />
+              </Button>
+              
+              <Separator orientation="vertical" className="h-6" />
+              
+              <Button variant="outline" size="sm" onClick={downloadPDF}>
+                <Download className="h-4 w-4" />
+                Download
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* PDF Container */}
+        <div 
+          className="flex-1 overflow-auto p-8 relative"
+          onMouseEnter={() => setHovering(true)}
+          onMouseLeave={() => setHovering(false)}
+        >
+          {/* Hover instruction */}
+          {hovering && (
+            <div className="absolute top-4 left-4 bg-black text-white px-3 py-2 rounded-lg text-sm z-10 pointer-events-none">
+              Click to add comment
+            </div>
+          )}
+
+          <div className="flex justify-center">
+            <div 
+              ref={pdfContainerRef}
+              className="relative cursor-crosshair"
+              onClick={handleCanvasClick}
+            >
+              {/* Pins for current page */}
+              {getCurrentPagePins().map((pin) => (
+                <div
+                  key={pin.id}
+                  className="absolute z-10 cursor-pointer transform -translate-x-1/2 -translate-y-1/2"
+                  style={{ left: pin.x, top: pin.y }}
+                >
+                  <div
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-white hover:scale-110 transition-transform"
+                    style={{ backgroundColor: pin.user.color }}
+                  >
+                    {pin.number}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Comment Dialog */}
+      <Dialog open={showCommentDialog} onOpenChange={setShowCommentDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Comment</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Textarea
+              placeholder="Enter your comment..."
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              className="min-h-[100px]"
+            />
+            <div className="flex justify-end gap-2">
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  setShowCommentDialog(false);
+                  setCommentText("");
+                  setPendingPin(null);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={addComment}
+                disabled={!commentText.trim()}
+              >
+                Add Comment
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
