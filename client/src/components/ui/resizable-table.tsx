@@ -457,6 +457,38 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
       return value;
     };
 
+    // Special handling for number field with fixed prefix
+    if (column.key === 'number' && (numberPrefix === 'W' || numberPrefix === 'D')) {
+      const currentValue = row[column.key] || '';
+      const prefix = numberPrefix + '-';
+      const numberPart = currentValue.replace(prefix, '');
+      
+      return (
+        <div className="flex items-center h-6">
+          <span className="text-xs text-muted-foreground mr-1">{prefix}</span>
+          <Input 
+            value={numberPart} 
+            onChange={(e) => {
+              const newValue = prefix + e.target.value;
+              updateRowData(row.id, column.key, newValue);
+            }}
+            onBlur={() => {
+              setEditingCell(null);
+            }}
+            onFocus={() => {
+              setEditingCell(`${row.id}-${column.key}`);
+            }}
+            className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full"
+            style={{ fontSize: '0.75rem' }}
+            placeholder="1"
+            data-row={rowIndex}
+            data-column={column.key}
+            onKeyDown={(e) => handleKeyDown(e, row.id, rowIndex, column.key)}
+          />
+        </div>
+      );
+    }
+
     return (
       <Input 
         value={row[column.key] || ''} 
