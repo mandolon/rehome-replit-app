@@ -241,18 +241,44 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
       const enterKey = `${rowId}-${column}`;
       const currentCount = enterPressCount[enterKey] || 0;
       
-      // If not in edit mode, single Enter activates the cell
+      // Handle Enter for different field types
       if (!isInEditMode) {
-        setEditingCell(cellKey);
-        setEnterPressCount({ ...enterPressCount, [enterKey]: 1 });
-        setTimeout(() => {
-          setEnterPressCount(prev => {
-            const newCount = { ...prev };
-            delete newCount[enterKey];
-            return newCount;
-          });
-        }, 1000);
-        return;
+        // For checkboxes, toggle the value directly
+        if (currentColumn?.type === 'checkbox') {
+          const currentValue = !!row[column];
+          const newValue = !currentValue;
+          
+          if (column === 'existing' || column === 'new') {
+            // Handle mutual exclusivity for existing/new checkboxes
+            const otherKey = column === 'existing' ? 'new' : 'existing';
+            updateRowData(rowId, otherKey, false);
+          }
+          updateRowData(rowId, column, newValue);
+          return;
+        }
+        
+        // For select fields, open the dropdown by focusing the trigger
+        if (isSelectColumn) {
+          const selectTrigger = document.querySelector(`[data-row="${currentIndex}"][data-column="${column}"] button`) as HTMLElement;
+          if (selectTrigger) {
+            selectTrigger.click();
+          }
+          return;
+        }
+        
+        // For input fields, enter edit mode
+        if (isInputColumn) {
+          setEditingCell(cellKey);
+          setEnterPressCount({ ...enterPressCount, [enterKey]: 1 });
+          setTimeout(() => {
+            setEnterPressCount(prev => {
+              const newCount = { ...prev };
+              delete newCount[enterKey];
+              return newCount;
+            });
+          }, 1000);
+          return;
+        }
       }
       
       // If in edit mode, check for double Enter
