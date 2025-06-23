@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
 import PDFCanvas, { PDFCanvasHandle } from "@/components/PDFCanvas";
+import PDFToolbar from "@/components/PDFToolbar";
 
 // Configure PDF.js worker - use local worker file
 pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
@@ -322,98 +323,20 @@ export default function PDFViewerPage() {
       {/* Main PDF Viewer */}
       <div className={`flex flex-col h-full transition-all duration-200 ${sidebarOpen ? 'mr-80' : 'mr-0'}`}>
         {/* Toolbar */}
-        <div className="bg-white dark:bg-gray-800 border-b p-3 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-              >
-                {sidebarOpen ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                {sidebarOpen ? "Hide" : "Show"} Comments
-              </Button>
-              
-              <Separator orientation="vertical" className="h-6" />
-              
-              <div className="flex items-center gap-1">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={prevPage}
-                  disabled={currentPage <= 1}
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <span className="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded">
-                  {currentPage} / {totalPages}
-                </span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={nextPage}
-                  disabled={currentPage >= totalPages}
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
-
-              <Separator orientation="vertical" className="h-6" />
-
-              {/* Document Title */}
-              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                <span className="font-medium">
-                  {uploadedFileName || "Sample Document"}
-                </span>
-                {uploadedFileName && (
-                  <Badge variant="secondary" className="text-xs">
-                    Uploaded
-                  </Badge>
-                )}
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <div className="relative">
-                <input
-                  type="file"
-                  accept=".pdf"
-                  onChange={handleFileUpload}
-                  className="hidden"
-                  id="pdf-upload"
-                />
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => document.getElementById('pdf-upload')?.click()}
-                  className="flex items-center gap-2"
-                >
-                  <Upload className="h-4 w-4" />
-                  Upload PDF
-                </Button>
-              </div>
-              
-              <Separator orientation="vertical" className="h-6" />
-              
-              <Button variant="outline" size="sm" onClick={zoomOut}>
-                <ZoomOut className="h-4 w-4" />
-              </Button>
-              <span className="px-2 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded min-w-[60px] text-center">
-                {Math.round(scale * 100)}%
-              </span>
-              <Button variant="outline" size="sm" onClick={zoomIn}>
-                <ZoomIn className="h-4 w-4" />
-              </Button>
-              
-              <Separator orientation="vertical" className="h-6" />
-              
-              <Button variant="outline" size="sm" onClick={downloadPDF}>
-                <Download className="h-4 w-4" />
-                Download
-              </Button>
-            </div>
-          </div>
-        </div>
+        <PDFToolbar
+          sidebarOpen={sidebarOpen}
+          onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPrevPage={prevPage}
+          onNextPage={nextPage}
+          uploadedFileName={uploadedFileName}
+          scale={scale}
+          onZoomIn={zoomIn}
+          onZoomOut={zoomOut}
+          onDownload={downloadPDF}
+          onFileUpload={handleFileUpload}
+        />
 
         {/* PDF Container */}
         <div 
