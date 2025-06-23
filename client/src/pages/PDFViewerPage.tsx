@@ -449,11 +449,11 @@ export default function PDFViewerPage() {
     if (e.ctrlKey) {
       e.preventDefault();
       const delta = e.deltaY > 0 ? -0.1 : 0.1;
-      setScale(prev => Math.max(0.2, Math.min(3.0, prev + delta)));
+      setScale(prev => Math.max(0.2, Math.min(2.0, prev + delta)));
     }
   };
 
-  const zoomIn = () => setScale(prev => Math.min(prev + 0.25, 3.0));
+  const zoomIn = () => setScale(prev => Math.min(prev + 0.25, 2.0));
   const zoomOut = () => setScale(prev => Math.max(prev - 0.25, 0.2));
   const resetZoom = () => setScale(1.0);
 
@@ -479,7 +479,11 @@ export default function PDFViewerPage() {
   };
 
   const getCurrentPagePins = () => {
-    return pins.filter(pin => pin.pageNumber === currentPage && scale <= 1.0);
+    return pins.filter(pin => pin.pageNumber === currentPage);
+  };
+
+  const shouldShowMarkers = () => {
+    return scale <= 1.0;
   };
 
   const formatTimestamp = (date: Date) => {
@@ -587,18 +591,23 @@ export default function PDFViewerPage() {
               
               <Separator orientation="vertical" className="h-6" />
               
-              <Button variant="outline" size="sm" onClick={zoomOut}>
+              <Button variant="outline" size="sm" onClick={zoomOut} disabled={scale <= 0.2}>
                 <ZoomOut className="h-4 w-4" />
               </Button>
               <span className="px-2 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded min-w-[60px] text-center">
                 {Math.round(scale * 100)}%
               </span>
-              <Button variant="outline" size="sm" onClick={zoomIn}>
+              <Button variant="outline" size="sm" onClick={zoomIn} disabled={scale >= 2.0}>
                 <ZoomIn className="h-4 w-4" />
               </Button>
               <Button variant="outline" size="sm" onClick={resetZoom}>
                 Fit
               </Button>
+              {scale > 1.0 && (
+                <Badge variant="secondary" className="text-xs ml-2">
+                  Markers hidden above 100%
+                </Badge>
+              )}
               
               <Separator orientation="vertical" className="h-6" />
               
@@ -638,12 +647,13 @@ export default function PDFViewerPage() {
               style={{ 
                 cursor: isPanning ? 'grabbing' : scale > 1.0 ? 'grab' : 'crosshair',
                 transform: `translate(${panOffset.x}px, ${panOffset.y}px)`,
-                maxWidth: '100%',
-                maxHeight: '100%'
+                maxWidth: 'calc(100vw - 400px)', // Account for sidebar
+                maxHeight: 'calc(100vh - 120px)', // Account for toolbar
+                overflow: 'hidden'
               }}
             >
-              {/* Pins for current page */}
-              {getCurrentPagePins().map((pin) => (
+              {/* Pins for current page - only show when zoom <= 100% */}
+              {shouldShowMarkers() && getCurrentPagePins().map((pin) => (
                 <div
                   key={pin.id}
                   className="absolute z-10 cursor-pointer transform -translate-x-1/2 -translate-y-1/2"
