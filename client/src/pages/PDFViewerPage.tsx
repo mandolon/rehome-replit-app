@@ -319,10 +319,8 @@ export default function PDFViewerPage() {
 
   return (
     <div className="relative h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Main PDF Viewer */}
-      <div className={`flex flex-col h-full transition-all duration-200 ${sidebarOpen ? 'mr-80' : 'mr-0'}`}>
-        {/* Toolbar */}
-        <div className="bg-white dark:bg-gray-800 border-b p-3 shadow-sm">
+      {/* Fixed Toolbar */}
+      <div className={`fixed top-0 left-0 right-0 z-20 bg-white dark:bg-gray-800 border-b p-3 shadow-sm transition-all duration-200 ${sidebarOpen ? 'mr-80' : 'mr-0'}`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Button
@@ -413,24 +411,25 @@ export default function PDFViewerPage() {
               </Button>
             </div>
           </div>
-        </div>
+      </div>
 
-        {/* PDF Container */}
-        <div 
-          className="flex-1 relative"
-          onMouseEnter={() => setHovering(true)}
-          onMouseLeave={() => setHovering(false)}
-        >
-          <PDFCanvas
-            ref={pdfCanvasRef}
-            pdfDoc={pdfDoc}
-            currentPage={currentPage}
-            scale={scale}
-            onCanvasClick={handleCanvasClick}
-            hovering={hovering}
-            pins={getCurrentPagePins()}
-          />
-        </div>
+      {/* Main PDF Viewer Container */}
+      <div 
+        id="pdf-viewer-container"
+        className={`transition-all duration-200 ${sidebarOpen ? 'mr-80' : 'mr-0'}`}
+        style={{ height: 'calc(100vh - 64px)', marginTop: '64px' }}
+        onMouseEnter={() => setHovering(true)}
+        onMouseLeave={() => setHovering(false)}
+      >
+        <PDFCanvas
+          ref={pdfCanvasRef}
+          pdfDoc={pdfDoc}
+          currentPage={currentPage}
+          scale={scale}
+          onCanvasClick={handleCanvasClick}
+          hovering={hovering}
+          pins={getCurrentPagePins()}
+        />
       </div>
 
       {/* Right Sidebar */}
