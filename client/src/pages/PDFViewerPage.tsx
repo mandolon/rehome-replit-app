@@ -42,6 +42,9 @@ interface Comment {
   user: User;
   replies: Reply[];
   timestamp: Date;
+  // Store relative positions (0-1) instead of absolute pixels
+  relativeX: number;
+  relativeY: number;
 }
 
 interface Reply {
@@ -58,6 +61,9 @@ interface Pin {
   pageNumber: number;
   user: User;
   number: number;
+  // Store relative positions (0-1) instead of absolute pixels
+  relativeX: number;
+  relativeY: number;
 }
 
 // Predefined user colors
@@ -87,6 +93,7 @@ export default function PDFViewerPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [sidebarWidth, setSidebarWidth] = useState(320);
   const [scale, setScale] = useState(1.0);
+  const [pdfDimensions, setPdfDimensions] = useState({ width: 0, height: 0 });
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [pdfDoc, setPdfDoc] = useState<pdfjsLib.PDFDocumentProxy | null>(null);
@@ -197,6 +204,26 @@ export default function PDFViewerPage() {
     }
   };
 
+  const updatePinPositions = useCallback(() => {
+    if (!canvasRef.current || pdfDimensions.width === 0) return;
+
+    setPins(prevPins => 
+      prevPins.map(pin => ({
+        ...pin,
+        x: pin.relativeX * pdfDimensions.width,
+        y: pin.relativeY * pdfDimensions.height
+      }))
+    );
+
+    setComments(prevComments =>
+      prevComments.map(comment => ({
+        ...comment,
+        x: comment.relativeX * pdfDimensions.width,
+        y: comment.relativeY * pdfDimensions.height
+      }))
+    );
+  }, [pdfDimensions]);
+
   const autoFitToHeight = useCallback(async () => {
     if (!pdfDoc || !pdfContainerRef.current) return;
     
@@ -204,8 +231,20 @@ export default function PDFViewerPage() {
       const page = await pdfDoc.getPage(1);
       const viewport = page.getViewport({ scale: 1 });
       const containerHeight = pdfContainerRef.current.clientHeight - 40; // Account for padding
-      const newScale = containerHeight / viewport.height;
-      console.log("📐 Auto-fitting PDF to height:", { containerHeight, newScale });
+      const containerWidth = pdfContainerRef.current.clientWidth - 40;
+      
+      // Calculate scale to fit both height and width, maintaining aspect ratio
+      const scaleByHeight = containerHeight / viewport.height;
+      const scaleByWidth = containerWidth / viewport.width;
+      const newScale = Math.min(scaleByHeight, scaleByWidth, 2); // Cap at 2x scale
+      
+      console.log("📐 Auto-fitting PDF:", { 
+        containerHeight, 
+        containerWidth, 
+        pdfHeight: viewport.height,
+        pdfWidth: viewport.width,
+        newScale 
+      });
       setScale(newScale);
     } catch (error) {
       console.error("❌ Error auto-fitting PDF:", error);
@@ -246,6 +285,9 @@ export default function PDFViewerPage() {
         scale: viewport.scale
       });
 
+      // Store PDF dimensions for relative positioning calculations
+      setPdfDimensions({ width: viewport.width, height: viewport.height });
+
       console.log("🖼️ Creating new canvas element");
       const canvas = document.createElement("canvas");
       const context = canvas.getContext("2d");
@@ -271,6 +313,9 @@ export default function PDFViewerPage() {
       console.log(`🎨 Starting to render page ${pageNum} to canvas`);
       await page.render(renderContext).promise;
       console.log(`✅ Page ${pageNum} rendered successfully to canvas`);
+      
+      // Update pin positions after rendering
+      updatePinPositions();
     } catch (error) {
       console.error(`❌ Error rendering page ${pageNum}:`, error);
       if (error instanceof Error) {
@@ -297,7 +342,11 @@ export default function PDFViewerPage() {
       return;
     }
 
-    console.log("📍 Adding new comment pin at:", { x, y, page: currentPage });
+    // Calculate relative position (0-1) based on actual canvas dimensions
+    const relativeX = x / canvas.width;
+    const relativeY = y / canvas.height;
+
+    console.log("📍 Adding new comment pin at:", { x, y, relativeX, relativeY, page: currentPage });
     
     const commentId = `comment-${Date.now()}`;
     const pinId = `pin-${Date.now()}`;
@@ -310,6 +359,8 @@ export default function PDFViewerPage() {
       pageNumber: currentPage,
       user: CURRENT_USER,
       number: pinNumber,
+      relativeX,
+      relativeY,
     };
 
     setPins(prev => [...prev, newPin]);
@@ -320,6 +371,8 @@ export default function PDFViewerPage() {
     const currentPagePins = pins.filter(p => p.pageNumber === currentPage);
     return currentPagePins.length + 1;
   };
+
+
 
   const renumberPins = () => {
     const updatedPins = pins.map(pin => {
@@ -416,6 +469,8 @@ export default function PDFViewerPage() {
       user: CURRENT_USER,
       replies: [],
       timestamp: new Date(),
+      relativeX: relatedPin.relativeX,
+      relativeY: relatedPin.relativeY,
     };
 
     setComments(prev => [...prev, newComment]);
