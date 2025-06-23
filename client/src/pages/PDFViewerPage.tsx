@@ -17,7 +17,8 @@ import {
   Eye,
   EyeOff,
   Reply,
-  Upload
+  Upload,
+  Maximize
 } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
 
@@ -94,6 +95,7 @@ export default function PDFViewerPage() {
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [uploadedPdfUrl, setUploadedPdfUrl] = useState<string | null>(null);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+  const [fitMode, setFitMode] = useState(true); // Default to fit mode
   
   const pdfContainerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -174,6 +176,32 @@ export default function PDFViewerPage() {
     }
   };
 
+  const calculateFitScale = (page: pdfjsLib.PDFPageProxy): number => {
+    if (!pdfContainerRef.current) return 1.2;
+    
+    const containerRect = pdfContainerRef.current.getBoundingClientRect();
+    const containerWidth = containerRect.width - 64; // Account for padding
+    const containerHeight = containerRect.height - 64; // Account for padding
+    
+    const viewport = page.getViewport({ scale: 1 });
+    const scaleX = containerWidth / viewport.width;
+    const scaleY = containerHeight / viewport.height;
+    
+    // Use the smaller scale to ensure the PDF fits entirely
+    const fitScale = Math.min(scaleX, scaleY);
+    console.log("📐 Calculated fit scale:", {
+      containerWidth,
+      containerHeight,
+      pageWidth: viewport.width,
+      pageHeight: viewport.height,
+      scaleX,
+      scaleY,
+      fitScale
+    });
+    
+    return Math.max(0.1, Math.min(fitScale, 3)); // Clamp between 0.1 and 3
+  };
+
   const renderPage = async (pageNum: number) => {
     console.log(`🎨 Starting to render page ${pageNum}`);
     
@@ -194,14 +222,24 @@ export default function PDFViewerPage() {
       
       console.log(`✅ Page ${pageNum} retrieved successfully`);
 
+      // Calculate scale based on fit mode
+      let currentScale = scale;
+      if (fitMode) {
+        currentScale = calculateFitScale(page);
+        if (currentScale !== scale) {
+          setScale(currentScale);
+          console.log(`📏 Updated scale to fit: ${currentScale}`);
+        }
+      }
+
       // Remove existing canvas
       if (canvasRef.current) {
         console.log("🗑️ Removing existing canvas");
         canvasRef.current.remove();
       }
 
-      console.log(`📐 Creating viewport with scale ${scale}`);
-      const viewport = page.getViewport({ scale });
+      console.log(`📐 Creating viewport with scale ${currentScale}`);
+      const viewport = page.getViewport({ scale: currentScale });
       console.log("📐 Viewport dimensions:", {
         width: viewport.width,
         height: viewport.height,
@@ -219,7 +257,7 @@ export default function PDFViewerPage() {
 
       canvas.height = viewport.height;
       canvas.width = viewport.width;
-      canvas.className = "border shadow-lg bg-white";
+      canvas.className = "border shadow-lg bg-white max-w-full max-h-full";
       
       console.log("🔗 Appending canvas to container");
       pdfContainerRef.current.appendChild(canvas);
@@ -361,11 +399,21 @@ export default function PDFViewerPage() {
   };
 
   const zoomIn = () => {
+    setFitMode(false);
     setScale(prev => Math.min(prev + 0.25, 3));
   };
 
   const zoomOut = () => {
+    setFitMode(false);
     setScale(prev => Math.max(prev - 0.25, 0.5));
+  };
+
+  const fitToPage = () => {
+    setFitMode(true);
+    if (pageRef.current) {
+      const fitScale = calculateFitScale(pageRef.current);
+      setScale(fitScale);
+    }
   };
 
   const nextPage = () => {
@@ -401,11 +449,11 @@ export default function PDFViewerPage() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden">
       {/* Sidebar */}
       {sidebarOpen && (
-        <div className="w-80 border-r bg-white dark:bg-gray-800 shadow-lg">
-          <div className="p-4 border-b">
+        <div className="w-80 border-r bg-white dark:bg-gray-800 shadow-lg flex flex-col">
+          <div className="p-4 border-b flex-shrink-0">
             <div className="flex items-center gap-2">
               <MessageSquare className="h-5 w-5" />
               <h2 className="text-lg font-semibold">Comments</h2>
@@ -413,7 +461,7 @@ export default function PDFViewerPage() {
             </div>
           </div>
           
-          <ScrollArea className="h-full p-4">
+          <ScrollArea className="flex-1 p-4">
             {getCurrentPageComments().length === 0 ? (
               <div className="text-center text-gray-500 mt-8">
                 <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
@@ -598,6 +646,15 @@ export default function PDFViewerPage() {
               </span>
               <Button variant="outline" size="sm" onClick={zoomIn}>
                 <ZoomIn className="h-4 w-4" />
+              </Button>
+              <Button 
+                variant={fitMode ? "default" : "outline"} 
+                size="sm" 
+                onClick={fitToPage}
+                className="flex items-center gap-1"
+              >
+                <Maximize className="h-4 w-4" />
+                Fit
               </Button>
               
               <Separator orientation="vertical" className="h-6" />
