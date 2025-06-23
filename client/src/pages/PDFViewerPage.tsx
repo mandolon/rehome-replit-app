@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -103,6 +103,18 @@ export default function PDFViewerPage() {
   const pdfCanvasRef = useRef<PDFCanvasHandle>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
 
+  // Handle click outside popover to cancel comment
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (popoverComment && popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
+        cancelPopoverComment();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [popoverComment]);
+
   // Sample PDF URL - using Mozilla's sample PDF
   const PDF_URL = "https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf";
 
@@ -201,8 +213,56 @@ export default function PDFViewerPage() {
 
 
   const handleCanvasClick = (x: number, y: number) => {
-    setPendingPin({ x, y, pageNumber: currentPage });
-    setShowCommentDialog(true);
+    if (!hovering) return;
+    
+    setPopoverComment({ x, y, pageNumber: currentPage });
+    setPopoverText("");
+  };
+
+  const addPopoverComment = () => {
+    if (!popoverComment || !popoverText.trim()) return;
+
+    const commentId = `comment-${Date.now()}`;
+    const pinId = `pin-${Date.now()}`;
+    
+    // Calculate sequential pin number across all pages
+    const allPinsSorted = [...pins]
+      .sort((a, b) => {
+        if (a.pageNumber !== b.pageNumber) return a.pageNumber - b.pageNumber;
+        return a.y - b.y || a.x - b.x;
+      });
+    
+    const pinNumber = allPinsSorted.length + 1;
+
+    const newPin: Pin = {
+      id: pinId,
+      x: popoverComment.x,
+      y: popoverComment.y,
+      pageNumber: popoverComment.pageNumber,
+      user: CURRENT_USER,
+      number: pinNumber,
+    };
+
+    const newComment: Comment = {
+      id: commentId,
+      x: popoverComment.x,
+      y: popoverComment.y,
+      pageNumber: popoverComment.pageNumber,
+      text: popoverText,
+      user: CURRENT_USER,
+      replies: [],
+      timestamp: new Date(),
+    };
+
+    setPins([...pins, newPin]);
+    setComments([...comments, newComment]);
+    setPopoverText("");
+    setPopoverComment(null);
+  };
+
+  const cancelPopoverComment = () => {
+    setPopoverComment(null);
+    setPopoverText("");
   };
 
   const addComment = () => {
@@ -405,7 +465,7 @@ export default function PDFViewerPage() {
       <div className={`fixed top-16 bottom-0 left-0 transition-all duration-200 ${sidebarOpen ? 'right-80' : 'right-0'}`}>
         {/* PDF Container with internal scrolling */}
         <div 
-          className="w-full h-full overflow-hidden"
+          className="w-full h-full overflow-hidden relative"
           onMouseEnter={() => setHovering(true)}
           onMouseLeave={() => setHovering(false)}
         >
@@ -418,6 +478,53 @@ export default function PDFViewerPage() {
             hovering={hovering}
             pins={getCurrentPagePins()}
           />
+          
+          {/* Popover Comment Input */}
+          {popoverComment && (
+            <div
+              ref={popoverRef}
+              className="absolute z-50 bg-white dark:bg-gray-800 border rounded-lg shadow-lg p-3 w-64"
+              style={{
+                left: Math.min(popoverComment.x + 10, window.innerWidth - 280),
+                top: Math.max(popoverComment.y - 10, 10),
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Textarea
+                value={popoverText}
+                onChange={(e) => setPopoverText(e.target.value)}
+                placeholder="Add your comment..."
+                className="min-h-[80px] text-sm mb-2"
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    addPopoverComment();
+                  } else if (e.key === 'Escape') {
+                    cancelPopoverComment();
+                  }
+                }}
+              />
+              <div className="flex justify-end gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-7 text-xs px-2"
+                  onClick={cancelPopoverComment}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  size="sm"
+                  className="h-7 text-xs px-2"
+                  onClick={addPopoverComment}
+                  disabled={!popoverText.trim()}
+                >
+                  Add Comment
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -428,6 +535,10 @@ export default function PDFViewerPage() {
         pins={pins}
         currentPage={currentPage}
         onAddReply={addReply}
+        onEditComment={editComment}
+        onDeleteComment={deleteComment}
+        onHighlightComment={highlightComment}
+        highlightedComment={highlightedComment}
       />
 
       {/* Comment Dialog */}

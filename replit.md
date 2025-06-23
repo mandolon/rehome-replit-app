@@ -141,6 +141,16 @@ Changelog:
   * Optimized React hooks (useTaskOperations, useTaskEditing, useTaskAssignments) to prevent infinite re-renders
   * Maintained Node.js/Express backend for real-time WebSocket functionality and legacy support
   * Enhanced project architecture to support hybrid Laravel/Node.js backend with shared PostgreSQL database
+- June 23, 2025: Enhanced collaborative PDF viewer with advanced interaction features
+  * Implemented mouse wheel click + drag panning for zoomed PDFs
+  * Added compact sidebar styling with reduced padding, margins, and smaller font sizes
+  * Implemented comment editing/deletion with Enter to save, click outside to cancel
+  * Added popover comment input boxes positioned next to PDF markers
+  * Implemented sequential marker numbering (1,2,3...) with auto-renumbering on deletion
+  * Added clickable markers to highlight corresponding sidebar comments for editing
+  * Implemented hover text showing "Click to add comment" indicator on PDF
+  * Enhanced collaborative features with real-time comment highlighting and visual feedback
+  * Added fit-to-height button with automatic vertical fitting as default behavior
 ```
 
 ## User Preferences
