@@ -17,8 +17,7 @@ import {
   Eye,
   EyeOff,
   Reply,
-  Upload,
-  Maximize
+  Upload
 } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
 
@@ -220,7 +219,7 @@ export default function PDFViewerPage() {
 
       canvas.height = viewport.height;
       canvas.width = viewport.width;
-      canvas.className = "pdf-canvas border shadow-lg bg-white";
+      canvas.className = "border shadow-lg bg-white";
       
       console.log("🔗 Appending canvas to container");
       pdfContainerRef.current.appendChild(canvas);
@@ -369,85 +368,6 @@ export default function PDFViewerPage() {
     setScale(prev => Math.max(prev - 0.25, 0.5));
   };
 
-  const fitToScreen = () => {
-    console.log("fitToScreen() called");
-    
-    const canvas = document.querySelector('.pdf-canvas') as HTMLCanvasElement;
-    const container = document.getElementById('pdf-viewer-container');
-    const pageContainer = document.querySelector('.pdf-page-container') as HTMLElement;
-    
-    if (!canvas || !container || !pageContainer) {
-      console.log("Canvas, container, or page container not found");
-      return;
-    }
-    
-    // Reset any previous transforms and container adjustments
-    canvas.style.transform = '';
-    canvas.style.transformOrigin = 'top left';
-    pageContainer.style.width = '';
-    pageContainer.style.height = '';
-    
-    // Force reflow to get accurate dimensions
-    canvas.offsetHeight;
-    
-    // Get container dimensions using getBoundingClientRect
-    const containerRect = container.getBoundingClientRect();
-    const availableWidth = containerRect.width - 64; // Account for padding (32px each side)
-    const availableHeight = containerRect.height - 64;
-    
-    // Get canvas natural dimensions
-    const canvasWidth = canvas.offsetWidth;
-    const canvasHeight = canvas.offsetHeight;
-    
-    console.log("Available space:", { availableWidth, availableHeight });
-    console.log("Canvas size:", { canvasWidth, canvasHeight });
-    
-    if (canvasWidth === 0 || canvasHeight === 0 || availableWidth <= 0 || availableHeight <= 0) {
-      console.log("Invalid dimensions detected");
-      return;
-    }
-    
-    // Calculate scale factors
-    const scaleX = availableWidth / canvasWidth;
-    const scaleY = availableHeight / canvasHeight;
-    const fitScale = Math.min(scaleX, scaleY); // Use smaller scale to prevent overflow
-    
-    console.log("Scale factors:", { scaleX, scaleY, fitScale });
-    
-    // Apply CSS transform
-    canvas.style.transform = `scale(${fitScale})`;
-    canvas.style.transformOrigin = 'top left';
-    
-    // Calculate scaled dimensions
-    const scaledWidth = canvasWidth * fitScale;
-    const scaledHeight = canvasHeight * fitScale;
-    
-    // Update the page container to match scaled dimensions
-    // This prevents overflow by containing the scaled canvas properly
-    pageContainer.style.width = `${scaledWidth}px`;
-    pageContainer.style.height = `${scaledHeight}px`;
-    pageContainer.style.overflow = 'hidden';
-    
-    console.log("Applied scale:", fitScale);
-    console.log("Scaled dimensions:", { scaledWidth, scaledHeight });
-  };
-
-  const resetZoom = () => {
-    const canvas = document.querySelector('.pdf-canvas') as HTMLCanvasElement;
-    const pageContainer = document.querySelector('.pdf-page-container') as HTMLElement;
-    
-    if (canvas) {
-      canvas.style.transform = '';
-      canvas.style.transformOrigin = '';
-    }
-    
-    if (pageContainer) {
-      pageContainer.style.width = '';
-      pageContainer.style.height = '';
-      pageContainer.style.overflow = '';
-    }
-  };
-
   const nextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
@@ -481,10 +401,10 @@ export default function PDFViewerPage() {
   }
 
   return (
-    <div className="h-screen bg-gray-50 dark:bg-gray-900 flex">
-      {/* Left Sidebar for Comments */}
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Sidebar */}
       {sidebarOpen && (
-        <div id="comment-sidebar" className="w-80 bg-white dark:bg-gray-800 border-r shadow-lg flex flex-col">
+        <div className="w-80 border-r bg-white dark:bg-gray-800 shadow-lg">
           <div className="p-4 border-b">
             <div className="flex items-center gap-2">
               <MessageSquare className="h-5 w-5" />
@@ -493,7 +413,7 @@ export default function PDFViewerPage() {
             </div>
           </div>
           
-          <ScrollArea className="flex-1 p-4">
+          <ScrollArea className="h-full p-4">
             {getCurrentPageComments().length === 0 ? (
               <div className="text-center text-gray-500 mt-8">
                 <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
@@ -594,10 +514,10 @@ export default function PDFViewerPage() {
         </div>
       )}
 
-      {/* Main Content Area */}
+      {/* Main PDF Viewer */}
       <div className="flex-1 flex flex-col">
         {/* Toolbar */}
-        <div id="toolbar" className="bg-white dark:bg-gray-800 border-b p-3 shadow-sm">
+        <div className="bg-white dark:bg-gray-800 border-b p-3 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Button
@@ -679,10 +599,6 @@ export default function PDFViewerPage() {
               <Button variant="outline" size="sm" onClick={zoomIn}>
                 <ZoomIn className="h-4 w-4" />
               </Button>
-              <Button variant="outline" size="sm" onClick={fitToScreen}>
-                <Maximize className="h-4 w-4" />
-                Fit
-              </Button>
               
               <Separator orientation="vertical" className="h-6" />
               
@@ -694,9 +610,8 @@ export default function PDFViewerPage() {
           </div>
         </div>
 
-        {/* PDF Viewer Container */}
+        {/* PDF Container */}
         <div 
-          id="pdf-viewer-container"
           className="flex-1 overflow-auto p-8 relative"
           onMouseEnter={() => setHovering(true)}
           onMouseLeave={() => setHovering(false)}
@@ -711,7 +626,7 @@ export default function PDFViewerPage() {
           <div className="flex justify-center">
             <div 
               ref={pdfContainerRef}
-              className="pdf-page-container relative cursor-crosshair"
+              className="relative cursor-crosshair"
               onClick={handleCanvasClick}
             >
               {/* Pins for current page */}
