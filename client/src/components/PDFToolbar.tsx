@@ -42,7 +42,7 @@ export default function PDFToolbar({
   onFileUpload
 }: PDFToolbarProps) {
   return (
-    <div className="bg-white dark:bg-gray-800 border-b p-3 shadow-sm">
+    <div className="fixed top-0 left-0 right-0 bg-white dark:bg-gray-800 border-b p-3 shadow-sm z-20">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Button

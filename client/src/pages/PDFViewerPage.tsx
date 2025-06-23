@@ -320,24 +320,24 @@ export default function PDFViewerPage() {
 
   return (
     <div className="relative h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Main PDF Viewer */}
-      <div className={`flex flex-col h-full transition-all duration-200 ${sidebarOpen ? 'mr-80' : 'mr-0'}`}>
-        {/* Toolbar */}
-        <PDFToolbar
-          sidebarOpen={sidebarOpen}
-          onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPrevPage={prevPage}
-          onNextPage={nextPage}
-          uploadedFileName={uploadedFileName}
-          scale={scale}
-          onZoomIn={zoomIn}
-          onZoomOut={zoomOut}
-          onDownload={downloadPDF}
-          onFileUpload={handleFileUpload}
-        />
+      {/* Fixed Toolbar */}
+      <PDFToolbar
+        sidebarOpen={sidebarOpen}
+        onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPrevPage={prevPage}
+        onNextPage={nextPage}
+        uploadedFileName={uploadedFileName}
+        scale={scale}
+        onZoomIn={zoomIn}
+        onZoomOut={zoomOut}
+        onDownload={downloadPDF}
+        onFileUpload={handleFileUpload}
+      />
 
+      {/* Main PDF Viewer - with top padding for fixed toolbar */}
+      <div className={`flex flex-col h-full pt-16 transition-all duration-200 ${sidebarOpen ? 'mr-80' : 'mr-0'}`}>
         {/* PDF Container */}
         <div 
           className="flex-1 relative"
@@ -358,7 +358,7 @@ export default function PDFViewerPage() {
 
       {/* Right Sidebar */}
       {sidebarOpen && (
-        <div className="fixed right-0 top-0 h-full w-80 border-l bg-white dark:bg-gray-800 shadow-lg z-10">
+        <div className="fixed right-0 top-16 h-[calc(100vh-4rem)] w-80 border-l bg-white dark:bg-gray-800 shadow-lg z-10">
           <div className="p-4 border-b">
             <div className="flex items-center gap-2">
               <MessageSquare className="h-5 w-5" />
