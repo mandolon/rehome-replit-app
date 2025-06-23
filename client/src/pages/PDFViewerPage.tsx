@@ -477,7 +477,12 @@ export default function PDFViewerPage() {
             scale={scale}
             onCanvasClick={handleCanvasClick}
             hovering={canvasHovering}
-            onHoverChange={setCanvasHovering}
+            onHoverChange={(hovering) => {
+              setCanvasHovering(hovering);
+              if (!hovering) {
+                setCursorPosition(null);
+              }
+            }}
             onCursorMove={(x, y) => {
               const container = pdfCanvasRef.current?.getContainerElement();
               if (container) {
@@ -492,9 +497,9 @@ export default function PDFViewerPage() {
           />
           
           {/* Cursor Comment Indicator */}
-          {hovering && cursorPosition && !popoverComment && (
+          {canvasHovering && cursorPosition && !popoverComment && (
             <div
-              className="absolute z-40 pointer-events-none"
+              className="fixed z-40 pointer-events-none"
               style={{
                 left: cursorPosition.x + 15,
                 top: cursorPosition.y - 5,
