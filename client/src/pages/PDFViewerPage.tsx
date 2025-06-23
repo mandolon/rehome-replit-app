@@ -83,7 +83,7 @@ export default function PDFViewerPage() {
   const [pins, setPins] = useState<Pin[]>([]);
   const [hovering, setHovering] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [scale, setScale] = useState(1.2);
+  const [scale, setScale] = useState(1.0);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [pdfDoc, setPdfDoc] = useState<pdfjsLib.PDFDocumentProxy | null>(null);
@@ -130,6 +130,19 @@ export default function PDFViewerPage() {
   useEffect(() => {
     console.log("📊 Current PDF URL changed:", { currentPdfUrl, uploadedPdfUrl });
   }, [currentPdfUrl]);
+
+  // Handle window resize to recalculate fit scale
+  useEffect(() => {
+    const handleResize = () => {
+      if (fitMode && pageRef.current) {
+        const newFitScale = calculateFitScale(pageRef.current);
+        setScale(newFitScale);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [fitMode]);
 
   const loadPDF = async () => {
     try {
@@ -669,7 +682,7 @@ export default function PDFViewerPage() {
 
         {/* PDF Container */}
         <div 
-          className="flex-1 overflow-auto p-8 relative"
+          className="flex-1 overflow-auto relative"
           onMouseEnter={() => setHovering(true)}
           onMouseLeave={() => setHovering(false)}
         >
@@ -680,10 +693,10 @@ export default function PDFViewerPage() {
             </div>
           )}
 
-          <div className="flex justify-center">
+          <div className="flex justify-center items-center min-h-full p-4">
             <div 
               ref={pdfContainerRef}
-              className="relative cursor-crosshair"
+              className="relative cursor-crosshair flex justify-center items-center"
               onClick={handleCanvasClick}
             >
               {/* Pins for current page */}
