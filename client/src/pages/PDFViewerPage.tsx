@@ -112,10 +112,13 @@ export default function PDFViewerPage() {
 
   useEffect(() => {
     console.log("🎨 Render page useEffect triggered:", { pdfDoc: !!pdfDoc, currentPage, totalPages, scale });
-    if (pdfDoc && currentPage <= totalPages) {
-      renderPage(currentPage);
+    if (pdfDoc && currentPage <= totalPages && totalPages > 0) {
+      // Add small delay to ensure DOM is ready
+      setTimeout(() => {
+        renderPage(currentPage);
+      }, 50);
     }
-  }, [pdfDoc, currentPage, scale]);
+  }, [pdfDoc, currentPage, scale, totalPages]);
 
   useEffect(() => {
     console.log("📤 Upload URL useEffect triggered:", { uploadedPdfUrl });
@@ -210,8 +213,16 @@ export default function PDFViewerPage() {
       return;
     }
     
+    // Wait for container to be available
+    let retries = 0;
+    while (!pdfContainerRef.current && retries < 10) {
+      console.log(`⏳ Waiting for PDF container ref... (${retries + 1}/10)`);
+      await new Promise(resolve => setTimeout(resolve, 100));
+      retries++;
+    }
+    
     if (!pdfContainerRef.current) {
-      console.log("❌ PDF container ref not available");
+      console.log("❌ PDF container ref not available after retries");
       return;
     }
 
