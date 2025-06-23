@@ -172,9 +172,11 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
     const currentColumn = columns.find(col => col.key === column);
     const isSelectColumn = currentColumn?.type === 'select';
     const isInputColumn = currentColumn?.type === 'input';
+    const isCheckboxColumn = currentColumn?.type === 'checkbox';
     const cellKey = `${rowId}-${column}`;
     const isInEditMode = editingCell === cellKey;
     
+    // Arrow key navigation - works consistently for all field types
     if (e.key === 'ArrowUp') {
       e.preventDefault();
       const newIndex = Math.max(0, currentIndex - 1);
@@ -185,95 +187,93 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
           nextInput.focus();
         }
       }, 10);
-    } else if (e.key === 'ArrowDown') {
-      // For select columns, let the dropdown open naturally
-      if (isSelectColumn) {
-        return; // Don't prevent default, let select handle it
+      return;
+    }
+    
+    if (e.key === 'ArrowDown') {
+      // Only navigate if not in edit mode or if it's a dropdown
+      if (!isInEditMode || isSelectColumn) {
+        e.preventDefault();
+        const newIndex = Math.min(data.length - 1, currentIndex + 1);
+        setFocusedRowIndex(newIndex);
+        setTimeout(() => {
+          const nextInput = document.querySelector(`[data-row="${newIndex}"][data-column="${column}"]`) as HTMLElement;
+          if (nextInput) {
+            nextInput.focus();
+          }
+        }, 10);
       }
+      return;
+    }
+    
+    if (e.key === 'ArrowLeft') {
+      // Allow text cursor movement in edit mode, otherwise navigate
+      if (!isInEditMode || !isInputColumn) {
+        e.preventDefault();
+        const currentColumnIndex = columns.findIndex(col => col.key === column);
+        const prevColumnIndex = Math.max(0, currentColumnIndex - 1);
+        const prevColumn = columns[prevColumnIndex];
+        setTimeout(() => {
+          const prevInput = document.querySelector(`[data-row="${currentIndex}"][data-column="${prevColumn.key}"]`) as HTMLElement;
+          if (prevInput) {
+            prevInput.focus();
+          }
+        }, 10);
+      }
+      return;
+    }
+    
+    if (e.key === 'ArrowRight') {
+      // Allow text cursor movement in edit mode, otherwise navigate
+      if (!isInEditMode || !isInputColumn) {
+        e.preventDefault();
+        const currentColumnIndex = columns.findIndex(col => col.key === column);
+        const nextColumnIndex = Math.min(columns.length - 1, currentColumnIndex + 1);
+        const nextColumn = columns[nextColumnIndex];
+        setTimeout(() => {
+          const nextInput = document.querySelector(`[data-row="${currentIndex}"][data-column="${nextColumn.key}"]`) as HTMLElement;
+          if (nextInput) {
+            nextInput.focus();
+          }
+        }, 10);
+      }
+      return;
+    }
+    
+    // Enter key handling - clean and specific
+    if (e.key === 'Enter') {
+      e.preventDefault();
       
-      // For input columns, enter edit mode (focus)
-      if (isInputColumn && !isInEditMode) {
-        setEditingCell(cellKey);
+      // For checkboxes - toggle directly
+      if (isCheckboxColumn) {
+        const currentRow = data[currentIndex];
+        const currentValue = !!currentRow[column];
+        const newValue = !currentValue;
+        
+        if (column === 'existing' || column === 'new') {
+          const otherKey = column === 'existing' ? 'new' : 'existing';
+          updateRowData(rowId, otherKey, false);
+        }
+        updateRowData(rowId, column, newValue);
         return;
       }
       
-      // Navigate to next row
-      e.preventDefault();
-      const newIndex = Math.min(data.length - 1, currentIndex + 1);
-      setFocusedRowIndex(newIndex);
-      setTimeout(() => {
-        const nextInput = document.querySelector(`[data-row="${newIndex}"][data-column="${column}"]`) as HTMLElement;
-        if (nextInput) {
-          nextInput.focus();
+      // For dropdowns - open dropdown
+      if (isSelectColumn) {
+        const selectTrigger = document.querySelector(`[data-row="${currentIndex}"][data-column="${column}"] button`) as HTMLElement;
+        if (selectTrigger) {
+          selectTrigger.click();
         }
-      }, 10);
-    } else if (e.key === 'ArrowLeft') {
-      // If in edit mode on input, allow normal cursor movement
-      if (isInEditMode && isInputColumn) {
-        return; // Don't prevent default, let input handle cursor movement
+        return;
       }
       
-      e.preventDefault();
-      const currentColumnIndex = columns.findIndex(col => col.key === column);
-      const prevColumnIndex = Math.max(0, currentColumnIndex - 1);
-      const prevColumn = columns[prevColumnIndex];
-      setTimeout(() => {
-        const prevInput = document.querySelector(`[data-row="${currentIndex}"][data-column="${prevColumn.key}"]`) as HTMLElement;
-        if (prevInput) {
-          prevInput.focus();
-        }
-      }, 10);
-    } else if (e.key === 'ArrowRight') {
-      // If in edit mode on input, allow normal cursor movement
-      if (isInEditMode && isInputColumn) {
-        return; // Don't prevent default, let input handle cursor movement
-      }
-      
-      e.preventDefault();
-      const currentColumnIndex = columns.findIndex(col => col.key === column);
-      const nextColumnIndex = Math.min(columns.length - 1, currentColumnIndex + 1);
-      const nextColumn = columns[nextColumnIndex];
-      setTimeout(() => {
-        const nextInput = document.querySelector(`[data-row="${currentIndex}"][data-column="${nextColumn.key}"]`) as HTMLElement;
-        if (nextInput) {
-          nextInput.focus();
-        }
-      }, 10);
-    } else if (e.key === 'Enter') {
-      e.preventDefault();
-      
-      // Track Enter presses for double-Enter functionality
-      const enterKey = `${rowId}-${column}`;
-      const currentCount = enterPressCount[enterKey] || 0;
-      
-      // Handle Enter for different field types
-      if (!isInEditMode) {
-        // For checkboxes, toggle the value directly
-        if (currentColumn?.type === 'checkbox') {
-          const currentRow = data[currentIndex];
-          const currentValue = !!currentRow[column];
-          const newValue = !currentValue;
-          
-          if (column === 'existing' || column === 'new') {
-            // Handle mutual exclusivity for existing/new checkboxes
-            const otherKey = column === 'existing' ? 'new' : 'existing';
-            updateRowData(rowId, otherKey, false);
-          }
-          updateRowData(rowId, column, newValue);
-          return;
-        }
+      // For inputs - handle edit mode and double enter
+      if (isInputColumn) {
+        const enterKey = `${rowId}-${column}`;
+        const currentCount = enterPressCount[enterKey] || 0;
         
-        // For select fields, open the dropdown by focusing the trigger
-        if (isSelectColumn) {
-          const selectTrigger = document.querySelector(`[data-row="${currentIndex}"][data-column="${column}"] button`) as HTMLElement;
-          if (selectTrigger) {
-            selectTrigger.click();
-          }
-          return;
-        }
-        
-        // For input fields, enter edit mode
-        if (isInputColumn) {
+        if (!isInEditMode) {
+          // First enter - activate edit mode
           setEditingCell(cellKey);
           setEnterPressCount({ ...enterPressCount, [enterKey]: 1 });
           setTimeout(() => {
@@ -283,73 +283,67 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
               return newCount;
             });
           }, 1000);
-          return;
-        }
-      }
-      
-      // If in edit mode, check for double Enter
-      if (isInEditMode && isInputColumn) {
-        // Apply dimension formatting if needed
-        const currentValue = (e.target as HTMLInputElement).value;
-        const currentColumn = columns.find(col => col.key === column);
-        if (currentColumn && (currentColumn.key === 'width' || currentColumn.key === 'height')) {
-          const formatDimension = (value: string) => {
-            const cleanValue = value.trim();
-            let match = cleanValue.match(/^(\d+)\s+(\d+)$/);
-            if (match) {
-              return `${match[1]}'-${match[2]}"`;
-            }
-            match = cleanValue.match(/^(\d+)$/);
-            if (match) {
-              return `${match[1]}'-0"`;
-            }
-            match = cleanValue.match(/^(\d+)\.(\d+)$/);
-            if (match) {
-              const wholeFeet = match[1];
-              const decimal = parseFloat('0.' + match[2]);
-              const inches = Math.round(decimal * 12);
-              return `${wholeFeet}'-${inches}"`;
-            }
-            return value;
-          };
-          const formattedValue = formatDimension(currentValue);
-          if (formattedValue !== currentValue) {
-            updateRowData(rowId, column, formattedValue);
-          }
-        }
-        
-        // Check for double Enter
-        if (currentCount === 1) {
-          // Second Enter - move to next column or create new row if last column
-          const currentColumnIndex = columns.findIndex(col => col.key === column);
-          const isLastColumn = currentColumnIndex === columns.length - 1;
-          
-          setEditingCell(null);
-          setEnterPressCount({});
-          
-          if (isLastColumn) {
-            onAddRow();
-          } else {
-            moveToNextField(currentIndex, column);
-          }
-          return;
         } else {
-          // First Enter - stay in same cell but track the press
-          setEnterPressCount({ ...enterPressCount, [enterKey]: 1 });
-          setTimeout(() => {
-            setEnterPressCount(prev => {
-              const newCount = { ...prev };
-              delete newCount[enterKey];
-              return newCount;
-            });
-          }, 1000);
-          return;
+          // In edit mode - check for double enter
+          if (currentCount === 1) {
+            // Second enter - move to next column or add row
+            const currentValue = (e.target as HTMLInputElement).value;
+            
+            // Apply dimension formatting
+            if (currentColumn && (currentColumn.key === 'width' || currentColumn.key === 'height')) {
+              const formatDimension = (value: string) => {
+                const cleanValue = value.trim();
+                let match = cleanValue.match(/^(\d+)\s+(\d+)$/);
+                if (match) return `${match[1]}'-${match[2]}"`;
+                match = cleanValue.match(/^(\d+)$/);
+                if (match) return `${match[1]}'-0"`;
+                match = cleanValue.match(/^(\d+)\.(\d+)$/);
+                if (match) {
+                  const wholeFeet = match[1];
+                  const decimal = parseFloat('0.' + match[2]);
+                  const inches = Math.round(decimal * 12);
+                  return `${wholeFeet}'-${inches}"`;
+                }
+                return value;
+              };
+              const formattedValue = formatDimension(currentValue);
+              if (formattedValue !== currentValue) {
+                updateRowData(rowId, column, formattedValue);
+              }
+            }
+            
+            const currentColumnIndex = columns.findIndex(col => col.key === column);
+            const isLastColumn = currentColumnIndex === columns.length - 1;
+            
+            setEditingCell(null);
+            setEnterPressCount({});
+            
+            if (isLastColumn) {
+              onAddRow();
+            } else {
+              moveToNextField(currentIndex, column);
+            }
+          } else {
+            // First enter in edit mode - track for double enter
+            setEnterPressCount({ ...enterPressCount, [enterKey]: 1 });
+            setTimeout(() => {
+              setEnterPressCount(prev => {
+                const newCount = { ...prev };
+                delete newCount[enterKey];
+                return newCount;
+              });
+            }, 1000);
+          }
         }
       }
-    } else if (e.key === 'Escape') {
-      // Exit edit mode and reset Enter count
+      return;
+    }
+    
+    // Escape key - exit edit mode
+    if (e.key === 'Escape') {
       setEditingCell(null);
       setEnterPressCount({});
+      return;
     }
   };
 
