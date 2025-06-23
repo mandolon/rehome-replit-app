@@ -21,8 +21,9 @@ import {
 } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
 
-// Configure PDF.js worker with Mozilla CDN
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://mozilla.github.io/pdf.js/build/pdf.worker.min.js';
+// Disable PDF.js worker to avoid loading issues in development
+pdfjsLib.GlobalWorkerOptions.workerSrc = '';
+console.log('PDF.js configured to run without external worker');
 
 interface User {
   id: string;
@@ -169,7 +170,15 @@ export default function PDFViewerPage() {
       setIsLoading(true);
       
       console.log("📋 Creating PDF.js loading task with URL:", currentPdfUrl);
-      const loadingTask = pdfjsLib.getDocument(currentPdfUrl);
+      
+      // Configure loading task with worker disabled
+      const loadingTask = pdfjsLib.getDocument({
+        url: currentPdfUrl,
+        disableWorker: true,
+        isEvalSupported: false,
+        disableAutoFetch: false,
+        disableStream: false
+      });
       
       console.log("⏳ Waiting for PDF document to load...");
       const pdf = await loadingTask.promise;
@@ -197,6 +206,13 @@ export default function PDFViewerPage() {
         });
       }
       setIsLoading(false);
+      
+      // Show user-friendly error message
+      toast({
+        title: "PDF Loading Failed",
+        description: "Unable to load the PDF document. Please try a different file.",
+        variant: "destructive",
+      });
     }
   };
 
