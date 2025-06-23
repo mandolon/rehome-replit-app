@@ -127,7 +127,7 @@ export default function PDFViewerPage() {
     }
   }, [pdfDoc, currentPage, scale]);
 
-  // Keyboard shortcuts
+  // Keyboard shortcuts and click outside handling
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -141,14 +141,29 @@ export default function PDFViewerPage() {
       }
     };
 
+    const handleClickOutside = (e: MouseEvent) => {
+      if (showCommentBox && pdfContainerRef.current) {
+        const commentBox = document.querySelector('[data-comment-box]');
+        if (commentBox && !commentBox.contains(e.target as Node)) {
+          setShowCommentBox(false);
+          setPendingComment(null);
+          setCommentText("");
+        }
+      }
+    };
+
     document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("click", handleClickOutside);
+    };
   }, [showCommentBox, commentText]);
 
   // Mouse tracking for cursor hint
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      if (pdfContainerRef.current && !isPanning && !isDragging) {
+      if (pdfContainerRef.current && !isPanning && !isDragging && !showCommentBox) {
         const rect = pdfContainerRef.current.getBoundingClientRect();
         if (
           e.clientX >= rect.left &&
@@ -156,7 +171,7 @@ export default function PDFViewerPage() {
           e.clientY >= rect.top &&
           e.clientY <= rect.bottom
         ) {
-          setMousePosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+          setMousePosition({ x: e.clientX, y: e.clientY });
           setShowCursorHint(true);
         } else {
           setShowCursorHint(false);
@@ -168,7 +183,7 @@ export default function PDFViewerPage() {
 
     document.addEventListener("mousemove", handleMouseMove);
     return () => document.removeEventListener("mousemove", handleMouseMove);
-  }, [isPanning, isDragging]);
+  }, [isPanning, isDragging, showCommentBox]);
 
   const loadPDF = async () => {
     try {
@@ -230,7 +245,6 @@ export default function PDFViewerPage() {
       canvas.height = viewport.height;
       canvas.width = viewport.width;
       canvas.className = "border shadow-lg bg-white";
-      canvas.style.transform = `translate(${panOffset.x}px, ${panOffset.y}px)`;
       
       pdfContainerRef.current.appendChild(canvas);
       canvasRef.current = canvas;
@@ -271,14 +285,14 @@ export default function PDFViewerPage() {
     event.target.value = '';
   };
 
-  const handleRightClick = (e: React.MouseEvent) => {
-    e.preventDefault();
+  const handleClick = (e: React.MouseEvent) => {
+    if (e.button !== 0) return; // Only handle left clicks
     
     if (!canvasRef.current) return;
     
     const rect = canvasRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const x = (e.clientX - rect.left - panOffset.x) / scale;
+    const y = (e.clientY - rect.top - panOffset.y) / scale;
     
     setPendingComment({ x, y, pageNumber: currentPage });
     setShowCommentBox(true);
@@ -366,11 +380,11 @@ export default function PDFViewerPage() {
   };
 
   const handlePinDragMove = useCallback((e: MouseEvent) => {
-    if (!isDragging || !draggedPin || !canvasRef.current) return;
+    if (!isDragging || !draggedPin || !pdfContainerRef.current) return;
 
-    const rect = canvasRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const rect = pdfContainerRef.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / scale;
+    const y = (e.clientY - rect.top) / scale;
 
     setPins(pins.map(p => 
       p.id === draggedPin ? { ...p, x, y } : p
@@ -382,7 +396,7 @@ export default function PDFViewerPage() {
         c.id === pin.commentId ? { ...c, x, y } : c
       ));
     }
-  }, [isDragging, draggedPin, pins, comments]);
+  }, [isDragging, draggedPin, pins, comments, scale]);
 
   const handlePinDragEnd = useCallback(() => {
     setIsDragging(false);
@@ -605,24 +619,28 @@ export default function PDFViewerPage() {
           {/* Cursor hint */}
           {showCursorHint && !showCommentBox && (
             <div 
-              className="absolute bg-black text-white px-2 py-1 rounded text-xs z-20 pointer-events-none"
+              className="fixed bg-black text-white px-2 py-1 rounded text-xs z-50 pointer-events-none"
               style={{ 
                 left: mousePosition.x + 10, 
-                top: mousePosition.y - 30,
-                transform: 'translate(-50%, 0)'
+                top: mousePosition.y - 30
               }}
             >
-              Right click to add comment
+              Click to add comment
             </div>
           )}
 
-          <div className="flex justify-center items-center h-full p-8">
+          <div className="flex justify-center items-center h-full p-8 overflow-hidden">
             <div 
               ref={pdfContainerRef}
-              className="relative cursor-grab active:cursor-grabbing"
-              onContextMenu={handleRightClick}
+              className="relative"
+              onClick={handleClick}
               onMouseDown={handlePanStart}
-              style={{ cursor: isPanning ? 'grabbing' : scale > 1.0 ? 'grab' : 'default' }}
+              style={{ 
+                cursor: isPanning ? 'grabbing' : scale > 1.0 ? 'grab' : 'crosshair',
+                transform: `translate(${panOffset.x}px, ${panOffset.y}px)`,
+                maxWidth: '100%',
+                maxHeight: '100%'
+              }}
             >
               {/* Pins for current page */}
               {getCurrentPagePins().map((pin) => (
@@ -630,11 +648,14 @@ export default function PDFViewerPage() {
                   key={pin.id}
                   className="absolute z-10 cursor-pointer transform -translate-x-1/2 -translate-y-1/2"
                   style={{ 
-                    left: pin.x + panOffset.x, 
-                    top: pin.y + panOffset.y 
+                    left: pin.x * scale, 
+                    top: pin.y * scale 
                   }}
                   onMouseDown={(e) => handlePinDragStart(e, pin.id)}
-                  onClick={() => handlePinClick(pin.commentId)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handlePinClick(pin.commentId);
+                  }}
                 >
                   <div
                     className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-white hover:scale-110 transition-transform"
@@ -650,10 +671,11 @@ export default function PDFViewerPage() {
                 <div
                   className="absolute z-20 bg-white border shadow-lg rounded-lg p-3 min-w-[250px]"
                   style={{ 
-                    left: pendingComment.x + 10, 
-                    top: pendingComment.y,
+                    left: pendingComment.x * scale + 20, 
+                    top: pendingComment.y * scale,
                     transform: 'translateY(-50%)'
                   }}
+                  onClick={(e) => e.stopPropagation()}
                 >
                   <Textarea
                     ref={commentBoxRef}
