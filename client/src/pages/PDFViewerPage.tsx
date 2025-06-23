@@ -348,12 +348,23 @@ export default function PDFViewerPage() {
         }
       }
 
-      // Remove existing canvas
+      // Clear container and remove existing canvas
       if (canvasRef.current) {
         console.log("🗑️ Removing existing canvas");
         const oldCanvas = canvasRef.current;
         logCanvasDimensions(oldCanvas, page.getViewport({ scale: currentScale }), "Before Canvas Removal");
         oldCanvas.remove();
+        canvasRef.current = null;
+      }
+      
+      // Ensure container is clean
+      if (pdfContainerRef.current) {
+        // Clear all canvas elements to prevent stacking
+        const existingCanvases = pdfContainerRef.current.querySelectorAll('canvas');
+        existingCanvases.forEach(canvas => {
+          console.log("🧹 Cleaning up stray canvas element");
+          canvas.remove();
+        });
       }
 
       console.log(`📐 Creating viewport with scale ${currentScale}`);
@@ -380,6 +391,9 @@ export default function PDFViewerPage() {
       canvas.style.maxWidth = "100%";
       canvas.style.maxHeight = "100%";
       canvas.style.objectFit = "contain";
+      // Add red border for debugging canvas boundaries
+      canvas.style.border = "2px solid red";
+      canvas.style.boxSizing = "border-box";
       
       console.log("🔗 Appending canvas to container");
       pdfContainerRef.current.appendChild(canvas);
@@ -398,6 +412,35 @@ export default function PDFViewerPage() {
       
       logCanvasDimensions(canvas, viewport, "After Page Render");
       logContainerDimensions("After Page Render Complete");
+      
+      // Detailed zoom progression analysis
+      const analysisData = {
+        zoomLevel: Math.round(currentScale * 100) + '%',
+        canvasDimensions: {
+          actualWidth: canvas.width,
+          actualHeight: canvas.height,
+          displayWidth: canvas.getBoundingClientRect().width,
+          displayHeight: canvas.getBoundingClientRect().height
+        },
+        containerDimensions: {
+          width: pdfContainerRef.current.getBoundingClientRect().width,
+          height: pdfContainerRef.current.getBoundingClientRect().height
+        },
+        scale: currentScale,
+        isCanvasSmallerThanContainer: canvas.getBoundingClientRect().width < pdfContainerRef.current.getBoundingClientRect().width,
+        shouldHaveScrollbars: canvas.getBoundingClientRect().width > pdfContainerRef.current.getBoundingClientRect().width
+      };
+      
+      console.log("🔍 ZOOM PROGRESSION ANALYSIS:", analysisData);
+      
+      // Check for potential layout issues
+      if (analysisData.canvasDimensions.displayWidth < 100) {
+        console.warn("⚠️ WARNING: Canvas display width is very small:", analysisData.canvasDimensions.displayWidth);
+      }
+      
+      if (analysisData.isCanvasSmallerThanContainer && currentScale > 1) {
+        console.warn("⚠️ WARNING: Canvas is smaller than container at scale > 1. This suggests CSS constraints are limiting growth.");
+      }
       
       // Check for overflow after rendering
       setTimeout(() => {
@@ -513,28 +556,50 @@ export default function PDFViewerPage() {
     link.click();
   };
 
+  const logZoomDetails = (action: string, oldScale: number, newScale: number) => {
+    console.log(`🔍 ${action}:`, {
+      previousScale: oldScale,
+      newScale: newScale,
+      scaleChange: newScale - oldScale,
+      percentageChange: Math.round(((newScale - oldScale) / oldScale) * 100)
+    });
+    
+    // Log container and canvas dimensions after zoom
+    setTimeout(() => {
+      if (pdfContainerRef.current && canvasRef.current) {
+        const containerRect = pdfContainerRef.current.getBoundingClientRect();
+        const canvasRect = canvasRef.current.getBoundingClientRect();
+        
+        console.log(`📏 ${action} - Dimensions:`, {
+          container: {
+            width: containerRect.width,
+            height: containerRect.height
+          },
+          canvas: {
+            width: canvasRef.current.width,
+            height: canvasRef.current.height,
+            displayWidth: canvasRect.width,
+            displayHeight: canvasRect.height
+          },
+          scale: newScale,
+          zoomPercentage: Math.round(newScale * 100) + '%'
+        });
+      }
+    }, 100);
+  };
+
   const zoomIn = () => {
     const newScale = Math.min(scale + 0.25, 3);
-    console.log("🔍 Zoom In triggered:", {
-      previousScale: scale,
-      newScale,
-      fitMode: fitMode
-    });
+    logZoomDetails("Zoom In", scale, newScale);
     setFitMode(false);
     setScale(newScale);
-    logContainerDimensions("After Zoom In");
   };
 
   const zoomOut = () => {
     const newScale = Math.max(scale - 0.25, 0.5);
-    console.log("🔍 Zoom Out triggered:", {
-      previousScale: scale,
-      newScale,
-      fitMode: fitMode
-    });
+    logZoomDetails("Zoom Out", scale, newScale);
     setFitMode(false);
     setScale(newScale);
-    logContainerDimensions("After Zoom Out");
   };
 
   const fitToPage = () => {
