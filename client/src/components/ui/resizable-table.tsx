@@ -57,6 +57,7 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
   const [focusedRowIndex, setFocusedRowIndex] = useState<number>(-1);
   const [editingCell, setEditingCell] = useState<string | null>(null);
   const [enterPressCount, setEnterPressCount] = useState<{[key: string]: number}>({});
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [customInputs, setCustomInputs] = useState<Record<string, string>>({});
   const tableRef = useRef<HTMLDivElement>(null);
   const startXRef = useRef<number>(0);
@@ -175,11 +176,25 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
     const isCheckboxColumn = currentColumn?.type === 'checkbox';
     const cellKey = `${rowId}-${column}`;
     const isInEditMode = editingCell === cellKey;
+    const dropdownKey = `${currentIndex}-${column}`;
+    const isDropdownOpen = openDropdown === dropdownKey;
     
-    // Arrow key navigation - works consistently for all field types
-    if (e.key === 'ArrowUp') {
+    // Check if any dropdown is currently open
+    const hasOpenDropdown = document.querySelector('[data-state="open"]') !== null;
+    
+    // Arrow key navigation
+    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+      // If dropdown is open, let it handle navigation internally
+      if (hasOpenDropdown && isSelectColumn) {
+        return; // Don't prevent default, let dropdown handle it
+      }
+      
+      // Otherwise handle cell navigation
       e.preventDefault();
-      const newIndex = Math.max(0, currentIndex - 1);
+      const newIndex = e.key === 'ArrowUp' 
+        ? Math.max(0, currentIndex - 1)
+        : Math.min(data.length - 1, currentIndex + 1);
+      
       setFocusedRowIndex(newIndex);
       setTimeout(() => {
         const nextInput = document.querySelector(`[data-row="${newIndex}"][data-column="${column}"]`) as HTMLElement;
@@ -190,57 +205,30 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
       return;
     }
     
-    if (e.key === 'ArrowDown') {
-      // Only navigate if not in edit mode or if it's a dropdown
-      if (!isInEditMode || isSelectColumn) {
-        e.preventDefault();
-        const newIndex = Math.min(data.length - 1, currentIndex + 1);
-        setFocusedRowIndex(newIndex);
-        setTimeout(() => {
-          const nextInput = document.querySelector(`[data-row="${newIndex}"][data-column="${column}"]`) as HTMLElement;
-          if (nextInput) {
-            nextInput.focus();
-          }
-        }, 10);
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      // Allow text cursor movement in edit mode
+      if (isInEditMode && isInputColumn) {
+        return; // Don't prevent default, allow text cursor movement
       }
+      
+      // Otherwise handle column navigation
+      e.preventDefault();
+      const currentColumnIndex = columns.findIndex(col => col.key === column);
+      const newColumnIndex = e.key === 'ArrowLeft'
+        ? Math.max(0, currentColumnIndex - 1)
+        : Math.min(columns.length - 1, currentColumnIndex + 1);
+      const newColumn = columns[newColumnIndex];
+      
+      setTimeout(() => {
+        const nextInput = document.querySelector(`[data-row="${currentIndex}"][data-column="${newColumn.key}"]`) as HTMLElement;
+        if (nextInput) {
+          nextInput.focus();
+        }
+      }, 10);
       return;
     }
     
-    if (e.key === 'ArrowLeft') {
-      // Allow text cursor movement in edit mode, otherwise navigate
-      if (!isInEditMode || !isInputColumn) {
-        e.preventDefault();
-        const currentColumnIndex = columns.findIndex(col => col.key === column);
-        const prevColumnIndex = Math.max(0, currentColumnIndex - 1);
-        const prevColumn = columns[prevColumnIndex];
-        setTimeout(() => {
-          const prevInput = document.querySelector(`[data-row="${currentIndex}"][data-column="${prevColumn.key}"]`) as HTMLElement;
-          if (prevInput) {
-            prevInput.focus();
-          }
-        }, 10);
-      }
-      return;
-    }
-    
-    if (e.key === 'ArrowRight') {
-      // Allow text cursor movement in edit mode, otherwise navigate
-      if (!isInEditMode || !isInputColumn) {
-        e.preventDefault();
-        const currentColumnIndex = columns.findIndex(col => col.key === column);
-        const nextColumnIndex = Math.min(columns.length - 1, currentColumnIndex + 1);
-        const nextColumn = columns[nextColumnIndex];
-        setTimeout(() => {
-          const nextInput = document.querySelector(`[data-row="${currentIndex}"][data-column="${nextColumn.key}"]`) as HTMLElement;
-          if (nextInput) {
-            nextInput.focus();
-          }
-        }, 10);
-      }
-      return;
-    }
-    
-    // Enter key handling - clean and specific
+    // Enter key handling
     if (e.key === 'Enter') {
       e.preventDefault();
       
@@ -258,23 +246,14 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
         return;
       }
       
-      // For dropdowns - open dropdown
+      // For dropdowns - activate dropdown
       if (isSelectColumn) {
-        // Find the select trigger using multiple selectors
+        setOpenDropdown(dropdownKey);
         setTimeout(() => {
-          let selectTrigger = document.querySelector(`[data-row="${currentIndex}"][data-column="${column}"] button[role="combobox"]`) as HTMLElement;
-          if (!selectTrigger) {
-            selectTrigger = document.querySelector(`[data-row="${currentIndex}"][data-column="${column}"] [data-radix-collection-item]`) as HTMLElement;
-          }
-          if (!selectTrigger) {
-            selectTrigger = document.querySelector(`[data-row="${currentIndex}"][data-column="${column}"] button`) as HTMLElement;
-          }
+          const selectTrigger = document.querySelector(`[data-row="${currentIndex}"][data-column="${column}"] button`) as HTMLButtonElement;
           if (selectTrigger) {
             selectTrigger.focus();
             selectTrigger.click();
-            // Trigger a space or enter event to open the dropdown
-            const event = new KeyboardEvent('keydown', { key: ' ', code: 'Space' });
-            selectTrigger.dispatchEvent(event);
           }
         }, 10);
         return;
@@ -352,10 +331,11 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
       return;
     }
     
-    // Escape key - exit edit mode
+    // Escape key - exit edit mode and close dropdowns
     if (e.key === 'Escape') {
       setEditingCell(null);
       setEnterPressCount({});
+      setOpenDropdown(null);
       return;
     }
   };
@@ -430,10 +410,22 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
         ? column.options(row) 
         : column.options || [];
 
+      const dropdownKey = `${rowIndex}-${column.key}`;
+      
       return (
         <Select 
           value={row[column.key]} 
-          onValueChange={(value) => handleSelectChange(row.id, column.key, value, column.allowCustomInput)}
+          onValueChange={(value) => {
+            handleSelectChange(row.id, column.key, value, column.allowCustomInput);
+            setOpenDropdown(null);
+          }}
+          onOpenChange={(open) => {
+            if (open) {
+              setOpenDropdown(dropdownKey);
+            } else {
+              setOpenDropdown(null);
+            }
+          }}
         >
           <SelectTrigger 
             className="h-6 border-0 shadow-none bg-transparent focus:bg-muted/30 px-0 w-full" 
