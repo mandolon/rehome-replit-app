@@ -1,0 +1,82 @@
+react-dom.development.js:29895 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+App.tsx:55 App component is rendering, current path: /sandbox/pdf-viewer
+PDFViewerPage.tsx:109 🚀 Initial PDF load useEffect triggered
+PDFViewerPage.tsx:134 🚀 Starting PDF loading process
+PDFViewerPage.tsx:135 📂 Current PDF URL: https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf
+PDFViewerPage.tsx:136 🔄 Setting loading state to true
+PDFViewerPage.tsx:140 📋 Creating PDF.js loading task with URL: https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf
+PDFViewerPage.tsx:143 ⏳ Waiting for PDF document to load...
+PDFViewerPage.tsx:114 🎨 Render page useEffect triggered: {pdfDoc: false, currentPage: 1, totalPages: 0, scale: 1.2}
+PDFViewerPage.tsx:121 📤 Upload URL useEffect triggered: {uploadedPdfUrl: null}
+PDFViewerPage.tsx:129 📊 Current PDF URL changed: {currentPdfUrl: 'https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf', uploadedPdfUrl: null}
+util.js:384 Warning: Setting up fake worker.
+api.js:2285 
+            
+            
+            GET https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.3.31/pdf.worker.min.js net::ERR_ABORTED 404 (Not Found)
+loader @ api.js:2285
+get _setupFakeWorkerGlobal @ api.js:2289
+setupFakeWorker_fn @ api.js:2194
+terminateEarly @ api.js:2125
+worker.addEventListener.signal @ api.js:2136
+PDFViewerPage.tsx:164  ❌ Error loading PDF: Error: Setting up fake worker failed: "Failed to fetch dynamically imported module: https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.3.31/pdf.worker.min.js".
+    at api.js:2216:11
+loadPDF @ PDFViewerPage.tsx:164
+await in loadPDF
+(anonymous) @ PDFViewerPage.tsx:110
+commitHookEffectListMount @ react-dom.development.js:23189
+commitPassiveMountOnFiber @ react-dom.development.js:24965
+commitPassiveMountEffects_complete @ react-dom.development.js:24930
+commitPassiveMountEffects_begin @ react-dom.development.js:24917
+commitPassiveMountEffects @ react-dom.development.js:24905
+flushPassiveEffectsImpl @ react-dom.development.js:27078
+flushPassiveEffects @ react-dom.development.js:27023
+performSyncWorkOnRoot @ react-dom.development.js:26115
+flushSyncCallbacks @ react-dom.development.js:12042
+commitRootImpl @ react-dom.development.js:26998
+commitRoot @ react-dom.development.js:26721
+finishConcurrentRender @ react-dom.development.js:26020
+performConcurrentWorkOnRoot @ react-dom.development.js:25848
+workLoop @ scheduler.development.js:266
+flushWork @ scheduler.development.js:239
+performWorkUntilDeadline @ scheduler.development.js:533
+PDFViewerPage.tsx:165  ❌ PDF URL that failed: https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf
+loadPDF @ PDFViewerPage.tsx:165
+await in loadPDF
+(anonymous) @ PDFViewerPage.tsx:110
+commitHookEffectListMount @ react-dom.development.js:23189
+commitPassiveMountOnFiber @ react-dom.development.js:24965
+commitPassiveMountEffects_complete @ react-dom.development.js:24930
+commitPassiveMountEffects_begin @ react-dom.development.js:24917
+commitPassiveMountEffects @ react-dom.development.js:24905
+flushPassiveEffectsImpl @ react-dom.development.js:27078
+flushPassiveEffects @ react-dom.development.js:27023
+performSyncWorkOnRoot @ react-dom.development.js:26115
+flushSyncCallbacks @ react-dom.development.js:12042
+commitRootImpl @ react-dom.development.js:26998
+commitRoot @ react-dom.development.js:26721
+finishConcurrentRender @ react-dom.development.js:26020
+performConcurrentWorkOnRoot @ react-dom.development.js:25848
+workLoop @ scheduler.development.js:266
+flushWork @ scheduler.development.js:239
+performWorkUntilDeadline @ scheduler.development.js:533
+PDFViewerPage.tsx:167  ❌ Error details: {name: 'Error', message: 'Setting up fake worker failed: "Failed to fetch dy…e.com/ajax/libs/pdf.js/5.3.31/pdf.worker.min.js".', stack: 'Error: Setting up fake worker failed: "Failed to f…ules/.vite/deps/pdfjs-dist.js?v=82dd3191:12472:45'}
+loadPDF @ PDFViewerPage.tsx:167
+await in loadPDF
+(anonymous) @ PDFViewerPage.tsx:110
+commitHookEffectListMount @ react-dom.development.js:23189
+commitPassiveMountOnFiber @ react-dom.development.js:24965
+commitPassiveMountEffects_complete @ react-dom.development.js:24930
+commitPassiveMountEffects_begin @ react-dom.development.js:24917
+commitPassiveMountEffects @ react-dom.development.js:24905
+flushPassiveEffectsImpl @ react-dom.development.js:27078
+flushPassiveEffects @ react-dom.development.js:27023
+performSyncWorkOnRoot @ react-dom.development.js:26115
+flushSyncCallbacks @ react-dom.development.js:12042
+commitRootImpl @ react-dom.development.js:26998
+commitRoot @ react-dom.development.js:26721
+finishConcurrentRender @ react-dom.development.js:26020
+performConcurrentWorkOnRoot @ react-dom.development.js:25848
+workLoop @ scheduler.development.js:266
+flushWork @ scheduler.development.js:239
+performWorkUntilDeadline @ scheduler.development.js:533

@@ -21,8 +21,8 @@ import {
 } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
 
-// Configure PDF.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+// Configure PDF.js worker using jsdelivr CDN
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.worker.min.js';
 
 interface User {
   id: string;
@@ -129,12 +129,43 @@ export default function PDFViewerPage() {
     console.log("📊 Current PDF URL changed:", { currentPdfUrl, uploadedPdfUrl });
   }, [currentPdfUrl]);
 
+  const clearExistingPDF = () => {
+    console.log("🧹 Clearing existing PDF content");
+    
+    // Remove existing canvas
+    if (canvasRef.current) {
+      console.log("🗑️ Removing existing canvas element");
+      canvasRef.current.remove();
+      canvasRef.current = null;
+    }
+    
+    // Clear PDF container
+    if (pdfContainerRef.current) {
+      console.log("🧹 Clearing PDF container content");
+      pdfContainerRef.current.innerHTML = '';
+    }
+    
+    // Reset PDF-related state
+    console.log("🔄 Resetting PDF-related state values");
+    setPdfDoc(null);
+    setTotalPages(0);
+    setCurrentPage(1);
+    setPins([]);
+    setComments([]);
+    pageRef.current = null;
+    
+    console.log("✅ PDF content cleared successfully");
+  };
+
   const loadPDF = async () => {
     try {
       console.log("🚀 Starting PDF loading process");
       console.log("📂 Current PDF URL:", currentPdfUrl);
-      console.log("🔄 Setting loading state to true");
       
+      // Clear existing PDF content before loading new one
+      clearExistingPDF();
+      
+      console.log("🔄 Setting loading state to true");
       setIsLoading(true);
       
       console.log("📋 Creating PDF.js loading task with URL:", currentPdfUrl);
@@ -151,12 +182,7 @@ export default function PDFViewerPage() {
       
       setPdfDoc(pdf);
       setTotalPages(pdf.numPages);
-      setCurrentPage(1); // Reset to first page when loading new PDF
-      
-      console.log("🗑️ Clearing existing pins and comments for new PDF");
-      // Clear existing pins and comments when loading new PDF
-      setPins([]);
-      setComments([]);
+      setCurrentPage(1);
       
       console.log("✅ PDF loading complete, setting loading state to false");
       setIsLoading(false);
