@@ -151,6 +151,9 @@ Changelog:
   * Implemented hover text showing "Click to add comment" indicator on PDF
   * Enhanced collaborative features with real-time comment highlighting and visual feedback
   * Added fit-to-height button with automatic vertical fitting as default behavior
+  * Implemented draggable comment markers with percentage-based positioning
+  * Added relative positioning system that maintains marker placement across zoom levels
+  * Enhanced marker system to store both pixel and percentage coordinates for responsive positioning
 ```
 
 ## User Preferences

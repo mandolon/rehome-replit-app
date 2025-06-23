@@ -213,10 +213,48 @@ const PDFCanvas = forwardRef<PDFCanvasHandle, PDFCanvasProps>(({
             style={{ 
               left: pin.x, 
               top: pin.y,
-              '--pin-color': pin.user.color
+              '--pin-color': pin.user.color,
+              cursor: 'grab'
             } as React.CSSProperties & { '--pin-color': string }}
+            onMouseDown={(e) => {
+              if (e.button === 0) { // Left mouse button only
+                e.preventDefault();
+                e.stopPropagation();
+                isDraggingPin.current = true;
+                draggedPinId.current = pin.id;
+                
+                const handleMouseMove = (moveEvent: MouseEvent) => {
+                  if (!isDraggingPin.current || !canvasRef.current) return;
+                  
+                  const rect = canvasRef.current.getBoundingClientRect();
+                  const x = moveEvent.clientX - rect.left;
+                  const y = moveEvent.clientY - rect.top;
+                  
+                  // Calculate percentage coordinates
+                  const xPercent = Math.max(0, Math.min(100, (x / canvasRef.current.width) * 100));
+                  const yPercent = Math.max(0, Math.min(100, (y / canvasRef.current.height) * 100));
+                  
+                  onPinDrag(pin.id, xPercent, yPercent);
+                };
+                
+                const handleMouseUp = () => {
+                  isDraggingPin.current = false;
+                  draggedPinId.current = null;
+                  document.removeEventListener('mousemove', handleMouseMove);
+                  document.removeEventListener('mouseup', handleMouseUp);
+                };
+                
+                document.addEventListener('mousemove', handleMouseMove);
+                document.addEventListener('mouseup', handleMouseUp);
+              }
+            }}
           >
-            <div className="pdf-pin-circle">
+            <div 
+              className="pdf-pin-circle"
+              style={{ 
+                cursor: isDraggingPin.current && draggedPinId.current === pin.id ? 'grabbing' : 'grab' 
+              }}
+            >
               {pin.number}
             </div>
           </div>

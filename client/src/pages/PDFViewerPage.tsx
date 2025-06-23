@@ -122,6 +122,37 @@ export default function PDFViewerPage() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [popoverComment]);
 
+  // Update pin positions when scale changes to maintain relative positioning
+  useEffect(() => {
+    if (scale && pdfCanvasRef.current) {
+      const canvas = pdfCanvasRef.current.getCanvasElement();
+      if (canvas) {
+        // Update all pins to maintain their percentage-based positions
+        setPins(prevPins => prevPins.map(pin => ({
+          ...pin,
+          x: (pin.xPercent / 100) * canvas.width,
+          y: (pin.yPercent / 100) * canvas.height,
+        })));
+
+        // Update all comments to match pin positions
+        setComments(prevComments => prevComments.map(comment => ({
+          ...comment,
+          x: (comment.xPercent / 100) * canvas.width,
+          y: (comment.yPercent / 100) * canvas.height,
+        })));
+
+        // Update temp pin if it exists
+        if (tempPin) {
+          setTempPin(prevTempPin => prevTempPin ? {
+            ...prevTempPin,
+            x: (prevTempPin.xPercent / 100) * canvas.width,
+            y: (prevTempPin.yPercent / 100) * canvas.height,
+          } : null);
+        }
+      }
+    }
+  }, [scale, pdfDoc]);
+
   // Sample PDF URL - using Mozilla's sample PDF
   const PDF_URL = "https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf";
 
@@ -595,6 +626,7 @@ export default function PDFViewerPage() {
                 });
               }
             }}
+            onPinDrag={handlePinDrag}
             pins={getCurrentPagePins()}
           />
           
