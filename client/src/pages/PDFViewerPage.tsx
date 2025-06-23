@@ -17,24 +17,12 @@ import {
   Eye,
   EyeOff,
   Reply,
-  Upload,
-  Maximize
+  Upload
 } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
 
-// Configure PDF.js worker to use local file
+// Configure PDF.js worker - use local worker file
 pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
-
-const USER_COLORS = [
-  "#3B82F6", // Blue
-  "#EF4444", // Red
-  "#10B981", // Green
-  "#F59E0B", // Yellow
-  "#8B5CF6", // Purple
-  "#F97316", // Orange
-  "#06B6D4", // Cyan
-  "#84CC16", // Lime
-];
 
 interface User {
   id: string;
@@ -65,11 +53,23 @@ interface Pin {
   x: number;
   y: number;
   pageNumber: number;
-  number: number;
   user: User;
-  comment: Comment;
+  number: number;
 }
 
+// Predefined user colors
+const USER_COLORS = [
+  "#ec4899", // pink
+  "#3b82f6", // blue
+  "#22c55e", // green
+  "#a855f7", // purple
+  "#f59e0b", // amber
+  "#ef4444", // red
+  "#06b6d4", // cyan
+  "#8b5cf6", // violet
+];
+
+// Mock current user - in real app this would come from auth
 const CURRENT_USER: User = {
   id: "user-1",
   name: "Current User",
@@ -112,13 +112,10 @@ export default function PDFViewerPage() {
 
   useEffect(() => {
     console.log("🎨 Render page useEffect triggered:", { pdfDoc: !!pdfDoc, currentPage, totalPages, scale });
-    if (pdfDoc && currentPage <= totalPages && totalPages > 0) {
-      // Add small delay to ensure DOM is ready
-      setTimeout(() => {
-        renderPage(currentPage);
-      }, 50);
+    if (pdfDoc && currentPage <= totalPages) {
+      renderPage(currentPage);
     }
-  }, [pdfDoc, currentPage, scale, totalPages]);
+  }, [pdfDoc, currentPage, scale]);
 
   useEffect(() => {
     console.log("📤 Upload URL useEffect triggered:", { uploadedPdfUrl });
@@ -130,77 +127,49 @@ export default function PDFViewerPage() {
 
   useEffect(() => {
     console.log("📊 Current PDF URL changed:", { currentPdfUrl, uploadedPdfUrl });
-  }, [currentPdfUrl, uploadedPdfUrl]);
-
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file && file.type === "application/pdf") {
-      console.log("📁 File selected:", file.name);
-      setUploadedFileName(file.name);
-      const url = URL.createObjectURL(file);
-      setUploadedPdfUrl(url);
-      toast({
-        title: "PDF Uploaded",
-        description: `Successfully loaded ${file.name}`,
-      });
-    } else {
-      toast({
-        title: "Invalid File",
-        description: "Please select a valid PDF file",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const downloadPDF = () => {
-    const link = document.createElement('a');
-    link.href = currentPdfUrl;
-    link.download = uploadedFileName || 'document.pdf';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    toast({
-      title: "Download Started",
-      description: "PDF download has begun",
-    });
-  };
+  }, [currentPdfUrl]);
 
   const loadPDF = async () => {
-    console.log("📂 Loading PDF from URL:", currentPdfUrl);
-    
     try {
+      console.log("🚀 Starting PDF loading process");
+      console.log("📂 Current PDF URL:", currentPdfUrl);
+      console.log("🔄 Setting loading state to true");
+      
       setIsLoading(true);
-      console.log("🔄 Fetching PDF document...");
       
-      const loadingTask = pdfjsLib.getDocument({
-        url: currentPdfUrl,
-        cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/cmaps/',
-        cMapPacked: true,
-      });
+      console.log("📋 Creating PDF.js loading task with URL:", currentPdfUrl);
+      const loadingTask = pdfjsLib.getDocument(currentPdfUrl);
       
+      console.log("⏳ Waiting for PDF document to load...");
       const pdf = await loadingTask.promise;
-      console.log("✅ PDF loaded successfully!");
-      console.log("📊 PDF Info:", {
+      
+      console.log("✅ PDF document loaded successfully!");
+      console.log("📊 PDF Details:", {
         numPages: pdf.numPages,
         fingerprints: pdf.fingerprints
       });
       
       setPdfDoc(pdf);
       setTotalPages(pdf.numPages);
-      setCurrentPage(1);
+      setCurrentPage(1); // Reset to first page when loading new PDF
       
-      toast({
-        title: "PDF Loaded",
-        description: `Document loaded with ${pdf.numPages} pages`,
-      });
+      console.log("🗑️ Clearing existing pins and comments for new PDF");
+      // Clear existing pins and comments when loading new PDF
+      setPins([]);
+      setComments([]);
+      
+      console.log("✅ PDF loading complete, setting loading state to false");
+      setIsLoading(false);
     } catch (error) {
       console.error("❌ Error loading PDF:", error);
-      toast({
-        title: "Error Loading PDF",
-        description: "Failed to load the PDF document. Please try again.",
-        variant: "destructive",
-      });
+      console.error("❌ PDF URL that failed:", currentPdfUrl);
+      if (error instanceof Error) {
+        console.error("❌ Error details:", {
+          name: error.name,
+          message: error.message,
+          stack: error.stack
+        });
+      }
       setIsLoading(false);
     }
   };
@@ -213,16 +182,8 @@ export default function PDFViewerPage() {
       return;
     }
     
-    // Wait for container to be available
-    let retries = 0;
-    while (!pdfContainerRef.current && retries < 10) {
-      console.log(`⏳ Waiting for PDF container ref... (${retries + 1}/10)`);
-      await new Promise(resolve => setTimeout(resolve, 100));
-      retries++;
-    }
-    
     if (!pdfContainerRef.current) {
-      console.log("❌ PDF container ref not available after retries");
+      console.log("❌ PDF container ref not available");
       return;
     }
 
@@ -252,72 +213,67 @@ export default function PDFViewerPage() {
       const context = canvas.getContext("2d");
       
       if (!context) {
-        console.error("❌ Could not get 2D context from canvas");
+        console.log("❌ Failed to get 2D context from canvas");
         return;
       }
 
-      canvas.className = "pdf-canvas border border-gray-200 dark:border-gray-700 shadow-lg";
-      canvas.width = viewport.width;
       canvas.height = viewport.height;
+      canvas.width = viewport.width;
+      canvas.className = "border shadow-lg bg-white";
+      
+      console.log("🔗 Appending canvas to container");
+      pdfContainerRef.current.appendChild(canvas);
       canvasRef.current = canvas;
 
-      console.log("📦 Canvas created with dimensions:", {
-        width: canvas.width,
-        height: canvas.height
-      });
-
-      // Clear the container and add the new canvas
-      pdfContainerRef.current.innerHTML = "";
-      pdfContainerRef.current.appendChild(canvas);
-
-      console.log("🎨 Starting page render task...");
-      const renderTask = page.render({
+      const renderContext = {
         canvasContext: context,
         viewport: viewport,
-      });
+      };
 
-      await renderTask.promise;
-      console.log(`✅ Page ${pageNum} rendered successfully!`);
-      
-      setIsLoading(false);
+      console.log(`🎨 Starting to render page ${pageNum} to canvas`);
+      await page.render(renderContext).promise;
+      console.log(`✅ Page ${pageNum} rendered successfully to canvas`);
     } catch (error) {
       console.error(`❌ Error rendering page ${pageNum}:`, error);
-      toast({
-        title: "Rendering Error",
-        description: `Failed to render page ${pageNum}`,
-        variant: "destructive",
-      });
-      setIsLoading(false);
+      if (error instanceof Error) {
+        console.error("❌ Error details:", {
+          name: error.name,
+          message: error.message,
+          stack: error.stack
+        });
+      }
     }
   };
 
-  const handleCanvasClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    console.log("🖱️ Canvas clicked");
-    
-    const rect = event.currentTarget.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-    
-    console.log("📍 Click coordinates:", { x, y });
-    
-    // Store pending pin location
-    const pin = { x, y, pageNumber: currentPage };
-    setPendingPin(pin);
+  const handleCanvasClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!canvasRef.current) return;
+
+    const rect = canvasRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    setPendingPin({ x, y, pageNumber: currentPage });
     setShowCommentDialog(true);
-    
-    console.log("💬 Opening comment dialog for pin:", pin);
   };
 
   const addComment = () => {
-    if (!pendingPin || !commentText.trim()) {
-      console.log("❌ Cannot add comment: missing pin or text");
-      return;
-    }
+    if (!pendingPin || !commentText.trim()) return;
 
-    console.log("💬 Adding new comment:", { pendingPin, commentText });
+    const commentId = `comment-${Date.now()}`;
+    const pinId = `pin-${Date.now()}`;
+    const pinNumber = pins.filter(p => p.pageNumber === currentPage).length + 1;
 
-    const comment: Comment = {
-      id: `comment-${Date.now()}`,
+    const newPin: Pin = {
+      id: pinId,
+      x: pendingPin.x,
+      y: pendingPin.y,
+      pageNumber: pendingPin.pageNumber,
+      user: CURRENT_USER,
+      number: pinNumber,
+    };
+
+    const newComment: Comment = {
+      id: commentId,
       x: pendingPin.x,
       y: pendingPin.y,
       pageNumber: pendingPin.pageNumber,
@@ -327,33 +283,15 @@ export default function PDFViewerPage() {
       timestamp: new Date(),
     };
 
-    const pin: Pin = {
-      id: `pin-${Date.now()}`,
-      x: pendingPin.x,
-      y: pendingPin.y,
-      pageNumber: pendingPin.pageNumber,
-      number: comments.length + 1,
-      user: CURRENT_USER,
-      comment,
-    };
-
-    setComments(prev => [...prev, comment]);
-    setPins(prev => [...prev, pin]);
-    setShowCommentDialog(false);
+    setPins([...pins, newPin]);
+    setComments([...comments, newComment]);
     setCommentText("");
     setPendingPin(null);
-
-    console.log("✅ Comment and pin added successfully");
-    toast({
-      title: "Comment Added",
-      description: "Your comment has been added to the document",
-    });
+    setShowCommentDialog(false);
   };
 
   const addReply = (commentId: string) => {
     if (!replyText.trim()) return;
-
-    console.log("💬 Adding reply to comment:", commentId);
 
     const reply: Reply = {
       id: `reply-${Date.now()}`,
@@ -362,7 +300,7 @@ export default function PDFViewerPage() {
       timestamp: new Date(),
     };
 
-    setComments(prev => prev.map(comment => 
+    setComments(comments.map(comment => 
       comment.id === commentId 
         ? { ...comment, replies: [...comment.replies, reply] }
         : comment
@@ -370,12 +308,56 @@ export default function PDFViewerPage() {
 
     setReplyText("");
     setReplyingTo(null);
+  };
 
-    console.log("✅ Reply added successfully");
-    toast({
-      title: "Reply Added",
-      description: "Your reply has been added",
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("🔄 PDF upload process started");
+    const file = event.target.files?.[0];
+    
+    if (!file) {
+      console.log("❌ No file selected");
+      return;
+    }
+    
+    console.log("📄 File selected:", {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      lastModified: file.lastModified
     });
+    
+    if (file && file.type === 'application/pdf') {
+      console.log("✅ Valid PDF file detected, creating object URL");
+      const fileUrl = URL.createObjectURL(file);
+      console.log("🔗 Object URL created:", fileUrl);
+      
+      setUploadedPdfUrl(fileUrl);
+      setUploadedFileName(file.name);
+      
+      console.log("📊 State updated - uploadedPdfUrl:", fileUrl);
+      console.log("📊 State updated - uploadedFileName:", file.name);
+      
+      toast({
+        title: "PDF Uploaded Successfully",
+        description: `${file.name} has been loaded for viewing.`,
+      });
+    } else {
+      console.log("❌ Invalid file type:", file.type);
+      toast({
+        title: "Invalid File Type",
+        description: "Please select a valid PDF file.",
+        variant: "destructive",
+      });
+    }
+    // Reset the input
+    event.target.value = '';
+  };
+
+  const downloadPDF = () => {
+    const link = document.createElement("a");
+    link.href = currentPdfUrl;
+    link.download = "document.pdf";
+    link.click();
   };
 
   const zoomIn = () => {
@@ -384,82 +366,6 @@ export default function PDFViewerPage() {
 
   const zoomOut = () => {
     setScale(prev => Math.max(prev - 0.25, 0.5));
-  };
-
-  const fitToScreen = () => {
-    console.log("fitToScreen() called");
-    
-    const canvas = document.querySelector('.pdf-canvas') as HTMLCanvasElement;
-    const container = document.getElementById('pdf-viewer-container');
-    const pageContainer = document.querySelector('.pdf-page-container') as HTMLElement;
-    
-    if (!canvas || !container || !pageContainer) {
-      console.log("Canvas, container, or page container not found");
-      return;
-    }
-    
-    // Reset any previous transforms and container adjustments
-    canvas.style.transform = '';
-    canvas.style.transformOrigin = 'top left';
-    pageContainer.style.width = '';
-    pageContainer.style.height = '';
-    
-    // Force reflow to get accurate dimensions
-    canvas.offsetHeight;
-    
-    // Get container dimensions using getBoundingClientRect
-    const containerRect = container.getBoundingClientRect();
-    const availableWidth = containerRect.width - 64; // Account for padding (32px each side)
-    const availableHeight = containerRect.height - 64;
-    
-    // Get canvas natural dimensions
-    const canvasWidth = canvas.offsetWidth;
-    const canvasHeight = canvas.offsetHeight;
-    
-    console.log("Available space:", { availableWidth, availableHeight });
-    console.log("Canvas size:", { canvasWidth, canvasHeight });
-    
-    if (canvasWidth === 0 || canvasHeight === 0 || availableWidth <= 0 || availableHeight <= 0) {
-      console.log("Invalid dimensions, cannot fit to screen");
-      return;
-    }
-    
-    // Calculate scale to fit both width and height
-    const scaleX = availableWidth / canvasWidth;
-    const scaleY = availableHeight / canvasHeight;
-    const fitScale = Math.min(scaleX, scaleY, 1); // Don't scale up, only down
-    
-    // Calculate scaled dimensions
-    const scaledWidth = canvasWidth * fitScale;
-    const scaledHeight = canvasHeight * fitScale;
-    
-    // Apply transform to canvas
-    canvas.style.transform = `scale(${fitScale})`;
-    canvas.style.transformOrigin = 'top left';
-    
-    // Adjust container size to match scaled content
-    pageContainer.style.width = `${scaledWidth}px`;
-    pageContainer.style.height = `${scaledHeight}px`;
-    pageContainer.style.overflow = 'visible';
-    
-    console.log("Applied scale:", fitScale);
-    console.log("Scaled dimensions:", { scaledWidth, scaledHeight });
-  };
-
-  const resetZoom = () => {
-    const canvas = document.querySelector('.pdf-canvas') as HTMLCanvasElement;
-    const pageContainer = document.querySelector('.pdf-page-container') as HTMLElement;
-    
-    if (canvas) {
-      canvas.style.transform = '';
-      canvas.style.transformOrigin = '';
-    }
-    
-    if (pageContainer) {
-      pageContainer.style.width = '';
-      pageContainer.style.height = '';
-      pageContainer.style.overflow = '';
-    }
   };
 
   const nextPage = () => {
@@ -489,19 +395,16 @@ export default function PDFViewerPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-lg">Loading PDF...</p>
-        </div>
+        <div className="text-lg">Loading PDF...</div>
       </div>
     );
   }
 
   return (
-    <div className="h-screen bg-gray-50 dark:bg-gray-900 flex">
-      {/* Left Sidebar for Comments */}
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Sidebar */}
       {sidebarOpen && (
-        <div id="comment-sidebar" className="w-80 bg-white dark:bg-gray-800 border-r shadow-lg flex flex-col">
+        <div className="w-80 border-r bg-white dark:bg-gray-800 shadow-lg">
           <div className="p-4 border-b">
             <div className="flex items-center gap-2">
               <MessageSquare className="h-5 w-5" />
@@ -510,57 +413,55 @@ export default function PDFViewerPage() {
             </div>
           </div>
           
-          <ScrollArea className="flex-1 p-4">
+          <ScrollArea className="h-full p-4">
             {getCurrentPageComments().length === 0 ? (
               <div className="text-center text-gray-500 mt-8">
                 <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
                 <p>No comments on this page</p>
-                <p className="text-sm mt-2">Click on the document to add a comment</p>
+                <p className="text-sm mt-2">Click anywhere on the PDF to add a comment</p>
               </div>
             ) : (
               <div className="space-y-4">
-                {getCurrentPageComments().map((comment) => {
-                  const matchingPin = getCurrentPagePins().find(pin => 
-                    pin.x === comment.x && pin.y === comment.y
-                  );
+                {getCurrentPageComments().map((comment, index) => {
+                  const pinNumber = getCurrentPagePins().find(p => 
+                    p.x === comment.x && p.y === comment.y
+                  )?.number || index + 1;
                   
                   return (
-                    <Card key={comment.id} className="relative">
+                    <Card key={comment.id} className="border-l-4" style={{ borderLeftColor: comment.user.color }}>
                       <CardHeader className="pb-2">
                         <div className="flex items-center gap-2">
-                          {matchingPin && (
-                            <div
-                              className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold"
-                              style={{ backgroundColor: matchingPin.user.color }}
-                            >
-                              {matchingPin.number}
-                            </div>
-                          )}
-                          <div>
-                            <CardTitle className="text-sm font-medium">
-                              {comment.user.name}
-                            </CardTitle>
-                            <p className="text-xs text-gray-500">
-                              {formatTimestamp(comment.timestamp)}
-                            </p>
+                          <div 
+                            className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold"
+                            style={{ backgroundColor: comment.user.color }}
+                          >
+                            {pinNumber}
                           </div>
+                          <CardTitle className="text-sm">{comment.user.name}</CardTitle>
+                          <span className="text-xs text-gray-500 ml-auto">
+                            Page {comment.pageNumber}
+                          </span>
                         </div>
                       </CardHeader>
                       <CardContent className="pt-0">
-                        <p className="text-sm mb-3">{comment.text}</p>
+                        <p className="text-sm mb-2">{comment.text}</p>
+                        <p className="text-xs text-gray-500 mb-3">
+                          {formatTimestamp(comment.timestamp)}
+                        </p>
                         
                         {/* Replies */}
                         {comment.replies.length > 0 && (
-                          <div className="space-y-2 pl-4 border-l-2 border-gray-200 dark:border-gray-700">
+                          <div className="space-y-2 mb-3">
+                            <Separator />
                             {comment.replies.map((reply) => (
-                              <div key={reply.id} className="bg-gray-50 dark:bg-gray-700 p-2 rounded text-sm">
+                              <div key={reply.id} className="ml-4 pl-3 border-l-2 border-gray-200">
                                 <div className="flex items-center gap-2 mb-1">
-                                  <span className="font-medium text-xs">{reply.user.name}</span>
+                                  <span className="text-xs font-medium">{reply.user.name}</span>
                                   <span className="text-xs text-gray-500">
                                     {formatTimestamp(reply.timestamp)}
                                   </span>
                                 </div>
-                                <p>{reply.text}</p>
+                                <p className="text-xs text-gray-700 dark:text-gray-300">{reply.text}</p>
                               </div>
                             ))}
                           </div>
@@ -613,15 +514,11 @@ export default function PDFViewerPage() {
         </div>
       )}
 
-      {/* Main Content Area */}
+      {/* Main PDF Viewer */}
       <div className="flex-1 flex flex-col">
-        {/* Toolbar Container */}
-        <div 
-          id="toolbar" 
-          className="bg-white dark:bg-gray-800 border-b shadow-sm"
-          style={{ height: '60px', minHeight: '60px', maxHeight: '60px' }}
-        >
-          <div className="h-full px-4 py-2 flex items-center justify-between">
+        {/* Toolbar */}
+        <div className="bg-white dark:bg-gray-800 border-b p-3 shadow-sm">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Button
                 variant="outline"
@@ -702,10 +599,6 @@ export default function PDFViewerPage() {
               <Button variant="outline" size="sm" onClick={zoomIn}>
                 <ZoomIn className="h-4 w-4" />
               </Button>
-              <Button variant="outline" size="sm" onClick={fitToScreen}>
-                <Maximize className="h-4 w-4" />
-                Fit
-              </Button>
               
               <Separator orientation="vertical" className="h-6" />
               
@@ -717,44 +610,40 @@ export default function PDFViewerPage() {
           </div>
         </div>
 
-        {/* Canvas Container */}
+        {/* PDF Container */}
         <div 
-          id="pdf-viewer-container"
-          className="flex-1 overflow-auto relative bg-gray-100 dark:bg-gray-900"
-          style={{ height: 'calc(100vh - 60px)' }}
+          className="flex-1 overflow-auto p-8 relative"
           onMouseEnter={() => setHovering(true)}
           onMouseLeave={() => setHovering(false)}
         >
-          <div className="p-8 h-full">
-            {/* Hover instruction */}
-            {hovering && (
-              <div className="absolute top-4 left-4 bg-black text-white px-3 py-2 rounded-lg text-sm z-10 pointer-events-none">
-                Click to add comment
-              </div>
-            )}
+          {/* Hover instruction */}
+          {hovering && (
+            <div className="absolute top-4 left-4 bg-black text-white px-3 py-2 rounded-lg text-sm z-10 pointer-events-none">
+              Click to add comment
+            </div>
+          )}
 
-            <div className="flex justify-center h-full">
-              <div 
-                ref={pdfContainerRef}
-                className="pdf-page-container relative cursor-crosshair"
-                onClick={handleCanvasClick}
-              >
-                {/* Pins for current page */}
-                {getCurrentPagePins().map((pin) => (
+          <div className="flex justify-center">
+            <div 
+              ref={pdfContainerRef}
+              className="relative cursor-crosshair"
+              onClick={handleCanvasClick}
+            >
+              {/* Pins for current page */}
+              {getCurrentPagePins().map((pin) => (
+                <div
+                  key={pin.id}
+                  className="absolute z-10 cursor-pointer transform -translate-x-1/2 -translate-y-1/2"
+                  style={{ left: pin.x, top: pin.y }}
+                >
                   <div
-                    key={pin.id}
-                    className="absolute z-10 cursor-pointer transform -translate-x-1/2 -translate-y-1/2"
-                    style={{ left: pin.x, top: pin.y }}
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-white hover:scale-110 transition-transform"
+                    style={{ backgroundColor: pin.user.color }}
                   >
-                    <div
-                      className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-white hover:scale-110 transition-transform"
-                      style={{ backgroundColor: pin.user.color }}
-                    >
-                      {pin.number}
-                    </div>
+                    {pin.number}
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
