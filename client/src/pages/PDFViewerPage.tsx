@@ -91,7 +91,10 @@ export default function PDFViewerPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [scale, setScale] = useState(1.2);
   
-
+  // Track scale changes for debugging
+  useEffect(() => {
+    console.log("📊 Scale changed to:", scale);
+  }, [scale]);
   const [fitToHeight, setFitToHeight] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -155,7 +158,22 @@ export default function PDFViewerPage() {
     }
   }, [scale]);
 
+  // Handle window resize to maintain fit mode consistency
+  useEffect(() => {
+    const handleResize = async () => {
+      if (pdfDoc) {
+        const newFitScale = await calculateFitToHeightScale(pdfDoc);
+        setScale(newFitScale);
+      }
+    };
 
+    const debouncedResize = debounce(handleResize, 150);
+    window.addEventListener('resize', debouncedResize);
+    
+    return () => {
+      window.removeEventListener('resize', debouncedResize);
+    };
+  }, [pdfDoc]);
 
   // Simple debounce function
   const debounce = (func: Function, delay: number) => {
@@ -172,9 +190,88 @@ export default function PDFViewerPage() {
   // Use uploaded PDF URL if available, otherwise use default
   const currentPdfUrl = uploadedPdfUrl || PDF_URL;
 
-  // Will add useEffect after function declarations
+  useEffect(() => {
+    console.log("🚀 Initial PDF load useEffect triggered");
+    loadPDF();
+  }, []);
 
-  // Removed old functions that caused circular dependencies
+  useEffect(() => {
+    console.log("📤 Upload URL useEffect triggered:", { uploadedPdfUrl });
+    if (uploadedPdfUrl) {
+      console.log("🔄 Triggering loadPDF due to uploaded PDF URL change");
+      loadPDF();
+    }
+  }, [uploadedPdfUrl]);
+
+  const calculateFitToHeightScale = async (pdf?: pdfjsLib.PDFDocumentProxy) => {
+    const doc = pdf || pdfDoc;
+    if (!doc) {
+      return 1.2;
+    }
+    
+    try {
+      const page = await doc.getPage(1);
+      const viewport = page.getViewport({ scale: 1 });
+      
+      // Get container dimensions (accounting for toolbar, padding, and margins)
+      const windowHeight = window.innerHeight;
+      const toolbarHeight = 80;
+      const padding = 40;
+      const extraPadding = 60;
+      const containerHeight = windowHeight - toolbarHeight - padding;
+      const availableHeight = Math.max(400, containerHeight - extraPadding);
+      
+      const fitScale = availableHeight / viewport.height;
+      const clampedScale = Math.max(0.3, Math.min(3.0, fitScale));
+      
+      console.log("📏 Fit scale calculated:", clampedScale);
+      
+      return clampedScale;
+    } catch (error) {
+      console.error("Error calculating fit-to-height scale:", error);
+      return 1.2;
+    }
+  };
+
+  const loadPDF = async () => {
+    try {
+      setIsLoading(true);
+      
+      const loadingTask = pdfjsLib.getDocument(currentPdfUrl);
+      const pdf = await loadingTask.promise;
+      
+      setPdfDoc(pdf);
+      setTotalPages(pdf.numPages);
+      setCurrentPage(1);
+      
+      // Calculate and apply fit-to-height scale for new PDF
+      const fitScale = await calculateFitToHeightScale(pdf);
+      setScale(fitScale);
+      
+      // Clear existing pins and comments when loading new PDF
+      setPins([]);
+      setComments([]);
+      
+      setIsLoading(false);
+      if (fitToHeight) {
+        setTimeout(async () => {
+          const fitScale = await calculateFitToHeightScale();
+          setScale(fitScale);
+        }, 100);
+      }
+    } catch (error) {
+      console.error("❌ Error loading PDF:", error);
+      console.error("❌ PDF URL that failed:", currentPdfUrl);
+      if (error instanceof Error) {
+        console.error("❌ Error details:", {
+          name: error.name,
+          message: error.message,
+          stack: error.stack
+        });
+      }
+      setIsLoading(false);
+    }
+  };
 
 
 
@@ -472,32 +569,8 @@ export default function PDFViewerPage() {
 
   const handleFitToHeight = async () => {
     setFitToHeight(true);
-    
-    if (!pdfDoc) {
-      console.warn("⚠️ No PDF document available for fit-to-height");
-      return;
-    }
-    
-    try {
-      const page = await pdfDoc.getPage(1);
-      const viewport = page.getViewport({ scale: 1 });
-      
-      const windowHeight = window.innerHeight;
-      const toolbarHeight = 80;
-      const padding = 40;
-      const extraPadding = 60;
-      const containerHeight = windowHeight - toolbarHeight - padding;
-      const availableHeight = Math.max(400, containerHeight - extraPadding);
-      
-      const fitScale = availableHeight / viewport.height;
-      const clampedScale = Math.max(0.3, Math.min(3.0, fitScale));
-      
-      console.log("📏 Manual fit-to-height scale:", clampedScale);
-      setScale(clampedScale);
-    } catch (error) {
-      console.error("❌ Error in handleFitToHeight:", error);
-      setScale(1.2);
-    }
+    const fitScale = await calculateFitToHeightScale();
+    setScale(fitScale);
   };
 
   const nextPage = () => {
@@ -520,67 +593,6 @@ export default function PDFViewerPage() {
     }
     return currentPins;
   };
-
-  // Load PDF when component mounts or URL changes - avoid infinite loop
-  useEffect(() => {
-    const loadPDFOnMount = async () => {
-      try {
-        setIsLoading(true);
-        console.log("📥 Loading PDF from:", currentPdfUrl);
-        
-        const loadingTask = pdfjsLib.getDocument(currentPdfUrl);
-        const pdf = await loadingTask.promise;
-        
-        console.log("✅ PDF loaded successfully:", pdf.numPages, "pages");
-        
-        setPdfDoc(pdf);
-        setTotalPages(pdf.numPages);
-        setCurrentPage(1);
-        
-        // Calculate fit-to-height scale directly
-        try {
-          const page = await pdf.getPage(1);
-          const viewport = page.getViewport({ scale: 1 });
-          
-          const windowHeight = window.innerHeight;
-          const toolbarHeight = 80;
-          const padding = 40;
-          const extraPadding = 60;
-          const containerHeight = windowHeight - toolbarHeight - padding;
-          const availableHeight = Math.max(400, containerHeight - extraPadding);
-          
-          const fitScale = availableHeight / viewport.height;
-          const clampedScale = Math.max(0.3, Math.min(3.0, fitScale));
-          
-          console.log("📏 Applying initial fit scale:", clampedScale);
-          setScale(clampedScale);
-          setFitToHeight(true);
-        } catch (scaleError) {
-          console.error("❌ Error calculating initial scale:", scaleError);
-          setScale(1.2);
-          setFitToHeight(true);
-        }
-        
-        // Clear existing comments and pins
-        setPins([]);
-        setComments([]);
-        
-        setIsLoading(false);
-        
-      } catch (error) {
-        console.error("❌ Error loading PDF:", error);
-        setIsLoading(false);
-        
-        toast({
-          title: "PDF Loading Error", 
-          description: "Failed to load the PDF. Please try again.",
-          variant: "destructive",
-        });
-      }
-    };
-
-    loadPDFOnMount();
-  }, [currentPdfUrl, toast]);
 
   if (isLoading) {
     return (
