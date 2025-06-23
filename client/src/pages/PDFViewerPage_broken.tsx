@@ -42,6 +42,7 @@ interface Comment {
   user: User;
   replies: Reply[];
   timestamp: Date;
+  // Store relative positions (0-1) instead of absolute pixels
   relativeX: number;
   relativeY: number;
 }
@@ -60,6 +61,7 @@ interface Pin {
   pageNumber: number;
   user: User;
   number: number;
+  // Store relative positions (0-1) instead of absolute pixels
   relativeX: number;
   relativeY: number;
 }
@@ -121,7 +123,30 @@ export default function PDFViewerPage() {
   // Use uploaded PDF URL if available, otherwise use default
   const currentPdfUrl = uploadedPdfUrl || PDF_URL;
 
-  // Helper functions defined first
+  useEffect(() => {
+    console.log("🚀 Initial PDF load useEffect triggered");
+    loadPDF();
+  }, []);
+
+  useEffect(() => {
+    console.log("🎨 Render page useEffect triggered:", { pdfDoc: !!pdfDoc, currentPage, totalPages, scale });
+    if (pdfDoc && currentPage <= totalPages) {
+      renderPage(currentPage);
+    }
+  }, [pdfDoc, currentPage, scale]);
+
+  useEffect(() => {
+    console.log("📤 Upload URL useEffect triggered:", { uploadedPdfUrl });
+    if (uploadedPdfUrl) {
+      console.log("🔄 Triggering loadPDF due to uploaded PDF URL change");
+      loadPDF();
+    }
+  }, [uploadedPdfUrl]);
+
+  useEffect(() => {
+    console.log("📊 Current PDF URL changed:", { currentPdfUrl, uploadedPdfUrl });
+  }, [currentPdfUrl]);
+
   const updatePinPositions = useCallback(() => {
     if (!canvasRef.current || pdfDimensions.width === 0) return;
 
@@ -148,14 +173,15 @@ export default function PDFViewerPage() {
     try {
       const page = await pdfDoc.getPage(1);
       const viewport = page.getViewport({ scale: 1 });
-      const containerHeight = pdfContainerRef.current.clientHeight - 40;
+      const containerHeight = pdfContainerRef.current.clientHeight - 40; // Account for padding
       const containerWidth = pdfContainerRef.current.clientWidth - 40;
       
+      // Calculate scale to fit both height and width, maintaining aspect ratio
       const scaleByHeight = containerHeight / viewport.height;
       const scaleByWidth = containerWidth / viewport.width;
-      const newScale = Math.min(scaleByHeight, scaleByWidth, 2);
+      const newScale = Math.min(scaleByHeight, scaleByWidth, 2); // Cap at 2x scale
       
-      console.log("Auto-fitting PDF:", { 
+      console.log("📐 Auto-fitting PDF:", { 
         containerHeight, 
         containerWidth, 
         pdfHeight: viewport.height,
@@ -164,80 +190,63 @@ export default function PDFViewerPage() {
       });
       setScale(newScale);
     } catch (error) {
-      console.error("Error auto-fitting PDF:", error);
+      console.error("❌ Error auto-fitting PDF:", error);
     }
   }, [pdfDoc]);
 
-  // Effects
-  useEffect(() => {
-    console.log("Initial PDF load useEffect triggered");
-    loadPDF();
-  }, []);
-
-  useEffect(() => {
-    console.log("Render page useEffect triggered:", { pdfDoc: !!pdfDoc, currentPage, totalPages, scale });
-    if (pdfDoc && currentPage <= totalPages) {
-      renderPage(currentPage);
-    }
-  }, [pdfDoc, currentPage, scale]);
-
-  useEffect(() => {
-    console.log("Upload URL useEffect triggered:", { uploadedPdfUrl });
-    if (uploadedPdfUrl) {
-      console.log("Triggering loadPDF due to uploaded PDF URL change");
-      loadPDF();
-    }
-  }, [uploadedPdfUrl]);
-
+  // Auto-fit PDF to viewer height
   useEffect(() => {
     if (pdfDoc && pdfContainerRef.current) {
       autoFitToHeight();
     }
   }, [pdfDoc, pdfContainerRef.current, autoFitToHeight]);
 
+  // Update pin positions when PDF dimensions change due to zoom
   useEffect(() => {
     updatePinPositions();
   }, [pdfDimensions, updatePinPositions]);
 
-  // Handle clicks outside PDF area to close comment boxes
-  const handleOutsideClick = useCallback((e: MouseEvent) => {
-    if (activeComment && canvasRef.current) {
-      const canvas = canvasRef.current;
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-
-      if (x < 0 || y < 0 || x > canvas.width || y > canvas.height) {
-        cancelComment();
-      }
-    }
-  }, [activeComment]);
-
-  useEffect(() => {
-    document.addEventListener('click', handleOutsideClick);
-    return () => {
-      document.removeEventListener('click', handleOutsideClick);
-    };
-  }, [handleOutsideClick]);
-
-  // Main functions
   const loadPDF = async () => {
     try {
-      console.log("Starting PDF loading process");
+      console.log("🚀 Starting PDF loading process");
+      console.log("📂 Current PDF URL:", currentPdfUrl);
+      console.log("🔄 Setting loading state to true");
+      
       setIsLoading(true);
       
+      console.log("📋 Creating PDF.js loading task with URL:", currentPdfUrl);
       const loadingTask = pdfjsLib.getDocument(currentPdfUrl);
+      
+      console.log("⏳ Waiting for PDF document to load...");
       const pdf = await loadingTask.promise;
       
-      console.log("PDF document loaded successfully!");
+      console.log("✅ PDF document loaded successfully!");
+      console.log("📊 PDF Details:", {
+        numPages: pdf.numPages,
+        fingerprints: pdf.fingerprints
+      });
+      
       setPdfDoc(pdf);
       setTotalPages(pdf.numPages);
-      setCurrentPage(1);
+      setCurrentPage(1); // Reset to first page when loading new PDF
+      
+      console.log("🗑️ Clearing existing pins and comments for new PDF");
+      // Clear existing pins and comments when loading new PDF
       setPins([]);
       setComments([]);
+      
+      console.log("✅ PDF loading complete, setting loading state to false");
       setIsLoading(false);
     } catch (error) {
-      console.error("Error loading PDF:", error);
+      console.error("❌ Error loading PDF:", error);
+      console.error("❌ PDF URL that failed:", currentPdfUrl);
+      if (error instanceof Error) {
+        console.error("❌ Error details:", {
+          name: error.name,
+          message: error.message,
+          stack: error.stack
+        });
+      }
       setIsLoading(false);
       toast({
         title: "PDF Loading Error",
@@ -248,30 +257,56 @@ export default function PDFViewerPage() {
   };
 
   const renderPage = async (pageNum: number) => {
-    console.log(`Starting to render page ${pageNum}`);
+    console.log(`🎨 Starting to render page ${pageNum}`);
     
-    if (!pdfDoc || !pdfContainerRef.current) return;
+    if (!pdfDoc) {
+      console.log("❌ No PDF document available for rendering");
+      return;
+    }
+    
+    if (!pdfContainerRef.current) {
+      console.log("❌ PDF container ref not available");
+      return;
+    }
 
     try {
+      console.log(`📄 Getting page ${pageNum} from PDF document`);
       const page = await pdfDoc.getPage(pageNum);
       pageRef.current = page;
+      
+      console.log(`✅ Page ${pageNum} retrieved successfully`);
 
+      // Remove existing canvas
       if (canvasRef.current) {
+        console.log("🗑️ Removing existing canvas");
         canvasRef.current.remove();
       }
 
+      console.log(`📐 Creating viewport with scale ${scale}`);
       const viewport = page.getViewport({ scale });
+      console.log("📐 Viewport dimensions:", {
+        width: viewport.width,
+        height: viewport.height,
+        scale: viewport.scale
+      });
+
+      // Store PDF dimensions for relative positioning calculations
       setPdfDimensions({ width: viewport.width, height: viewport.height });
 
+      console.log("🖼️ Creating new canvas element");
       const canvas = document.createElement("canvas");
       const context = canvas.getContext("2d");
       
-      if (!context) return;
+      if (!context) {
+        console.log("❌ Failed to get 2D context from canvas");
+        return;
+      }
 
       canvas.height = viewport.height;
       canvas.width = viewport.width;
       canvas.className = "border shadow-lg bg-white max-w-full";
       
+      console.log("🔗 Appending canvas to container");
       pdfContainerRef.current.appendChild(canvas);
       canvasRef.current = canvas;
 
@@ -280,31 +315,43 @@ export default function PDFViewerPage() {
         viewport: viewport,
       };
 
+      console.log(`🎨 Starting to render page ${pageNum} to canvas`);
       await page.render(renderContext).promise;
-      console.log(`Page ${pageNum} rendered successfully to canvas`);
+      console.log(`✅ Page ${pageNum} rendered successfully to canvas`);
       
+      // Update pin positions after rendering
       updatePinPositions();
     } catch (error) {
-      console.error(`Error rendering page ${pageNum}:`, error);
+      console.error(`❌ Error rendering page ${pageNum}:`, error);
+      if (error instanceof Error) {
+        console.error("❌ Error details:", {
+          name: error.name,
+          message: error.message,
+          stack: error.stack
+        });
+      }
     }
   };
 
   const handleCanvasClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!canvasRef.current || draggedPin || activeComment) return;
 
+    // Only allow clicking within the actual canvas bounds
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
+    // Check if click is within canvas bounds
     if (x < 0 || y < 0 || x > canvas.width || y > canvas.height) {
       return;
     }
 
+    // Calculate relative position (0-1) based on actual canvas dimensions
     const relativeX = x / canvas.width;
     const relativeY = y / canvas.height;
 
-    console.log("Adding new comment pin at:", { x, y, relativeX, relativeY, page: currentPage });
+    console.log("📍 Adding new comment pin at:", { x, y, relativeX, relativeY, page: currentPage });
     
     const commentId = `comment-${Date.now()}`;
     const pinId = `pin-${Date.now()}`;
@@ -330,21 +377,49 @@ export default function PDFViewerPage() {
     return currentPagePins.length + 1;
   };
 
+
+  const renumberPins = () => {
+    const updatedPins = pins.map(pin => {
+      const samePagePins = pins.filter(p => p.pageNumber === pin.pageNumber && p.id !== pin.id);
+      const smallerNumbers = samePagePins.filter(p => p.number < pin.number);
+      return { ...pin, number: smallerNumbers.length + 1 };
+    });
+    setPins(updatedPins);
+  };
+
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("🔄 PDF upload process started");
     const file = event.target.files?.[0];
     
-    if (!file) return;
+    if (!file) {
+      console.log("❌ No file selected");
+      return;
+    }
+    
+    console.log("📄 File selected:", {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      lastModified: file.lastModified
+    });
     
     if (file && file.type === 'application/pdf') {
+      console.log("✅ Valid PDF file detected, creating object URL");
       const fileUrl = URL.createObjectURL(file);
+      console.log("🔗 Object URL created:", fileUrl);
+      
       setUploadedPdfUrl(fileUrl);
       setUploadedFileName(file.name);
+      
+      console.log("📊 State updated - uploadedPdfUrl:", fileUrl);
+      console.log("📊 State updated - uploadedFileName:", file.name);
       
       toast({
         title: "PDF Uploaded Successfully",
         description: `${file.name} has been loaded for viewing.`,
       });
     } else {
+      console.log("❌ Invalid file type:", file.type);
       toast({
         title: "Invalid File Type",
         description: "Please select a valid PDF file.",
@@ -362,11 +437,19 @@ export default function PDFViewerPage() {
   };
 
   const zoomIn = () => {
-    setScale(prev => Math.min(prev + 0.25, 5));
+    setScale(prev => {
+      const newScale = Math.min(prev + 0.25, 5); // Increased max zoom for large format PDFs
+      console.log("🔍 Zooming in:", { from: prev, to: newScale });
+      return newScale;
+    });
   };
 
   const zoomOut = () => {
-    setScale(prev => Math.max(prev - 0.25, 0.1));
+    setScale(prev => {
+      const newScale = Math.max(prev - 0.25, 0.1); // Reduced min zoom for large format PDFs
+      console.log("🔍 Zooming out:", { from: prev, to: newScale });
+      return newScale;
+    });
   };
 
   const nextPage = () => {
@@ -405,10 +488,13 @@ export default function PDFViewerPage() {
     setComments(prev => [...prev, newComment]);
     setCommentText("");
     setActiveComment(null);
+    
+    console.log("💬 Comment saved:", newComment);
   };
 
   const cancelComment = () => {
     if (activeComment) {
+      // Remove the pin that was just created
       setPins(prev => prev.filter(pin => !pin.id.includes(activeComment.split('-')[1])));
     }
     setActiveComment(null);
@@ -419,15 +505,8 @@ export default function PDFViewerPage() {
     setComments(prev => prev.filter(c => c.id !== commentId));
     setPins(prev => prev.filter(pin => !pin.id.includes(commentId.split('-')[1])));
     renumberPins();
-  };
-
-  const renumberPins = () => {
-    const updatedPins = pins.map(pin => {
-      const samePagePins = pins.filter(p => p.pageNumber === pin.pageNumber && p.id !== pin.id);
-      const smallerNumbers = samePagePins.filter(p => p.number < pin.number);
-      return { ...pin, number: smallerNumbers.length + 1 };
-    });
-    setPins(updatedPins);
+    
+    console.log("🗑️ Comment deleted:", commentId);
   };
 
   const handlePinDragStart = (e: React.MouseEvent, pinId: string) => {
@@ -451,9 +530,11 @@ export default function PDFViewerPage() {
     const newX = e.clientX - rect.left - dragOffset.x;
     const newY = e.clientY - rect.top - dragOffset.y;
 
+    // Constrain to canvas bounds
     const constrainedX = Math.max(0, Math.min(newX, canvasRef.current.width));
     const constrainedY = Math.max(0, Math.min(newY, canvasRef.current.height));
 
+    // Calculate new relative positions
     const newRelativeX = constrainedX / canvasRef.current.width;
     const newRelativeY = constrainedY / canvasRef.current.height;
 
@@ -480,6 +561,28 @@ export default function PDFViewerPage() {
     setMousePosition({ x: e.clientX, y: e.clientY });
   }, []);
 
+  // Handle clicks outside PDF area to close comment boxes
+  const handleOutsideClick = useCallback((e: MouseEvent) => {
+    if (activeComment && canvasRef.current) {
+      const canvas = canvasRef.current;
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      // Check if click is outside canvas or outside comment popover
+      if (x < 0 || y < 0 || x > canvas.width || y > canvas.height) {
+        cancelComment();
+      }
+    }
+  }, [activeComment]);
+
+  useEffect(() => {
+    document.addEventListener('click', handleOutsideClick);
+    return () => {
+      document.removeEventListener('click', handleOutsideClick);
+    };
+  }, [handleOutsideClick]);
+
   const getCurrentPageComments = () => {
     return comments.filter(comment => comment.pageNumber === currentPage);
   };
@@ -492,6 +595,7 @@ export default function PDFViewerPage() {
     return date.toLocaleDateString() + " " + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
+  // Sidebar resize functionality
   const handleResizeStart = (e: React.MouseEvent) => {
     e.preventDefault();
     const startX = e.clientX;
@@ -562,6 +666,7 @@ export default function PDFViewerPage() {
 
               <Separator orientation="vertical" className="h-6" />
 
+              {/* Document Title */}
               <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                 <span className="font-medium">
                   {uploadedFileName || "Sample Document"}
@@ -795,10 +900,91 @@ export default function PDFViewerPage() {
                         </div>
                       </CardHeader>
                       <CardContent className="pt-0 px-3 pb-2">
-                        <p className="text-xs mb-1">{comment.text}</p>
-                        <p className="text-xs text-gray-500">
-                          {formatTimestamp(comment.timestamp)}
-                        </p>
+                        {editingComment === comment.id ? (
+                          <div className="space-y-2">
+                            <Textarea
+                              value={commentText || comment.text}
+                              onChange={(e) => setCommentText(e.target.value)}
+                              className="min-h-[60px] text-xs"
+                            />
+                            <div className="flex gap-1">
+                              <Button size="sm" className="text-xs px-2 py-1">
+                                Save
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                className="text-xs px-2 py-1"
+                                onClick={() => {
+                                  setEditingComment(null);
+                                  setCommentText("");
+                                }}
+                              >
+                                Cancel
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <p className="text-xs mb-1">{comment.text}</p>
+                            <p className="text-xs text-gray-500">
+                              {formatTimestamp(comment.timestamp)}
+                            </p>
+                          </>
+                        )}
+                        
+                        {/* Replies */}
+                        {comment.replies.length > 0 && (
+                          <div className="space-y-1 mt-2">
+                            <Separator />
+                            {comment.replies.map((reply) => (
+                              <div key={reply.id} className="ml-3 pl-2 border-l border-gray-200">
+                                <div className="flex items-center gap-1 mb-1">
+                                  <span className="text-xs font-medium">{reply.user.name}</span>
+                                  <span className="text-xs text-gray-500">
+                                    {formatTimestamp(reply.timestamp)}
+                                  </span>
+                                </div>
+                                <p className="text-xs text-gray-700 dark:text-gray-300">{reply.text}</p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        
+                        {/* Reply input */}
+                        {replyingTo === comment.id ? (
+                          <div className="space-y-2 mt-2">
+                            <Textarea
+                              placeholder="Write a reply..."
+                              value={replyText}
+                              onChange={(e) => setReplyText(e.target.value)}
+                              className="min-h-[50px] text-xs"
+                            />
+                            <div className="flex gap-1">
+                              <Button size="sm" className="text-xs px-2 py-1">
+                                Reply
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                className="text-xs px-2 py-1"
+                                onClick={() => setReplyingTo(null)}
+                              >
+                                Cancel
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => setReplyingTo(comment.id)}
+                            className="flex items-center gap-1 text-xs mt-1 px-1 py-0 h-5"
+                          >
+                            <Reply className="h-3 w-3" />
+                            Reply
+                          </Button>
+                        )}
                       </CardContent>
                     </Card>
                   );
