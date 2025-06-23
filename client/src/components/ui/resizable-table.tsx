@@ -248,12 +248,46 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
       
       // For dropdowns - activate dropdown
       if (isSelectColumn) {
+        console.log('Enter pressed on dropdown, attempting to open...');
         setOpenDropdown(dropdownKey);
+        
+        // Try multiple approaches to activate the dropdown
         setTimeout(() => {
-          const selectTrigger = document.querySelector(`[data-row="${currentIndex}"][data-column="${column}"] button`) as HTMLButtonElement;
-          if (selectTrigger) {
-            selectTrigger.focus();
-            selectTrigger.click();
+          const cellElement = document.querySelector(`[data-row="${currentIndex}"][data-column="${column}"]`);
+          console.log('Cell element found:', cellElement);
+          
+          if (cellElement) {
+            // Try different selectors for the trigger button
+            let selectTrigger = cellElement.querySelector('button[role="combobox"]') as HTMLButtonElement;
+            if (!selectTrigger) {
+              selectTrigger = cellElement.querySelector('button') as HTMLButtonElement;
+            }
+            if (!selectTrigger) {
+              selectTrigger = cellElement.querySelector('[data-radix-collection-item]') as HTMLButtonElement;
+            }
+            
+            console.log('Select trigger found:', selectTrigger);
+            
+            if (selectTrigger) {
+              selectTrigger.focus();
+              console.log('Focused trigger, now clicking...');
+              selectTrigger.click();
+              
+              // Also try dispatching a keyboard event
+              const spaceEvent = new KeyboardEvent('keydown', { 
+                key: ' ', 
+                code: 'Space',
+                bubbles: true 
+              });
+              selectTrigger.dispatchEvent(spaceEvent);
+              
+              const enterEvent = new KeyboardEvent('keydown', { 
+                key: 'Enter', 
+                code: 'Enter',
+                bubbles: true 
+              });
+              selectTrigger.dispatchEvent(enterEvent);
+            }
           }
         }, 10);
         return;
