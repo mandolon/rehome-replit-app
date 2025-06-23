@@ -1,4 +1,4 @@
-import { useRef, useEffect, forwardRef, useImperativeHandle } from "react";
+import { useRef, useEffect, forwardRef, useImperativeHandle, useState } from "react";
 import * as pdfjsLib from "pdfjs-dist";
 import "./PDFCanvas.css";
 
@@ -228,6 +228,10 @@ const PDFCanvas = forwardRef<PDFCanvasHandle, PDFCanvasProps>(({
                 const handleMouseMove = (moveEvent: MouseEvent) => {
                   if (!isDraggingPin.current || !canvasRef.current) return;
                   
+                  const now = Date.now();
+                  if (now - lastDragUpdate.current < 16) return; // ~60fps throttling
+                  lastDragUpdate.current = now;
+                  
                   // Use requestAnimationFrame for smoother movement
                   requestAnimationFrame(() => {
                     if (!canvasRef.current) return;
@@ -247,6 +251,7 @@ const PDFCanvas = forwardRef<PDFCanvasHandle, PDFCanvasProps>(({
                 const handleMouseUp = () => {
                   isDraggingPin.current = false;
                   draggedPinId.current = null;
+                  setDraggingPinId(null);
                   document.removeEventListener('mousemove', handleMouseMove);
                   document.removeEventListener('mouseup', handleMouseUp);
                 };

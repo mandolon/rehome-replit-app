@@ -101,7 +101,8 @@
   font-weight: bold;
   border: 2px solid white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  transition: box-shadow 0.2s ease-in-out;
+  transition: all 0.15s ease-out;
+  user-select: none;
 }
 
 .pdf-pin:hover .pdf-pin-circle {
