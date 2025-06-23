@@ -374,15 +374,18 @@ export default function PDFViewerPage() {
     
     const canvas = document.querySelector('.pdf-canvas') as HTMLCanvasElement;
     const container = document.getElementById('pdf-viewer-container');
+    const pageContainer = document.querySelector('.pdf-page-container') as HTMLElement;
     
-    if (!canvas || !container) {
-      console.log("Canvas or container not found");
+    if (!canvas || !container || !pageContainer) {
+      console.log("Canvas, container, or page container not found");
       return;
     }
     
-    // Reset any previous transforms
+    // Reset any previous transforms and container adjustments
     canvas.style.transform = '';
     canvas.style.transformOrigin = 'top left';
+    pageContainer.style.width = '';
+    pageContainer.style.height = '';
     
     // Force reflow to get accurate dimensions
     canvas.offsetHeight;
@@ -415,7 +418,18 @@ export default function PDFViewerPage() {
     canvas.style.transform = `scale(${fitScale})`;
     canvas.style.transformOrigin = 'top left';
     
+    // Calculate scaled dimensions
+    const scaledWidth = canvasWidth * fitScale;
+    const scaledHeight = canvasHeight * fitScale;
+    
+    // Update the page container to match scaled dimensions
+    // This prevents overflow by containing the scaled canvas properly
+    pageContainer.style.width = `${scaledWidth}px`;
+    pageContainer.style.height = `${scaledHeight}px`;
+    pageContainer.style.overflow = 'hidden';
+    
     console.log("Applied scale:", fitScale);
+    console.log("Scaled dimensions:", { scaledWidth, scaledHeight });
   };
 
   const resetZoom = () => {
@@ -430,6 +444,7 @@ export default function PDFViewerPage() {
     if (pageContainer) {
       pageContainer.style.width = '';
       pageContainer.style.height = '';
+      pageContainer.style.overflow = '';
     }
   };
 
