@@ -319,56 +319,59 @@ export default function PDFViewerPage() {
 
   return (
     <div className="relative h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Fixed Toolbar */}
-      <div className={`fixed top-0 left-0 right-0 z-20 bg-white dark:bg-gray-800 border-b p-3 shadow-sm transition-all duration-200 ${sidebarOpen ? 'mr-80' : 'mr-0'}`}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-            >
-              {sidebarOpen ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              {sidebarOpen ? "Hide" : "Show"} Comments
-            </Button>
-            
-            <Separator orientation="vertical" className="h-6" />
-            
-            <div className="flex items-center gap-1">
+      {/* Main PDF Viewer */}
+      <div className={`flex flex-col h-full transition-all duration-200 ${sidebarOpen ? 'mr-80' : 'mr-0'}`}>
+        {/* Toolbar */}
+        <div className="bg-white dark:bg-gray-800 border-b p-3 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
               <Button
                 variant="outline"
                 size="sm"
-                onClick={prevPage}
-                disabled={currentPage <= 1}
+                onClick={() => setSidebarOpen(!sidebarOpen)}
               >
-                <ChevronLeft className="h-4 w-4" />
+                {sidebarOpen ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                {sidebarOpen ? "Hide" : "Show"} Comments
               </Button>
-              <span className="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded">
-                {currentPage} / {totalPages}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={nextPage}
-                disabled={currentPage >= totalPages}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
+              
+              <Separator orientation="vertical" className="h-6" />
+              
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={prevPage}
+                  disabled={currentPage <= 1}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <span className="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded">
+                  {currentPage} / {totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={nextPage}
+                  disabled={currentPage >= totalPages}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
 
-            <Separator orientation="vertical" className="h-6" />
+              <Separator orientation="vertical" className="h-6" />
 
-            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-              <span className="font-medium">
-                {uploadedFileName || "Sample Document"}
-              </span>
-              {uploadedFileName && (
-                <Badge variant="secondary" className="text-xs">
-                  Uploaded
-                </Badge>
-              )}
+              {/* Document Title */}
+              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                <span className="font-medium">
+                  {uploadedFileName || "Sample Document"}
+                </span>
+                {uploadedFileName && (
+                  <Badge variant="secondary" className="text-xs">
+                    Uploaded
+                  </Badge>
+                )}
+              </div>
             </div>
-          </div>
 
             <div className="flex items-center gap-2">
               <div className="relative">
@@ -410,25 +413,24 @@ export default function PDFViewerPage() {
               </Button>
             </div>
           </div>
-      </div>
+        </div>
 
-      {/* Main PDF Viewer Container */}
-      <div 
-        id="pdf-viewer-container"
-        className={`transition-all duration-200 ${sidebarOpen ? 'mr-80' : 'mr-0'}`}
-        style={{ height: 'calc(100vh - 64px)', marginTop: '64px' }}
-        onMouseEnter={() => setHovering(true)}
-        onMouseLeave={() => setHovering(false)}
-      >
-        <PDFCanvas
-          ref={pdfCanvasRef}
-          pdfDoc={pdfDoc}
-          currentPage={currentPage}
-          scale={scale}
-          onCanvasClick={handleCanvasClick}
-          hovering={hovering}
-          pins={getCurrentPagePins()}
-        />
+        {/* PDF Container */}
+        <div 
+          className="flex-1 relative"
+          onMouseEnter={() => setHovering(true)}
+          onMouseLeave={() => setHovering(false)}
+        >
+          <PDFCanvas
+            ref={pdfCanvasRef}
+            pdfDoc={pdfDoc}
+            currentPage={currentPage}
+            scale={scale}
+            onCanvasClick={handleCanvasClick}
+            hovering={hovering}
+            pins={getCurrentPagePins()}
+          />
+        </div>
       </div>
 
       {/* Right Sidebar */}
