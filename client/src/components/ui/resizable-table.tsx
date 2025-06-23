@@ -32,6 +32,9 @@ interface ResizableTableProps {
   addButtonText?: string;
   emptyStateText?: string;
   className?: string;
+  hideRowNumbers?: boolean;
+  autoNumberField?: string;
+  numberPrefix?: string;
 }
 
 export const ResizableTable: React.FC<ResizableTableProps> = ({
@@ -43,12 +46,16 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
   showAddButton = true,
   addButtonText = "Add Item",
   emptyStateText = "No items yet. Click 'Add Item' to get started.",
-  className = ""
+  className = "",
+  hideRowNumbers = false,
+  autoNumberField = "",
+  numberPrefix = ""
 }) => {
   const [columns, setColumns] = useState(initialColumns);
   const [isResizing, setIsResizing] = useState<string | null>(null);
   const [focusedRowIndex, setFocusedRowIndex] = useState<number>(-1);
   const [editingCell, setEditingCell] = useState<string | null>(null);
+  const [enterPressCount, setEnterPressCount] = useState<{[key: string]: number}>({});
   const [customInputs, setCustomInputs] = useState<Record<string, string>>({});
   const tableRef = useRef<HTMLDivElement>(null);
   const startXRef = useRef<number>(0);
@@ -126,7 +133,33 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
     const newData = data.map(row => 
       row.id === rowId ? { ...row, [field]: value } : row
     );
+    
+    // Check for duplicate numbers if this is the auto-number field
+    if (autoNumberField && field === autoNumberField && value) {
+      const duplicates = newData.filter(row => row[field] === value && row.id !== rowId);
+      if (duplicates.length > 0) {
+        // Don't update if it would create a duplicate
+        return;
+      }
+    }
+    
     onDataChange(newData);
+  };
+
+  const generateNextNumber = () => {
+    if (!autoNumberField || !numberPrefix) return '';
+    
+    const existingNumbers = data
+      .map(row => row[autoNumberField])
+      .filter(num => num && num.startsWith(numberPrefix))
+      .map(num => {
+        const match = num.match(new RegExp(`^${numberPrefix}-(\\d+)$`));
+        return match ? parseInt(match[1]) : 0;
+      })
+      .filter(num => !isNaN(num));
+    
+    const maxNumber = existingNumbers.length > 0 ? Math.max(...existingNumbers) : 0;
+    return `${numberPrefix}-${maxNumber + 1}`;
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, rowId: string, currentIndex: number, column: string) => {
@@ -203,7 +236,11 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
     } else if (e.key === 'Enter') {
       e.preventDefault();
       
-      // If in edit mode, save and exit edit mode
+      // Track Enter presses for double-Enter functionality
+      const enterKey = `${rowId}-${column}`;
+      const currentCount = enterPressCount[enterKey] || 0;
+      
+      // If in edit mode, save and check for double Enter
       if (isInEditMode && isInputColumn) {
         // Apply dimension formatting if needed
         const currentValue = (e.target as HTMLInputElement).value;
@@ -234,12 +271,30 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
           }
         }
         
-        setEditingCell(null);
-        return;
+        // Check for double Enter
+        if (currentCount === 1) {
+          // Second Enter - move to next column
+          setEditingCell(null);
+          setEnterPressCount({});
+          moveToNextField(currentIndex, column);
+          return;
+        } else {
+          // First Enter - stay in same cell but track the press
+          setEnterPressCount({ ...enterPressCount, [enterKey]: 1 });
+          setTimeout(() => {
+            // Reset count after a delay if no second Enter
+            setEnterPressCount(prev => {
+              const newCount = { ...prev };
+              delete newCount[enterKey];
+              return newCount;
+            });
+          }, 1000);
+          return;
+        }
       }
       
-      // For dropdowns and values, activate the cell
-      if (isSelectColumn || isInputColumn) {
+      // For dropdowns, checkboxes, and values, activate the cell
+      if (isSelectColumn || isInputColumn || currentColumn?.type === 'checkbox') {
         setEditingCell(cellKey);
         return;
       }
@@ -253,8 +308,9 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
         moveToNextField(currentIndex, column);
       }
     } else if (e.key === 'Escape') {
-      // Exit edit mode
+      // Exit edit mode and reset Enter count
       setEditingCell(null);
+      setEnterPressCount({});
     }
   };
 
@@ -428,7 +484,7 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
         <>
           {/* Table Header */}
           <div className="flex py-2 px-0 text-xs font-medium text-muted-foreground sticky top-0 z-10 bg-background" style={{ borderBottom: '1px solid #bbbbbb' }}>
-            <div className="w-12 flex-shrink-0 pl-3 pr-2">#</div>
+            {!hideRowNumbers && <div className="w-12 flex-shrink-0 pl-3 pr-2">#</div>}
             {columns.map((column, index) => (
               <div 
                 key={column.key}
@@ -460,9 +516,11 @@ export const ResizableTable: React.FC<ResizableTableProps> = ({
               style={{ borderBottom: '1px solid #bbbbbb' }}
               tabIndex={0}
             >
-              <div className="w-12 flex-shrink-0 pl-3 pr-2 text-xs text-muted-foreground flex items-center">
-                {index + 1}
-              </div>
+              {!hideRowNumbers && (
+                <div className="w-12 flex-shrink-0 pl-3 pr-2 text-xs text-muted-foreground flex items-center">
+                  {index + 1}
+                </div>
+              )}
               {columns.slice(0, -1).map((column) => (
                 <div key={column.key} className="flex-shrink-0 px-2 hover:bg-muted/50 dark:hover:bg-muted/70 transition-colors" style={{ width: `${column.width}px` }}>
                   {renderCell(row, column, index)}

@@ -775,6 +775,9 @@ const SchedulesContent = () => {
                   selectedRoom === 'Doors' ? 'door' : 
                   undefined
                 )}
+                hideRowNumbers={['Windows', 'Doors'].includes(selectedRoom)}
+                autoNumberField={['Windows', 'Doors'].includes(selectedRoom) ? 'number' : ''}
+                numberPrefix={selectedRoom === 'Windows' ? 'W' : selectedRoom === 'Doors' ? 'D' : ''}
                 data={(() => {
                   if (['Windows', 'Doors'].includes(selectedRoom)) {
                     return roomItems;
