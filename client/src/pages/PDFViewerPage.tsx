@@ -370,81 +370,74 @@ export default function PDFViewerPage() {
   };
 
   const fitToScreen = () => {
-    console.log("🎯 Fit to screen function called");
+    console.log("Fit to screen function called");
     
     const canvas = document.querySelector('.pdf-canvas') as HTMLCanvasElement;
     const container = document.getElementById('pdf-viewer-container');
+    const pageContainer = document.querySelector('.pdf-page-container') as HTMLElement;
     
-    if (!canvas || !container) {
-      console.log("❌ Canvas or container not found using selectors");
+    if (!canvas || !container || !pageContainer) {
+      console.log("Canvas, container, or page container not found");
       return;
     }
     
-    // Reset any previous transforms and styles
+    // Reset any previous transforms
     canvas.style.transform = '';
     canvas.style.transformOrigin = 'top left';
+    pageContainer.style.width = '';
+    pageContainer.style.height = '';
     
-    // Reset parent container styles
-    const canvasParent = canvas.parentElement;
-    if (canvasParent) {
-      canvasParent.style.display = '';
-      canvasParent.style.justifyContent = '';
-      canvasParent.style.alignItems = '';
-      canvasParent.style.minHeight = '';
-    }
-    
-    // Get container dimensions (excluding padding)
+    // Get container dimensions using getBoundingClientRect
     const containerRect = container.getBoundingClientRect();
-    const containerWidth = containerRect.width - 64; // Account for 32px padding on each side (p-8)
+    const containerWidth = containerRect.width - 64; // Account for padding (32px each side)
     const containerHeight = containerRect.height - 64;
     
-    // Get canvas natural dimensions (account for device pixel ratio)
+    // Get canvas natural dimensions
     const canvasWidth = canvas.offsetWidth;
     const canvasHeight = canvas.offsetHeight;
     
-    console.log("📐 Container dimensions:", { containerWidth, containerHeight });
-    console.log("📐 Canvas dimensions:", { canvasWidth, canvasHeight });
+    console.log("Container dimensions:", { containerWidth, containerHeight });
+    console.log("Canvas dimensions:", { canvasWidth, canvasHeight });
     
     if (canvasWidth === 0 || canvasHeight === 0) {
-      console.log("❌ Canvas has no dimensions");
+      console.log("Canvas has no dimensions");
       return;
     }
     
-    // Calculate scale factors
+    // Calculate scale factors to fit within container
     const scaleX = containerWidth / canvasWidth;
     const scaleY = containerHeight / canvasHeight;
-    const fitScale = Math.min(scaleX, scaleY, 1); // Don't scale up beyond 100%
+    const fitScale = Math.min(scaleX, scaleY);
     
-    console.log("📏 Scale factors:", { scaleX, scaleY, fitScale });
+    console.log("Scale factors:", { scaleX, scaleY, fitScale });
     
-    // Apply transform to scale the canvas
+    // Apply CSS transform to scale the canvas
     canvas.style.transform = `scale(${fitScale})`;
-    canvas.style.transformOrigin = 'center center';
+    canvas.style.transformOrigin = 'top left';
     
-    // Center the canvas in the container
-    if (canvasParent) {
-      canvasParent.style.display = 'flex';
-      canvasParent.style.justifyContent = 'center';
-      canvasParent.style.alignItems = 'center';
-      canvasParent.style.minHeight = `${containerHeight}px`;
-    }
+    // Update the page container dimensions to match scaled canvas
+    const scaledWidth = canvasWidth * fitScale;
+    const scaledHeight = canvasHeight * fitScale;
     
-    console.log("✅ Fit to screen completed with scale:", fitScale);
+    pageContainer.style.width = `${scaledWidth}px`;
+    pageContainer.style.height = `${scaledHeight}px`;
+    
+    console.log("Fit to screen completed with scale:", fitScale);
+    console.log("Scaled dimensions:", { scaledWidth, scaledHeight });
   };
 
   const resetZoom = () => {
     const canvas = document.querySelector('.pdf-canvas') as HTMLCanvasElement;
+    const pageContainer = document.querySelector('.pdf-page-container') as HTMLElement;
+    
     if (canvas) {
       canvas.style.transform = '';
       canvas.style.transformOrigin = '';
-      
-      const canvasParent = canvas.parentElement;
-      if (canvasParent) {
-        canvasParent.style.display = '';
-        canvasParent.style.justifyContent = '';
-        canvasParent.style.alignItems = '';
-        canvasParent.style.minHeight = '';
-      }
+    }
+    
+    if (pageContainer) {
+      pageContainer.style.width = '';
+      pageContainer.style.height = '';
     }
   };
 
@@ -601,7 +594,7 @@ export default function PDFViewerPage() {
             <div className="flex justify-center">
               <div 
                 ref={pdfContainerRef}
-                className="relative cursor-crosshair"
+                className="pdf-page-container relative cursor-crosshair"
                 onClick={handleCanvasClick}
               >
                 {/* Pins for current page */}

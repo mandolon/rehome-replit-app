@@ -24,6 +24,24 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;
   }
+
+  /* PDF Viewer Styles */
+  .pdf-page-container {
+    transition: width 0.3s ease, height 0.3s ease;
+    display: inline-block;
+    position: relative;
+  }
+
+  .pdf-canvas {
+    display: block;
+    transform-origin: top left;
+    transition: transform 0.3s ease;
+  }
+
+  #pdf-viewer-container {
+    overflow: auto;
+    position: relative;
+  }
 }
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. */
