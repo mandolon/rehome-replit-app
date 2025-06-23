@@ -20,6 +20,7 @@ import {
   Upload
 } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
+import PDFCanvas, { PDFCanvasHandle } from "@/components/PDFCanvas";
 
 // Configure PDF.js worker - use local worker file
 pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
@@ -95,9 +96,7 @@ export default function PDFViewerPage() {
   const [uploadedPdfUrl, setUploadedPdfUrl] = useState<string | null>(null);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
   
-  const pdfContainerRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const pageRef = useRef<pdfjsLib.PDFPageProxy | null>(null);
+  const pdfCanvasRef = useRef<PDFCanvasHandle>(null);
 
   // Sample PDF URL - using Mozilla's sample PDF
   const PDF_URL = "https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf";
@@ -109,13 +108,6 @@ export default function PDFViewerPage() {
     console.log("🚀 Initial PDF load useEffect triggered");
     loadPDF();
   }, []);
-
-  useEffect(() => {
-    console.log("🎨 Render page useEffect triggered:", { pdfDoc: !!pdfDoc, currentPage, totalPages, scale });
-    if (pdfDoc && currentPage <= totalPages) {
-      renderPage(currentPage);
-    }
-  }, [pdfDoc, currentPage, scale]);
 
   useEffect(() => {
     console.log("📤 Upload URL useEffect triggered:", { uploadedPdfUrl });
@@ -174,84 +166,9 @@ export default function PDFViewerPage() {
     }
   };
 
-  const renderPage = async (pageNum: number) => {
-    console.log(`🎨 Starting to render page ${pageNum}`);
-    
-    if (!pdfDoc) {
-      console.log("❌ No PDF document available for rendering");
-      return;
-    }
-    
-    if (!pdfContainerRef.current) {
-      console.log("❌ PDF container ref not available");
-      return;
-    }
 
-    try {
-      console.log(`📄 Getting page ${pageNum} from PDF document`);
-      const page = await pdfDoc.getPage(pageNum);
-      pageRef.current = page;
-      
-      console.log(`✅ Page ${pageNum} retrieved successfully`);
 
-      // Remove existing canvas
-      if (canvasRef.current) {
-        console.log("🗑️ Removing existing canvas");
-        canvasRef.current.remove();
-      }
-
-      console.log(`📐 Creating viewport with scale ${scale}`);
-      const viewport = page.getViewport({ scale });
-      console.log("📐 Viewport dimensions:", {
-        width: viewport.width,
-        height: viewport.height,
-        scale: viewport.scale
-      });
-
-      console.log("🖼️ Creating new canvas element");
-      const canvas = document.createElement("canvas");
-      const context = canvas.getContext("2d");
-      
-      if (!context) {
-        console.log("❌ Failed to get 2D context from canvas");
-        return;
-      }
-
-      canvas.height = viewport.height;
-      canvas.width = viewport.width;
-      canvas.className = "border shadow-lg bg-white";
-      
-      console.log("🔗 Appending canvas to container");
-      pdfContainerRef.current.appendChild(canvas);
-      canvasRef.current = canvas;
-
-      const renderContext = {
-        canvasContext: context,
-        viewport: viewport,
-      };
-
-      console.log(`🎨 Starting to render page ${pageNum} to canvas`);
-      await page.render(renderContext).promise;
-      console.log(`✅ Page ${pageNum} rendered successfully to canvas`);
-    } catch (error) {
-      console.error(`❌ Error rendering page ${pageNum}:`, error);
-      if (error instanceof Error) {
-        console.error("❌ Error details:", {
-          name: error.name,
-          message: error.message,
-          stack: error.stack
-        });
-      }
-    }
-  };
-
-  const handleCanvasClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!canvasRef.current) return;
-
-    const rect = canvasRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
+  const handleCanvasClick = (x: number, y: number) => {
     setPendingPin({ x, y, pageNumber: currentPage });
     setShowCommentDialog(true);
   };
@@ -500,40 +417,19 @@ export default function PDFViewerPage() {
 
         {/* PDF Container */}
         <div 
-          className="flex-1 overflow-auto p-8 relative"
+          className="flex-1 relative"
           onMouseEnter={() => setHovering(true)}
           onMouseLeave={() => setHovering(false)}
         >
-          {/* Hover instruction */}
-          {hovering && (
-            <div className="absolute top-4 left-4 bg-black text-white px-3 py-2 rounded-lg text-sm z-10 pointer-events-none">
-              Click to add comment
-            </div>
-          )}
-
-          <div className="flex justify-center">
-            <div 
-              ref={pdfContainerRef}
-              className="relative cursor-crosshair"
-              onClick={handleCanvasClick}
-            >
-              {/* Pins for current page */}
-              {getCurrentPagePins().map((pin) => (
-                <div
-                  key={pin.id}
-                  className="absolute z-10 cursor-pointer transform -translate-x-1/2 -translate-y-1/2"
-                  style={{ left: pin.x, top: pin.y }}
-                >
-                  <div
-                    className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-white hover:scale-110 transition-transform"
-                    style={{ backgroundColor: pin.user.color }}
-                  >
-                    {pin.number}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <PDFCanvas
+            ref={pdfCanvasRef}
+            pdfDoc={pdfDoc}
+            currentPage={currentPage}
+            scale={scale}
+            onCanvasClick={handleCanvasClick}
+            hovering={hovering}
+            pins={getCurrentPagePins()}
+          />
         </div>
       </div>
 

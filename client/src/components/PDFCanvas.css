@@ -1,0 +1,157 @@
+/* PDF Canvas Container Styles */
+.pdf-canvas-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem;
+  overflow: auto;
+  background: #f8f9fa;
+}
+
+.pdf-canvas-wrapper {
+  position: relative;
+  cursor: crosshair;
+  background: white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.pdf-canvas {
+  display: block;
+  border: none;
+  background: white;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .pdf-canvas-container {
+    background: #1f2937;
+  }
+  
+  .pdf-canvas-wrapper {
+    background: white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Hover instruction tooltip */
+.pdf-hover-instruction {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  z-index: 20;
+  pointer-events: none;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Pin styles */
+.pdf-pin {
+  position: absolute;
+  z-index: 15;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  transition: transform 0.2s ease-in-out;
+}
+
+.pdf-pin:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.pdf-pin-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: var(--pin-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  border: 2px solid white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.pdf-pin:hover .pdf-pin-circle {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .pdf-canvas-container {
+    padding: 1rem;
+  }
+  
+  .pdf-hover-instruction {
+    font-size: 0.75rem;
+    padding: 0.375rem 0.75rem;
+  }
+  
+  .pdf-pin-circle {
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+  }
+}
+
+/* Loading state */
+.pdf-canvas-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  color: #6b7280;
+  font-size: 1rem;
+}
+
+/* Error state */
+.pdf-canvas-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  background: #fef2f2;
+  border: 2px dashed #fca5a5;
+  border-radius: 8px;
+  color: #dc2626;
+  text-align: center;
+  padding: 2rem;
+}
+
+.pdf-canvas-error h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.pdf-canvas-error p {
+  margin: 0;
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
