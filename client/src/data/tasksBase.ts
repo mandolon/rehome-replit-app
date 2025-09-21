@@ -16,12 +16,20 @@ export const baseTasks: Task[] = [
     estimatedCompletion: "—",
     dateCreated: "8/10/22",
     dueDate: "—",
-    assignee: TEAM_USERS.find(u => u.name === "AL"), // Armando Lopez
+    assignee: TEAM_USERS.find(u => u.name === "AL") || null, // Armando Lopez
     hasAttachment: true,
+    collaborators: [],
     status: "redline",
+    archived: false,
     createdBy: "AL",
     createdAt: today,
-    updatedAt: today
+    updatedAt: today,
+    deletedAt: null,
+    deletedBy: null,
+    description: null,
+    markedComplete: null,
+    markedCompleteBy: null,
+    timeLogged: "0h"
   },
   {
     id: 2,
@@ -32,13 +40,20 @@ export const baseTasks: Task[] = [
     estimatedCompletion: "—",
     dateCreated: "12/27/23",
     dueDate: "—",
-    assignee: TEAM_USERS.find(u => u.name === "ALD"), // Alice Dale
+    assignee: TEAM_USERS.find(u => u.name === "ALD") || null, // Alice Dale
     hasAttachment: true,
-    collaborators: [TEAM_USERS.find(u => u.name === "MP")], // Mark Pinsky
+    collaborators: [TEAM_USERS.find(u => u.name === "MP")!], // Mark Pinsky
     status: "progress",
+    archived: false,
     createdBy: "AL",
     createdAt: today,
-    updatedAt: today
+    updatedAt: today,
+    deletedAt: null,
+    deletedBy: null,
+    description: null,
+    markedComplete: null,
+    markedCompleteBy: null,
+    timeLogged: "0h"
   },
   {
     id: 3,
@@ -49,12 +64,20 @@ export const baseTasks: Task[] = [
     estimatedCompletion: "—",
     dateCreated: "12/9/23",
     dueDate: "—",
-    assignee: TEAM_USERS.find(u => u.name === "MP"), // Mark Pinsky
+    assignee: TEAM_USERS.find(u => u.name === "MP") || null, // Mark Pinsky
     hasAttachment: true,
+    collaborators: [],
     status: "progress",
+    archived: false,
     createdBy: "AL",
     createdAt: today,
-    updatedAt: today
+    updatedAt: today,
+    deletedAt: null,
+    deletedBy: null,
+    description: null,
+    markedComplete: null,
+    markedCompleteBy: null,
+    timeLogged: "0h"
   },
   {
     id: 4,
@@ -65,11 +88,19 @@ export const baseTasks: Task[] = [
     estimatedCompletion: "—",
     dateCreated: "9/13/23",
     dueDate: "9/22/23, 5...",
-    assignee: TEAM_USERS.find(u => u.name === "JH"), // James Hall
+    assignee: TEAM_USERS.find(u => u.name === "JH") || null, // James Hall
     hasAttachment: false,
+    collaborators: [],
     status: "progress",
+    archived: false,
     createdBy: "AL",
     createdAt: today,
-    updatedAt: today
+    updatedAt: today,
+    deletedAt: null,
+    deletedBy: null,
+    description: null,
+    markedComplete: null,
+    markedCompleteBy: null,
+    timeLogged: "0h"
   }
 ];

@@ -110,6 +110,8 @@ export const restoreTask = (id: number): Task | null => {
     const { deletedAt, deletedBy, ...taskWithoutDeletedFields } = baseTasks[taskIndex];
     baseTasks[taskIndex] = {
       ...taskWithoutDeletedFields,
+      deletedAt: null,
+      deletedBy: null,
       updatedAt: new Date().toISOString()
     };
     return baseTasks[taskIndex];

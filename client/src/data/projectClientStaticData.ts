@@ -1,5 +1,22 @@
 // Pure static data for project clients
-export const projectClientData = {
+
+export interface ProjectClient {
+  clientId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  isPrimary: boolean;
+}
+
+export interface ProjectData {
+  clients: ProjectClient[];
+  projectAddress: string;
+  city: string;
+  state: string;
+  projectId: string;
+}
+
+export const projectClientData: Record<string, ProjectData> = {
   "adams-1063-40th-street": {
     clients: [
       {

@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import AppLayout from '@/components/layout/AppLayout';
 import SettingsHeader from '@/components/settings/SettingsHeader';
 import ProfileTab from '@/components/settings/ProfileTab';
 import AccountTab from '@/components/settings/AccountTab';
@@ -24,16 +23,14 @@ const SettingsPage = () => {
   };
 
   return (
-    <AppLayout>
-      <div className="h-full flex flex-col">
-        <SettingsHeader activeTab={activeTab} onTabChange={handleTabChange} />
-        <div className="flex-1 overflow-y-auto">
-          {activeTab === 'profile' && <ProfileTab />}
-          {activeTab === 'account' && <AccountTab />}
-          {activeTab === 'trash' && <TrashTab />}
-        </div>
+    <div className="h-full flex flex-col">
+      <SettingsHeader activeTab={activeTab} onTabChange={handleTabChange} />
+      <div className="flex-1 overflow-y-auto">
+        {activeTab === 'profile' && <ProfileTab />}
+        {activeTab === 'account' && <AccountTab />}
+        {activeTab === 'trash' && <TrashTab />}
       </div>
-    </AppLayout>
+    </div>
   );
 };
 

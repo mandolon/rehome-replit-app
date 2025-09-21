@@ -69,8 +69,8 @@ export function getVisibleWhiteboardsForUser(user: { role: string; id: string; e
   if (user.role === "Client") {
     // find project IDs where user is a client
     const projectIds = Object.keys(projectClientData).filter(pid =>
-      projectClientData[pid].clients.some(
-        c => c.clientId === user.id || (user.email && c.email === user.email)
+      projectClientData[pid as keyof typeof projectClientData].clients.some(
+        (c: any) => c.clientId === user.id || (user.email && c.email === user.email)
       )
     );
     return whiteboards.filter(

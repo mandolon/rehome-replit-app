@@ -154,17 +154,17 @@ const TaskTableSection = ({
         editingValue={editingValue}
         onSetEditingValue={setEditingValue}
         onTaskClick={onTaskClick}
-        onTaskNameClick={(task, e) => { e.stopPropagation(); if (startEditingTask) startEditingTask(task); }}
-        onEditClick={(task, e) => { e.stopPropagation(); if (startEditingTask) startEditingTask(task); }}
+        onTaskNameClick={(task: Task, e: React.MouseEvent) => { e.stopPropagation(); if (startEditingTask) startEditingTask(task); }}
+        onEditClick={(task: Task, e: React.MouseEvent) => { e.stopPropagation(); if (startEditingTask) startEditingTask(task); }}
         onSaveEdit={saveTaskEdit}
         onCancelEdit={cancelTaskEdit}
-        onKeyDown={(e, tid) => {
+        onKeyDown={(e: React.KeyboardEvent, tid: string) => {
           if (e.key === "Enter" && saveTaskEdit) saveTaskEdit(tid);
           else if (e.key === "Escape" && cancelTaskEdit) cancelTaskEdit();
         }}
         onTaskStatusClick={toggleTaskStatus}
-        onRemoveAssignee={(tid, e) => { e.stopPropagation(); if (removeAssignee) removeAssignee(tid); }}
-        onRemoveCollaborator={(tid, idx, e) => { e.stopPropagation(); if (removeCollaborator) removeCollaborator(tid, idx); }}
+        onRemoveAssignee={(tid: string, e: React.MouseEvent) => { e.stopPropagation(); if (removeAssignee) removeAssignee(tid); }}
+        onRemoveCollaborator={(tid: string, idx: number, e: React.MouseEvent) => { e.stopPropagation(); if (removeCollaborator) removeCollaborator(tid, idx); }}
         onAssignPerson={assignPerson}
         onAddCollaborator={addCollaborator}
         onTaskDeleted={onTaskDeleted}

@@ -25,8 +25,8 @@ function compareDateCreated(a: Task, b: Task, direction: "asc" | "desc") {
       return new Date(date);
     }
   };
-  const dA = parse(a.dateCreated);
-  const dB = parse(b.dateCreated);
+  const dA = parse(a.dateCreated || '');
+  const dB = parse(b.dateCreated || '');
   return direction === "asc" ? dA.getTime() - dB.getTime() : dB.getTime() - dA.getTime();
 }
 

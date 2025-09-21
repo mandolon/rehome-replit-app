@@ -143,7 +143,7 @@ const TaskTable = React.memo(React.forwardRef<HTMLDivElement, any>(({
           </TableRow>
         </TableHeader>
         <TableBody className="[&_tr:last-child]:border-b">
-          {tasks.map((task) => (
+          {tasks.map((task: Task) => (
             <TaskRow
               key={task.id}
               task={task}

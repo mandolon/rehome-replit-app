@@ -44,10 +44,10 @@ const TeamsContent = ({ tab, selectedUserId }: TeamsContentProps) => {
     'Jr Designer', 'Contractor', 'Client'
   ];
 
-  const handleRoleChange = (memberId: string, newTitleRole: ArchitectureRole) => {
+  const handleRoleChange = (memberId: string, newTitleRole: string) => {
     setTeamMembers(prev =>
       prev.map(m =>
-        m.id === memberId ? { ...m, titleRole: newTitleRole } : m
+        m.id === memberId ? { ...m, titleRole: newTitleRole as any } : m
       )
     );
   };

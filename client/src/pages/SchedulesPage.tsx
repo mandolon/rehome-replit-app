@@ -1,18 +1,15 @@
 import React from 'react';
-import AppLayout from '@/components/layout/AppLayout';
 import SchedulesContent from '@/components/schedules/SchedulesContent';
 import PageSectionHeader from '@/components/shared/PageSectionHeader';
 
 const SchedulesPage = React.memo(() => {
   return (
-    <AppLayout>
-      <div className="flex flex-col h-full overflow-hidden">
-        <PageSectionHeader title="Schedules" />
-        <div className="flex-1 min-h-0 overflow-hidden">
-          <SchedulesContent />
-        </div>
+    <div className="flex flex-col h-full overflow-hidden">
+      <PageSectionHeader title="Schedules" />
+      <div className="flex-1 min-h-0 overflow-hidden">
+        <SchedulesContent />
       </div>
-    </AppLayout>
+    </div>
   );
 });
 

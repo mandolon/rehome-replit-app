@@ -1,5 +1,4 @@
 import React from "react";
-import AppLayout from "@/components/layout/AppLayout";
 import ProjectHero from "@/components/client-dashboard/ProjectHero";
 import ProjectTimeline from "@/components/client-dashboard/ProjectTimeline";
 import ActivityFeed from "@/components/client-dashboard/ActivityFeed";
@@ -21,8 +20,7 @@ const activeProject = {
 
 const ClientDashboard = () => {
   return (
-    <AppLayout>
-      <div className="w-full max-w-5xl mx-auto py-6 px-2 sm:px-4">
+    <div className="w-full max-w-5xl mx-auto py-6 px-2 sm:px-4">
         <div className="space-y-6">
           {/* Project Hero */}
           <ProjectHero
@@ -68,8 +66,7 @@ const ClientDashboard = () => {
             </Tabs>
           </div>
         </div>
-      </div>
-    </AppLayout>
+    </div>
   );
 };
 

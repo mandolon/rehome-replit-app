@@ -10,15 +10,15 @@ export const getProjectIdFromDisplayName = (displayName: string): string => {
   console.log('Converted project ID:', projectId);
   
   // Check if this project exists in our client data
-  if (projectClientData[projectId]) {
+  if (projectClientData[projectId as keyof typeof projectClientData]) {
     console.log('Found project in client data:', projectId);
     return projectId;
   }
   
   // Fallback: try to find by partial match in projectClientData
   const fallbackId = Object.keys(projectClientData).find(id => {
-    const clientData = projectClientData[id];
-    const primaryClient = clientData.clients?.find(c => c.isPrimary) || clientData.clients?.[0];
+    const clientData = projectClientData[id as keyof typeof projectClientData];
+    const primaryClient = clientData.clients?.find((c: any) => c.isPrimary) || clientData.clients?.[0];
     const generatedDisplayName = `${primaryClient?.lastName ?? ''} - ${clientData.projectAddress}`;
     return generatedDisplayName === displayName;
   });
@@ -42,9 +42,9 @@ export const getDisplayNameFromProjectId = (projectId: string): string => {
   }
   
   // Fallback to client data
-  if (projectClientData[projectId]) {
-    const clientData = projectClientData[projectId];
-    const primaryClient = clientData.clients?.find(c => c.isPrimary) || clientData.clients?.[0];
+  if (projectClientData[projectId as keyof typeof projectClientData]) {
+    const clientData = projectClientData[projectId as keyof typeof projectClientData];
+    const primaryClient = clientData.clients?.find((c: any) => c.isPrimary) || clientData.clients?.[0];
     return `${primaryClient?.lastName ?? ''} - ${clientData.projectAddress}`;
   }
   

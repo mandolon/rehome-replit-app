@@ -2,7 +2,6 @@
 // Ensure consistent spacing/title by using only PageSectionHeader
 
 import React, { useState } from 'react';
-import AppLayout from '@/components/layout/AppLayout';
 import InvoiceTabs from '@/components/invoice/InvoiceTabs';
 import PageSectionHeader from '@/components/shared/PageSectionHeader';
 
@@ -31,21 +30,19 @@ const InvoicePage = () => {
   const total = subtotal + processingFee;
 
   return (
-    <AppLayout>
-      <div className="flex flex-col h-full">
-        <PageSectionHeader title="Invoices" />
-        <div className="flex-1 flex flex-col max-w-6xl mx-auto pt-0">
-          <InvoiceTabs
-            lineItems={lineItems}
-            onAddLineItem={addLineItem}
-            onUpdateLineItem={updateLineItem}
-            subtotal={subtotal}
-            processingFee={processingFee}
-            total={total}
-          />
-        </div>
+    <div className="flex flex-col h-full">
+      <PageSectionHeader title="Invoices" />
+      <div className="flex-1 flex flex-col max-w-6xl mx-auto pt-0">
+        <InvoiceTabs
+          lineItems={lineItems}
+          onAddLineItem={addLineItem}
+          onUpdateLineItem={updateLineItem}
+          subtotal={subtotal}
+          processingFee={processingFee}
+          total={total}
+        />
       </div>
-    </AppLayout>
+    </div>
   );
 };
 

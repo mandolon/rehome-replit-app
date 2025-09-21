@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
+import { useThemeStore } from "@/lib/zustand/useThemeStore";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export function ThemeToggle() {
-  const { setTheme } = useTheme();
+  const { theme, toggleTheme } = useThemeStore();
 
   return (
     <DropdownMenu>
@@ -23,14 +23,14 @@ export function ThemeToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>
+        <DropdownMenuItem onClick={() => useThemeStore.getState().theme !== 'light' && toggleTheme()}>
           Light
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
+        <DropdownMenuItem onClick={() => useThemeStore.getState().theme !== 'dark' && toggleTheme()}>
           Dark
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
-          System
+        <DropdownMenuItem onClick={toggleTheme}>
+          Toggle Theme
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -1,18 +1,17 @@
-
 import React, { useState } from 'react';
 import { ScrollArea } from "@/components/ui/scroll-area";
-import SidebarHeader from './sidebar/SidebarHeader';
+import SidebarHeader from '@/components/sidebar/SidebarHeader';
 import SidebarNavigation from '@/app/(core)/nav/SidebarNavigation';
-import SidebarProjects from './sidebar/SidebarProjects';
-import SidebarFooter from './sidebar/SidebarFooter';
+import SidebarProjects from '@/components/sidebar/SidebarProjects';
+import SidebarFooter from '@/components/sidebar/SidebarFooter';
 import { useProjectData } from '@/contexts/ProjectDataContext';
 import { useUser } from '@/contexts/UserContext';
 
-interface SidebarProps {
+interface SideNavProps {
   isCollapsed: boolean;
 }
 
-const Sidebar = ({ isCollapsed }: SidebarProps) => {
+const SideNav = ({ isCollapsed }: SideNavProps) => {
   const { refreshTrigger } = useProjectData();
   const [openSections, setOpenSections] = useState({
     mainNav: true,
@@ -71,5 +70,4 @@ const Sidebar = ({ isCollapsed }: SidebarProps) => {
   );
 };
 
-export default Sidebar;
-
+export default SideNav;

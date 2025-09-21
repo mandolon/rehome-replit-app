@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from 'react';
-import AppLayout from '@/components/layout/AppLayout';
 import DashboardContent from '@/components/dashboard/DashboardContent';
 import DashboardPageHeader from '@/components/dashboard/DashboardPageHeader';
 import { useUser } from '@/contexts/UserContext';
@@ -33,16 +32,14 @@ const Dashboard = () => {
   }
 
   return (
-    <AppLayout>
-      <div className="flex-1 bg-background p-4">
-        <div className="h-full flex flex-col max-w-6xl mx-auto">
-          <DashboardPageHeader activeTab={activeTab} onTabChange={handleTabChange} />
-          <div className="flex-1 pt-4 overflow-y-auto">
-            <DashboardContent />
-          </div>
+    <div className="flex-1 bg-background p-4">
+      <div className="h-full flex flex-col max-w-6xl mx-auto">
+        <DashboardPageHeader activeTab={activeTab} onTabChange={handleTabChange} />
+        <div className="flex-1 pt-4 overflow-y-auto">
+          <DashboardContent />
         </div>
       </div>
-    </AppLayout>
+    </div>
   );
 };
 

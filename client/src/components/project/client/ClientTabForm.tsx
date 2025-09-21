@@ -42,7 +42,7 @@ const ClientTabForm = ({ onSave }: ClientTabFormProps) => {
 
   useEffect(() => {
     const project = getClientData(projectId);
-    setClients([...project.clients]);
+    setClients([...project.clients] as any);
     setVisibleCount(CLIENTS_PER_BATCH); // Reset visible count if project changes
   }, [projectId]);
 

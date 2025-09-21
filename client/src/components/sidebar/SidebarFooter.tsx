@@ -59,9 +59,9 @@ const SidebarFooter = () => {
                 `}
                 onClick={handleNavigateHelp}
                 type="button"
-                disabled={helpDisabled}
+                disabled={helpDisabled ?? false}
                 tabIndex={helpDisabled ? -1 : 0}
-                aria-disabled={helpDisabled}
+                aria-disabled={helpDisabled ?? false}
               >
                 <HelpCircle className="w-4 h-4 flex-shrink-0" />
                 <span className="truncate">Help</span>

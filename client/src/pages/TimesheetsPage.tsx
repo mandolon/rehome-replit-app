@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import AppLayout from '@/components/layout/AppLayout';
 import TimesheetsHeader from '@/components/timesheets/TimesheetsHeader';
 import TimesheetTable from '@/components/timesheets/TimesheetTable';
 import TimesheetStats from '@/components/timesheets/TimesheetStats';
@@ -34,8 +33,7 @@ const TimesheetsPage = () => {
   };
 
   return (
-    <AppLayout>
-      <div className="flex flex-col h-full relative">
+    <div className="flex flex-col h-full relative">
         <TimesheetsHeader 
           selectedWeek={selectedWeek}
           onWeekChange={setSelectedWeek}
@@ -55,7 +53,7 @@ const TimesheetsPage = () => {
             <ProjectLogTab 
               selectedWeek={selectedWeek} 
               refreshTrigger={refreshTrigger} 
-              onTaskClick={handleTaskClick}
+              onTaskClick={(task: any) => handleTaskClick(task)}
             />
           )}
         </div>
@@ -79,8 +77,7 @@ const TimesheetsPage = () => {
           onClose={() => setIsAddDialogOpen(false)}
           onSave={handleAddTimeEntry}
         />
-      </div>
-    </AppLayout>
+    </div>
   );
 };
 

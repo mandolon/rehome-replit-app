@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from 'react';
-import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,7 +12,6 @@ import Dashboard from "./pages/Dashboard";
 import ProjectPage from "./pages/ProjectPage";
 import Projects from "./pages/Projects";
 import TaskDetailPage from "./pages/TaskDetailPage";
-import InboxPage from "./pages/InboxPage";
 import TeamsPage from "./pages/TeamsPage";
 import InvoicePage from "./pages/InvoicePage";
 import TimesheetsPage from "./pages/TimesheetsPage";
@@ -38,15 +36,14 @@ import { TaskAttachmentProvider } from "./contexts/TaskAttachmentContext";
 import ImpersonationGate from "./components/ImpersonationGate";
 import LoginPage from "./components/auth/LoginPage";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import CoreLayout from "./app/(core)/layout";
 
 const AppProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        {children}
-      </TooltipProvider>
-    </QueryClientProvider>
-  </ThemeProvider>
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      {children}
+    </TooltipProvider>
+  </QueryClientProvider>
 );
 
 const LocationLogger = () => {
@@ -78,33 +75,34 @@ const App = () => {
                         path="/*"
                         element={
                           <ProtectedRoute>
-                            <Routes>
-                              <Route path="/" element={<Index />} />
-                              <Route path="/home2" element={<Home2 />} />
-                              <Route path="/tasks" element={<TasksPage />} />
-                              <Route path="/schedules" element={<SchedulesPage />} />
-                              <Route path="/dashboard" element={<Dashboard />} />
-                              <Route path="/projects" element={<Projects />} />
-                              <Route path="/project/:projectId" element={<ProjectPage />} />
-                              <Route path="/task/:taskId" element={<TaskDetailPage />} />
-                              <Route path="/inbox" element={<InboxPage />} />
-                              <Route path="/teams" element={<TeamsPage />} />
-                              <Route path="/client/account" element={<ClientAccountPage />} />
-                              <Route path="/client/dashboard" element={<ClientDashboard />} />
-                              <Route path="/invoices" element={<InvoicePage />} />
-                              <Route path="/timesheets" element={<TimesheetsPage />} />
-                              <Route path="/work-records" element={<WorkRecordsPage />} />
-                              <Route path="/whiteboards" element={<WhiteboardsPage />} />
-                              <Route path="/client/whiteboards" element={<ClientWhiteboards />} />
-                              <Route path="/settings" element={<SettingsPage />} />
-                              <Route path="/settings/notifications" element={<SettingsPage />} />
-                              <Route path="/help" element={<HelpRedirector />} />
-                              <Route path="/help/admin" element={<AdminHelpPage />} />
-                              <Route path="/help/team" element={<TeamHelpPage />} />
-                              <Route path="/help/client" element={<ClientHelpPage />} />
-                              <Route path="/sandbox/pdf-viewer" element={<PDFViewerPage />} />
-                              <Route path="*" element={<NotFound />} />
-                            </Routes>
+                            <CoreLayout>
+                              <Routes>
+                                <Route path="/" element={<Index />} />
+                                <Route path="/home2" element={<Home2 />} />
+                                <Route path="/tasks" element={<TasksPage />} />
+                                <Route path="/schedules" element={<SchedulesPage />} />
+                                <Route path="/dashboard" element={<Dashboard />} />
+                                <Route path="/projects" element={<Projects />} />
+                                <Route path="/project/:projectId" element={<ProjectPage />} />
+                                <Route path="/task/:taskId" element={<TaskDetailPage />} />
+                                <Route path="/teams" element={<TeamsPage />} />
+                                <Route path="/client/account" element={<ClientAccountPage />} />
+                                <Route path="/client/dashboard" element={<ClientDashboard />} />
+                                <Route path="/invoices" element={<InvoicePage />} />
+                                <Route path="/timesheets" element={<TimesheetsPage />} />
+                                <Route path="/work-records" element={<WorkRecordsPage />} />
+                                <Route path="/whiteboards" element={<WhiteboardsPage />} />
+                                <Route path="/client/whiteboards" element={<ClientWhiteboards />} />
+                                <Route path="/settings" element={<SettingsPage />} />
+                                <Route path="/settings/notifications" element={<SettingsPage />} />
+                                <Route path="/help" element={<HelpRedirector />} />
+                                <Route path="/help/admin" element={<AdminHelpPage />} />
+                                <Route path="/help/team" element={<TeamHelpPage />} />
+                                <Route path="/help/client" element={<ClientHelpPage />} />
+                                <Route path="/sandbox/pdf-viewer" element={<PDFViewerPage />} />
+                                <Route path="*" element={<NotFound />} />
+                              </Routes>
+                            </CoreLayout>
                           </ProtectedRoute>
                         }
                       />

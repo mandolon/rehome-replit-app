@@ -1,6 +1,5 @@
 
 import React from "react";
-import AppLayout from "@/components/layout/AppLayout";
 
 const ClientAccountPage = () => {
   // This would be connected to the client's profile data in a real app
@@ -11,8 +10,7 @@ const ClientAccountPage = () => {
   };
 
   return (
-    <AppLayout>
-      <div className="max-w-lg mx-auto p-8">
+    <div className="max-w-lg mx-auto p-8">
         <h1 className="text-2xl font-semibold mb-6">Account Settings</h1>
         <div className="space-y-4">
           <div>
@@ -43,8 +41,7 @@ const ClientAccountPage = () => {
             />
           </div>
         </div>
-      </div>
-    </AppLayout>
+    </div>
   );
 };
 

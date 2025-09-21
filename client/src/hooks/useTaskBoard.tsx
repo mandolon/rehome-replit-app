@@ -2,33 +2,19 @@
 import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Task, TaskGroup, TaskUser } from '@/types/task';
+import { Task, TaskGroup, TaskUser } from '@/lib/schemas/task';
 import { useUser } from '@/contexts/UserContext';
-import { useRealtimeTasks } from './useRealtimeTasks';
-import { fetchAllTasks, createTask, updateTask, deleteTask } from '@/data/api';
-import { nanoid } from "nanoid";
-
-// New: helper to deep copy and update list
-function updateTaskInList(tasks: Task[], taskId: string, updater: (t: Task) => Task) {
-  return tasks.map(t => t.taskId === taskId ? updater(t) : t);
-}
+import { taskService } from '@/lib/services/tasks';
 
 export const useTaskBoard = () => {
   const navigate = useNavigate();
   const { currentUser } = useUser();
   const queryClient = useQueryClient();
   
-  // Enable real-time updates
-  useRealtimeTasks();
-  
-  // Completely isolated query with unique key to avoid conflicts
+  // Fetch tasks using the mock service
   const fetchTasksDirectly = React.useCallback(async () => {
-    console.log('Making direct API call for tasks');
-    const response = await fetch('/api/tasks');
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
+    console.log('Fetching tasks from mock service');
+    const data = await taskService.getTasks();
     console.log('Tasks loaded:', data.length);
     return data;
   }, []);
@@ -53,7 +39,7 @@ export const useTaskBoard = () => {
   const [showQuickAdd, setShowQuickAdd] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  // Task groups powered by API - memoized to prevent unnecessary recalculations
+  // Task groups powered by mock service - memoized to prevent unnecessary recalculations
   const taskGroups = React.useMemo((): TaskGroup[] => {
     if (!tasks || !Array.isArray(tasks)) {
       return [
@@ -63,31 +49,31 @@ export const useTaskBoard = () => {
       ];
     }
     
-    const centralizedRedline = tasks.filter((task: any) => task.status === 'redline' && !task.archived && !task.deletedAt);
-    const centralizedProgress = tasks.filter((task: any) => task.status === 'progress' && !task.archived && !task.deletedAt);
-    const centralizedCompleted = tasks.filter((task: any) => task.status === 'completed' && !task.deletedAt);
+    const redlineTasks = tasks.filter(task => task.status === 'redline' && !task.archived);
+    const progressTasks = tasks.filter(task => task.status === 'progress' && !task.archived);
+    const completedTasks = tasks.filter(task => task.status === 'completed' && !task.archived);
 
     const taskGroups: TaskGroup[] = [
       {
         title: "TASK/ REDLINE",
-        count: centralizedRedline.length,
+        count: redlineTasks.length,
         color: "bg-[#c62a2f]",
         status: "redline",
-        tasks: centralizedRedline
+        tasks: redlineTasks
       },
       {
         title: "PROGRESS/ UPDATE",
-        count: centralizedProgress.length,
+        count: progressTasks.length,
         color: "bg-blue-500",
         status: "progress",
-        tasks: centralizedProgress
+        tasks: progressTasks
       },
       {
         title: "COMPLETED",
-        count: centralizedCompleted.length,
+        count: completedTasks.length,
         color: "bg-green-500",
         status: "completed",
-        tasks: centralizedCompleted
+        tasks: completedTasks
       }
     ];
     return taskGroups;
@@ -99,21 +85,11 @@ export const useTaskBoard = () => {
   // Generate a new taskId for every task insert
   const generateTaskId = () => "T" + Math.floor(Math.random() * 100000).toString().padStart(4, "0");
 
-  // Create task mutation with direct API call and optimistic updates
+  // Create task mutation using mock service
   const createTaskMutation = useMutation({
     mutationFn: async (newTask: any) => {
       console.log('Creating task:', newTask);
-      const response = await fetch('/api/tasks', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newTask),
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const result = await response.json();
+      const result = await taskService.createTask(newTask);
       console.log('Task created successfully:', result);
       return result;
     },
@@ -135,7 +111,6 @@ export const useTaskBoard = () => {
           archived: false,
           deletedAt: null,
           deletedBy: null,
-          workRecord: false,
         }
       ]);
       
@@ -182,21 +157,11 @@ export const useTaskBoard = () => {
     navigate(`/task/${task.taskId}`);
   };
 
-  // Update task mutation with direct API call
+  // Update task mutation using mock service
   const updateTaskMutation = useMutation({
     mutationFn: async ({ taskId, updates }: { taskId: string; updates: Partial<Task> }) => {
       console.log('Updating task:', taskId, updates);
-      const response = await fetch(`/api/tasks/${taskId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updates),
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const result = await response.json();
+      const result = await taskService.updateTask(taskId, updates);
       console.log('Task updated successfully:', result);
       return result;
     },
@@ -207,18 +172,13 @@ export const useTaskBoard = () => {
     },
   });
 
-  // Delete task mutation with direct API call
+  // Delete task mutation using mock service
   const deleteTaskMutation = useMutation({
     mutationFn: async (taskId: string) => {
       console.log('Deleting task:', taskId);
-      const response = await fetch(`/api/tasks/${taskId}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      const result = await taskService.deleteTask(taskId);
       console.log('Task deleted successfully:', taskId);
-      return taskId;
+      return result;
     },
     onSuccess: (deletedTaskId) => {
       console.log('Delete mutation success, invalidating cache');
@@ -228,20 +188,20 @@ export const useTaskBoard = () => {
   });
 
   const handleTaskArchive = async (taskId: number) => {
-    const task = tasks.find((t: any) => t.id === taskId);
+    const task = tasks.find(t => t.id === taskId);
     if (task) {
       updateTaskMutation.mutate({ taskId: task.taskId, updates: { archived: true } });
     }
   };
 
   const handleTaskDeleted = async (taskId: string) => {
-    const task = tasks.find((t: any) => t.taskId === taskId);
+    const task = tasks.find(t => t.taskId === taskId);
     if (task) {
       deleteTaskMutation.mutate(task.taskId);
     }
   };
 
-  // Assignment handlers using API mutations
+  // Assignment handlers using mock service mutations
   const assignPerson = async (taskId: string, person: TaskUser) => {
     updateTaskMutation.mutate({ taskId, updates: { assignee: person } });
   };
@@ -251,16 +211,16 @@ export const useTaskBoard = () => {
   };
   
   const addCollaborator = async (taskId: string, person: TaskUser) => {
-    const task = tasks.find((t: any) => t.taskId === taskId);
+    const task = tasks.find(t => t.taskId === taskId);
     const collabs = (task?.collaborators ?? []).slice();
-    if (!collabs.find((c: any) => c.id === person.id)) {
+    if (!collabs.find(c => c.id === person.id)) {
       collabs.push(person);
     }
     updateTaskMutation.mutate({ taskId, updates: { collaborators: collabs } });
   };
   
   const removeCollaborator = async (taskId: string, collaboratorIndex: number) => {
-    const task = tasks.find((t: any) => t.taskId === taskId);
+    const task = tasks.find(t => t.taskId === taskId);
     const collabs = (task?.collaborators ?? []).slice();
     collabs.splice(collaboratorIndex, 1);
     updateTaskMutation.mutate({ taskId, updates: { collaborators: collabs } });
@@ -285,7 +245,7 @@ export const useTaskBoard = () => {
     addCollaborator,
     removeCollaborator,
     tasks, // expose tasks for dependency tracking
-    supabaseTasks: tasks, // expose realtime tasks for detail page
+    supabaseTasks: tasks, // expose tasks for detail page
     supabaseTasksLoading: loading,
   };
 };

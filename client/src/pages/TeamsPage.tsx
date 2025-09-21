@@ -1,5 +1,4 @@
 import React, { useState, createContext, useContext } from 'react';
-import AppLayout from '@/components/layout/AppLayout';
 import PageSectionHeader from '@/components/shared/PageSectionHeader';
 import TeamsContent from '@/components/teams/TeamsContent';
 import SelectUserDropdown from "@/components/teams/SelectUserDropdown";
@@ -23,8 +22,7 @@ const TeamsPage = () => {
 
   return (
     <CRMRoleContext.Provider value={role}>
-      <AppLayout>
-        <div className="flex flex-col h-full">
+      <div className="flex flex-col h-full">
           <PageSectionHeader title="Teams CRM">
             <div className="flex items-center gap-4">
               {/* Removed RoleSwitcher */}
@@ -54,9 +52,8 @@ const TeamsPage = () => {
             {(activeTab === "admin" || activeTab === "team" || activeTab === "client") && (
               <TeamsContent tab={activeTab} selectedUserId={selectedUserId} />
             )}
-          </div>
         </div>
-      </AppLayout>
+      </div>
     </CRMRoleContext.Provider>
   );
 };

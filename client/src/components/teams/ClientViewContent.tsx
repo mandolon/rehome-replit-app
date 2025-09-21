@@ -13,7 +13,7 @@ interface ClientViewContentProps {
 const ClientViewContent = ({ projectId }: ClientViewContentProps) => {
   // Use the provided projectId or fallback to the first available client
   const clientData = getClientData(projectId || fallbackProjectId);
-  const primaryClient = clientData.clients?.find(c => c.isPrimary) || clientData.clients?.[0];
+  const primaryClient = clientData.clients?.find((c: any) => c.isPrimary) || clientData.clients?.[0];
 
   return (
     <div className="flex-1 overflow-y-auto p-6 max-w-xl mx-auto">

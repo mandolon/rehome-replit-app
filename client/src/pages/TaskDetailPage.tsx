@@ -1,14 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import AppLayout from '@/components/layout/AppLayout';
 import TaskDetail from '@/components/TaskDetail';
 import { getProjectIdFromDisplayName } from '@/utils/projectMapping';
 import { useTaskContext } from '@/contexts/TaskContext';
 import { useUser } from '@/contexts/UserContext';
-import { TaskUser, Task } from '@/types/task';
+import { Task } from '@/lib/schemas/task';
 import { useTaskBoard } from '@/hooks/useTaskBoard';
 import { canUserViewTask } from '@/utils/taskVisibility';
+import { taskService } from '@/lib/services/tasks';
 
 const TaskDetailPage = () => {
   const { taskId } = useParams<{ taskId: string }>();
@@ -30,13 +30,22 @@ const TaskDetailPage = () => {
     
     let fetchedTask: Task | null = null;
     if (taskId) {
-      // 1. First look in Supabase-powered realtime tasks (if present)
+      // 1. First look in tasks from TaskBoard hook (if present)
       if (supabaseTasks && supabaseTasks.length > 0) {
         fetchedTask = supabaseTasks.find(
           t => t.taskId === taskId || t.id === Number(taskId)
         ) || null;
       }
-      // 2. (Legacy fallback) Try customTasks from TaskContext
+      // 2. If not found, try to fetch directly from service
+      if (!fetchedTask) {
+        taskService.getTaskById(taskId).then(task => {
+          if (task) {
+            setCurrentTask(task);
+          }
+        });
+        return;
+      }
+      // 3. (Legacy fallback) Try customTasks from TaskContext
       if (!fetchedTask && customTasks.length > 0) {
         const taskFromCustom = customTasks.find(
           t => t.taskId === taskId || t.id === Number(taskId)
@@ -45,8 +54,6 @@ const TaskDetailPage = () => {
           fetchedTask = taskFromCustom;
         }
       }
-      // 3. (Optional: fallback to direct backend fetch)
-      // (removed getTaskByTaskId/getTaskById which are static/legacy)
     }
     
     // Set the task in the next tick to ensure state update
@@ -102,71 +109,63 @@ const TaskDetailPage = () => {
   // Improved loading/error UI
   if (supabaseTasksLoading) {
     return (
-      <AppLayout>
-        <div className="h-full flex items-center justify-center">
-          <div className="text-center">
-            <h2 className="text-lg font-semibold">Loading task...</h2>
-            <p className="text-muted-foreground">If this persists, the task may not exist.</p>
-          </div>
+      <div className="h-full flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-lg font-semibold">Loading task...</h2>
+          <p className="text-muted-foreground">If this persists, the task may not exist.</p>
         </div>
-      </AppLayout>
+      </div>
     );
   }
 
   if (!currentTask) {
     // Not found after loading is done
     return (
-      <AppLayout>
-        <div className="h-full flex items-center justify-center">
-          <div className="text-center">
-            <h2 className="text-lg font-semibold">Task Not Found</h2>
-            <p className="text-muted-foreground">This task does not exist or has been removed.</p>
-            <button
-              onClick={handleBack}
-              className="mt-2 px-4 py-2 rounded bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
-            >
-              Go Back
-            </button>
-          </div>
+      <div className="h-full flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-lg font-semibold">Task Not Found</h2>
+          <p className="text-muted-foreground">This task does not exist or has been removed.</p>
+          <button
+            onClick={handleBack}
+            className="mt-2 px-4 py-2 rounded bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
+          >
+            Go Back
+          </button>
         </div>
-      </AppLayout>
+      </div>
     );
   }
 
   if (!isCurrentUserTaskViewer) {
     // Access denied state
     return (
-      <AppLayout>
-        <div className="h-full flex items-center justify-center">
-          <div className="text-center max-w-sm mx-auto">
-            <h2 className="text-lg font-semibold">Access Denied</h2>
-            <p className="text-muted-foreground mb-4">You are not assigned to this task and cannot view the details or participate in activity.</p>
-            <button
-              onClick={handleBack}
-              className="mt-2 px-4 py-2 rounded bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
-            >
-              Go Back
-            </button>
-          </div>
+      <div className="h-full flex items-center justify-center">
+        <div className="text-center max-w-sm mx-auto">
+          <h2 className="text-lg font-semibold">Access Denied</h2>
+          <p className="text-muted-foreground mb-4">You are not assigned to this task and cannot view the details or participate in activity.</p>
+          <button
+            onClick={handleBack}
+            className="mt-2 px-4 py-2 rounded bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
+          >
+            Go Back
+          </button>
         </div>
-      </AppLayout>
+      </div>
     );
   }
 
   return (
-    <AppLayout>
-      <div className="h-full flex flex-col overflow-hidden">
-        <div className="flex-1 min-h-0 overflow-hidden">
-          <TaskDetail 
-            isOpen={true} 
-            onClose={handleBack}
-            onProjectClick={handleProjectClick}
-            task={currentTask}
-            onDeleted={handleDeleted}
-          />
-        </div>
+    <div className="h-full flex flex-col overflow-hidden">
+      <div className="flex-1 min-h-0 overflow-hidden">
+        <TaskDetail 
+          isOpen={true} 
+          onClose={handleBack}
+          onProjectClick={handleProjectClick}
+          task={currentTask}
+          onDeleted={handleDeleted}
+        />
       </div>
-    </AppLayout>
+    </div>
   );
 };
 

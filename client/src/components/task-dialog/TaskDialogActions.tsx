@@ -45,7 +45,7 @@ const TaskDialogActions = ({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length) {
-      setAttachedFiles(prev => [...prev, ...Array.from(e.target.files)]);
+      setAttachedFiles(prev => [...prev, ...Array.from(e.target.files!)]);
       e.target.value = "";
     }
   };

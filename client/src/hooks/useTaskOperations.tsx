@@ -63,8 +63,8 @@ export function useTaskOperations() {
 
   // Update local state when tasks change
   useEffect(() => {
-    const activeTasks = tasks.filter(task => !task.archived);
-    const archived = tasks.filter(task => task.archived);
+    const activeTasks = tasks.filter((task: any) => !task.archived);
+    const archived = tasks.filter((task: any) => task.archived);
     setCustomTasks(activeTasks);
     setArchivedTasks(archived);
   }, [tasks]);
@@ -130,14 +130,14 @@ export function useTaskOperations() {
   }, [createTaskMutation.mutate]);
 
   const updateTaskById = useCallback((taskId: number, updates: Partial<Task>) => {
-    const task = tasks.find(t => t.id === taskId);
+    const task = tasks.find((t: any) => t.id === taskId);
     if (task) {
       updateTaskMutation.mutate({ taskId: task.taskId, updates });
     }
   }, [tasks, updateTaskMutation.mutate]);
 
   const deleteTaskHandler = useCallback(async (taskId: number): Promise<void> => {
-    const task = tasks.find(t => t.id === taskId);
+    const task = tasks.find((t: any) => t.id === taskId);
     if (task) {
       deleteTaskMutation.mutate(task.taskId);
     }
@@ -157,11 +157,11 @@ export function useTaskOperations() {
   }, []);
 
   const getTasksByStatus = useCallback((status: string) => {
-    return tasks.filter(task => task.status === status && !task.archived);
+    return tasks.filter((task: any) => task.status === status && !task.archived);
   }, [tasks]);
 
   const getAllTasks = useCallback(() => {
-    return tasks.filter(task => !task.archived);
+    return tasks.filter((task: any) => !task.archived);
   }, [tasks]);
 
   const triggerRefresh = useCallback(() => {

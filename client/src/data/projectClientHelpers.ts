@@ -1,11 +1,11 @@
-import { projectClientData } from './projectClientStaticData';
+import { projectClientData, ProjectClient } from './projectClientStaticData';
 
 // Interfaces/types
 export interface Client {
   clientId: string;
   firstName: string;
   lastName: string;
-  email?: string;
+  email: string;
   isPrimary: boolean;
 }
 
@@ -55,7 +55,7 @@ export const getAllClients = (): Client[] => {
 
 export const updateClientData = (
   projectId: string,
-  updatedClients?: Client[],
+  updatedClients?: ProjectClient[],
   updatedAddress?: string,
   updatedCity?: string,
   updatedState?: string

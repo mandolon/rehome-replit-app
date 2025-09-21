@@ -9,7 +9,7 @@ import { projectClientData } from "@/data/projectClientStaticData";
 function getProjectName(projectId: string) {
   const p = projectClientData[projectId];
   if (!p) return projectId;
-  const primaryClient = p.clients.find(c => c.isPrimary) || p.clients[0];
+  const primaryClient = p.clients.find((c: any) => c.isPrimary) || p.clients[0];
   return `${primaryClient?.lastName ?? ""} • ${p.projectAddress}`;
 }
 

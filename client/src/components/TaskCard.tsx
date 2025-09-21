@@ -45,7 +45,7 @@ const TaskCard = ({ task }: TaskCardProps) => {
       </div>
       {/* Date Created */}
       <div className="col-span-2 flex items-center text-sm text-muted-foreground">
-        {formatDate(task.dateCreated)}
+        {task.dateCreated ? formatDate(task.dateCreated) : '-'}
       </div>
       {/* Due Date */}
       <div className="col-span-2 flex items-center text-sm text-muted-foreground">
