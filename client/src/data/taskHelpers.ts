@@ -1,4 +1,4 @@
-import { Task } from '@/types/task';
+import { Task } from '@/lib/schemas/task';
 import { baseTasks } from './tasksBase';
 import { getProjectDisplayName } from './projectClientHelpers';
 

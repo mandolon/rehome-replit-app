@@ -5,7 +5,7 @@ import { Trash2 } from "lucide-react";
 import DeleteTaskDialog from "@/components/DeleteTaskDialog";
 import { updateTaskAPI } from "@/data/taskAPI";
 import { useTaskContext } from "@/contexts/TaskContext";
-import { Task } from "@/types/task";
+import { Task } from "@/lib/schemas/task";
 import { toast } from "@/hooks/use-toast";
 
 interface TaskDetailTrashButtonProps {

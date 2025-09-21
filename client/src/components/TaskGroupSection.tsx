@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import TaskGroupHeader from './task-group/TaskGroupHeader';
 import TaskTableSection from './task-group/TaskTableSection';
-import { Task, TaskGroup, TaskUser } from '@/types/task';
+import { Task, TaskGroup, TaskUser } from '@/lib/schemas/task';
 
 interface TaskGroupSectionProps {
   group: TaskGroup;

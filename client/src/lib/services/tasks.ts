@@ -158,17 +158,33 @@ let mockTasks: Task[] = [
 
 // Service functions
 export const taskService = {
+  // Normalize legacy fields (assignedTo, assignedAvatar, assignedToFullName) into canonical `assignee`
+  _normalizeLegacy(task: any): Task {
+    if (!task) return task;
+    // If legacy assignedTo exists, map to assignee object
+    if ((task as any).assignedTo && !task.assignee) {
+      const assignedTo = (task as any).assignedTo;
+      task.assignee = {
+        id: String(assignedTo),
+        name: assignedTo,
+        avatar: (task as any).assignedAvatar || assignedTo.slice(0,2).toUpperCase(),
+        fullName: (task as any).assignedToFullName || assignedTo,
+      } as TaskUser;
+    }
+    return task as Task;
+  },
   // Get all tasks
   async getTasks(): Promise<Task[]> {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 100));
-    return [...mockTasks];
+    return [...mockTasks].map(t => this._normalizeLegacy(t));
   },
 
   // Get task by ID
   async getTaskById(taskId: string): Promise<Task | null> {
     await new Promise(resolve => setTimeout(resolve, 50));
-    return mockTasks.find(task => task.taskId === taskId || task.id === Number(taskId)) || null;
+    const found = mockTasks.find(task => task.taskId === taskId || task.id === Number(taskId)) || null;
+    return found ? this._normalizeLegacy(found) : null;
   },
 
   // Create new task

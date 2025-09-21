@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
-import { Task } from '@/types/task'; // Import the Task type
+import { Task } from '@/lib/schemas/task'; // Import the Task type
 
 interface TaskDetailHeaderProps {
   task: Task; // Use the imported Task type

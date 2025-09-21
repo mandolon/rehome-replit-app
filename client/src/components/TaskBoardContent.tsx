@@ -4,7 +4,7 @@ import TaskBoardHeader from './TaskBoardHeader';
 import TaskBoardFilters from './TaskBoardFilters';
 import TaskGroupSection from './TaskGroupSection';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Task, TaskGroup } from '@/types/task';
+import { Task, TaskGroup } from '@/lib/schemas/task';
 
 interface TaskBoardContentProps {
   taskGroups: TaskGroup[];

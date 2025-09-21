@@ -6,7 +6,7 @@ import { useTaskBoard } from '@/hooks/useTaskBoard';
 import { useTaskAttachmentContext } from '@/contexts/TaskAttachmentContext';
 
 import { useRealtimeTasks } from '@/hooks/useRealtimeTasks';
-import { Task } from '@/types/task';
+import { Task } from '@/lib/schemas/task';
 
 const TaskBoard: React.FC = React.memo(() => {
   // Use task board hook which already includes real-time updates

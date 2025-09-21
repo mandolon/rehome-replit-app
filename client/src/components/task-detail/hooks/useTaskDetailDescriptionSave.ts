@@ -1,7 +1,7 @@
 
 import { useCallback, useState } from "react";
 import { updateTaskAPI } from '@/data/taskAPI';
-import { Task } from '@/types/task';
+import { Task } from '@/lib/schemas/task';
 
 type UseTaskDetailDescriptionSaveResult = {
   desc: string;

@@ -2,7 +2,7 @@
 import React from 'react';
 import { TEAM_USERS } from "@/utils/teamUsers";
 import { formatFirstNameLastInitial } from "@/utils/taskUtils";
-import { Task } from "@/types/task";
+import { Task } from "@/lib/schemas/task";
 
 /**
  * Maps createdBy string (name/email) to a TEAM_USERS object (if possible)

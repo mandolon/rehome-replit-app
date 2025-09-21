@@ -8,7 +8,7 @@ import TaskRowCreatedBy from './TaskRowCreatedBy';
 import DeleteTaskDialog from '../DeleteTaskDialog';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { formatDate } from '@/utils/taskUtils';
-import { Task } from '@/types/task';
+import { Task } from '@/lib/schemas/task';
 import { useTaskToast } from '@/components/ui/unified-toast';
 
 interface TaskRowProps {

@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Task } from '@/types/task';
+import { Task } from '@/lib/schemas/task';
 
 export function useTaskStatusOperations(
   getAllTasks: () => Task[],

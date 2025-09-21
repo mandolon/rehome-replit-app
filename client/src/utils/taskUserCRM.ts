@@ -1,5 +1,5 @@
 
-import { TaskUser } from '@/types/task';
+import { TaskUser } from '@/lib/schemas/task';
 import { TEAM_USERS } from '@/utils/teamUsers';
 import { getUserCustomizations } from '@/utils/userCustomizations';
 

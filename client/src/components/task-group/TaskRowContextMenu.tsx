@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/context-menu';
 import { useToast } from '@/hooks/use-toast';
 import { ToastAction } from '@/components/ui/toast';
-import { Task } from '@/types/task';
+import { Task } from '@/lib/schemas/task';
 
 interface TaskRowContextMenuProps {
   task: Task;

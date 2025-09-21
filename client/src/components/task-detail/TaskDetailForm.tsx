@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useUser } from '@/contexts/UserContext';
 import { useTaskContext } from '@/contexts/TaskContext';
-import { Task } from '@/types/task';
+import { Task } from '@/lib/schemas/task';
 import TaskDetailTitleSection from './TaskDetailTitleSection';
 import TaskDetailDescription from './TaskDetailDescription';
 import TaskDetailFields from './TaskDetailFields';
