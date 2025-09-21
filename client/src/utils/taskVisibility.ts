@@ -2,11 +2,13 @@
 import { Task } from "@/lib/schemas/task";
 import { User } from "@/types/user";
 
-export function isAdmin(user: User) {
-  return (
-    user.name === "mandolon" ||
-    user.email === "armando@rehome.build"
-  );
+export function isAdmin(user?: { email?: string; role?: string; name?: string }) {
+  if (!user) return false;
+  const adminEmails = new Set([
+    "armando@rehome.build",
+    "armando.lopez@example.com", // dev mock
+  ]);
+  return user.role === "Admin" || adminEmails.has(user.email ?? "") || user.name === "mandolon";
 }
 
 export function isUserMatch(a: any, b: User | null) {

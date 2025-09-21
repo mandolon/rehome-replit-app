@@ -147,7 +147,7 @@ const TaskDetailFields: React.FC<TaskDetailFieldsProps> = ({
                 {selectedDueDate && !isNaN(selectedDueDate.getTime()) ? format(selectedDueDate, "MMM d, yyyy") : "Set date"}
               </button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
+            <PopoverContent className="w-auto p-0 bg-popover text-popover-foreground border border-border" align="start">
               <div className="p-3">
                 <Calendar
                   mode="single"

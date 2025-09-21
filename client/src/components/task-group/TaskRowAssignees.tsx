@@ -104,7 +104,7 @@ const TaskRowAssignees = ({
             <Plus className="w-3 h-3" />
           </button>
         </PopoverTrigger>
-        <PopoverContent align="start" className="p-1 w-40 bg-popover z-50 border border-border rounded shadow-xl">
+        <PopoverContent align="start" className="p-1 w-40 bg-popover text-popover-foreground z-50 border border-border rounded shadow-xl">
           <div className="text-xs font-semibold pb-1 px-2 text-foreground">Add person</div>
           <div className="flex flex-col">
             {availablePeople.length > 0 ? (

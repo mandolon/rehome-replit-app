@@ -82,7 +82,7 @@ const QuickAddAssigneePopover: React.FC<QuickAddAssigneePopoverProps> = ({
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent align="end" className="p-1 w-44 bg-popover z-50 border border-border rounded shadow-xl">
+        <PopoverContent align="end" className="p-1 w-44 bg-popover text-popover-foreground z-50 border border-border rounded shadow-xl">
           <div className="text-xs font-semibold pb-1 px-2 text-foreground">Assign to...</div>
           <div className="flex flex-col">
             {teamAssignees.map(person => {

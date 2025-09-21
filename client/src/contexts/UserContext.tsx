@@ -52,7 +52,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Load persisted userId
   const persistedUserId = typeof window !== "undefined" ? window.localStorage.getItem(LOCAL_STORAGE_KEY) : null;
-  const defaultUser = persistedUserId ? findUserById(persistedUserId) : null;
+  // Provide a fallback default user: prefer persisted user, otherwise first TEAM_USERS entry
+  let defaultUser = persistedUserId ? findUserById(persistedUserId) : null;
+  if (!defaultUser && TEAM_USERS && TEAM_USERS.length > 0) {
+    defaultUser = findUserById(TEAM_USERS[0].id);
+  }
 
   // State: originalUser is the admin, currentUser is the logged-in user
   const [originalUser, setOriginalUser] = useState<User | null>(defaultUser);

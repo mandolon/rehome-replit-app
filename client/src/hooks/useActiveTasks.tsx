@@ -1,29 +1,18 @@
-import { useQuery } from '@tanstack/react-query';
-import type { Task } from '@shared/schema';
+import { useEffect, useState } from "react";
+import { taskService } from "@/lib/services/tasks";
 
-export const useActiveTasks = () => {
-  const { data: tasks = [], isLoading, error } = useQuery({
-    queryKey: ['active-tasks'],
-    queryFn: async () => {
-      const response = await fetch('/api/tasks');
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      
-      // Filter to only show active tasks (not completed and not archived)
-      return data.filter((task: Task) => 
-        !task.archived && 
-        !task.markedComplete && 
-        task.status !== 'completed'
-      );
-    },
-    refetchInterval: 30000, // Refetch every 30 seconds for real-time updates
-  });
+export function useActiveTasks() {
+  const [tasks, setTasks] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  return {
-    activeTasks: tasks,
-    isLoading,
-    error
-  };
-};
+  useEffect(() => {
+    (async () => {
+      setIsLoading(true);
+      const all = await taskService.getTasks();
+      setTasks(all.filter((t: any) => t.status !== "completed" && t.status !== "archived"));
+      setIsLoading(false);
+    })();
+  }, []);
+
+  return { activeTasks: tasks, isLoading };
+}

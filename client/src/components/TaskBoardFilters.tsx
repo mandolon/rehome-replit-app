@@ -61,7 +61,7 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed, onFiltersChan
               <ChevronDown className="w-3 h-3" />
             </button>
           </PopoverTrigger>
-          <PopoverContent className="w-48 p-2 z-[1100]" align="start">
+          <PopoverContent className="w-48 p-2 z-[1100] bg-popover text-popover-foreground border border-border" align="start">
             <div className="space-y-1">
               <div className="text-[11px] font-medium text-muted-foreground/70 px-2 py-1">
                 Show status
@@ -84,7 +84,7 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed, onFiltersChan
               <ChevronDown className="w-3 h-3" />
             </button>
           </PopoverTrigger>
-          <PopoverContent className="w-48 p-2 z-[1100]" align="start">
+          <PopoverContent className="w-48 p-2 z-[1100] bg-popover text-popover-foreground border border-border" align="start">
             <div className="space-y-1">
               <div className="text-[11px] font-medium text-muted-foreground/70 px-2 py-1">
                 Show project
@@ -132,7 +132,7 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed, onFiltersChan
               <ChevronDown className="w-3 h-3" />
             </button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-2 z-[1100]" align="start">
+          <PopoverContent className="w-auto p-2 z-[1100] bg-popover text-popover-foreground border border-border" align="start">
             <div className="space-y-1">
               <div className="text-[11px] font-medium text-muted-foreground/70 px-2 py-1">
                 Show date range
@@ -146,7 +146,7 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed, onFiltersChan
                         {selectedStartDate ? selectedStartDate.toLocaleDateString() : "Select"}
                       </button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-2 z-[1200]">
+                    <PopoverContent className="w-auto p-2 z-[1200] bg-popover text-popover-foreground border border-border">
                       <ShadcnCalendar
                         mode="single"
                         selected={selectedStartDate}
@@ -165,7 +165,7 @@ const TaskBoardFilters = ({ onAddTask, showClosed, onToggleClosed, onFiltersChan
                         {selectedEndDate ? selectedEndDate.toLocaleDateString() : "Select"}
                       </button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-2 z-[1200]">
+                    <PopoverContent className="w-auto p-2 z-[1200] bg-popover text-popover-foreground border border-border">
                       <ShadcnCalendar
                         mode="single"
                         selected={selectedEndDate}

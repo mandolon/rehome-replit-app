@@ -80,7 +80,7 @@ const AddTimeEntryDialog = ({ isOpen, onClose, onSave }: AddTimeEntryDialogProps
                   {date ? format(date, "PPP") : <span>Pick a date</span>}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
+              <PopoverContent className="w-auto p-0 bg-popover text-popover-foreground border border-border" align="start">
                 <Calendar
                   mode="single"
                   selected={date}

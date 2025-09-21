@@ -96,7 +96,7 @@ const TaskDialogActions = ({
               {dueDate ? format(dueDate, "PPP") : "Due date"}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
+          <PopoverContent className="w-auto p-0 bg-popover text-popover-foreground border border-border" align="start">
             <CalendarComponent
               mode="single"
               selected={dueDate}

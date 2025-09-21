@@ -62,7 +62,7 @@ const CreatedByFilterPopover = ({ selectedPeople, onChange }: CreatedByFilterPop
           <ChevronDown className="w-3 h-3" />
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-48 p-2 z-[1100]" align="start">
+      <PopoverContent className="w-48 p-2 z-[1100] bg-popover text-popover-foreground border border-border" align="start">
         <div className="space-y-1">
           <div className="text-[11px] font-medium text-muted-foreground/70 px-2 py-1">
             Show tasks created by
