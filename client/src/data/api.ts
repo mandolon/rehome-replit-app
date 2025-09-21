@@ -1,5 +1,5 @@
 import { apiRequest } from '@/lib/queryClient';
-import { Task } from '@/types/task';
+import { Task } from '@/lib/schemas/task';
 
 // Task API functions
 export async function fetchAllTasks(): Promise<Task[]> {

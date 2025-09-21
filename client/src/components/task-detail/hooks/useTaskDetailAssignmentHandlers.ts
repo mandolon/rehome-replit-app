@@ -1,7 +1,7 @@
 
 import { useTaskAssignments } from '@/hooks/useTaskAssignments';
 import { useTaskContext } from '@/contexts/TaskContext';
-import { Task } from '@/types/task';
+import { Task } from '@/lib/schemas/task';
 
 /**
  * Keeps all assignment/collaborator handler logic together for reuse.

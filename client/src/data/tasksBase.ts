@@ -1,4 +1,4 @@
-import { Task } from '@/types/task';
+import { Task } from '@/lib/schemas/task';
 import { TEAM_USERS } from '@/utils/teamUsers';
 import { getProjectDisplayName } from './projectClientHelpers';
 

@@ -1,7 +1,7 @@
 
 import { useState, useCallback } from "react";
 import { updateTaskAPI } from "@/data/taskAPI";
-import { Task, TaskUser } from "@/types/task";
+import { Task, TaskUser } from "@/lib/schemas/task";
 
 /**
  * Provides assignment/collab actions for API-backed tasks.

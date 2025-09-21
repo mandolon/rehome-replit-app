@@ -7,7 +7,7 @@ import TimesheetCalendarSelector from '@/components/timesheets/TimesheetCalendar
 import ProjectLogTab from '@/components/timesheets/ProjectLogTab';
 import AddTimeEntryDialog from '@/components/timesheets/AddTimeEntryDialog';
 import TaskDetail from '@/components/TaskDetail';
-import { Task } from '@/types/task';
+import { Task } from '@/lib/schemas/task';
 
 const TimesheetsPage = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);

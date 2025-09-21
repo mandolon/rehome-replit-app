@@ -2,7 +2,7 @@
 import { useTaskToast } from '@/components/ui/unified-toast';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
-import { Task } from '@/types/task';
+import { Task } from '@/lib/schemas/task';
 
 export const useTaskStatus = (onTaskArchive?: (taskId: number) => void) => {
   const { taskCompleted } = useTaskToast();

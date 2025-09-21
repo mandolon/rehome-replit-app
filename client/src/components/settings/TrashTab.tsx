@@ -12,7 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { formatDate } from '@/utils/taskUtils';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Task } from '@/types/task';
+import { Task } from '@/lib/schemas/task';
 import { useNavigate } from 'react-router-dom';
 
 interface TrashItem {

@@ -1,12 +1,11 @@
 
-import { Task } from "@/types/task";
+import { Task } from "@/lib/schemas/task";
 import { User } from "@/types/user";
 
 export function isAdmin(user: User) {
   return (
-    user.name === "Armando Lopez" ||
-    user.name === "AL" ||
-    user.email === "armando@company.com"
+    user.name === "mandolon" ||
+    user.email === "armando@rehome.build"
   );
 }
 

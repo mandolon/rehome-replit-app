@@ -3,7 +3,7 @@ import TaskTable from "./TaskTable";
 import AddTaskButton from "./AddTaskButton";
 import QuickAddTask from "@/components/QuickAddTask";
 import { useTaskSorting } from "@/hooks/useTaskSorting";
-import { Task, TaskGroup } from "@/types/task";
+import { Task, TaskGroup } from "@/lib/schemas/task";
 import { useTaskContext } from "@/contexts/TaskContext";
 
 interface TaskTableSectionProps {

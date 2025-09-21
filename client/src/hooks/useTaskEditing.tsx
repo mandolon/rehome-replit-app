@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Task } from '@/types/task';
+import { Task } from '@/lib/schemas/task';
 
 export function useTaskEditing(updateTaskById: (taskId: number, updates: Partial<Task>) => void) {
   const [editingTaskId, setEditingTaskId] = useState<number | null>(null);

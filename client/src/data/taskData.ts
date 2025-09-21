@@ -1,5 +1,5 @@
 
-import { Task } from '@/types/task';
+import { Task } from '@/lib/schemas/task';
 import {
   generateTaskId,
   getNextTaskId,

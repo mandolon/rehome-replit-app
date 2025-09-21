@@ -6,7 +6,7 @@ import TaskDetailAttachments from './task-detail/TaskDetailAttachments';
 import TaskDetailActivity from './task-detail/TaskDetailActivity';
 import TaskDetailTrashButton from './task-detail/TaskDetailTrashButton';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Task } from '@/types/task';
+import { Task } from '@/lib/schemas/task';
 
 interface TaskDetailProps {
   isOpen: boolean;

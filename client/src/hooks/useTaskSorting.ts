@@ -1,6 +1,6 @@
 
 import { useMemo, useState, useCallback } from "react";
-import { Task } from "@/types/task";
+import { Task } from "@/lib/schemas/task";
 
 function compareAssignee(a: Task, b: Task, direction: "asc" | "desc") {
   const nameA = a.assignee?.name?.toLowerCase?.() ?? "";

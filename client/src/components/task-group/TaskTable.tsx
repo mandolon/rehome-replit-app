@@ -2,7 +2,7 @@ import React from 'react';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import TaskRow from './TaskRow';
 import TaskRowCreatedBy from "./TaskRowCreatedBy";
-import { Task } from '@/types/task';
+import { Task } from '@/lib/schemas/task';
 import { Triangle } from 'lucide-react';
 
 interface TaskTableProps {

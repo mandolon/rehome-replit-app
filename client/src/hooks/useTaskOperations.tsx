@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Task } from '@/types/task';
+import { Task } from '@/lib/schemas/task';
 import { fetchAllTasks, createTask, updateTask, deleteTask } from '@/data/api';
 import { useWebSocket } from './useWebSocket';
 

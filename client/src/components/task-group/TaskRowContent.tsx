@@ -3,7 +3,7 @@ import React, { useCallback } from 'react';
 import { Edit, Check, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import TaskStatusIcon from '../TaskStatusIcon';
-import { Task } from '@/types/task';
+import { Task } from '@/lib/schemas/task';
 
 interface TaskRowContentProps {
   task: Task;

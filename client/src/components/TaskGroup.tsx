@@ -1,7 +1,7 @@
 import React from 'react';
 import { ChevronDown, Plus, MoreHorizontal } from 'lucide-react';
 import TaskCard from './TaskCard';
-import { Task, TaskGroup as TaskGroupType } from '@/types/task';
+import { Task, TaskGroup as TaskGroupType } from '@/lib/schemas/task';
 
 interface TaskGroupProps {
   title: string;

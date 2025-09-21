@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { ChevronDown, User, Filter } from 'lucide-react';
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { useQuery } from '@tanstack/react-query';
-import type { Task } from '@/types/task';
+import type { Task } from '@/lib/schemas/task';
 
 type Person = { name: string; avatar: string; };
 
